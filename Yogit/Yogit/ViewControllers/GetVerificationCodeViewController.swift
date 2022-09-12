@@ -9,11 +9,11 @@ import UIKit
 import SnapKit
 import Alamofire
 
-class SendVerificationCodeViewController: UIViewController {
+class GetVerificationCodeViewController: UIViewController {
     
     // MARK: Properties
     
-    lazy var nationalFlagImageView: UIImageView = {
+    private lazy var nationalFlagImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Rectangle1")
         imageView.contentMode = .scaleAspectFit
@@ -22,7 +22,7 @@ class SendVerificationCodeViewController: UIViewController {
         return imageView
     }()
     
-    lazy var countryCodeLabel: UILabel = {
+    private lazy var countryCodeLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16.0)
         label.text = "+82" // country code
@@ -38,7 +38,7 @@ class SendVerificationCodeViewController: UIViewController {
         return label
     }()
     
-    lazy var phoneNumberTextField: UITextField = {
+    private lazy var phoneNumberTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Phone Number"
         textField.font = UIFont.systemFont(ofSize: 16.0)
@@ -49,7 +49,7 @@ class SendVerificationCodeViewController: UIViewController {
         return textField
     }()
     
-    lazy var countryContentStackView: UIStackView = {
+    private lazy var countryContentStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.layer.borderColor = UIColor.systemRed.cgColor
         stackView.layer.borderWidth = 1
@@ -67,7 +67,7 @@ class SendVerificationCodeViewController: UIViewController {
         return stackView
     }()
     
-    lazy var phoneNumberContentStackView: UIStackView = {
+    private lazy var phoneNumberContentStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         
@@ -88,17 +88,18 @@ class SendVerificationCodeViewController: UIViewController {
 
         [self.countryContentStackView,
          self.phoneNumberTextField].forEach { stackView.addArrangedSubview($0) }
+        
         return stackView
     }()
     
-    lazy var sendVerificationCodeButton: UIButton = {
+    private lazy var getVerificationCodeButton: UIButton = {
         let button = UIButton()
         button.setTitle("Continue", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16.0)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 12
         
-        button.addTarget(self, action: #selector(sendVerificationCodeButtonTapped(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(getVerificationCodeButtonTapped(_:)), for: .touchUpInside)
         
         return button
     }()
@@ -117,7 +118,7 @@ class SendVerificationCodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(phoneNumberContentStackView)
-        view.addSubview(sendVerificationCodeButton)
+        view.addSubview(getVerificationCodeButton)
         view.addSubview(touchPrintLabel)
         configureViewComponent()
     }
@@ -130,7 +131,7 @@ class SendVerificationCodeViewController: UIViewController {
             make.height.equalTo(50)
         }
         
-        sendVerificationCodeButton.snp.makeConstraints { make in
+        getVerificationCodeButton.snp.makeConstraints { make in
             make.left.right.equalTo(view).inset(20)
             make.top.equalTo(phoneNumberContentStackView.snp.bottom).offset(10)
             make.height.equalTo(50)
@@ -156,19 +157,54 @@ class SendVerificationCodeViewController: UIViewController {
         // Move animate under >> up
     }
     
-//    @objc func countryContentStackViewTapped(_ sender: UIStackView) {
-//        touchPrintLabel.text = "Touch countryContentStackView"
-//        // First Not handle
-//        // Move to view which choose the national flag and country code
-//        // Move animate under >> up
-//    }
-    
-    @objc func sendVerificationCodeButtonTapped(_ sender: UIButton) {
+    @objc func getVerificationCodeButtonTapped(_ sender: UIButton) {
         touchPrintLabel.text = sender.titleLabel?.text
-        navigationController?.pushViewController(PhoneNumberVerificationViewController(), animated: true)
         // Post (phoneNumber)
         // Move to view which input verification code
         // time limit 3 min
+        guard let countryCode = countryCodeLabel.text else { return }
+        guard let phoneNumber = phoneNumberTextField.text else { return }
+        let fullPhoneNumber = countryCode + phoneNumber
+//        guard let url = URL(string: "") else { return }
+//
+//        var request = URLRequest(url: url)
+//
+//        request.httpMethod = "POST"
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.timeoutInterval = 10
+//
+//        // sendbutton must be active when country digit is correct
+//        let parameter = ["phoneNumber":"\(fullPhoneNumber)"] as Dictionary
+//
+//        do {
+//            try request.httpBody = JSONSerialization.data(withJSONObject: parameter, options: [])
+//        } catch {
+//            print("http Body Error")
+//            print(error.localizedDescription)
+//        }
+//
+//        AF.request(request)
+//        .validate(statusCode: 200..<500)
+//        .responseData { [self] response in
+//            switch response.result {
+//            case .success(let data):
+//                do{
+//                    debugPrint(response)
+//                    let decodedData = try JSONDecoder().decode(GetVerificationCode.self, from: data)
+//                    let userDefaults = UserDefaults.standard
+//                    userDefaults.set(phoneNumber, forKey: "phoneNumber")
+//                    self.navigationController?.pushViewController(PhoneNumberVerificationViewController(), animated: true)
+//                } catch {
+//                    print(error)
+//                }
+//            case .failure(let error):
+//                print(error)
+//            }
+//        }
+        
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(fullPhoneNumber, forKey: "phoneNumber")
+        self.navigationController?.pushViewController(PhoneNumberVerificationViewController(), animated: true)
     }
     
 
