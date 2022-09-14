@@ -23,7 +23,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // true >> rootVC = main
         // false >> rootVC = SendVerificationCodeViewController()
         
-        let rootVC = GetVerificationCodeViewController()
+//        let rootVC = GetVerificationCodeViewController()
+//        let navVC = UINavigationController(rootViewController: rootVC)
+        
+        let rootVC = UserDetailViewController()
         let navVC = UINavigationController(rootViewController: rootVC)
         
         window = UIWindow(windowScene: scene)
