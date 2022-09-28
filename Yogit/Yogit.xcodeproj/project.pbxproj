@@ -16,6 +16,7 @@
 		79088B4E28DB9102008054F6 /* TokenSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B4D28DB9102008054F6 /* TokenSource.swift */; };
 		79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* HomeViewController.swift */; };
 		79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */; };
+		79088B7328E48C62008054F6 /* URL+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7228E48C62008054F6 /* URL+Helper.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
@@ -64,6 +65,7 @@
 		79088B4D28DB9102008054F6 /* TokenSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSource.swift; sourceTree = "<group>"; };
 		79088B6528DD8297008054F6 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewCell.swift; sourceTree = "<group>"; };
+		79088B7228E48C62008054F6 /* URL+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Helper.swift"; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -250,6 +252,7 @@
 		79A8F6E928D1F16000FEBE90 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				79088B7228E48C62008054F6 /* URL+Helper.swift */,
 				79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */,
 			);
 			path = API;
@@ -517,6 +520,7 @@
 				79A8F6A428CDB7C400FEBE90 /* Login.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
+				79088B7328E48C62008054F6 /* URL+Helper.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
