@@ -165,24 +165,25 @@ class GetVerificationCodeViewController: UIViewController {
         guard let countryCode = countryCodeLabel.text else { return }
         guard let phoneNumber = phoneNumberTextField.text else { return }
         let fullPhoneNumber = countryCode + phoneNumber
-//        guard let url = URL(string: "") else { return }
-//
-//        var request = URLRequest(url: url)
-//
-//        request.httpMethod = "POST"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.timeoutInterval = 10
-//
-//        // sendbutton must be active when country digit is correct
-//        let parameter = ["phoneNumber":"\(fullPhoneNumber)"] as Dictionary
-//
-//        do {
-//            try request.httpBody = JSONSerialization.data(withJSONObject: parameter, options: [])
-//        } catch {
-//            print("http Body Error")
-//            print(error.localizedDescription)
-//        }
-//
+        guard let url = URL(string: "") else { return }
+
+        var request = URLRequest(url: url)
+
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 10
+
+        // sendbutton must be active when country digit is correct
+        let parameter = ["phoneNumber":"\(fullPhoneNumber)"] as Dictionary
+
+        do {
+            try request.httpBody = JSONSerialization.data(withJSONObject: parameter, options: [])
+        } catch {
+            print("http Body Error")
+            print(error.localizedDescription)
+        }
+        
+
 //        AF.request(request)
 //        .validate(statusCode: 200..<500)
 //        .responseData { [self] response in

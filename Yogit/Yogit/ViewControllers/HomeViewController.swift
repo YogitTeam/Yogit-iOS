@@ -1,17 +1,16 @@
 //
-//  ProfileViewController.swift
+//  SecondSetUpUserInfoViewController.swift
 //  Yogit
 //
-//  Created by Junseo Park on 2022/09/11.
+//  Created by Junseo Park on 2022/09/23.
 //
 
 import UIKit
 
-class ProfileViewController: UIViewController {
+class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
     }
     

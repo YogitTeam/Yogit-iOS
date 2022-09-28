@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		1FB6B6874B627D1D5EF6D1CB /* Pods_Yogit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1908DC50101BAB8E435152C /* Pods_Yogit.framework */; };
 		20F7B8E231E3ED89F5835C7C /* Pods_Yogit_YogitUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */; };
+		79088AC828D89343008054F6 /* SignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088AC728D89343008054F6 /* SignInManager.swift */; };
+		79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */; };
+		79088AD028D8CBB6008054F6 /* AuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACF28D8CBB6008054F6 /* AuthState.swift */; };
+		79088B4C28DB893E008054F6 /* RootViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B4B28DB893E008054F6 /* RootViewState.swift */; };
+		79088B4E28DB9102008054F6 /* TokenSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B4D28DB9102008054F6 /* TokenSource.swift */; };
+		79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* HomeViewController.swift */; };
+		79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */; };
+		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -23,7 +31,7 @@
 		79A8F6A428CDB7C400FEBE90 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A328CDB7C400FEBE90 /* Login.swift */; };
 		79A8F6A728CDC95000FEBE90 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A628CDC95000FEBE90 /* User.swift */; };
 		79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */; };
-		79A8F6AB28CDD65800FEBE90 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AA28CDD65800FEBE90 /* ProfileViewController.swift */; };
+		79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */; };
 		79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */; };
 		79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */; };
 		B21896BB7E58864D8E368584 /* Pods_YogitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF43C87CD39B98E37C5472DC /* Pods_YogitTests.framework */; };
@@ -49,6 +57,15 @@
 /* Begin PBXFileReference section */
 		2453934A938574127CB75E59 /* Pods-Yogit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yogit.debug.xcconfig"; path = "Target Support Files/Pods-Yogit/Pods-Yogit.debug.xcconfig"; sourceTree = "<group>"; };
 		5E704620C3EBC75B7FA6F6DE /* Pods-Yogit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yogit.release.xcconfig"; path = "Target Support Files/Pods-Yogit/Pods-Yogit.release.xcconfig"; sourceTree = "<group>"; };
+		79088AC728D89343008054F6 /* SignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInManager.swift; sourceTree = "<group>"; };
+		79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementInfoManager.swift; sourceTree = "<group>"; };
+		79088ACF28D8CBB6008054F6 /* AuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthState.swift; sourceTree = "<group>"; };
+		79088B4B28DB893E008054F6 /* RootViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewState.swift; sourceTree = "<group>"; };
+		79088B4D28DB9102008054F6 /* TokenSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSource.swift; sourceTree = "<group>"; };
+		79088B6528DD8297008054F6 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewCell.swift; sourceTree = "<group>"; };
+		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
+		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,7 +84,7 @@
 		79A8F6A328CDB7C400FEBE90 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		79A8F6A628CDC95000FEBE90 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCode.swift; sourceTree = "<group>"; };
-		79A8F6AA28CDD65800FEBE90 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewController.swift; sourceTree = "<group>"; };
 		79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailTableViewCell.swift; sourceTree = "<group>"; };
 		7C23BBF16282160894DB4A74 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -120,6 +137,18 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		79088AC528D6EED6008054F6 /* SignInHelper */ = {
+			isa = PBXGroup;
+			children = (
+				79088ACF28D8CBB6008054F6 /* AuthState.swift */,
+				79088B4B28DB893E008054F6 /* RootViewState.swift */,
+				79088B4D28DB9102008054F6 /* TokenSource.swift */,
+				79088AC728D89343008054F6 /* SignInManager.swift */,
+				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
+			);
+			path = SignInHelper;
+			sourceTree = "<group>";
+		};
 		79A8F65F28C7240300FEBE90 = {
 			isa = PBXGroup;
 			children = (
@@ -145,10 +174,12 @@
 		79A8F66A28C7240300FEBE90 /* Yogit */ = {
 			isa = PBXGroup;
 			children = (
+				7954854828D5CF99005ED367 /* Yogit.entitlements */,
 				79A8F69B28C75CEE00FEBE90 /* Application */,
 				79A8F69C28C75F3900FEBE90 /* ViewControllers */,
 				79A8F69D28C75F4B00FEBE90 /* Models */,
-				79A8F6E928D1F16000FEBE90 /* CallAPI */,
+				79088AC528D6EED6008054F6 /* SignInHelper */,
+				79A8F6E928D1F16000FEBE90 /* API */,
 				79A8F69E28C75F9000FEBE90 /* Services */,
 				79A8F66F28C7240300FEBE90 /* ViewController.swift */,
 				79A8F67128C7240300FEBE90 /* Main.storyboard */,
@@ -188,9 +219,12 @@
 		79A8F69C28C75F3900FEBE90 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				7954854928D5D006005ED367 /* LoginViewController.swift */,
+				79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */,
+				79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */,
+				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
-				79A8F6AA28CDD65800FEBE90 /* ProfileViewController.swift */,
 				79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */,
 				79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */,
 			);
@@ -213,12 +247,12 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		79A8F6E928D1F16000FEBE90 /* CallAPI */ = {
+		79A8F6E928D1F16000FEBE90 /* API */ = {
 			isa = PBXGroup;
 			children = (
 				79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */,
 			);
-			path = CallAPI;
+			path = API;
 			sourceTree = "<group>";
 		};
 		F2200994E5F998C616020150 /* Frameworks */ = {
@@ -470,16 +504,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */,
+				79088B4E28DB9102008054F6 /* TokenSource.swift in Sources */,
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
+				79088AD028D8CBB6008054F6 /* AuthState.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
+				79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */,
+				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
+				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
 				79A8F6A428CDB7C400FEBE90 /* Login.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
-				79A8F6AB28CDD65800FEBE90 /* ProfileViewController.swift in Sources */,
+				79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */,
+				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
 				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
+				79088B4C28DB893E008054F6 /* RootViewState.swift in Sources */,
 				79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -656,6 +698,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Yogit/Yogit.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9487SKDZZB;
@@ -666,13 +710,15 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Junseo-Park.Yogit";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Branch.Yogit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -685,6 +731,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Yogit/Yogit.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9487SKDZZB;
@@ -695,13 +743,15 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Junseo-Park.Yogit";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Branch.Yogit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

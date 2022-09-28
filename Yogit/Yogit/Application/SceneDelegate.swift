@@ -18,21 +18,53 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
+
         
-        // load log in status
-        // true >> rootVC = main
-        // false >> rootVC = SendVerificationCodeViewController()
+        let setUpVC = LoginViewController()
+        let rootVC = UINavigationController(rootViewController: setUpVC)
         
-//        let rootVC = GetVerificationCodeViewController()
-//        let navVC = UINavigationController(rootViewController: rootVC)
+        self.window = UIWindow(windowScene: scene)
+        self.window?.rootViewController = rootVC
+        self.window?.makeKeyAndVisible()
         
-        let rootVC = UserDetailViewController()
-        let navVC = UINavigationController(rootViewController: rootVC)
-        
-        window = UIWindow(windowScene: scene)
-        window?.rootViewController = navVC
-        window?.makeKeyAndVisible()
-        
+        SignInManager.checkUserAuth { (AuthState) in
+            var rootViewState = RootViewState.loginView
+            switch AuthState {
+            case .undefined, .signedOut:
+                // 처음 token으로 서버 넘겨줄때, 필수 데이터 상태 받아옴 (init nil)
+                break
+            case .signedIn:
+                // 필수 데이터 있으면 homeView, 없으면 loginViewController로 이동
+                RequirementInfoManager.checkIsFullRequirementInfo { (RequirementInfoState) in
+                    switch RequirementInfoState {
+                    case .full:
+                        rootViewState = .homeView   // home view
+                        break
+                    case .notFull:
+                        break
+                    }
+                }
+                break
+            }
+
+            DispatchQueue.main.async {
+                let rootVC: UIViewController
+                switch rootViewState {
+                case .loginView:
+                    let loginVC = LoginViewController()
+                    rootVC = UINavigationController(rootViewController: loginVC)
+                    
+                // 필수 데이터 있으면
+                case .homeView:
+                    let homeVC = HomeViewController()
+                    let tabBarVC = UITabBarController()
+                    tabBarVC.viewControllers = [homeVC]
+                    rootVC = tabBarVC
+                self.window = UIWindow(windowScene: scene)
+                self.window?.rootViewController = rootVC
+                self.window?.makeKeyAndVisible()
+            }
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -102,21 +102,21 @@ class PhoneNumberVerificationViewController: UIViewController {
             print(error.localizedDescription)
         }
 
-        AF.request(request)
-        .validate(statusCode: 200..<500)
-        .responseData { response in
-            switch response.result {
-            case .success(let data):
-                debugPrint(response)
-                guard let userId = String(data: data, encoding: String.Encoding.utf8) as String? else { return }
-                let userDefaults = UserDefaults.standard
-                userDefaults.set(userId, forKey: "userId")
-                print("👤User ID = \(userId)")
-                self.navigationController?.pushViewController(ProfileViewController(), animated: true)
-            case .failure(let error):
-                print(error)
-            }
-        }
+//        AF.request(request)
+//        .validate(statusCode: 200..<500)
+//        .responseData { response in
+//            switch response.result {
+//            case .success(let data):
+//                debugPrint(response)
+//                guard let userId = String(data: data, encoding: String.Encoding.utf8) as String? else { return }
+//                let userDefaults = UserDefaults.standard
+//                userDefaults.set(userId, forKey: "userId")
+//                print("👤User ID = \(userId)")
+//                self.navigationController?.pushViewController(ProfileViewController(), animated: true)
+//            case .failure(let error):
+//                print(error)
+//            }
+//        }
     }
     
     /*
