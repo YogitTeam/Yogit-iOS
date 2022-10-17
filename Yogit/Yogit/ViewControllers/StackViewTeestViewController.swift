@@ -1,17 +1,15 @@
 //
-//  ProfileViewController.swift
+//  StackViewTeestViewController.swift
 //  Yogit
 //
-//  Created by Junseo Park on 2022/09/11.
+//  Created by Junseo Park on 2022/10/04.
 //
 
 import UIKit
 
-class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
+class StackViewTeestViewController: UIViewController, UITableViewDelegate {
     
-    let picker = UIImagePickerController()
-    
-    let langages = ["English", "Korean","Korean","Korean","Korean"]
+    let langages = ["English", "Korean"]
     
     var languageCount = 1
     
@@ -22,7 +20,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 //        imageView.contentMode = .scaleAspectFit
 //        return imageView
 //    }()
-//    
+//
 //    // name of content
 //    private lazy var contentNameLabel: UILabel = {
 //        let label = UILabel()
@@ -30,17 +28,17 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 //        label.font = UIFont.systemFont(ofSize: 16.0)
 //        label.textAlignment = .left
 //        label.text = "Label"
-//        
+//
 //        // Label frame size to fit as text of label
 ////        label.sizeToFit()
 //        label.numberOfLines = 0
 //        label.adjustsFontSizeToFitWidth = true
-//        
+//
 //        label.layer.borderWidth = 1
 //        label.layer.borderColor = UIColor.black.cgColor
 //        return label
 //    }()
-//    
+//
 //    // requirementExpressionView & contentNameLabel horizontal stack view
 //    public lazy var profileHeaderStackView: UIView = {
 //        let stackView = UIStackView()
@@ -54,130 +52,56 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 //         self.contentNameLabel].forEach { stackView.addArrangedSubview($0) }
 //        return stackView
 //    }()
-
-    private lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .placeholderText
-//        imageView.layer.cornerRadius = 55
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
-        return imageView
-    }()
     
-    private lazy var imageLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont.systemFont(ofSize: 20)
-        label.textAlignment = .left
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        label.textColor = UIColor(rgb: 0x3232FF)
-        label.text = "Select photos"
-        
-        // Label frame size to fit as text of label
-        label.sizeToFit()
-        label.numberOfLines = 0
-        label.adjustsFontSizeToFitWidth = true
-        
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.black.cgColor
-        return label
-    }()
-    
-    private lazy var imageContentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemBackground
-        [self.imageView, self.imageLabel].forEach { view.addSubview($0) }
+    private lazy var profileImageContentView: UIView = {
+       let view = UIView()
+        view.backgroundColor = .systemYellow
         return view
     }()
     
     private lazy var infoTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
-        tableView.isScrollEnabled = false
-//        tableView.separatorColor = UIColor(rgb: 0xF5F5F5)
         tableView.backgroundColor = .systemBackground
-//        tableView.sectionFooterHeight = 20
-//        tableView.backgroundColor = UIColor(rgb: 0xF5F5F5)
-//        tableView.sectionIndexTrackingBackgroundColor = .systemBackground
-//        tableView.tintColor = .systemPink
-//        tableView.sectionHeaderHeight = 24
-    
-        tableView.sectionHeaderTopPadding = 16
-//        tableView.separatorColor = .systemPink
-
-//        tableView.sectionHeaderTopPadding = 10
-//        tableView.sectionIndexColor = .systemBackground
-//        tableView.sectionIndexBackgroundColor = .systemBackground
-//        table
-        // register new cell
-        // self: reference the type object
+//        tableView.sectionHeaderHeight = 22
+//        tableView.estimatedRowHeight = 48
+//        tableView.estimatedSectionHeaderHeight = 24
+//        tableView.sectionHeaderHeight = 22
+        
         tableView.register(SetUpProfileTableViewCell.self, forCellReuseIdentifier: SetUpProfileTableViewCell.identifier)
         tableView.register(SetUpProfileTableViewHeader.self, forHeaderFooterViewReuseIdentifier: SetUpProfileTableViewHeader.identifier)
         tableView.register(SetUpProfileTableViewFooter.self, forHeaderFooterViewReuseIdentifier: SetUpProfileTableViewFooter.identifier)
+        
+//        tableView.sectionFooterHeight = UITableView.automaticDimension
+//        tableView.estimatedSectionFooterHeight = 20
         return tableView
-    }()
-    
-    private lazy var profileContentScrollView: UIScrollView = {
-       let scrollView = UIScrollView()
-        scrollView.backgroundColor = .systemBlue
-//        stackView.axis = .vertical
-//        stackView.alignment = .fill
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        [self.imageContentView, self.infoTableView].forEach { scrollView.addSubview($0) }
-        return scrollView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        view.addSubview(profileImageContentView)
-        view.addSubview(profileContentScrollView)
+        view.addSubview(profileImageContentView)
+        view.addSubview(infoTableView)
         infoTableView.delegate = self
         infoTableView.dataSource = self
-        picker.delegate = self
-
 //        infoTableView.rowHeight = UITableView.automaticDimension
 //        infoTableView.estimatedRowHeight = UITableView.automaticDimension
 //        infoTableView.estimatedRowHeight = 50 // 테이블뷰 셀사이즈 동적 변경 안됨
         configureViewComponent()
+    
         // Do any additional setup after loading the view.
     }
-
-    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        profileContentScrollView.frame = view.bounds
-        profileContentScrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        profileImageContentView.snp.makeConstraints { make in
+            make.height.equalTo(250)
+            make.top.left.right.equalToSuperview().inset(0)
         }
         
-        imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(110)
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(24)
-//            make.top.equalToSuperview().inset(30)
-        }
-        
-        configureImageViewComponent()
-        
-        imageLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(10)
-//            make.leading.trailing.equalToSuperview().inset(20)
-            make.centerX.equalToSuperview()
-        }
-        
-        imageContentView.snp.makeConstraints { make in
-            make.height.equalTo(180)
-            make.top.equalToSuperview()
-            make.width.equalToSuperview()
-        }
-//
+//        infoTableView.frame = view.bounds
         infoTableView.snp.makeConstraints { make in
-            make.height.equalTo(1000)
-            make.top.equalTo(imageContentView.snp.bottom)
-            make.width.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.top.equalTo(profileImageContentView.snp.bottom).offset(0)
+            make.left.right.bottom.equalTo(view).inset(0)
         }
 //        requirementView.snp.makeConstraints { make in
 //            make.width.height.equalTo(6)
@@ -199,7 +123,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 //            make.top.equalTo(phoneNumberContentStackView.snp.bottom).offset(10)
 //            make.height.equalTo(50)
 //        }
-//        
+//
 //        touchPrintLabel.snp.makeConstraints { make in
 //            make.left.right.equalTo(view).inset(20)
 //            make.top.equalTo(view).inset(100)
@@ -211,11 +135,6 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
         view.backgroundColor = .systemBackground
     }
     
-    private func configureImageViewComponent() {
-        imageView.layer.cornerRadius = imageView.frame.width / 2
-        imageView.clipsToBounds = true
-    }
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 5
     }
@@ -224,25 +143,38 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         print("tapped cell")
     }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 48
+    }
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 22
     }
     
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        50
+    }
     
 //    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-//        switch section {
-//        case 2, 4:
-//            return 50
-//        default:
-//            return 0
-//        }
+//        return UITableView.automaticDimension
 //    }
-
+    
+//    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+//        return 40
+//    }
+    
+//    func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+//        return tableView.row
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return 22
+//    }
+    
+//    func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
+//        return 24
+//    }
 
     /*
     // MARK: - Navigation
@@ -256,7 +188,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 
 }
 
-extension SetUpProfileTableViewController: UITableViewDataSource {
+extension StackViewTeestViewController: UITableViewDataSource {
     // Reporting the number of sections and rows in the table.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
@@ -289,20 +221,20 @@ extension SetUpProfileTableViewController: UITableViewDataSource {
         
         // name, age, lanages, gender, nationality
         switch indexPath.section {
-            case 0: cell.configure(text: "Input name")
-            case 1: cell.configure(text: "Select international age")
+            case 0: cell.configure(text: "Your name")
+            case 1: cell.configure(text: "Your age")
             case 2:
-                cell.configure(text: "Add conversational language")
+                cell.configure(text: "Language you can speak")
                 cell.accessoryType = .disclosureIndicator
 //                if languageCount < langages.count {
 //                    languageCount+=1
 //
-//            cell.addBorder(toSide: .Bottom, withColor: UIColor.systemRed.cgColor, andThickness: 1.0)
+////                    cell.addBorder(toSide: .Bottom, withColor: UIColor.systemRed.cgColor, andThickness: 1.0)
 ////                    cell.contentView.layer.addBorder(arr_edge: [.bottom], color: UIColor.systemGray, width: 0.5)
 //                }
-            case 3: cell.configure(text: "Select gender")
+            case 3: cell.configure(text: "Prefer not to say")
             case 4:
-                cell.configure(text: "Select nationaltiy")
+                cell.configure(text: "Your nationaltiy")
                 cell.accessoryType = .disclosureIndicator
             default: fatalError("cellInSection default")
         }
@@ -338,16 +270,15 @@ extension SetUpProfileTableViewController: UITableViewDataSource {
 //        cell.contentConfiguration = content
 //        cell.frame.size = CGSize(width: <#T##Double#>, height: <#T##Double#>)
         cell.selectionStyle = .blue
-//        cell.layoutIfNeeded()
-        cell.addViewBorder(withColor: .placeholderText, width: 0.3) // UIColor(rgb: 0xBDBDBD)
+        cell.layoutIfNeeded()
         return cell
         
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
+
         guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewHeader.identifier) as? SetUpProfileTableViewHeader else { return UITableViewHeaderFooterView() }
-        
+
         // name, age, lanages, gender, nationality
         switch section {
             case 0: headerView.configure(text: "Name")
@@ -359,32 +290,32 @@ extension SetUpProfileTableViewController: UITableViewDataSource {
         }
         return headerView
     }
-    
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+
+////    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+////        switch section {
+////        case 2:
+////            return "Your name, age, languages will be public.\n\n"
+////        case 4:
+////            return "Gender, nationality help improve recommendations but are not shown publicly."
+////        default:
+////            return nil
+////        }
+////    }
+//
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        guard let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewFooter.identifier) as? SetUpProfileTableViewFooter else { return UITableViewHeaderFooterView() }
+
+
+        // name, age, lanages, gender, nationality
         switch section {
-        case 2:
-            return "Your name, age, languages will be public.\n\n"
-        case 4:
-            return "Gender, nationality help improve recommendations but are not shown publicly."
-        default:
-            return nil
+            case 2: footerView.configure(text: "Your name, age, languages will be public.")
+            case 4: footerView.configure(text: "Gender, nationality help improve recommendations but are not shown publicly.")
+            default: return nil // footerView.configure(text: "")
         }
+
+        footerView.layoutIfNeeded()
+        return footerView
     }
-    
-//    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-//        guard let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewFooter.identifier) as? SetUpProfileTableViewFooter else { return UITableViewHeaderFooterView() }
-//
-//
-//        // name, age, lanages, gender, nationality
-//        switch section {
-//            case 2: footerView.configure(text: "Your name, age, languages will be public.")
-//            case 4: footerView.configure(text: "Gender, nationality help improve recommendations but are not shown publicly.")
-//            default: return nil // footerView.configure(text: "")
-//        }
-//
-////        footerView.layoutIfNeeded() // layout 로딩 (동적이므로 다름)
-//        return footerView
-//    }
     
   
 //    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -404,45 +335,4 @@ extension SetUpProfileTableViewController: UITableViewDataSource {
 
 }
 
-extension SetUpProfileTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func openLibrary() {
-        picker.sourceType = .photoLibrary
-        present(picker, animated: false, completion: nil)
-    }
-    
-    func openCamera() {
-        picker.sourceType = .camera
-        present(picker, animated: false, completion: nil)
-    }
-    
-    @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "원하는 타이틀", message: "원하는 메세지", preferredStyle: .actionSheet)
-        let library = UIAlertAction(title: "사진앨범", style: .default) { (action) in self.openLibrary()}
-        let camera = UIAlertAction(title: "카메라", style: .default) { (action) in self.openCamera()}
-        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        
-        alert.addAction(library)
-        alert.addAction(camera)
-        alert.addAction(cancel)
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let img = info[UIImagePickerController.InfoKey.originalImage]{
-            imageView.image = img as? UIImage
-//            imageView.layer.cornerRadius = imageView.frame.height/2
-//            imageView.clipsToBounds = true
-        }
-        dismiss(animated: true, completion: nil)
-    }
-}
 
-extension UIImage {
-    
-//    func circle() -> UIImageView? {
-//        imageView.layer.cornerRadius = imageView.frame.width/2
-//        imageView.clipsToBounds = true
-//        return newImage
-//    }
-}

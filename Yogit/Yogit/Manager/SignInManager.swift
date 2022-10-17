@@ -8,28 +8,46 @@
 import Foundation
 import AuthenticationServices
 
-struct SignInManager {
-    // static let refreshTokenKey = "refreshToken"
-    static let userIdentifierKey = "userIdentifier"
-    static let identityTokenKey = "identityToken"
-    static let accessTokenKey = "accessToken"
-    static let refreshTokenKey = "refreshToken"
-    static let tokenElementKey = "tokenElement"
+enum AuthState {
+    case undefined, signedIn, signedOut
     
-    let userIdentifier = UserDefaults.standard.string(forKey: userIdentifierKey)
+    enum RequirementInfoState {
+        case full, notFull
+    }
+}
+
+enum RootViewState {
+    case loginView, homeView, setUpProfileView
+}
+
+struct SignInManager {
+    
+//    static let userIdentifierKey = "userIdentifier"
+//    static let identityTokenKey = "identityToken"
+//    static let accessTokenKey = "accessToken"
+//    static let refreshTokenKey = "refreshToken"
+//    static let tokenElementKey = "tokenElement"
+//    let userIdentifier = UserDefaults.standard.string(forKey: userIdentifierKey)
     
     static func checkUserAuth(completion: @escaping (AuthState) -> ()) {
-        // changed to the rrefesh token
-
-        guard let userIdentifier = UserDefaults.standard.string(forKey: userIdentifierKey) else {
-            print("User Identifier not exist")
+        
+        // changed to the refresh token
+        // check token is existed
+//        guard let userIdentifier = UserDefaults.standard.string(forKey: userIdentifierKey) else {
+//            print("User Identifier not exist")
+//            completion(.undefined)
+//            return
+//        }
+        
+        guard let userItem = try? KeychainManager.getUserItem() else {
             completion(.undefined)
             return
         }
         
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        appleIDProvider.getCredentialState(forUserID: userIdentifier) { (credentialState, error) in
-            switch credentialState {
+        if userItem.service == Service.APPLE_SIGNIN {
+            let appleIDProvider = ASAuthorizationAppleIDProvider()
+            appleIDProvider.getCredentialState(forUserID: userItem.accunt.userIdentifier) { (credentialState, error) in
+                switch credentialState {
                 case .notFound: // The Apple ID credential was not found, so show the sign-in UI.
                     completion(.undefined)
                     break
@@ -41,6 +59,7 @@ struct SignInManager {
                     break
                 default:
                     break
+                }
             }
         }
         
@@ -49,10 +68,11 @@ struct SignInManager {
 //            completion(.undefined)
 //            return
 //        }
-        
+//
 //        let tokenSource = UserDefaults.standard.dictionary(forKey: tokenElementKey)
-        
-//        if tokenElement.keys.description == TokenSource.apple.rawValue {
+//
+//        // "tokenElement"
+//        if tokenElement.keys.description == Token.APPLE_TOKEN {
 //            // refactoring keychian
 //            let appleIDProvider = ASAuthorizationAppleIDProvider()
 //            appleIDProvider.getCredentialState(forUserID: userIdentifier) { (credentialState, error) in

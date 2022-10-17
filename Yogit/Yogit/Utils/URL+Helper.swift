@@ -12,6 +12,16 @@ import Foundation
 // 쿼리 받게 extension
 // 파라메터로 넘어온 모든 딕션너리를 url queryitem instance로 변경이 핵심
 extension URL {
+    
+//    let baseUrl = URL(string: "https://yogit.world")!
+//
+//    let query: [String: String] = [
+//        "api_key": "DEMO_KEY",
+//        "date": "2011-07-13"
+//    ]
+//    https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=2011-07-13
+//    let url = baseUrl.withQueries(query)!
+    
     func withQueries(_ queries: [String: String]) -> URL? {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: true) // url 자체를 받고 baseurl 기반으로 쓰도록
         // 컨포넌트 쿼리아이템 생성
@@ -19,3 +29,4 @@ extension URL {
             return components?.url // 컨포넌트 url 반환
     }
 }
+

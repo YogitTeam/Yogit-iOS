@@ -7,6 +7,6 @@
 
 import Foundation
 
-enum RootViewState {
-    case loginView, homeView 
-}
+//enum RootViewState {
+//    case loginView, homeView, setUpProfileView
+//}

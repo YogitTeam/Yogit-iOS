@@ -11,13 +11,21 @@
 		20F7B8E231E3ED89F5835C7C /* Pods_Yogit_YogitUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */; };
 		79088AC828D89343008054F6 /* SignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088AC728D89343008054F6 /* SignInManager.swift */; };
 		79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */; };
-		79088AD028D8CBB6008054F6 /* AuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACF28D8CBB6008054F6 /* AuthState.swift */; };
-		79088B4C28DB893E008054F6 /* RootViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B4B28DB893E008054F6 /* RootViewState.swift */; };
-		79088B4E28DB9102008054F6 /* TokenSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B4D28DB9102008054F6 /* TokenSource.swift */; };
 		79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* HomeViewController.swift */; };
 		79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */; };
-		79088B7328E48C62008054F6 /* URL+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7228E48C62008054F6 /* URL+Helper.swift */; };
+		79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7428E48D24008054F6 /* AlamofireManager.swift */; };
+		79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7628E490CA008054F6 /* BaseInterceptor.swift */; };
+		79088B7928E4A58F008054F6 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7828E4A58F008054F6 /* Auth.swift */; };
+		79088B7E28E4A81A008054F6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7D28E4A81A008054F6 /* Constants.swift */; };
+		79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B8128E4C2FE008054F6 /* AuthRouter.swift */; };
+		79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B8328E5683F008054F6 /* KeyChainManager.swift */; };
+		794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C728EBD504007C3C89 /* ImageViewController.swift */; };
+		794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
+		795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */; };
+		795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */; };
+		795D9BC528F1D4E300228E34 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC428F1D4E300228E34 /* Color.swift */; };
+		795D9BC728F1F72900228E34 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC628F1F72900228E34 /* Layer.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -29,12 +37,14 @@
 		79A8F68F28C7240500FEBE90 /* YogitUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F68E28C7240500FEBE90 /* YogitUITestsLaunchTests.swift */; };
 		79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */; };
 		79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */; };
-		79A8F6A428CDB7C400FEBE90 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A328CDB7C400FEBE90 /* Login.swift */; };
 		79A8F6A728CDC95000FEBE90 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A628CDC95000FEBE90 /* User.swift */; };
 		79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */; };
 		79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */; };
 		79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */; };
 		79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */; };
+		79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */; };
+		79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228B28FD0ECB007D59B8 /* Logger.swift */; };
+		79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */; };
 		B21896BB7E58864D8E368584 /* Pods_YogitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF43C87CD39B98E37C5472DC /* Pods_YogitTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -60,14 +70,22 @@
 		5E704620C3EBC75B7FA6F6DE /* Pods-Yogit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yogit.release.xcconfig"; path = "Target Support Files/Pods-Yogit/Pods-Yogit.release.xcconfig"; sourceTree = "<group>"; };
 		79088AC728D89343008054F6 /* SignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInManager.swift; sourceTree = "<group>"; };
 		79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementInfoManager.swift; sourceTree = "<group>"; };
-		79088ACF28D8CBB6008054F6 /* AuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthState.swift; sourceTree = "<group>"; };
-		79088B4B28DB893E008054F6 /* RootViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewState.swift; sourceTree = "<group>"; };
-		79088B4D28DB9102008054F6 /* TokenSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSource.swift; sourceTree = "<group>"; };
 		79088B6528DD8297008054F6 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewCell.swift; sourceTree = "<group>"; };
-		79088B7228E48C62008054F6 /* URL+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Helper.swift"; sourceTree = "<group>"; };
+		79088B7428E48D24008054F6 /* AlamofireManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireManager.swift; sourceTree = "<group>"; };
+		79088B7628E490CA008054F6 /* BaseInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInterceptor.swift; sourceTree = "<group>"; };
+		79088B7828E4A58F008054F6 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		79088B7D28E4A81A008054F6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		79088B8128E4C2FE008054F6 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
+		79088B8328E5683F008054F6 /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
+		794FF7C728EBD504007C3C89 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
+		794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewTeestViewController.swift; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewHeader.swift; sourceTree = "<group>"; };
+		795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewFooter.swift; sourceTree = "<group>"; };
+		795D9BC428F1D4E300228E34 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		795D9BC628F1F72900228E34 /* Layer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -83,12 +101,14 @@
 		79A8F68E28C7240500FEBE90 /* YogitUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YogitUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationViewController.swift; sourceTree = "<group>"; };
 		79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetVerificationCodeViewController.swift; sourceTree = "<group>"; };
-		79A8F6A328CDB7C400FEBE90 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		79A8F6A628CDC95000FEBE90 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCode.swift; sourceTree = "<group>"; };
 		79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewController.swift; sourceTree = "<group>"; };
 		79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailTableViewCell.swift; sourceTree = "<group>"; };
+		79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImagesViewController.swift; sourceTree = "<group>"; };
+		79F0228B28FD0ECB007D59B8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiStatusLogger.swift; sourceTree = "<group>"; };
 		7C23BBF16282160894DB4A74 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B1908DC50101BAB8E435152C /* Pods_Yogit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit_YogitUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,16 +159,41 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		79088AC528D6EED6008054F6 /* SignInHelper */ = {
+		79088AC528D6EED6008054F6 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				79088ACF28D8CBB6008054F6 /* AuthState.swift */,
-				79088B4B28DB893E008054F6 /* RootViewState.swift */,
-				79088B4D28DB9102008054F6 /* TokenSource.swift */,
 				79088AC728D89343008054F6 /* SignInManager.swift */,
 				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
+				79088B8328E5683F008054F6 /* KeyChainManager.swift */,
 			);
-			path = SignInHelper;
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		79088B7C28E4A7DC008054F6 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				79088B7D28E4A81A008054F6 /* Constants.swift */,
+				795D9BC428F1D4E300228E34 /* Color.swift */,
+				795D9BC628F1F72900228E34 /* Layer.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		79088B8028E4AA2E008054F6 /* ViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */,
+			);
+			path = ViewCells;
+			sourceTree = "<group>";
+		};
+		795D9BC128F1993F00228E34 /* ViewHeaderFooters */ = {
+			isa = PBXGroup;
+			children = (
+				795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */,
+				795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */,
+			);
+			path = ViewHeaderFooters;
 			sourceTree = "<group>";
 		};
 		79A8F65F28C7240300FEBE90 = {
@@ -179,10 +224,12 @@
 				7954854828D5CF99005ED367 /* Yogit.entitlements */,
 				79A8F69B28C75CEE00FEBE90 /* Application */,
 				79A8F69C28C75F3900FEBE90 /* ViewControllers */,
+				79088B8028E4AA2E008054F6 /* ViewCells */,
+				795D9BC128F1993F00228E34 /* ViewHeaderFooters */,
 				79A8F69D28C75F4B00FEBE90 /* Models */,
-				79088AC528D6EED6008054F6 /* SignInHelper */,
-				79A8F6E928D1F16000FEBE90 /* API */,
-				79A8F69E28C75F9000FEBE90 /* Services */,
+				79088AC528D6EED6008054F6 /* Manager */,
+				79A8F6E928D1F16000FEBE90 /* Network */,
+				79088B7C28E4A7DC008054F6 /* Utils */,
 				79A8F66F28C7240300FEBE90 /* ViewController.swift */,
 				79A8F67128C7240300FEBE90 /* Main.storyboard */,
 				79A8F67428C7240500FEBE90 /* Assets.xcassets */,
@@ -223,12 +270,14 @@
 			children = (
 				7954854928D5D006005ED367 /* LoginViewController.swift */,
 				79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */,
-				79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */,
+				79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */,
 				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
 				79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */,
 				79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */,
+				794FF7C728EBD504007C3C89 /* ImageViewController.swift */,
+				794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -241,21 +290,18 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		79A8F69E28C75F9000FEBE90 /* Services */ = {
+		79A8F6E928D1F16000FEBE90 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				79A8F6A328CDB7C400FEBE90 /* Login.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		79A8F6E928D1F16000FEBE90 /* API */ = {
-			isa = PBXGroup;
-			children = (
-				79088B7228E48C62008054F6 /* URL+Helper.swift */,
+				79088B7828E4A58F008054F6 /* Auth.swift */,
+				79088B8128E4C2FE008054F6 /* AuthRouter.swift */,
+				79088B7428E48D24008054F6 /* AlamofireManager.swift */,
+				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
+				79F0228B28FD0ECB007D59B8 /* Logger.swift */,
+				79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */,
 				79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */,
 			);
-			path = API;
+			path = Network;
 			sourceTree = "<group>";
 		};
 		F2200994E5F998C616020150 /* Frameworks */ = {
@@ -510,22 +556,32 @@
 				79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */,
-				79088B4E28DB9102008054F6 /* TokenSource.swift in Sources */,
+				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
-				79088AD028D8CBB6008054F6 /* AuthState.swift in Sources */,
+				79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */,
+				79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */,
+				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
+				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
 				79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */,
 				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
+				79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */,
+				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
 				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
-				79A8F6A428CDB7C400FEBE90 /* Login.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
+				79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */,
+				795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */,
+				795D9BC528F1D4E300228E34 /* Color.swift in Sources */,
+				794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
-				79088B7328E48C62008054F6 /* URL+Helper.swift in Sources */,
+				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
 				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
-				79088B4C28DB893E008054F6 /* RootViewState.swift in Sources */,
+				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
+				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
+				795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */,
 				79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
