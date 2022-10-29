@@ -201,8 +201,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             print("Email \(userEmail)")
             print("RealUserStatus \(realUserStatus.rawValue)")
             
-            let account = Account(userName: userName, userEmail: userEmail, userIdentifier: userIdentifier, userId: 1)
-            let userItem = UserItem(accunt: account, service: Service.APPLE_SIGNIN , token: identityToken) // refresh token으로 변경
+//            let account = Account(userName: userName, userEmail: userEmail, userIdentifier: userIdentifier, userId: 1)
+//            let userItem = UserItem(accunt: account, service: Service.APPLE_SIGNIN , token: identityToken) // refresh token으로 변경
             
             
         case let passwordCredential as ASPasswordCredential:
@@ -230,9 +230,9 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         print("Authentication fail")
     }
     
-    func saveUserIdentifier(userIdentifier: String) {
-        UserDefaults.standard.set(userIdentifier, forKey: SignInManager.userIdentifierKey)
-    }
+//    func saveUserIdentifier(userIdentifier: String) {
+//        UserDefaults.standard.set(userIdentifier, forKey: SignInManager.userIdentifierKey)
+//    }
     
     func saveToken(userItem: UserItem) { // paramter 수정 필요
         // save token in keychain

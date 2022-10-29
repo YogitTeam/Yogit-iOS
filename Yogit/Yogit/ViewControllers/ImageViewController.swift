@@ -12,8 +12,8 @@ class ImageViewController: UIViewController {
 
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
         imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
         imageView.layer.borderColor = UIColor.systemBlue.cgColor
         imageView.layer.borderWidth = 1
         return imageView

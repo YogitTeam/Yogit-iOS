@@ -22,11 +22,12 @@ enum RootViewState {
 
 struct SignInManager {
     
-//    static let userIdentifierKey = "userIdentifier"
-//    static let identityTokenKey = "identityToken"
-//    static let accessTokenKey = "accessToken"
-//    static let refreshTokenKey = "refreshToken"
+    static let userIdentifierKey = "userIdentifier"
+    static let identityTokenKey = "identityToken"
+    static let accessTokenKey = "accessToken"
+    static let refreshTokenKey = "refreshToken"
 //    static let tokenElementKey = "tokenElement"
+    
 //    let userIdentifier = UserDefaults.standard.string(forKey: userIdentifierKey)
     
     static func checkUserAuth(completion: @escaping (AuthState) -> ()) {

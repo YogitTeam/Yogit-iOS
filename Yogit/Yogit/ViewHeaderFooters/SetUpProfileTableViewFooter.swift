@@ -43,7 +43,7 @@ class SetUpProfileTableViewFooter: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         contentView.addSubview(footerLabel)
-        contentView.backgroundColor = UIColor(rgb: 0xF5F5F5)
+        contentView.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
     }
     
     required init?(coder: NSCoder) {

@@ -16,7 +16,7 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
     private lazy var requirementView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(rgb: 0x3232FF)
+        view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
         view.layer.cornerRadius = 3
 //        imageView.layer.borderWidth = 1
 //        imageView.layer.borderColor = UIColor.systemPink.cgColor
@@ -40,6 +40,14 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
 //        label.layer.borderWidth = 1
 //        label.layer.borderColor = UIColor.black.cgColor
         return label
+    }()
+    
+    private lazy var editButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Edit", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: UIFont.Weight.semibold)
+        button.setTitleColor(.black, for: .normal)
+        return button
     }()
     
     // requirementView & contentNameLabel horizontal stack view
@@ -71,6 +79,7 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
         contentView.backgroundColor = .systemBackground
         contentView.addSubview(requirementView)
         contentView.addSubview(contentNameLabel)
+        contentView.addSubview(editButton)
     }
     
     required init?(coder: NSCoder) {
@@ -93,8 +102,13 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
         contentNameLabel.snp.makeConstraints { make in
             make.leading.equalTo(requirementView.snp.trailing).offset(6)
 //            make.height.equalTo(22)
-            make.top.bottom.trailing.equalToSuperview().inset(0)
+            make.top.bottom.equalToSuperview().inset(0)
 //            make.height.equalTo(24)
+        }
+        
+        editButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(20)
+            make.top.bottom.equalToSuperview().inset(0)
         }
 //        profileHeaderStackView.snp.makeConstraints { make in
 //            make.top.bottom.equalTo(contentView).inset(0)
@@ -109,6 +123,11 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
 
     public func configure(text: String) {
         contentNameLabel.text = text
+        if text == "Languages" {
+            editButton.isHidden = false
+        } else {
+            editButton.isHidden = true
+        }
         // uiview 설정
         // 이벤트 전환
     }

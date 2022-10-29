@@ -9,69 +9,29 @@ import UIKit
 
 class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
     
-    let picker = UIImagePickerController()
+    private let langages = ["English", "Korean","Korean","Korean","Korean"]
     
-    let langages = ["English", "Korean","Korean","Korean","Korean"]
+    private var image: UIImage? = nil
     
     var languageCount = 1
-    
-//    // requirement expression blue point
-//    private lazy var requirementView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(named: "RequirementExpresstion")
-//        imageView.contentMode = .scaleAspectFit
-//        return imageView
-//    }()
-//    
-//    // name of content
-//    private lazy var contentNameLabel: UILabel = {
-//        let label = UILabel()
-////        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont.systemFont(ofSize: 16.0)
-//        label.textAlignment = .left
-//        label.text = "Label"
-//        
-//        // Label frame size to fit as text of label
-////        label.sizeToFit()
-//        label.numberOfLines = 0
-//        label.adjustsFontSizeToFitWidth = true
-//        
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.black.cgColor
-//        return label
-//    }()
-//    
-//    // requirementExpressionView & contentNameLabel horizontal stack view
-//    public lazy var profileHeaderStackView: UIView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .horizontal
-//        stackView.spacing = 4
-//        stackView.alignment = .leading
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.systemBlue.cgColor
-//        [self.requirementView,
-//         self.contentNameLabel].forEach { stackView.addArrangedSubview($0) }
-//        return stackView
-//    }()
 
-    private lazy var imageView: UIImageView = {
+    private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .placeholderText
-//        imageView.layer.cornerRadius = 55
+        imageView.layer.cornerRadius = 55
+        imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
         return imageView
     }()
     
-    private lazy var imageLabel: UILabel = {
+    private lazy var profileImageLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
 //        label.font = UIFont.systemFont(ofSize: 20)
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        label.textColor = UIColor(rgb: 0x3232FF)
+        label.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
         label.text = "Select photos"
         
         // Label frame size to fit as text of label
@@ -84,10 +44,11 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
         return label
     }()
     
-    private lazy var imageContentView: UIView = {
+    private lazy var profileImageContentView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemBackground
-        [self.imageView, self.imageLabel].forEach { view.addSubview($0) }
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
+        [self.profileImageView, self.profileImageLabel].forEach { view.addSubview($0) }
         return view
     }()
     
@@ -120,11 +81,11 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
     
     private lazy var profileContentScrollView: UIScrollView = {
        let scrollView = UIScrollView()
-        scrollView.backgroundColor = .systemBlue
+        scrollView.backgroundColor = .systemBackground
 //        stackView.axis = .vertical
 //        stackView.alignment = .fill
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        [self.imageContentView, self.infoTableView].forEach { scrollView.addSubview($0) }
+        [self.profileImageContentView, self.infoTableView].forEach { scrollView.addSubview($0) }
         return scrollView
     }()
     
@@ -134,7 +95,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
         view.addSubview(profileContentScrollView)
         infoTableView.delegate = self
         infoTableView.dataSource = self
-        picker.delegate = self
+//        picker.delegate = self
 
 //        infoTableView.rowHeight = UITableView.automaticDimension
 //        infoTableView.estimatedRowHeight = UITableView.automaticDimension
@@ -152,7 +113,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
             make.edges.equalToSuperview()
         }
         
-        imageView.snp.makeConstraints { make in
+        profileImageView.snp.makeConstraints { make in
             make.width.height.equalTo(110)
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().inset(24)
@@ -161,13 +122,13 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
         
         configureImageViewComponent()
         
-        imageLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(10)
+        profileImageLabel.snp.makeConstraints { make in
+            make.top.equalTo(profileImageView.snp.bottom).offset(10)
 //            make.leading.trailing.equalToSuperview().inset(20)
             make.centerX.equalToSuperview()
         }
         
-        imageContentView.snp.makeConstraints { make in
+        profileImageContentView.snp.makeConstraints { make in
             make.height.equalTo(180)
             make.top.equalToSuperview()
             make.width.equalToSuperview()
@@ -175,7 +136,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 //
         infoTableView.snp.makeConstraints { make in
             make.height.equalTo(1000)
-            make.top.equalTo(imageContentView.snp.bottom)
+            make.top.equalTo(profileImageContentView.snp.bottom)
             make.width.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -208,12 +169,13 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
     }
     
     private func configureViewComponent() {
+        self.navigationItem.title = "Profile"
         view.backgroundColor = .systemBackground
     }
     
     private func configureImageViewComponent() {
-        imageView.layer.cornerRadius = imageView.frame.width / 2
-        imageView.clipsToBounds = true
+//        imageView.layer.cornerRadius = imageView.frame.width / 2
+//        imageView.clipsToBounds = true
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -404,45 +366,15 @@ extension SetUpProfileTableViewController: UITableViewDataSource {
 
 }
 
-extension SetUpProfileTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func openLibrary() {
-        picker.sourceType = .photoLibrary
-        present(picker, animated: false, completion: nil)
-    }
-    
-    func openCamera() {
-        picker.sourceType = .camera
-        present(picker, animated: false, completion: nil)
+extension SetUpProfileTableViewController: ImagesProtocol {
+    func imagesSend(profileImage: UIImage?) {
+        image = profileImage
+        profileImageView.image = image
     }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "원하는 타이틀", message: "원하는 메세지", preferredStyle: .actionSheet)
-        let library = UIAlertAction(title: "사진앨범", style: .default) { (action) in self.openLibrary()}
-        let camera = UIAlertAction(title: "카메라", style: .default) { (action) in self.openCamera()}
-        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        
-        alert.addAction(library)
-        alert.addAction(camera)
-        alert.addAction(cancel)
-        
-        present(alert, animated: true, completion: nil)
+        let PICV = ProfileImagesCollectionViewController()
+        PICV.delegate = self
+        self.navigationController?.pushViewController(PICV, animated: true)
     }
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let img = info[UIImagePickerController.InfoKey.originalImage]{
-            imageView.image = img as? UIImage
-//            imageView.layer.cornerRadius = imageView.frame.height/2
-//            imageView.clipsToBounds = true
-        }
-        dismiss(animated: true, completion: nil)
-    }
-}
-
-extension UIImage {
-    
-//    func circle() -> UIImageView? {
-//        imageView.layer.cornerRadius = imageView.frame.width/2
-//        imageView.clipsToBounds = true
-//        return newImage
-//    }
 }

@@ -42,9 +42,10 @@
 		79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */; };
 		79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */; };
 		79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */; };
-		79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */; };
+		79F0227328F7E61B007D59B8 /* ProfileImagesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* ProfileImagesCollectionViewController.swift */; };
 		79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228B28FD0ECB007D59B8 /* Logger.swift */; };
 		79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */; };
+		79F022CC290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */; };
 		B21896BB7E58864D8E368584 /* Pods_YogitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF43C87CD39B98E37C5472DC /* Pods_YogitTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -106,9 +107,10 @@
 		79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewController.swift; sourceTree = "<group>"; };
 		79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailTableViewCell.swift; sourceTree = "<group>"; };
-		79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImagesViewController.swift; sourceTree = "<group>"; };
+		79F0227228F7E61B007D59B8 /* ProfileImagesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImagesCollectionViewController.swift; sourceTree = "<group>"; };
 		79F0228B28FD0ECB007D59B8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiStatusLogger.swift; sourceTree = "<group>"; };
+		79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImagesCollectionViewCell.swift; sourceTree = "<group>"; };
 		7C23BBF16282160894DB4A74 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B1908DC50101BAB8E435152C /* Pods_Yogit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit_YogitUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -183,6 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */,
+				79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */,
 			);
 			path = ViewCells;
 			sourceTree = "<group>";
@@ -270,7 +273,7 @@
 			children = (
 				7954854928D5D006005ED367 /* LoginViewController.swift */,
 				79A8F6AA28CDD65800FEBE90 /* SetUpProfileTableViewController.swift */,
-				79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */,
+				79F0227228F7E61B007D59B8 /* ProfileImagesCollectionViewController.swift */,
 				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
@@ -559,7 +562,7 @@
 				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
 				79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */,
-				79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */,
+				79F0227328F7E61B007D59B8 /* ProfileImagesCollectionViewController.swift in Sources */,
 				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
 				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
@@ -577,6 +580,7 @@
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileTableViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
+				79F022CC290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
 				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
