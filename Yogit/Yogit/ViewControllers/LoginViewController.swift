@@ -250,7 +250,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             case .full:
                 break
             case .notFull:
-                self.navigationController?.pushViewController(SetUpProfileTableViewController(), animated: true)
+                self.navigationController?.pushViewController(SetUpProfileViewController(), animated: true)
                 break
             }
         }

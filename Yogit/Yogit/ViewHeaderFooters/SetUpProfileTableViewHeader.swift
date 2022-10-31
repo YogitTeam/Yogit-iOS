@@ -47,6 +47,8 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
         button.setTitle("Edit", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: UIFont.Weight.semibold)
         button.setTitleColor(.black, for: .normal)
+        button.layer.borderColor = UIColor.systemBlue.cgColor
+        button.layer.borderWidth = 1
         return button
     }()
     
@@ -93,14 +95,14 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
         requirementView.snp.makeConstraints { make in
             make.width.height.equalTo(6)
             make.top.equalToSuperview().inset(0)
-            make.leading.equalToSuperview().inset(10)
+            make.leading.equalToSuperview().inset(12)
         }
 //        profileHeaderView.snp.makeConstraints { make in
 //            make.leading.trailing.equalTo(contentView).inset(10)
 //            make.top.bottom.equalTo(contentView).inset(0)
 //        }
         contentNameLabel.snp.makeConstraints { make in
-            make.leading.equalTo(requirementView.snp.trailing).offset(6)
+            make.leading.equalTo(requirementView.snp.trailing).offset(4)
 //            make.height.equalTo(22)
             make.top.bottom.equalToSuperview().inset(0)
 //            make.height.equalTo(24)
@@ -109,6 +111,7 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
         editButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
             make.top.bottom.equalToSuperview().inset(0)
+            make.width.height.equalTo(44)
         }
 //        profileHeaderStackView.snp.makeConstraints { make in
 //            make.top.bottom.equalTo(contentView).inset(0)
@@ -125,8 +128,10 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
         contentNameLabel.text = text
         if text == "Languages" {
             editButton.isHidden = false
+            editButton.isEnabled = true
         } else {
             editButton.isHidden = true
+            editButton.isEnabled = false
         }
         // uiview 설정
         // 이벤트 전환

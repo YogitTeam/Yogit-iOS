@@ -21,6 +21,11 @@ class ProfileImagesViewController: UIViewController, UICollectionViewDelegate {
     private var images: [UIImage] = [] {
         didSet(oldVal){
             imagesCollectionView.reloadData()
+            if images.count > 0 {
+                saveButton.isEnabled = true
+            } else {
+                saveButton.isEnabled = false
+            }
             print("reload")
         }
     }
@@ -38,7 +43,7 @@ class ProfileImagesViewController: UIViewController, UICollectionViewDelegate {
 
     private let imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(
-            frame: .zero, collectionViewLayout: ProfileImagesCollectionViewController.generateLayout()
+            frame: .zero, collectionViewLayout: ProfileImagesViewController.generateLayout()
           )
         collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
         collectionView.backgroundColor = .systemBackground

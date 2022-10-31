@@ -7,15 +7,13 @@
 
 import UIKit
 
-class SetUpProfileViewController: UIViewController, UITableViewDelegate {
+class SetUpProfileViewController: UIViewController {
     
-    private let langages = ["English", "Korean","Korean","Korean","Korean"]
+    private let langages: [String: String]? = nil
     
     private var image: UIImage? = nil
-    
-    var languageCount = 1
 
-    private lazy var profileImageView: UIImageView = {
+    private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .placeholderText
@@ -25,10 +23,9 @@ class SetUpProfileViewController: UIViewController, UITableViewDelegate {
         return imageView
     }()
     
-    private lazy var profileImageLabel: UILabel = {
+    private let profileImageLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont.systemFont(ofSize: 20)
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
         label.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -38,9 +35,7 @@ class SetUpProfileViewController: UIViewController, UITableViewDelegate {
         label.sizeToFit()
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
-        
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.black.cgColor
+
         return label
     }()
     
@@ -52,7 +47,7 @@ class SetUpProfileViewController: UIViewController, UITableViewDelegate {
         return view
     }()
     
-    private lazy var infoTableView: UITableView = {
+    private let infoTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
@@ -119,8 +114,7 @@ class SetUpProfileViewController: UIViewController, UITableViewDelegate {
             make.top.equalToSuperview().inset(24)
 //            make.top.equalToSuperview().inset(30)
         }
-        
-        configureImageViewComponent()
+
         
         profileImageLabel.snp.makeConstraints { make in
             make.top.equalTo(profileImageView.snp.bottom).offset(10)
@@ -173,26 +167,16 @@ class SetUpProfileViewController: UIViewController, UITableViewDelegate {
         view.backgroundColor = .systemBackground
     }
     
-    private func configureImageViewComponent() {
-//        imageView.layer.cornerRadius = imageView.frame.width / 2
-//        imageView.clipsToBounds = true
-    }
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 5
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        print("tapped cell")
-    }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        return 44
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 22
+        return 44
     }
     
     
@@ -230,7 +214,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
                 return 1
             case 2:
             // langages
-                return langages.count
+                return (langages?.count ?? 1)
             case 3:
             // gender
                 return 1
@@ -366,6 +350,13 @@ extension SetUpProfileViewController: UITableViewDataSource {
 
 }
 
+extension SetUpProfileViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        tableView.deselectRow(at: indexPath, animated: true)
+        print("tapped cell")
+    }
+}
+
 extension SetUpProfileViewController: ImagesProtocol {
     func imagesSend(profileImage: UIImage?) {
         image = profileImage
@@ -373,7 +364,7 @@ extension SetUpProfileViewController: ImagesProtocol {
     }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        let PICV = ProfileImagesCollectionViewController()
+        let PICV = ProfileImagesViewController()
         PICV.delegate = self
         self.navigationController?.pushViewController(PICV, animated: true)
     }

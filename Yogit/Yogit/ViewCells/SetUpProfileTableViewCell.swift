@@ -54,7 +54,7 @@ class SetUpProfileTableViewCell: UITableViewCell {
     
     private lazy var profileTextField: UITextField = {
         let textField = UITextField()
-        textField.font = UIFont.systemFont(ofSize: 16)
+        textField.font = UIFont.systemFont(ofSize: 18)
 //        textField.layer.borderWidth = 1
 //        textField.layer.borderColor = UIColor.systemRed.cgColor
 //        textField.layer.addBorder1(arr_edge: [.bottom], color: UIColor.systemBlue, width: 1.0)

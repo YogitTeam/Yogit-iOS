@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension CALayer {
-    func addBorder(arr_edge: [UIRectEdge], color: UIColor, width: CGFloat) {
+    func addBorder(arr_edge: [UIRectEdge], color: UIColor?, width: CGFloat) {
         for edge in arr_edge {
             let border = CALayer()
             switch edge {
@@ -24,12 +24,10 @@ extension CALayer {
                 default:
                 break
             }
-            border.backgroundColor = color.cgColor
+            border.backgroundColor = color?.cgColor
             self.addSublayer(border)
         }
     }
-
-    
 }
 
 extension UIView {

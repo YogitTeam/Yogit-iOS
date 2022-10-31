@@ -21,9 +21,9 @@ class SetUpProfileTableViewFooter: UITableViewHeaderFooterView {
 //        label.text = "Label"
         
         // Label frame size to fit as text of label
-//        label.sizeToFit()
+        label.sizeToFit()
         label.numberOfLines = 0
-//        label.adjustsFontSizeToFitWidth = true
+        label.adjustsFontSizeToFitWidth = true
 //        label.layer.borderWidth = 1
 //        label.layer.borderColor = UIColor.systemYellow.cgColor
         return label
@@ -43,7 +43,7 @@ class SetUpProfileTableViewFooter: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         contentView.addSubview(footerLabel)
-        contentView.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        contentView.backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {
