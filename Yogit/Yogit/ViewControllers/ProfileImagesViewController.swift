@@ -12,7 +12,7 @@ protocol ImagesProtocol {
     func imagesSend(profileImage: UIImage?)
 }
 
-class ProfileImagesCollectionViewController: UIViewController, UICollectionViewDelegate {
+class ProfileImagesViewController: UIViewController, UICollectionViewDelegate {
 
     private let picker = UIImagePickerController()
     
@@ -203,7 +203,7 @@ class ProfileImagesCollectionViewController: UIViewController, UICollectionViewD
 
 }
 
-extension ProfileImagesCollectionViewController: UICollectionViewDataSource {
+extension ProfileImagesViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 6
     }
@@ -221,7 +221,7 @@ extension ProfileImagesCollectionViewController: UICollectionViewDataSource {
     }
 }
 
-extension ProfileImagesCollectionViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func openLibrary() {
         picker.sourceType = .photoLibrary
         present(picker, animated: false, completion: nil)

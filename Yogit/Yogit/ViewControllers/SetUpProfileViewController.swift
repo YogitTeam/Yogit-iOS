@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
+class SetUpProfileViewController: UIViewController, UITableViewDelegate {
     
     private let langages = ["English", "Korean","Korean","Korean","Korean"]
     
@@ -218,7 +218,7 @@ class SetUpProfileTableViewController: UIViewController, UITableViewDelegate {
 
 }
 
-extension SetUpProfileTableViewController: UITableViewDataSource {
+extension SetUpProfileViewController: UITableViewDataSource {
     // Reporting the number of sections and rows in the table.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
@@ -366,7 +366,7 @@ extension SetUpProfileTableViewController: UITableViewDataSource {
 
 }
 
-extension SetUpProfileTableViewController: ImagesProtocol {
+extension SetUpProfileViewController: ImagesProtocol {
     func imagesSend(profileImage: UIImage?) {
         image = profileImage
         profileImageView.image = image
