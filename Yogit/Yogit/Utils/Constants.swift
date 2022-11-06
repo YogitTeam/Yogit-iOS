@@ -19,3 +19,12 @@ enum Service {
     static let APPLE_SIGNIN: String = "apple"
     static let FACEBOOK_SIGNIN: String = "facebook"
 }
+
+enum ProfileSectionData: Int {
+//    case image = 0
+    case name = 0
+    case age
+    case languages
+    case gender
+    case nationality
+}

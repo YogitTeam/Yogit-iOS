@@ -14,63 +14,61 @@ class LanguagesTableViewCell: UITableViewCell {
     
     // MARK: - Property
     
-    let tableLabel : UILabel = {
+    private let cellLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.textColor = .black
         return label
     }()
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-    }
+    
+    private let cellImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.clipsToBounds = true
+        return imageView
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubview(tableLabel)
-    }
-//
-//    override required init?(coder: NSCoder) {
-//        super.init(coder: NSError())
-//    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        tableLabel.snp.makeConstraints { (make) in
-            make.centerY.equalToSuperview()
-            make.leading.equalTo(20)
-        }
-        print("layout")
+        addSubview(cellLabel)
+        addSubview(cellImageView)
     }
     
     required init?(coder: NSCoder) {
         fatalError()
     }
     
-//    func configureUI() {
-////        addSubview(tableLabel)
-//        
-//        tableLabel.snp.makeConstraints { (make) in
-//            make.centerY.equalToSuperview()
-//            make.leading.equalTo(20)
-//        }
-//        
-//    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        cellLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
+        }
+        cellImageView.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().inset(20)
+            make.width.height.equalTo(20)
+        }
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        tableLabel.textColor = .black
+        cellLabel.text = nil
+        cellImageView.image = nil
+//        cellLabel.font = .systemFont(ofSize: 14, weight: .regular)
     }
 
-    public func configure(color: UIColor) {
-        tableLabel.textColor = color
-
-//        addSubview(tableLabel)
-
-//        tableLabel.snp.makeConstraints { (make) in
-//            make.centerY.equalToSuperview()
-//            make.leading.equalTo(20)
-//        }
+    public func configure(text: String, isSelected: Bool?) {
+        cellLabel.text = text
+        guard let isSelected = isSelected else {
+            return
+        }
+        cellLabel.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+        if isSelected {
+            cellLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            cellImageView.image = UIImage(named: "reduce")
+        } else {
+            cellImageView.image = UIImage(named: "expand")
+        }
     }
-
 }

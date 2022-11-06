@@ -11,90 +11,56 @@ class SetUpProfileTableViewCell: UITableViewCell {
 
     static let identifier = "setUpProfileTableViewCell"
     
-//    // name of content
-//    public lazy var noticeLabel: UILabel = {
-//        let label = UILabel()
-////        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont.systemFont(ofSize: 14.0)
-//        label.textAlignment = .left
-//        label.text = "Label"
-//
-//        // Label frame size to fit as text of label
-////        label.sizeToFit()
-//        label.numberOfLines = 0
-//        label.adjustsFontSizeToFitWidth = true
-//
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.black.cgColor
-//        return label
-//    }()
-//
-//    // footerView
-//    public lazy var noticefooterView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor(rgb: 0xF5F5F5)
-//        view.addSubview(noticeLabel)
-//        return view
-//    }()
-
-//    // requirementExpressionView & contentNameLabel horizontal stack view
-//    public lazy var profileHeaderStackView: UIView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .horizontal
-//        stackView.spacing = 4
-//        stackView.alignment = .leading
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.systemBlue.cgColor
-//        [self.requirementView,
-//         self.contentNameLabel].forEach { stackView.addArrangedSubview($0) }
-//        return stackView
-//    }()
+    weak var borderLayer: CALayer?  // cell bottom border
     
+    let placeholderData = ["Name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
+//
+//    var placeholder: String? {
+//        didSet {
+//             guard let item = placeholder else { return }
+//             profileTextField.placeholder = item
+//        }
+//    }
     
-    private lazy var profileTextField: UITextField = {
+    let profileTextField: UITextField = {
         let textField = UITextField()
-        textField.font = UIFont.systemFont(ofSize: 18)
+        textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        textField.isEnabled = false
+        textField.translatesAutoresizingMaskIntoConstraints = false
 //        textField.layer.borderWidth = 1
 //        textField.layer.borderColor = UIColor.systemRed.cgColor
-//        textField.layer.addBorder1(arr_edge: [.bottom], color: UIColor.systemBlue, width: 1.0)
         return textField
     }()
     
-//    private lazy var lineImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(named: "Vector")
-//        imageView.contentMode = .scaleAspectFit
-//        return imageView
-//    }()
+    let levelLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.light)
+        label.isHidden = true
+        label.sizeToFit()
+        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = true
+//        label.layer.borderColor = UIColor.systemRed.cgColor
+//        label.layer.borderWidth = 1
+        return label
+    }()
     
-//    // input Line view
-//    private lazy var inputLineView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.layer.cornerRadius = 6
-//        view.layer.borderWidth = 2
-//        view.layer.borderColor = UIColor.systemGray.cgColor
-//        return view
-//    }()
-//
-//    // total vertical stack view
-//    lazy var infoContentStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .vertical
-//        stackView.spacing = 10
-//        [self.pprofileHeaderStackView,
-//         self.inputLineView].forEach { stackView.addArrangedSubview($0) }
-//        return stackView
-//    }()
+    let languageDeleteButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        button.isEnabled = false
+        button.setImage(UIImage(named: "push"), for: .disabled)
+        button.setImage(UIImage(named: "delete"), for: .normal)
     
+        return button
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .systemBackground
+        print("SetUpProfileTableViewCell init")
         contentView.addSubview(profileTextField)
-//        contentView.addSubview(lineImageView)
+        contentView.addSubview(languageDeleteButton)
+        contentView.addSubview(levelLabel)
     }
     
     required init?(coder: NSCoder) {
@@ -102,77 +68,99 @@ class SetUpProfileTableViewCell: UITableViewCell {
     }
      
     // MARK: - Layout
-   
-//    override func layoutSublayers(of layer: CALayer) {
-//        profileTextField.layer.addBorder(arr_edge: [.bottom], color: UIColor.systemRed, width: 1.0)
-//    }
-    
-    
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         profileTextField.snp.makeConstraints { make in
-            make.height.equalTo(48)
-//            make.leftMargin.equalTo(20)
-//            make.top.equalTo(contentView).inset(0)
-            make.leading.trailing.equalTo(contentView).inset(20)
-//            make.trailing.equalTo(contentView).inset(0)
+            print("profileTextField snp")
+            make.top.equalToSuperview()
+            make.bottom.equalTo(levelLabel.snp.top)
+//            make.height.equalTo(44)
+//            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(0)
         }
         
+        levelLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+//            make.height.equalTo(10)
+//            make.top.equalTo(profileTextField.snp.bottom).offset(30)
+//            make.bottomMargin.equalTo(-10)
+            make.bottom.equalToSuperview().inset(0)
+//            make.height.equalTo(14)
+        }
         
-//        lineImageView.snp.makeConstraints { make in
-//            make.bottom.equalTo(contentView.snp.bottom).offset(0)
-//            make.left.equalTo(contentView).inset(20)
-//            make.right.equalTo(contentView.snp.right).inset(0)
-//        }
-//        profileTextField.addBorder2(withColor: UIColor(rgb: 0xF5F5F5), width: 1)
-//        noticeLabel.snp.makeConstraints { make in
-//            make.top.bottom.equalTo(noticefooterView).inset(6)
-//            make.leading.trailing.equalTo(noticefooterView).inset(20)
-//        }
-//        noticefooterView.snp.makeConstraints { make in
-//            make.top.bottom.equalTo(noticefooterView).inset(6)
-//            make.leading.trailing.equalTo(noticefooterView).inset(20)
-//        }
-//        requirementView.snp.makeConstraints { make in
-//            make.width.height.equalTo(6)
-//            make.top.equalTo(profileHeaderStackView).inset(0)
-//        }
-//        contentNameLabel.snp.makeConstraints { make in
-//            make.top.bottom.right.equalTo(contentExpressionView).inset(0)
-//            make.left.equalTo(requirementExpressionView.snp.right).offset(10)
-//
-//        }
+        languageDeleteButton.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(44)
+            make.trailing.equalToSuperview().inset(20)
+        }
         
-//        contentExpressionStackView.snp.makeConstraints { make in
-//            make.height.equalTo(27)
-////            make.left.right.top.equalTo(infoContentStackView).inset(0)
-//        }
-        
-//        inputLineView.snp.makeConstraints { make in
-//            make.top.bottom.leading.trailing.equalTo(contentView).inset(10)
-////            make.leading.trailing.top.bottom.equalToSuperview().offset(0)
-//            make.height.equalTo(100)
-////            make.height.equalTo(44)
-////            make.bottom.left.right.equalTo(infoContentStackView).inset(0)
-//        }
-        
-//        infoContentStackView.snp.makeConstraints { make in
-////            make.height.equalTo(66)
-////            make.left.right.top.bottom.equalTo(contentView)
-//
-//            make.top.bottom.left.right.equalTo(contentView).inset(10)
-////            make.height.equalTo(1
-//        }
+
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        profileTextField.text = nil
+        print("PrepareForReuse SetUpProfileTableViewCell")
+        self.removeBorder() // remove bottom border
+        prepareForReuseTextField()
+        prepareForReuseButton()
+        prepareForReuseLabel()
+    }
+    
+    func prepareForReuseTextField() {
+        self.profileTextField.text = nil
+        self.profileTextField.isEnabled = false
+        self.profileTextField.placeholder = nil
+        self.profileTextField.inputView = nil
+        self.profileTextField.inputAccessoryView = nil
+    }
+    
+    func prepareForReuseButton() {
+        self.languageDeleteButton.isEnabled = false
+        self.languageDeleteButton.isHidden = true
+    }
+    
+    func prepareForReuseLabel() {
+        self.levelLabel.text = nil
+        self.levelLabel.isHidden = true
+    }
+    
+    // cell content update
+    public func configure(text: String?, profileSectionData: Int) {
+        // default
+        profileTextField.text = text
+        profileTextField.placeholder = placeholderData[profileSectionData]
+        // option
+        switch profileSectionData {
+        case ProfileSectionData.name.rawValue: profileTextField.isEnabled = true
+        case ProfileSectionData.age.rawValue: profileTextField.isEnabled = true
+        case ProfileSectionData.languages.rawValue:
+//            profileTextField.text = "\(String(describing: text)) \n"
+            languageDeleteButton.isHidden = false
+            levelLabel.isHidden = false
+            if text != nil { languageDeleteButton.isEnabled = true }
+        case ProfileSectionData.gender.rawValue: profileTextField.isEnabled = true
+        case ProfileSectionData.nationality.rawValue: languageDeleteButton.isHidden = false
+        default: fatalError("Out of section index SetUpProfileTableVeiwCell")
+        }
+    }
+    
+    
+    func addBottomBorderWithColor(color: UIColor, width: CGFloat) {
+        let border = CALayer()
+        border.backgroundColor = color.cgColor
+//        border.frame = CGRect(x: bounds.minX,
+//                              y: bounds.maxX - width,
+//                              width: bounds.width,
+//                              height: width)
+        border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 20, height:width)
+        self.layer.addSublayer(border)
+        self.borderLayer = border
     }
 
-    public func configure(text: String) {
-        profileTextField.placeholder = text
-        // uiview 설정
-        // 이벤트 전환
+    func removeBorder() {
+        self.borderLayer?.removeFromSuperlayer()
     }
 }
+

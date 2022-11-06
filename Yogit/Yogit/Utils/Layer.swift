@@ -30,19 +30,36 @@ extension CALayer {
     }
 }
 
-extension UIView {
+extension CALayer {
 
     enum ViewSide {
         case Left, Right, Top, Bottom
     }
 
     func addViewBorder(withColor color: UIColor, width: CGFloat) {
-
+       
         let border = CALayer()
         border.backgroundColor = color.cgColor
+        // origin
+//        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height:width)
+        
+        // coustom
         border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 40, height: width)
-        layer.addSublayer(border)
-        self.layer.addSublayer(border)
+        self.addSublayer(border)
+//        self.layer.addSublayer(border)
+    }
+    
+    func removeViewBorder(withColor color: UIColor, width: CGFloat) {
+       
+        let border = CALayer()
+        border.backgroundColor = color.cgColor
+        // origin
+//        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height:width)
+        
+        // coustom
+        border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 40, height: width)
+        border.removeFromSuperlayer()
+//        self.layer.addSublayer(border)
     }
     
 //    func addBottomBorder(withColor color: UIColor, toLayer layer: CALayer, onFrame frame: CGRect, withWidth width: CGFloat) {

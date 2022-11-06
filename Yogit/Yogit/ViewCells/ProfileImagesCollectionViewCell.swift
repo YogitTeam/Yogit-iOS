@@ -13,7 +13,7 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .placeholderText
+        imageView.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 1.0)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
         return imageView
@@ -45,7 +45,6 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
     private lazy var imageSequenceView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 0.6)
-//        view.backgroundColor = UIColor(red: 50, green: 50, blue: 255, alpha: 1.0)
         view.layer.cornerRadius = 10
         view.addSubview(imageSequenceLabel)
         return view
@@ -65,38 +64,24 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
     private lazy var mainImageView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
-//        view.backgroundColor = UIColor(red: 50, green: 50, blue: 255, alpha: 1.0)
         view.layer.cornerRadius = 8
         view.addSubview(mainImageLabel)
-//        view.isHidden = true
+        view.isHidden = true
         return view
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(imageView)
-//        contentView.addSubview(deleteButton)
         contentView.addSubview(imageSequenceView)
         contentView.addSubview(mainImageView)
-//        let images: [UIImage] = [
-//            UIImage(named: "image1"),
-//            UIImage(named: "image2"),
-//            UIImage(named: "image3"),
-//            UIImage(named: "image4"),
-//            UIImage(named: "image5"),
-//            UIImage(named: "image6")
-//        ].compactMap({$0})
-//        imageView.image = images.randomElement()
-//        imageView.image =
-//        print("1")
-//        deleteButton.imageView?.image = UIImage(named: "imageDeleteButton")
-        contentView.clipsToBounds = true
+//        contentView.addSubview(deleteButton)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         imageView.frame = contentView.bounds
-//        imageView.layer.cornerRadius = 6
+
         imageSequenceView.snp.makeConstraints { make in
             make.width.height.equalTo(20)
             make.top.leading.equalToSuperview().inset(6)
@@ -122,20 +107,12 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         imageView.image = nil
         imageSequenceLabel.text = nil
+        mainImageView.isHidden = true
     }
 
-    public func configure(image: UIImage?, sequence: String) {
+    public func configure(image: UIImage?, sequence: Int) {
         imageView.image = image
-        imageSequenceLabel.text = sequence
-        if sequence == "1" {
-            mainImageView.isHidden = false
-        } else {
-            mainImageView.isHidden = true
-        }
-//        if image != nil {
-//            imageView.isUserInteractionEnabled = false
-//        } else {
-//            imageView.isUserInteractionEnabled = true
-//        }
+        imageSequenceLabel.text = "\(sequence)"
+        if sequence == 1 { mainImageView.isHidden = false }
     }
 }

@@ -47,7 +47,9 @@
 		79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */; };
 		79F022CC290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */; };
 		79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */; };
-		79F022D4290D8E9E007D59B8 /* LanguagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D3290D8E9E007D59B8 /* LanguagesViewController.swift */; };
+		79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D529111100007D59B8 /* LanguagesViewController.swift */; };
+		79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D72913C0F5007D59B8 /* NationalityViewController.swift */; };
+		79F02300291558EC007D59B8 /* testViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022FF291558EC007D59B8 /* testViewController.swift */; };
 		B21896BB7E58864D8E368584 /* Pods_YogitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF43C87CD39B98E37C5472DC /* Pods_YogitTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -114,7 +116,9 @@
 		79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiStatusLogger.swift; sourceTree = "<group>"; };
 		79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImagesCollectionViewCell.swift; sourceTree = "<group>"; };
 		79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesTableViewCell.swift; sourceTree = "<group>"; };
-		79F022D3290D8E9E007D59B8 /* LanguagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesViewController.swift; sourceTree = "<group>"; };
+		79F022D529111100007D59B8 /* LanguagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesViewController.swift; sourceTree = "<group>"; };
+		79F022D72913C0F5007D59B8 /* NationalityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalityViewController.swift; sourceTree = "<group>"; };
+		79F022FF291558EC007D59B8 /* testViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testViewController.swift; sourceTree = "<group>"; };
 		7C23BBF16282160894DB4A74 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B1908DC50101BAB8E435152C /* Pods_Yogit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit_YogitUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -279,7 +283,8 @@
 				7954854928D5D006005ED367 /* LoginViewController.swift */,
 				79A8F6AA28CDD65800FEBE90 /* SetUpProfileViewController.swift */,
 				79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */,
-				79F022D3290D8E9E007D59B8 /* LanguagesViewController.swift */,
+				79F022D529111100007D59B8 /* LanguagesViewController.swift */,
+				79F022D72913C0F5007D59B8 /* NationalityViewController.swift */,
 				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
@@ -287,6 +292,7 @@
 				79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */,
 				794FF7C728EBD504007C3C89 /* ImageViewController.swift */,
 				794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */,
+				79F022FF291558EC007D59B8 /* testViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -565,6 +571,7 @@
 				79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */,
+				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
 				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
 				79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */,
@@ -582,10 +589,11 @@
 				79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */,
 				795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */,
 				795D9BC528F1D4E300228E34 /* Color.swift in Sources */,
-				79F022D4290D8E9E007D59B8 /* LanguagesViewController.swift in Sources */,
 				794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
+				79F02300291558EC007D59B8 /* testViewController.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
+				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift in Sources */,

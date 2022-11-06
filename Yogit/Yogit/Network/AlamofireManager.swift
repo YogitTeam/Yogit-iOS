@@ -13,9 +13,7 @@ final class AlamofireManager {
     static let shared = AlamofireManager()
     
     // interceptor: Call api >> intercept >> input common parameter / check auth / add header
-     let interceptors = Interceptor(interceptors: [
-        BaseInterceptor()
-     ])
+     let interceptors = Interceptor(interceptors: [BaseInterceptor()])
     
     // setup logger: event monitor
     let monitors = [Logger(), ApiStatusLogger()] as [EventMonitor]
@@ -23,7 +21,10 @@ final class AlamofireManager {
     // setup sesstion
     var session: Session
     private init() {
-        session = Session(interceptor: interceptors)
+        session = Session(
+                    interceptor: interceptors,
+                    eventMonitors: monitors
+                )
     }
     
 }

@@ -129,7 +129,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 //            ]
 //            guard let url = baseUrl.withQueries(query) else { return }
             
-//            MyAlamofireManager
+//            AlamofireManager
 //                    .shared
 //                    .session
 //                    .request(AuthRouter.auth(term: signInWithAppleInfo))
@@ -250,7 +250,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             case .full:
                 break
             case .notFull:
-                self.navigationController?.pushViewController(SetUpProfileViewController(), animated: true)
+                 self.navigationController?.pushViewController(SetUpProfileViewController(), animated: true)
                 break
             }
         }
