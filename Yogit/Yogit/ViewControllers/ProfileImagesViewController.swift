@@ -229,38 +229,10 @@ class ProfileImagesViewController: UIViewController {
         let profileImage = images.first
         
         guard let profileImage = images.first else { return }
-        
-        
-//        print(profileImage)
-//        if let data = profileImage?.pngData() {
-//            let base64 = data.base64EncodedString()
-//            self.dataModel.base64s[index] = base64
-//            images = self.images.map { $0.pngData() }
-//        }
-//
-//        self.filteredSections = self.sections.filter { $0.title.lowercased().hasPrefix(text) }
-        
-//        var images: [String] = []
-        
-//        if let data = profileImage?.pngData() {
-//            let base64 = data.base64EncodedString().
-//            print(base64)
-//        }
-        
-//        print(profileImage!.toBase64(format: ImageFormat.png))
-        
-//        images = self.images.map { $0.pngData()!.base64EncodedString() }
-//        print(images)
-        
-
-        
+    
         let parameters: [String: Int64] = [
             "userId": 1
         ]
-        
-//        print(Data(String(userId).utf8))
-        
-//        multipartFormData.append(Data(String(userId).utf8), withName: "userId")
        
         // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
         AF.upload(multipartFormData: { multipartFormData in
