@@ -28,3 +28,18 @@ enum ProfileSectionData: Int {
     case gender
     case nationality
 }
+
+enum BoardSelectDetailSectionData: Int {
+//    case image = 0
+    case name = 0
+    case age
+    case languages
+    case gender
+    case nationality
+}
+
+enum Kind: String {
+    case profile = "Profile"
+    case boardSelectDetail = "BoardSelectDetail"
+    case boardTextDetail = "BoardTextDetail"
+}

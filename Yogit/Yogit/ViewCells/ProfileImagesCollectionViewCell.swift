@@ -10,12 +10,14 @@ import UIKit
 class ProfileImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "ProfileImagesCollectionViewCell"
     
-    private let imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 1.0)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
+        imageView.addSubview(imageSequenceView)
+        imageView.addSubview(mainImageView)
         return imageView
     }()
     
@@ -73,13 +75,15 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(imageView)
-        contentView.addSubview(imageSequenceView)
-        contentView.addSubview(mainImageView)
+//        contentView.addSubview(imageView)
+//        contentView.addSubview(imageSequenceView)
+//        contentView.addSubview(mainImageView)
 //        contentView.addSubview(deleteButton)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        print("profile images layoutSubviews")
         imageView.frame = contentView.bounds
 
         imageSequenceView.snp.makeConstraints { make in
@@ -110,7 +114,7 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
         mainImageView.isHidden = true
     }
 
-    public func configure(image: UIImage?, sequence: Int) {
+    func configure(image: UIImage?, sequence: Int) {
         imageView.image = image
         imageSequenceLabel.text = "\(sequence)"
         if sequence == 1 { mainImageView.isHidden = false }

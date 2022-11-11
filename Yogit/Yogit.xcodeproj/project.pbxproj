@@ -12,7 +12,7 @@
 		79088AC828D89343008054F6 /* SignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088AC728D89343008054F6 /* SignInManager.swift */; };
 		79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */; };
 		79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* HomeViewController.swift */; };
-		79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */; };
+		79088B6828DE1A66008054F6 /* CommonTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* CommonTextFieldTableViewCell.swift */; };
 		79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7428E48D24008054F6 /* AlamofireManager.swift */; };
 		79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7628E490CA008054F6 /* BaseInterceptor.swift */; };
 		79088B7928E4A58F008054F6 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7828E4A58F008054F6 /* Auth.swift */; };
@@ -23,6 +23,10 @@
 		794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */; };
 		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
 		79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */; };
+		79519FF1291E95E600D8E6CF /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF0291E95E600D8E6CF /* Image.swift */; };
+		79519FF3291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */; };
+		79519FF5291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */; };
+		79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */; };
 		795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */; };
@@ -81,7 +85,7 @@
 		79088AC728D89343008054F6 /* SignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInManager.swift; sourceTree = "<group>"; };
 		79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementInfoManager.swift; sourceTree = "<group>"; };
 		79088B6528DD8297008054F6 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewCell.swift; sourceTree = "<group>"; };
+		79088B6728DE1A66008054F6 /* CommonTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		79088B7428E48D24008054F6 /* AlamofireManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireManager.swift; sourceTree = "<group>"; };
 		79088B7628E490CA008054F6 /* BaseInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInterceptor.swift; sourceTree = "<group>"; };
 		79088B7828E4A58F008054F6 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
@@ -92,6 +96,10 @@
 		794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewTeestViewController.swift; sourceTree = "<group>"; };
 		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
 		79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoard.swift; sourceTree = "<group>"; };
+		79519FF0291E95E600D8E6CF /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardSelectDetailViewController.swift; sourceTree = "<group>"; };
+		79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardTextDetailViewController.swift; sourceTree = "<group>"; };
+		79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardSelectImagesViewController.swift; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewHeader.swift; sourceTree = "<group>"; };
@@ -195,6 +203,7 @@
 				79088B7D28E4A81A008054F6 /* Constants.swift */,
 				795D9BC428F1D4E300228E34 /* Color.swift */,
 				795D9BC628F1F72900228E34 /* Layer.swift */,
+				79519FF0291E95E600D8E6CF /* Image.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -202,12 +211,23 @@
 		79088B8028E4AA2E008054F6 /* ViewCells */ = {
 			isa = PBXGroup;
 			children = (
-				79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */,
+				79088B6728DE1A66008054F6 /* CommonTextFieldTableViewCell.swift */,
 				79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */,
 				79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */,
 				79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */,
 			);
 			path = ViewCells;
+			sourceTree = "<group>";
+		};
+		79519FF8291EA92F00D8E6CF /* WriteGatheringBoard */ = {
+			isa = PBXGroup;
+			children = (
+				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
+				79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */,
+				79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */,
+				79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */,
+			);
+			path = WriteGatheringBoard;
 			sourceTree = "<group>";
 		};
 		795D9BC128F1993F00228E34 /* ViewHeaderFooters */ = {
@@ -297,7 +317,7 @@
 				79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */,
 				79F022D529111100007D59B8 /* LanguagesViewController.swift */,
 				79F022D72913C0F5007D59B8 /* NationalityViewController.swift */,
-				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
+				79519FF8291EA92F00D8E6CF /* WriteGatheringBoard */,
 				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
@@ -603,12 +623,14 @@
 				79F023042919394A007D59B8 /* TextFieldViewController.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
 				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
+				79519FF1291E95E600D8E6CF /* Image.swift in Sources */,
 				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
 				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
-				79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */,
+				79088B6828DE1A66008054F6 /* CommonTextFieldTableViewCell.swift in Sources */,
 				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
 				79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */,
+				79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */,
 				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
 				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
@@ -621,6 +643,7 @@
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
 				79F02300291558EC007D59B8 /* testViewController.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
+				79519FF3291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
@@ -629,6 +652,7 @@
 				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
 				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
+				79519FF5291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift in Sources */,
 				795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */,
 				79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */,
 			);

@@ -71,9 +71,6 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
         label.sizeToFit()
         label.numberOfLines = 0
-//        label.adjustsFontSizeToFitWidth = true
-//        label.layer.borderColor = UIColor.systemRed.cgColor
-//        label.layer.borderWidth = 1
         return label
     }()
     
@@ -83,27 +80,13 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.regular)
         label.sizeToFit()
         label.numberOfLines = 0
-//        label.adjustsFontSizeToFitWidth = true
-//        label.layer.borderColor = UIColor.systemRed.cgColor
-//        label.layer.borderWidth = 1
         return label
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        contentView.addSubview(categoryContentView)
         contentView.backgroundColor = .white
-//        contentView.addSubview(categoryImageView)
-//        contentView.addSubview(categoryLabelStackView)
         contentView.addSubview(categoryContentView)
-//        contentView.layer.cornerRadius = 10
-//        contentView.layer.borderWidth = 1
-//        contentView.layer.borderColor = UIColor.brown.cgColor
-//        contentView.isUserInteractionEnabled = false
-       
-//        contentView.directionalLayoutMargins = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
-//        self.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-//        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20))
     }
     
     required init?(coder: NSCoder) {
@@ -112,9 +95,7 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-//        contentView.snp.makeConstraints { make in
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
+        
         print("gathering layoutSubviews")
         categoryImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
@@ -126,29 +107,11 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
             make.leading.equalTo(categoryImageView.snp.trailing).offset(20)
         }
         
-//        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 10))
-        
         categoryContentView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
             make.top.bottom.equalToSuperview().inset(10)
-//            make.height.equalTo(80)
         }
-//        contentView.isUserInteractionEnabled = false
-//        contentView.directionalLayoutMargins = .init(top: 20, leading: 20, bottom: 20, trailing: 20)
-//        directionalLayoutMargins = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-//        self.contentView.frame = self.contentView.frame.insetBy(dx: <#T##CGFloat#>, dy: <#T##CGFloat#>)
-//        self.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        
-//        contentView.snp.makeConstraints { make in
-//            make.margins
-//        }
-
     }
-    
-//    override func layoutMarginsDidChange() {
-//        super.layoutMarginsDidChange()
-//        self.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-//    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -157,19 +120,4 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
         categoryTitleLabel.text = nil
         categoryDescriptionLabel.text = nil
     }
-    
-//    // cell content update
-//    func configure(title: String?, subTitle: String?) {
-//        if isTapped == true {
-//            categoryContentView.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//            categoryImageView.image = UIImage(named: "\(title) ")
-//            categoryTitleLabel.textColor = .white
-//            categoryDescriptionLabel.textColor = .white
-//        } else {
-//            categoryContentView.backgroundColor = .white
-//            categoryTitleLabel.textColor = .black
-//            categoryDescriptionLabel.textColor = .black
-//        }
-//    }
-
 }

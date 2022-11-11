@@ -7,11 +7,11 @@
 
 import UIKit
 
-class SetUpProfileTableViewCell: UITableViewCell {
+class CommonTextFieldTableViewCell: UITableViewCell {
 
     static let identifier = "setUpProfileTableViewCell"
     
-    private let placeholderData = ["userName", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
+//    private let placeholderData = ["userName", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
     
     weak var borderLayer: CALayer?  // cell bottom border
     
@@ -125,22 +125,22 @@ class SetUpProfileTableViewCell: UITableViewCell {
     }
     
     // cell content update
-    func configure(text: String?, profileSectionData: Int) {
-        // default
-        profileTextField.text = text
-        profileTextField.placeholder = placeholderData[profileSectionData]
-        // option
-        switch profileSectionData {
-        case ProfileSectionData.name.rawValue: profileTextField.isEnabled = true
-        case ProfileSectionData.age.rawValue: profileTextField.isEnabled = true
-        case ProfileSectionData.languages.rawValue:
-//            profileTextField.text = "\(String(describing: text)) \n"
-            languageDeleteButton.isHidden = false
-            levelLabel.isHidden = false
-            if text != nil { languageDeleteButton.isEnabled = true }
-        case ProfileSectionData.gender.rawValue: profileTextField.isEnabled = true
-        case ProfileSectionData.nationality.rawValue: languageDeleteButton.isHidden = false
-        default: fatalError("Out of section index SetUpProfileTableVeiwCell")
+    func configure(text: String?, section: Int, kind: String) {
+        switch kind {
+        case Kind.profile.rawValue:
+            profileTextField.text = text
+            switch section {
+            case ProfileSectionData.name.rawValue: profileTextField.isEnabled = true
+            case ProfileSectionData.age.rawValue: profileTextField.isEnabled = true
+            case ProfileSectionData.languages.rawValue:
+                languageDeleteButton.isHidden = false
+                levelLabel.isHidden = false
+                if text != nil { languageDeleteButton.isEnabled = true }
+            case ProfileSectionData.gender.rawValue: profileTextField.isEnabled = true
+            case ProfileSectionData.nationality.rawValue: languageDeleteButton.isHidden = false
+            default: fatalError("Out of section index SetUpProfileTableVeiwCell")
+            }
+        default: fatalError("Out of common cell kind")
         }
     }
     

@@ -44,88 +44,98 @@ class ProfileImagesViewController: UIViewController {
         return label
     }()
     
-    // original: UICollectionViewLayout
-    private let collectionViewLayout: UICollectionViewCompositionalLayout = {
-        print("generate LayoutSubviews")
-        // First type: Main with pair
-        let mainItem = NSCollectionLayoutItem(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(2/3),
-            heightDimension: .fractionalHeight(1.0)))
-
-        // 1
-        mainItem.contentInsets = NSDirectionalEdgeInsets(
-          top: 5,
-          leading: 5,
-          bottom: 5,
-          trailing: 5)
-
-        // 2, 3
-        let pairItem = NSCollectionLayoutItem(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(0.5)))
-
-        pairItem.contentInsets = NSDirectionalEdgeInsets(
-          top: 5,
-          leading: 5,
-          bottom: 5,
-          trailing: 5)
-
-        // 2, 3 group
-        let pairGroup = NSCollectionLayoutGroup.vertical(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1/3),
-            heightDimension: .fractionalHeight(1.0)),
-          subitem: pairItem,
-          count: 2)
-
-        // 1, 2, 3 group
-        let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalWidth(2/3)),
-          subitems: [mainItem, pairGroup])
-
-        // Second type. Triplet
-        let tripletItem = NSCollectionLayoutItem(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1/3),
-            heightDimension: .fractionalHeight(1.0)))
-
-        // 4, 5, 6
-        tripletItem.contentInsets = NSDirectionalEdgeInsets(
-          top: 5,
-          leading: 5,
-          bottom: 5,
-          trailing: 5)
-
-        // 4, 5, 6 group
-        let tripletGroup = NSCollectionLayoutGroup.horizontal(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalWidth(1/3)),
-          subitems: [tripletItem, tripletItem, tripletItem])
-
-        // total group
-        let containerGroup = NSCollectionLayoutGroup.vertical(
-          layoutSize: NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalWidth(1.0)),
-          subitems: [
-            mainWithPairGroup,
-            tripletGroup,
-          ]
-        )
-        
-        let section = NSCollectionLayoutSection(group: containerGroup) // 0,1 section
-        let layout = UICollectionViewCompositionalLayout(section: section)
-        return layout
-    }()
+//    // original: UICollectionViewLayout
+//    private let collectionViewLayout: UICollectionViewCompositionalLayout = {
+//        print("generate LayoutSubviews")
+//        // First type: Main with pair
+//        let mainItem = NSCollectionLayoutItem(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(2/3),
+//            heightDimension: .fractionalHeight(1.0)))
+//
+//        // 1
+//        mainItem.contentInsets = NSDirectionalEdgeInsets(
+//          top: 5,
+//          leading: 5,
+//          bottom: 5,
+//          trailing: 5)
+//
+//        // 2, 3
+//        let pairItem = NSCollectionLayoutItem(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(1.0),
+//            heightDimension: .fractionalHeight(0.5)))
+//
+//        pairItem.contentInsets = NSDirectionalEdgeInsets(
+//          top: 5,
+//          leading: 5,
+//          bottom: 5,
+//          trailing: 5)
+//
+//        // 2, 3 group
+//        let pairGroup = NSCollectionLayoutGroup.vertical(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(1/3),
+//            heightDimension: .fractionalHeight(1.0)),
+//          subitem: pairItem,
+//          count: 2)
+//
+//        // 1, 2, 3 group
+//        let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(1.0),
+//            heightDimension: .fractionalWidth(2/3)),
+//          subitems: [mainItem, pairGroup])
+//
+//        // Second type. Triplet
+//        let tripletItem = NSCollectionLayoutItem(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(1/3),
+//            heightDimension: .fractionalHeight(1.0)))
+//
+//        // 4, 5, 6
+//        tripletItem.contentInsets = NSDirectionalEdgeInsets(
+//          top: 5,
+//          leading: 5,
+//          bottom: 5,
+//          trailing: 5)
+//
+//        // 4, 5, 6 group
+//        let tripletGroup = NSCollectionLayoutGroup.horizontal(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(1.0),
+//            heightDimension: .fractionalWidth(1/3)),
+//          subitems: [tripletItem, tripletItem, tripletItem])
+//
+//        // total group
+//        let containerGroup = NSCollectionLayoutGroup.vertical(
+//          layoutSize: NSCollectionLayoutSize(
+//            widthDimension: .fractionalWidth(1.0),
+//            heightDimension: .fractionalWidth(1.0)),
+//          subitems: [
+//            mainWithPairGroup,
+//            tripletGroup,
+//          ]
+//        )
+//
+//        let section = NSCollectionLayoutSection(group: containerGroup) // 0,1 section
+//        let layout = UICollectionViewCompositionalLayout(section: section)
+//        return layout
+//    }()
+//
+//    private lazy var imagesCollectionView: UICollectionView = {
+//        let collectionView = UICollectionView(
+//            frame: .zero, collectionViewLayout: collectionViewLayout
+//          )
+//        collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
+//        collectionView.backgroundColor = .systemBackground
+//        collectionView.isScrollEnabled = false
+//        return collectionView
+//    }()
     
-    private lazy var imagesCollectionView: UICollectionView = {
+    private let imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(
-            frame: .zero, collectionViewLayout: collectionViewLayout
+            frame: .zero, collectionViewLayout: createCollectionViewLayout()
           )
         collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
         collectionView.backgroundColor = .systemBackground
@@ -150,10 +160,12 @@ class ProfileImagesViewController: UIViewController {
         view.addSubview(noticeLabel)
         view.addSubview(imagesCollectionView)
         view.addSubview(saveButton)
+//        self.imagesCollectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
+//        self.imagesCollectionView.collectionViewLayout = createCollectionViewLayout()
         configureViewComponent()
-        picker.delegate = self
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
+        picker.delegate = self
 //        configureConstranit()
 //        self.configDataSource()
     }
@@ -215,19 +227,8 @@ class ProfileImagesViewController: UIViewController {
     }
     
     @objc func saveButtonTapped(_ sender: UIButton) {
-        delegate?.imagesSend(profileImage: self.images.first)
-        self.navigationController?.popViewController(animated: true)
-//        AF.upload(multipartFormData: { multipartFormData in
-//            multipartFormData.append(Data("one".utf8), withName: "one")
-//            multipartFormData.append(Data("two".utf8), withName: "two")
-//        }, to: "https://httpbin.org/post")
-//            .responseDecodable(of: DecodableType.self) { response in
-//                debugPrint(response)
-//            }
-
         let url = "https://yogit.world/users/image"
-        let profileImage = images.first
-        
+
         guard let profileImage = images.first else { return }
     
         let parameters: [String: Int64] = [
@@ -249,6 +250,7 @@ class ProfileImagesViewController: UIViewController {
             switch response.result {
             case .success:
                 debugPrint(response)
+                self.delegate?.imagesSend(profileImage: self.images.first)
                 DispatchQueue.main.async {
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -339,37 +341,93 @@ extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINaviga
                 images.append(image)
             }
         }
-        dismiss(animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
 }
 
-
-public enum ImageFormat {
-    case png
-    case jpeg(CGFloat)
-}
-
-extension UIImage {
-    public func toBase64(format: ImageFormat) -> String? {
-        var imageData: Data?
-
-        switch format {
-        case .png:
-            imageData = self.pngData()
-        case .jpeg(let compression):
-            imageData = self.jpegData(compressionQuality: compression)
+extension ProfileImagesViewController {
+    fileprivate static func createCollectionViewLayout() -> UICollectionViewLayout  {
+        print("generate LayoutSubviews")
+        let layout = UICollectionViewCompositionalLayout {
+            // 만들게 되면 튜플 (키: 값, 키: 값) 의 묶음으로 들어옴 반환 하는 것은 NSCollectionLayoutSection 콜렉션 레이아웃 섹션을 반환해야함
+            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            
+            // First type: Main with pair
+            let mainItem = NSCollectionLayoutItem(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(2/3),
+                    heightDimension: .fractionalHeight(1.0)))
+            
+            // 1
+            mainItem.contentInsets = NSDirectionalEdgeInsets(
+                top: 5,
+                leading: 5,
+                bottom: 5,
+                trailing: 5)
+            
+            // 2, 3
+            let pairItem = NSCollectionLayoutItem(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .fractionalHeight(0.5)))
+            
+            pairItem.contentInsets = NSDirectionalEdgeInsets(
+                top: 5,
+                leading: 5,
+                bottom: 5,
+                trailing: 5)
+            
+            // 2, 3 group
+            let pairGroup = NSCollectionLayoutGroup.vertical(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1/3),
+                    heightDimension: .fractionalHeight(1.0)),
+                subitem: pairItem,
+                count: 2)
+            
+            // 1, 2, 3 group
+            let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .fractionalWidth(2/3)),
+                subitems: [mainItem, pairGroup])
+            
+            // Second type. Triplet
+            let tripletItem = NSCollectionLayoutItem(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1/3),
+                    heightDimension: .fractionalHeight(1.0)))
+            
+            // 4, 5, 6
+            tripletItem.contentInsets = NSDirectionalEdgeInsets(
+                top: 5,
+                leading: 5,
+                bottom: 5,
+                trailing: 5)
+            
+            // 4, 5, 6 group
+            let tripletGroup = NSCollectionLayoutGroup.horizontal(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .fractionalWidth(1/3)),
+                subitems: [tripletItem, tripletItem, tripletItem])
+            
+            // total group
+            let containerGroup = NSCollectionLayoutGroup.vertical(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .fractionalWidth(1.0)),
+                subitems: [
+                    mainWithPairGroup,
+                    tripletGroup,
+                ]
+            )
+            
+            let section = NSCollectionLayoutSection(group: containerGroup) // 0,1 section
+            return section
         }
-        return imageData?.base64EncodedString()
-    }
-    public func toFile(format: ImageFormat) -> Data? {
-        var imageData: Data?
-
-        switch format {
-        case .png:
-            imageData = self.pngData()
-        case .jpeg(let compression):
-            imageData = self.jpegData(compressionQuality: compression)
-        }
-        return imageData
+        return layout
     }
 }

@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
 
-        let setUpVC = GatheringBoardCategoryViewController()
+        let setUpVC = SetUpProfileViewController()
         let rootVC = UINavigationController(rootViewController: setUpVC)
         rootVC.navigationBar.topItem?.backButtonTitle = ""
         rootVC.navigationBar.tintColor = .black

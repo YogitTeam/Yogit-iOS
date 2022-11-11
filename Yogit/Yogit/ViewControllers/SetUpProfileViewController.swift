@@ -23,7 +23,6 @@ import Alamofire
 //}
 
 class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
-   
 //    var userProfile = UserProfile()
     private var image: UIImage? = nil
 //    public var userName: String? = nil
@@ -38,6 +37,8 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
     private let genderData = ["Prefer not to say", "Male", "Female"]
     
     private var ageData: [Int] = []
+    
+    private let placeholderData = ["Nick name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Sign Up", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -115,7 +116,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
         tableView.sectionHeaderTopPadding = 16
-        tableView.register(SetUpProfileTableViewCell.self, forCellReuseIdentifier: SetUpProfileTableViewCell.identifier)
+        tableView.register(CommonTextFieldTableViewCell.self, forCellReuseIdentifier: CommonTextFieldTableViewCell.identifier)
         tableView.register(SetUpProfileTableViewHeader.self, forHeaderFooterViewReuseIdentifier: SetUpProfileTableViewHeader.identifier)
 //        tableView.register(SetUpProfileTableViewFooter.self, forHeaderFooterViewReuseIdentifier: SetUpProfileTableViewFooter.identifier)
         return tableView
@@ -143,9 +144,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         infoTableView.delegate = self
         infoTableView.dataSource = self
         agePickerView.delegate = self
-        agePickerView.dataSource = self
         genderPickerView.delegate = self
-        genderPickerView.dataSource = self
         for i in 18...60 { ageData.append(i) }
         configureViewComponent()
         // Do any additional setup after loading the view.
@@ -345,37 +344,40 @@ extension SetUpProfileViewController: UITableViewDataSource {
     
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SetUpProfileTableViewCell.identifier, for: indexPath) as? SetUpProfileTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CommonTextFieldTableViewCell.identifier, for: indexPath) as? CommonTextFieldTableViewCell else { return UITableViewCell() }
         cell.profileTextField.delegate = nil
-//        cell.profileTextField.tag = indexPath.section
+        cell.profileTextField.placeholder = placeholderData[indexPath.section]
         cell.selectionStyle = .none
         switch indexPath.section {
             case 0:
-            cell.configure(text: userProfile.userName, profileSectionData: indexPath.section) // "Age"
-                cell.profileTextField.delegate = self // action component assign 가능
+            cell.configure(text: userProfile.userName, section: indexPath.section, kind: Kind.profile.rawValue)
+            cell.profileTextField.delegate = self // action component assign 가능
             case 1:
-                cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", profileSectionData: indexPath.section) // "International age"
-                cell.profileTextField.inputView = agePickerView
-                cell.profileTextField.inputAccessoryView = pickerToolBar
-                agePickerView.tag = indexPath.section // picker data, event 분기
+            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", section: indexPath.section, kind: Kind.profile.rawValue) // "International age"
+            cell.profileTextField.inputView = agePickerView
+            cell.profileTextField.inputAccessoryView = pickerToolBar
+            agePickerView.tag = indexPath.section // picker data, event 분기
             case 2:
-                if indexPath.row < (userProfile.languageNames?.count ?? 0) {
-                    cell.configure(text: userProfile.languageNames?[indexPath.row], profileSectionData: indexPath.section) // "Add conversational
-                    cell.levelLabel.text = userProfile.languageLevels?[indexPath.row]
-                    cell.selectionStyle = .none
-                } else {
-                    cell.configure(text: nil, profileSectionData: indexPath.section)
-                }
-                cell.languageDeleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-                cell.languageDeleteButton.tag = indexPath.row
+            cell.selectionStyle = .blue
+            if indexPath.row < (userProfile.languageNames?.count ?? 0) {
+                cell.configure(text: userProfile.languageNames?[indexPath.row], section: indexPath.section, kind: Kind.profile.rawValue) // "Add conversational
+                cell.levelLabel.text = userProfile.languageLevels?[indexPath.row]
+                cell.selectionStyle = .none
+            } else {
+                cell.configure(text: nil, section: indexPath.section, kind: Kind.profile.rawValue)
+            }
+            cell.languageDeleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+            cell.languageDeleteButton.tag = indexPath.row
             case 3:
-            cell.configure(text: userProfile.gender, profileSectionData: indexPath.section) // "Select gender"
-                cell.profileTextField.inputView = genderPickerView
-                cell.profileTextField.inputAccessoryView = pickerToolBar
-                // profileTextField.delegate = ?
-                genderPickerView.tag = indexPath.section
-            case 4: cell.configure(text: userProfile.nationality, profileSectionData: indexPath.section) // "Select nationaltiy"
-            default: fatalError("cellInSection default")
+            cell.configure(text: userProfile.gender, section: indexPath.section, kind: Kind.profile.rawValue) // "Select gender"
+            cell.profileTextField.inputView = genderPickerView
+            cell.profileTextField.inputAccessoryView = pickerToolBar
+            // profileTextField.delegate = ?
+            genderPickerView.tag = indexPath.section
+            case 4:
+            cell.selectionStyle = .blue
+            cell.configure(text: userProfile.nationality, section: indexPath.section, kind: Kind.profile.rawValue) // "Select nationaltiy"
+            default: fatalError("Out of Setup Profile table view section")
         }
         cell.layoutIfNeeded()
         cell.addBottomBorderWithColor(color: UIColor(rgb: 0xD9D9D9, alpha: 1.0), width: 0.3)
@@ -411,7 +413,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
         case 2:
-            return "Your userName, age, languageNames will be public.\n\n"
+            return "Your name, age, languageNames will be public.\n\n"
         case 4:
             return "Gender, nationality help improve recommendations but are not shown publicly."
         default:
