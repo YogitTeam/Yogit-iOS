@@ -21,6 +21,8 @@
 		79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B8328E5683F008054F6 /* KeyChainManager.swift */; };
 		794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C728EBD504007C3C89 /* ImageViewController.swift */; };
 		794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */; };
+		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
+		79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */; };
 		795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */; };
@@ -50,6 +52,9 @@
 		79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D529111100007D59B8 /* LanguagesViewController.swift */; };
 		79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D72913C0F5007D59B8 /* NationalityViewController.swift */; };
 		79F02300291558EC007D59B8 /* testViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022FF291558EC007D59B8 /* testViewController.swift */; };
+		79F023042919394A007D59B8 /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F023032919394A007D59B8 /* TextFieldViewController.swift */; };
+		79F0230B291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */; };
+		79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0230D291CDD82007D59B8 /* StepViewHeader.swift */; };
 		B21896BB7E58864D8E368584 /* Pods_YogitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF43C87CD39B98E37C5472DC /* Pods_YogitTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +90,8 @@
 		79088B8328E5683F008054F6 /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
 		794FF7C728EBD504007C3C89 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewTeestViewController.swift; sourceTree = "<group>"; };
+		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
+		79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoard.swift; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewHeader.swift; sourceTree = "<group>"; };
@@ -119,6 +126,9 @@
 		79F022D529111100007D59B8 /* LanguagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesViewController.swift; sourceTree = "<group>"; };
 		79F022D72913C0F5007D59B8 /* NationalityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalityViewController.swift; sourceTree = "<group>"; };
 		79F022FF291558EC007D59B8 /* testViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testViewController.swift; sourceTree = "<group>"; };
+		79F023032919394A007D59B8 /* TextFieldViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
+		79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryViewController.swift; sourceTree = "<group>"; };
+		79F0230D291CDD82007D59B8 /* StepViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepViewHeader.swift; sourceTree = "<group>"; };
 		7C23BBF16282160894DB4A74 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B1908DC50101BAB8E435152C /* Pods_Yogit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit_YogitUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,6 +205,7 @@
 				79088B6728DE1A66008054F6 /* SetUpProfileTableViewCell.swift */,
 				79F022CB290A40F1007D59B8 /* ProfileImagesCollectionViewCell.swift */,
 				79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */,
+				79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */,
 			);
 			path = ViewCells;
 			sourceTree = "<group>";
@@ -238,6 +249,7 @@
 				79A8F69C28C75F3900FEBE90 /* ViewControllers */,
 				79088B8028E4AA2E008054F6 /* ViewCells */,
 				795D9BC128F1993F00228E34 /* ViewHeaderFooters */,
+				79F0230C291CDCFD007D59B8 /* Views */,
 				79A8F69D28C75F4B00FEBE90 /* Models */,
 				79088AC528D6EED6008054F6 /* Manager */,
 				79A8F6E928D1F16000FEBE90 /* Network */,
@@ -285,6 +297,7 @@
 				79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */,
 				79F022D529111100007D59B8 /* LanguagesViewController.swift */,
 				79F022D72913C0F5007D59B8 /* NationalityViewController.swift */,
+				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
 				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
@@ -293,6 +306,7 @@
 				794FF7C728EBD504007C3C89 /* ImageViewController.swift */,
 				794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */,
 				79F022FF291558EC007D59B8 /* testViewController.swift */,
+				79F023032919394A007D59B8 /* TextFieldViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -301,6 +315,7 @@
 			isa = PBXGroup;
 			children = (
 				79A8F6A628CDC95000FEBE90 /* User.swift */,
+				79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -317,6 +332,14 @@
 				79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		79F0230C291CDCFD007D59B8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				79F0230D291CDD82007D59B8 /* StepViewHeader.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		F2200994E5F998C616020150 /* Frameworks */ = {
@@ -576,8 +599,11 @@
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
 				79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */,
 				79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */,
+				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
+				79F023042919394A007D59B8 /* TextFieldViewController.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
 				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
+				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
 				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
 				79088B6828DE1A66008054F6 /* SetUpProfileTableViewCell.swift in Sources */,
@@ -586,7 +612,9 @@
 				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
 				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
+				79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */,
 				79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */,
+				79F0230B291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift in Sources */,
 				795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */,
 				795D9BC528F1D4E300228E34 /* Color.swift in Sources */,
 				794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */,

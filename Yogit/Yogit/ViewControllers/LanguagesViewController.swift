@@ -142,7 +142,6 @@ extension LanguagesViewController: UITableViewDelegate {
                 print(sections[indexPath.section].title, sections[indexPath.section].options[indexPath.row - 1])
                 delegate?.languageSend(language: sections[indexPath.section].title, level: sections[indexPath.section].options[indexPath.row - 1])
             }
-            
             self.navigationController?.popViewController(animated: true)
         }
     }
@@ -166,7 +165,6 @@ extension LanguagesViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("section update \(section)")
         if isFiltering {
             return filteredSections[section].opened ? filteredSections[section].options.count + 1 : 1
         } else {

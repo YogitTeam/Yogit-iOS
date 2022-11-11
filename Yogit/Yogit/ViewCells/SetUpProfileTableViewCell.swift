@@ -11,9 +11,11 @@ class SetUpProfileTableViewCell: UITableViewCell {
 
     static let identifier = "setUpProfileTableViewCell"
     
+    private let placeholderData = ["userName", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
+    
     weak var borderLayer: CALayer?  // cell bottom border
     
-    let placeholderData = ["Name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
+//    let placeholderData = ["Name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
 //
 //    var placeholder: String? {
 //        didSet {
@@ -51,7 +53,6 @@ class SetUpProfileTableViewCell: UITableViewCell {
         button.isEnabled = false
         button.setImage(UIImage(named: "push"), for: .disabled)
         button.setImage(UIImage(named: "delete"), for: .normal)
-    
         return button
     }()
     
@@ -72,11 +73,8 @@ class SetUpProfileTableViewCell: UITableViewCell {
         super.layoutSubviews()
         
         profileTextField.snp.makeConstraints { make in
-            print("profileTextField snp")
             make.top.equalToSuperview()
             make.bottom.equalTo(levelLabel.snp.top)
-//            make.height.equalTo(44)
-//            make.centerY.equalToSuperview()
             make.leading.equalToSuperview().inset(20)
             make.trailing.equalToSuperview().inset(0)
         }
@@ -127,7 +125,7 @@ class SetUpProfileTableViewCell: UITableViewCell {
     }
     
     // cell content update
-    public func configure(text: String?, profileSectionData: Int) {
+    func configure(text: String?, profileSectionData: Int) {
         // default
         profileTextField.text = text
         profileTextField.placeholder = placeholderData[profileSectionData]

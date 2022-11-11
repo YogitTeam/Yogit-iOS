@@ -10,50 +10,40 @@
 // 피커뷰 나눠야댐 >> 누른 textfield 에따라 피커뷰 데이터 종류 구분
 
 import UIKit
+import Alamofire
 
-// click sign up >> post
-//struct UserProfile {
-//    var age: String?
-//    var language1: String?
-//    var level1: String?
-//    var language2: String?
-//    var level2: String?
-//    var language3: String?
-//    var level3: String?
-//    var language4: String?
-//    var level4: String?
-//    var language5: String?
-//    var level5: String?
+//class UserProfile: Codable {
 //    var gender: String?
+//    var languageNames: [String]?
+//    var languageLevels: [String]?
 //    var nationality: String?
-//    var name: String?
-//}
-
-//enum SectionData: Int {
-//    case name = 0
-//    case age
-//    case languages
-//    case gender
-//    case nationality
+//    var userAge: Int?
+//    var userId: Int64?
+//    var userName: String?
 //}
 
 class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
-    
+   
 //    var userProfile = UserProfile()
     private var image: UIImage? = nil
-    public var name: String? = nil
-    private var age: String? = nil
-    var languages: [String] = []
-    var levels: [String] = []
-    private var gender: String?
-    private var nationality: String?
-    private var langCount = 1
+//    public var userName: String? = nil
+//    private var userAge: Int? = nil
+//    private var languageNames: [String] = []
+//    private var languageLevels: [String] = []
+//    private var gender: String?
+//    private var nationality: String?
+    private var userProfile = UserProfile()
+//    private var userProfile = UserProfile(from: nil)
     
-    let placeholderData = ["Name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
+    private let genderData = ["Prefer not to say", "Male", "Female"]
     
-    let genderData = ["Prefer not to say", "Male", "Female"]
+    private var ageData: [Int] = []
     
-    var ageData: [Int] = []
+    private lazy var rightButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "Sign Up", style: .plain, target: self, action: #selector(buttonPressed(_:)))
+        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
+        return button
+    }()
     
     private let agePickerView: UIPickerView = {
         let pickerView = UIPickerView()
@@ -67,7 +57,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var pickerToolBar: UIToolbar = {
         let toolBar = UIToolbar()
-        toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
+        toolBar.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 44)
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
         toolBar.setItems([flexSpace, doneButton], animated: true)
@@ -139,14 +129,24 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         return scrollView
     }()
     
+    private var hasAllValue: Bool {
+        let isTrue = (userProfile.userId != nil) && (userProfile.languageNames?.count ?? 0 > 0) && (userProfile.languageLevels?.count ?? 0 > 0) && (userProfile.userName != nil) && (userProfile.userId != nil) && (userProfile.userAge != nil) && (userProfile.gender != nil) && (userProfile.nationality != nil)
+        return isTrue
+    }
+    
+    
+    // viewload 시 get 요청
+    // get 요청시 object에 적재
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(profileContentScrollView)
         infoTableView.delegate = self
         infoTableView.dataSource = self
         agePickerView.delegate = self
+        agePickerView.dataSource = self
         genderPickerView.delegate = self
-        for i in 18...100 { ageData.append(i) }
+        genderPickerView.dataSource = self
+        for i in 18...60 { ageData.append(i) }
         configureViewComponent()
         // Do any additional setup after loading the view.
     }
@@ -156,6 +156,8 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         print("setup viewDidLayoutSubviews")
         profileContentScrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            
+//            make.top.leading.trailing.bottom.equalToSuperview()
         }
         profileImageView.snp.makeConstraints { make in
             make.width.height.equalTo(110)
@@ -174,6 +176,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         }
         infoTableView.snp.makeConstraints { make in
             make.height.equalTo(850)
+//            make.height.equalTo(infoTableView.contentSize.height)
             make.top.equalTo(profileImageContentView.snp.bottom)
             make.width.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -185,22 +188,86 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
 //            profileContentScrollView.contentLayoutGuide.s
 //            make.width.equalTo(profileContentScrollView.frameLayoutGuide)
         }
+        
+//        agePickerView.snp.makeConstraints { make in
+//            make.leading.trailing.bottom.equalTo(view)
+//            make.height.equalTo(300)
+//        }
+//        genderPickerView.snp.makeConstraints { make in
+//            make.leading.trailing.bottom.equalTo(view)
+//        }
+//        infoTableView.constant = infoTableView.contentSize.height
+        
     }
     
     private func configureViewComponent() {
         self.navigationItem.title = "Profile"
+        self.navigationItem.rightBarButtonItem = self.rightButton
         view.backgroundColor = .systemBackground
     }
+
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        userProfile.userName = textField.text
+        print("userName = \(userProfile.userName!)")
+//        userName = textField.text
+//        print("userName = \(userName!)")
+    }
     
-    // 각 셀 section 데이터에 넣어줄수 있음 (tag 이용)
-    @objc func textFieldDidChange(_ textField: UITextField) {
-        name = textField.text
-        print("name = \(name!)")
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    @objc private func buttonPressed(_ sender: Any) {
+        // 값 다 있는지 확인 하고 없으면 alert창
+        //
+        userProfile.userId = 1
+        print(userProfile)
+        
+        if hasAllValue == false {
+            print("Not has all value")
+            let alert = UIAlertController(title: "Please input requirement value", message: "Input all requirement value", preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(okAction)
+            present(alert, animated: false, completion: nil)
+            // present alert
+            return
+        }
+        
+        let url = "https://www.yogit.world/users/essential-profile"
+        
+        let parameters: [String: Any] = [
+            "gender": userProfile.gender!,
+            "languageLevels": userProfile.languageLevels!,
+            "languageNames": userProfile.languageNames!,
+            "nationality": userProfile.nationality!,
+            "userAge": userProfile.userAge!,
+            "userId": userProfile.userId!,
+            "userName": userProfile.userName!
+        ]
+        
+        AF.upload(multipartFormData: { multipartFormData in
+            for (key, value) in parameters {
+                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
+            }
+        }, to: url, method: .patch)
+        .validate(statusCode: 200..<500)
+        .responseData { response in
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            case let .failure(error):
+                print(error)
+            }
+        }
     }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async {
-            let PICV = ProfileImagesViewController() 
+            let PICV = ProfileImagesViewController()
             PICV.delegate = self
             self.navigationController?.pushViewController(PICV, animated: true)
         }
@@ -220,7 +287,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         return 48
 //        switch indexPath.section {
 //        case 2:
-//            return 48 // indexPath.row < languages.count ? 58 : 44
+//            return 48 // indexPath.row < languageNames.count ? 58 : 44
 //        default:
 //            return 48
 //        }
@@ -258,19 +325,13 @@ extension SetUpProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
             case 0:
-            // name
+            // userName
                 return 1
             case 1:
             // age
                 return 1
             case 2:
-            // langages
-//                if languages.count < 5 {
-//                    langCount = languages.count + 1
-//                } else {
-//                    langCount = 5
-//                }
-                return languages.count < 5 ? languages.count + 1 : 5
+            return (userProfile.languageNames?.count ?? 0) < 5 ? ((userProfile.languageNames?.count ?? 0) + 1) : 5// languageNames.count < 5 ? languageNames.count + 1 : 5
             case 3:
             // gender
                 return 1
@@ -285,23 +346,22 @@ extension SetUpProfileViewController: UITableViewDataSource {
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SetUpProfileTableViewCell.identifier, for: indexPath) as? SetUpProfileTableViewCell else { return UITableViewCell() }
-        cell.profileTextField.tag = indexPath.section
+        cell.profileTextField.delegate = nil
+//        cell.profileTextField.tag = indexPath.section
         cell.selectionStyle = .none
         switch indexPath.section {
             case 0:
-                //                cell.profileTextField.tag = indexPath.section
-                cell.configure(text: name, profileSectionData: indexPath.section) // "Age"
+            cell.configure(text: userProfile.userName, profileSectionData: indexPath.section) // "Age"
                 cell.profileTextField.delegate = self // action component assign 가능
-                cell.profileTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
             case 1:
-                cell.configure(text: age, profileSectionData: indexPath.section) // "International age"
+                cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", profileSectionData: indexPath.section) // "International age"
                 cell.profileTextField.inputView = agePickerView
                 cell.profileTextField.inputAccessoryView = pickerToolBar
                 agePickerView.tag = indexPath.section // picker data, event 분기
             case 2:
-                if indexPath.row < languages.count {
-                    cell.configure(text: languages[indexPath.row], profileSectionData: indexPath.section) // "Add conversational
-                    cell.levelLabel.text = levels[indexPath.row]
+                if indexPath.row < (userProfile.languageNames?.count ?? 0) {
+                    cell.configure(text: userProfile.languageNames?[indexPath.row], profileSectionData: indexPath.section) // "Add conversational
+                    cell.levelLabel.text = userProfile.languageLevels?[indexPath.row]
                     cell.selectionStyle = .none
                 } else {
                     cell.configure(text: nil, profileSectionData: indexPath.section)
@@ -309,12 +369,12 @@ extension SetUpProfileViewController: UITableViewDataSource {
                 cell.languageDeleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
                 cell.languageDeleteButton.tag = indexPath.row
             case 3:
-                cell.configure(text: gender, profileSectionData: indexPath.section) // "Select gender"
+            cell.configure(text: userProfile.gender, profileSectionData: indexPath.section) // "Select gender"
                 cell.profileTextField.inputView = genderPickerView
                 cell.profileTextField.inputAccessoryView = pickerToolBar
                 // profileTextField.delegate = ?
                 genderPickerView.tag = indexPath.section
-            case 4: cell.configure(text: nationality, profileSectionData: indexPath.section) // "Select nationaltiy"
+            case 4: cell.configure(text: userProfile.nationality, profileSectionData: indexPath.section) // "Select nationaltiy"
             default: fatalError("cellInSection default")
         }
         cell.layoutIfNeeded()
@@ -326,18 +386,19 @@ extension SetUpProfileViewController: UITableViewDataSource {
     
     @objc func deleteButtonTapped(_ button: UIButton) {
         print("deleteButtonTapped")
-        let deletedLang = languages.remove(at: button.tag)
+        let deletedLanguage = userProfile.languageNames?.remove(at: button.tag)
+        let deletedLevel = userProfile.languageLevels?.remove(at: button.tag)
         infoTableView.reloadData()
-        print("deletedLang \(deletedLang)")
+        print("deletedLangInfo \(deletedLanguage!) \(deletedLevel!)")
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewHeader.identifier) as? SetUpProfileTableViewHeader else { return UITableViewHeaderFooterView() }
     
-        // name, age, lanages, gender, nationality
+        // userName, age, lanages, gender, nationality
         switch section {
-            case 0: headerView.configure(text: "Name") 
+            case 0: headerView.configure(text: "Name")
             case 1: headerView.configure(text: "Age")
             case 2: headerView.configure(text: "Languages")
             case 3: headerView.configure(text: "Gender")
@@ -346,11 +407,11 @@ extension SetUpProfileViewController: UITableViewDataSource {
         }
         return headerView
     }
-    
+
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch section {
         case 2:
-            return "Your name, age, languages will be public.\n\n"
+            return "Your userName, age, languageNames will be public.\n\n"
         case 4:
             return "Gender, nationality help improve recommendations but are not shown publicly."
         default:
@@ -362,9 +423,9 @@ extension SetUpProfileViewController: UITableViewDataSource {
 //        guard let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewFooter.identifier) as? SetUpProfileTableViewFooter else { return UITableViewHeaderFooterView() }
 //
 //
-//        // name, age, lanages, gender, nationality
+//        // userName, age, lanages, gender, nationality
 //        switch section {
-//            case 2: footerView.configure(text: "Your name, age, languages will be public.")
+//            case 2: footerView.configure(text: "Your userName, age, languageNames will be public.")
 //            case 4: footerView.configure(text: "Gender, nationality help improve recommendations but are not shown publicly.")
 //            default: return nil // footerView.configure(text: "")
 //        }
@@ -398,7 +459,7 @@ extension SetUpProfileViewController: UITableViewDelegate {
         print("Cell 선택")
         switch indexPath.section {
         case 2:
-            if indexPath.row >= languages.count {
+            if indexPath.row >= userProfile.languageNames?.count ?? 0 {
                 DispatchQueue.main.async {
                     let LVC = LanguagesViewController()
                     LVC.delegate = self
@@ -427,10 +488,10 @@ extension SetUpProfileViewController: ImagesProtocol {
 
 extension SetUpProfileViewController: LanguageProtocol {
     func languageSend(language: String, level: String) {
-        languages.append(language)
-        levels.append(level)
+        userProfile.languageNames?.append(language)
+        userProfile.languageLevels?.append(level)
         infoTableView.reloadData()
-        print(languages, levels)
+        print(userProfile.languageNames!, userProfile.languageLevels!)
     }
 }
 
@@ -465,8 +526,8 @@ extension SetUpProfileViewController: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView.tag {
-        case ProfileSectionData.age.rawValue: self.age = "\(self.ageData[row])"
-        case ProfileSectionData.gender.rawValue: self.gender = "\(self.genderData[row])"
+        case ProfileSectionData.age.rawValue: userProfile.userAge = self.ageData[row]
+        case ProfileSectionData.gender.rawValue: userProfile.gender = "\(self.genderData[row])"
         default: fatalError("Pickerview tag error")
         }
     }
@@ -478,7 +539,7 @@ extension SetUpProfileViewController: UIPickerViewDelegate {
 
 extension SetUpProfileViewController: NationalityProtocol {
     func nationalitySend(nationality: String) {
-        self.nationality = nationality
+        userProfile.nationality = nationality
         infoTableView.reloadData()
     }
 }

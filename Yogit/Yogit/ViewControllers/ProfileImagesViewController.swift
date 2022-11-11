@@ -44,7 +44,8 @@ class ProfileImagesViewController: UIViewController {
         return label
     }()
     
-    private let collectionViewLayout: UICollectionViewLayout = {
+    // original: UICollectionViewLayout
+    private let collectionViewLayout: UICollectionViewCompositionalLayout = {
         print("generate LayoutSubviews")
         // First type: Main with pair
         let mainItem = NSCollectionLayoutItem(
@@ -72,7 +73,7 @@ class ProfileImagesViewController: UIViewController {
           trailing: 5)
 
         // 2, 3 group
-        let trailingGroup = NSCollectionLayoutGroup.vertical(
+        let pairGroup = NSCollectionLayoutGroup.vertical(
           layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1/3),
             heightDimension: .fractionalHeight(1.0)),
@@ -84,7 +85,7 @@ class ProfileImagesViewController: UIViewController {
           layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalWidth(2/3)),
-          subitems: [mainItem, trailingGroup])
+          subitems: [mainItem, pairGroup])
 
         // Second type. Triplet
         let tripletItem = NSCollectionLayoutItem(
@@ -107,7 +108,7 @@ class ProfileImagesViewController: UIViewController {
           subitems: [tripletItem, tripletItem, tripletItem])
 
         // total group
-        let nestedGroup = NSCollectionLayoutGroup.vertical(
+        let containerGroup = NSCollectionLayoutGroup.vertical(
           layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalWidth(1.0)),
@@ -116,8 +117,8 @@ class ProfileImagesViewController: UIViewController {
             tripletGroup,
           ]
         )
-
-        let section = NSCollectionLayoutSection(group: nestedGroup) // 0,1 section
+        
+        let section = NSCollectionLayoutSection(group: containerGroup) // 0,1 section
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }()
@@ -128,6 +129,7 @@ class ProfileImagesViewController: UIViewController {
           )
         collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
         collectionView.backgroundColor = .systemBackground
+        collectionView.isScrollEnabled = false
         return collectionView
     }()
     
@@ -152,8 +154,26 @@ class ProfileImagesViewController: UIViewController {
         picker.delegate = self
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
+//        configureConstranit()
+//        self.configDataSource()
     }
-
+    
+//    func configureConstranit() {
+//        print("profileimagecollectionview viewDidLayoutSubviews")
+//        noticeLabel.snp.makeConstraints { make in
+//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+//            make.leading.trailing.equalToSuperview().inset(20)
+//        }
+//        imagesCollectionView.snp.makeConstraints { make in
+//            make.top.equalTo(noticeLabel.snp.bottom).offset(10)
+//            make.leading.trailing.bottom.equalToSuperview().inset(15)
+//        }
+//        saveButton.snp.makeConstraints { make in
+//            make.leading.trailing.equalToSuperview().inset(20)
+//            make.bottom.equalTo(view.snp.bottom).inset(30)
+//            make.height.equalTo(50)
+//        }
+//    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -173,6 +193,22 @@ class ProfileImagesViewController: UIViewController {
         }
     }
     
+//    func configDataSource() {
+//        let cellRegistration = UICollectionView.CellRegistration<ProfileImagesCollectionViewCell, UIImage> { cell, indexPath, image in
+//            cell.configure(image: image, sequence: indexPath.row + 1)
+//        }
+//
+//        dataSource = UICollectionViewDiffableDataSource<Section, UIImage>(collectionView: imagesCollectionView, cellProvider: { (collectionView, indexPath, image) -> ProfileImagesCollectionViewCell? in
+//            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+//        })
+//
+//
+//        var snapShot = NSDiffableDataSourceSnapshot<Section, Animal>()
+//        snapShot.appendSections([.main])
+//        snapShot.appendItems(animalData)
+//        dataSource.apply(snapShot)
+//    }
+//
     private func configureViewComponent() {
         self.navigationItem.title = "Profile Photos"
         view.backgroundColor = .systemBackground
@@ -180,6 +216,7 @@ class ProfileImagesViewController: UIViewController {
     
     @objc func saveButtonTapped(_ sender: UIButton) {
         delegate?.imagesSend(profileImage: self.images.first)
+        self.navigationController?.popViewController(animated: true)
 //        AF.upload(multipartFormData: { multipartFormData in
 //            multipartFormData.append(Data("one".utf8), withName: "one")
 //            multipartFormData.append(Data("two".utf8), withName: "two")
@@ -188,8 +225,12 @@ class ProfileImagesViewController: UIViewController {
 //                debugPrint(response)
 //            }
 
-        let url = "localhost:8080/users/image"
+        let url = "https://yogit.world/users/image"
         let profileImage = images.first
+        
+        guard let profileImage = images.first else { return }
+        
+        
 //        print(profileImage)
 //        if let data = profileImage?.pngData() {
 //            let base64 = data.base64EncodedString()
@@ -206,28 +247,44 @@ class ProfileImagesViewController: UIViewController {
 //            print(base64)
 //        }
         
-        print(profileImage!.toBase64(format: ImageFormat.png))
+//        print(profileImage!.toBase64(format: ImageFormat.png))
         
 //        images = self.images.map { $0.pngData()!.base64EncodedString() }
 //        print(images)
         
-//        AF.upload(multipartFormData: { multipartFormData in
-//            multipartFormData.append(profileImage.data(using: String.Encoding.utf8)!, withName: "profileImage")
-//            multipartFormData.append(images.data(using: String.Encoding.utf8)!, withName: "images")
-//            multipartFormData.append(userId, withName: "images")    // int
-//        }, to: url, method: .post)
-//        .validate(statusCode: 200..<500)
-//        .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                self.navigationController?.popViewController(animated: true)
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
-//
-        self.navigationController?.popViewController(animated: true)
+
+        
+        let parameters: [String: Int64] = [
+            "userId": 1
+        ]
+        
+//        print(Data(String(userId).utf8))
+        
+//        multipartFormData.append(Data(String(userId).utf8), withName: "userId")
+       
+        // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
+        AF.upload(multipartFormData: { multipartFormData in
+            for (key, value) in parameters {
+                multipartFormData.append(Data(String(value).utf8), withName: key)
+            }
+            multipartFormData.append(profileImage.toFile(format: .jpeg(1))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
+            for image in self.images {
+                multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+            }
+        }, to: url, method: .post)
+        .validate(statusCode: 200..<500)
+        .responseData { response in
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            case let .failure(error):
+                print(error)
+            }
+        }
+        
     }
 
     /*
@@ -259,8 +316,9 @@ extension ProfileImagesViewController: UICollectionViewDelegate {
             alert.addAction(camera)
             alert.addAction(cancel)
         }
-        
-        present(alert, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 
@@ -271,7 +329,7 @@ extension ProfileImagesViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 //        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImagesCollectionViewCell.identifier, for: indexPath)
-        
+        print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  ProfileImagesCollectionViewCell.identifier, for: indexPath) as? ProfileImagesCollectionViewCell else { return UICollectionViewCell() }
         if indexPath.row < images.count {
             cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1)
@@ -285,12 +343,16 @@ extension ProfileImagesViewController: UICollectionViewDataSource {
 extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func openLibrary() {
         picker.sourceType = .photoLibrary
-        present(picker, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(self.picker, animated: true, completion: nil)
+        }
     }
 
     func openCamera() {
         picker.sourceType = .camera
-        present(picker, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(self.picker, animated: true, completion: nil)
+        }
     }
 
     func deleteImage(_ index: Int) {
@@ -326,5 +388,16 @@ extension UIImage {
             imageData = self.jpegData(compressionQuality: compression)
         }
         return imageData?.base64EncodedString()
+    }
+    public func toFile(format: ImageFormat) -> Data? {
+        var imageData: Data?
+
+        switch format {
+        case .png:
+            imageData = self.pngData()
+        case .jpeg(let compression):
+            imageData = self.jpegData(compressionQuality: compression)
+        }
+        return imageData
     }
 }

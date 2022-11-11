@@ -40,18 +40,18 @@
 ////    }()
 ////
 ////    // requirementExpressionView & contentNameLabel horizontal stack view
-////    public lazy var profileHeaderStackView: UIView = {
-////        let stackView = UIStackView()
-////        stackView.translatesAutoresizingMaskIntoConstraints = false
-////        stackView.axis = .horizontal
-////        stackView.spacing = 4
-////        stackView.alignment = .leading
-////        stackView.layer.borderWidth = 1
-////        stackView.layer.borderColor = UIColor.systemBlue.cgColor
-////        [self.requirementView,
-////         self.contentNameLabel].forEach { stackView.addArrangedSubview($0) }
-////        return stackView
-////    }()
+//    public lazy var profileHeaderStackView: UIView = {
+//        let stackView = UIStackView()
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.axis = .horizontal
+//        stackView.spacing = 4
+//        stackView.alignment = .leading
+//        stackView.layer.borderWidth = 1
+//        stackView.layer.borderColor = UIColor.systemBlue.cgColor
+//        [self.requirementView,
+//         self.contentNameLabel].forEach { stackView.addArrangedSubview($0) }
+//        return stackView
+//    }()
 //    
 //    private lazy var profileImageContentView: UIView = {
 //       let view = UIView()
