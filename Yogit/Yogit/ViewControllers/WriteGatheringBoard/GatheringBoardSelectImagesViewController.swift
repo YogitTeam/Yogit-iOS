@@ -40,7 +40,7 @@ class GatheringBoardSelectImagesViewController: UIViewController {
     }
     
     private func configureViewComponent() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
     }
 
     @objc func saveButtonTapped(_ sender: UIButton) {

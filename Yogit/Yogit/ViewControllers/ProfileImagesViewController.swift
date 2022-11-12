@@ -36,9 +36,9 @@ class ProfileImagesViewController: UIViewController {
     private let noticeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
-        label.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        label.text = "Show your global friends pictures of your face and pictures that show you well"
+        label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
+//        label.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        label.text = "Please show people a picture of your face and a picture that shows you well."
         label.sizeToFit()
         label.numberOfLines = 0
         return label
@@ -145,8 +145,7 @@ class ProfileImagesViewController: UIViewController {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.setTitle("Save", for: .normal)
+        button.setTitle("Done", for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 8
         button.isEnabled = false
@@ -227,38 +226,41 @@ class ProfileImagesViewController: UIViewController {
     }
     
     @objc func saveButtonTapped(_ sender: UIButton) {
-        let url = "https://yogit.world/users/image"
-
-        guard let profileImage = images.first else { return }
-    
-        let parameters: [String: Int64] = [
-            "userId": 1
-        ]
-       
-        // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
-        AF.upload(multipartFormData: { multipartFormData in
-            for (key, value) in parameters {
-                multipartFormData.append(Data(String(value).utf8), withName: key)
-            }
-            multipartFormData.append(profileImage.toFile(format: .jpeg(1))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
-            for image in self.images {
-                multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-            }
-        }, to: url, method: .post)
-        .validate(statusCode: 200..<500)
-        .responseData { response in
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                self.delegate?.imagesSend(profileImage: self.images.first)
-                DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            case let .failure(error):
-                print(error)
-            }
+//        let url = "https://yogit.world/users/image"
+//
+//        guard let profileImage = images.first else { return }
+//    
+//        let parameters: [String: Int64] = [
+//            "userId": 1
+//        ]
+//       
+//        // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
+//        AF.upload(multipartFormData: { multipartFormData in
+//            for (key, value) in parameters {
+//                multipartFormData.append(Data(String(value).utf8), withName: key)
+//            }
+//            multipartFormData.append(profileImage.toFile(format: .jpeg(1))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
+//            for image in self.images {
+//                multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+//            }
+//        }, to: url, method: .post)
+//        .validate(statusCode: 200..<500)
+//        .responseData { response in
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                self.delegate?.imagesSend(profileImage: self.images.first)
+//                DispatchQueue.main.async {
+//                    self.navigationController?.popViewController(animated: true)
+//                }
+//            case let .failure(error):
+//                print(error)
+//            }
+//        }
+        self.delegate?.imagesSend(profileImage: self.images.first)
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
         }
-        
     }
 
     /*

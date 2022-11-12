@@ -17,7 +17,7 @@ class LanguagesTableViewCell: UITableViewCell {
     private let cellLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .black
+//        label.textColor = .black
         return label
     }()
     

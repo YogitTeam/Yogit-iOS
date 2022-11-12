@@ -29,6 +29,8 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textField.isEnabled = false
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.tintColor = .clear
+        textField.leftView = nil
 //        textField.layer.borderWidth = 1
 //        textField.layer.borderColor = UIColor.systemRed.cgColor
         return textField
@@ -51,10 +53,23 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         let button = UIButton()
         button.isHidden = true
         button.isEnabled = false
-        button.setImage(UIImage(named: "push"), for: .disabled)
-        button.setImage(UIImage(named: "delete"), for: .normal)
+        button.setImage(UIImage(named: "push")?.withRenderingMode(.alwaysTemplate), for: .disabled)
+        button.setImage(UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.imageView?.tintColor = .placeholderText
         return button
     }()
+    
+//    private let leftImageView: UIImageView = {
+//        let imageView = UIImageView()
+////        imageView.clipsToBounds = true
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.backgroundColor = .white
+//        imageView.image = nil
+//        imageView.contentMode = .f
+//        imageView.isHidden = true
+////        imageView.sizeToFit()
+//        return imageView
+//    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -62,6 +77,12 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         contentView.addSubview(profileTextField)
         contentView.addSubview(languageDeleteButton)
         contentView.addSubview(levelLabel)
+        configureViewComponent()
+//        contentView.addSubview(leftImageView)
+    }
+    
+    private func configureViewComponent() {
+        contentView.backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {
@@ -75,26 +96,28 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         profileTextField.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.equalTo(levelLabel.snp.top)
+//            make.leading.equalTo(leftImageView.snp.trailing)
             make.leading.equalToSuperview().inset(20)
-            make.trailing.equalToSuperview().inset(0)
+            make.trailing.equalToSuperview().inset(20)
         }
+
+//        profileTextField.addLeftPadding()
         
         levelLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
-//            make.height.equalTo(10)
-//            make.top.equalTo(profileTextField.snp.bottom).offset(30)
-//            make.bottomMargin.equalTo(-10)
             make.bottom.equalToSuperview().inset(0)
-//            make.height.equalTo(14)
         }
-        
         languageDeleteButton.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.width.equalTo(44)
             make.trailing.equalToSuperview().inset(20)
         }
-        
-
+//        leftImageView.snp.makeConstraints { make in
+//            make.leading.equalToSuperview().inset(20)
+//            make.centerY.equalToSuperview()
+////            make.width.height.equalTo(leftImageView.contentsize)
+////            make.width.height.equalTo(44)
+//        }
     }
     
     override func prepareForReuse() {
@@ -104,6 +127,7 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         prepareForReuseTextField()
         prepareForReuseButton()
         prepareForReuseLabel()
+//        prepareForReuseimageView()
     }
     
     func prepareForReuseTextField() {
@@ -112,6 +136,8 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         self.profileTextField.placeholder = nil
         self.profileTextField.inputView = nil
         self.profileTextField.inputAccessoryView = nil
+        self.profileTextField.leftView = nil
+        self.profileTextField.tintColor = .clear
     }
     
     func prepareForReuseButton() {
@@ -124,20 +150,29 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         self.levelLabel.isHidden = true
     }
     
+//    func prepareForReuseimageView() {
+//        self.leftImageView.isHidden = true
+//    }
+    
     // cell content update
-    func configure(text: String?, section: Int, kind: String) {
+    func configure(text: String?, image: UIImage?, section: Int, kind: String) {
         switch kind {
         case Kind.profile.rawValue:
             profileTextField.text = text
             switch section {
-            case ProfileSectionData.name.rawValue: profileTextField.isEnabled = true
-            case ProfileSectionData.age.rawValue: profileTextField.isEnabled = true
+            case ProfileSectionData.name.rawValue:
+                profileTextField.isEnabled = true
+                profileTextField.tintColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
+            case ProfileSectionData.age.rawValue:
+                profileTextField.isEnabled = true
             case ProfileSectionData.languages.rawValue:
                 languageDeleteButton.isHidden = false
                 levelLabel.isHidden = false
                 if text != nil { languageDeleteButton.isEnabled = true }
             case ProfileSectionData.gender.rawValue: profileTextField.isEnabled = true
-            case ProfileSectionData.nationality.rawValue: languageDeleteButton.isHidden = false
+            case ProfileSectionData.nationality.rawValue:
+                languageDeleteButton.isHidden = false
+                profileTextField.addleftimage(image: image)
             default: fatalError("Out of section index SetUpProfileTableVeiwCell")
             }
         default: fatalError("Out of common cell kind")
@@ -152,7 +187,7 @@ class CommonTextFieldTableViewCell: UITableViewCell {
 //                              y: bounds.maxX - width,
 //                              width: bounds.width,
 //                              height: width)
-        border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 20, height:width)
+        border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 40, height:width)
         self.layer.addSublayer(border)
         self.borderLayer = border
     }
@@ -161,4 +196,3 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         self.borderLayer?.removeFromSuperlayer()
     }
 }
-

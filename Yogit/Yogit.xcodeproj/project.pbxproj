@@ -27,6 +27,7 @@
 		79519FF3291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */; };
 		79519FF5291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */; };
 		79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */; };
+		79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FFB291FB6B800D8E6CF /* TextField.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */; };
 		795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */; };
@@ -100,6 +101,7 @@
 		79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardSelectDetailViewController.swift; sourceTree = "<group>"; };
 		79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardTextDetailViewController.swift; sourceTree = "<group>"; };
 		79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardSelectImagesViewController.swift; sourceTree = "<group>"; };
+		79519FFB291FB6B800D8E6CF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewHeader.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				795D9BC428F1D4E300228E34 /* Color.swift */,
 				795D9BC628F1F72900228E34 /* Layer.swift */,
 				79519FF0291E95E600D8E6CF /* Image.swift */,
+				79519FFB291FB6B800D8E6CF /* TextField.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -644,6 +647,7 @@
 				79F02300291558EC007D59B8 /* testViewController.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79519FF3291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift in Sources */,
+				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,

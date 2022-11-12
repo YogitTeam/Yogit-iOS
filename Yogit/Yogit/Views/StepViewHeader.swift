@@ -11,6 +11,7 @@ class StepHeaderView: UIView {
     
     static let identifier = "StepHeaderView"
     
+//    let step: CGFloat?
     var step: CGFloat = 0.0
     
 //    lazy var contentView: UIView = {

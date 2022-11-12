@@ -13,7 +13,8 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 1.0)
+//        imageView.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 1.0)
+        imageView.backgroundColor = .placeholderText
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
         imageView.addSubview(imageSequenceView)
@@ -46,7 +47,7 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
     
     private lazy var imageSequenceView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 0.6)
+        view.backgroundColor = .placeholderText.withAlphaComponent(0.5)
         view.layer.cornerRadius = 10
         view.addSubview(imageSequenceLabel)
         return view

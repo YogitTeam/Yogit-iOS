@@ -21,9 +21,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let setUpVC = SetUpProfileViewController()
         let rootVC = UINavigationController(rootViewController: setUpVC)
+        rootVC.navigationBar.tintColor = .placeholderText
         rootVC.navigationBar.topItem?.backButtonTitle = ""
-        rootVC.navigationBar.tintColor = .black
-    
+//        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
         self.window = UIWindow(windowScene: scene)
         self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()

@@ -22,11 +22,11 @@ class GatheringBoardCategoryViewController: UIViewController {
         didSet {
             print("tapIndex \(tapIndex)")
             if tapIndex != nil {
-                saveButton.isEnabled = true
-                saveButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                nextButton.isEnabled = true
+                nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
             } else {
-                saveButton.isEnabled = false
-                saveButton.backgroundColor = .placeholderText
+                nextButton.isEnabled = false
+                nextButton.backgroundColor = .placeholderText
             }
         }
     }
@@ -40,22 +40,22 @@ class GatheringBoardCategoryViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var saveButton: UIButton = {
+    private lazy var nextButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.setTitle("Save", for: .normal)
+        button.setTitle("Next", for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 8
         button.isEnabled = false
         button.backgroundColor = .placeholderText
-        button.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(categoryTableView)
-        view.addSubview(saveButton)
+        view.addSubview(nextButton)
         configureViewComponent()
         categoryTableView.delegate = self
         categoryTableView.dataSource = self
@@ -64,7 +64,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         categoryTableView.frame = view.bounds
-        saveButton.snp.makeConstraints { make in
+        nextButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(view.snp.bottom).inset(30)
             make.height.equalTo(50)
@@ -72,7 +72,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     }
     
     private func configureViewComponent() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
     }
     
     @objc func categoryContentViewTapped(sender: UITapGestureRecognizer) {
@@ -83,7 +83,7 @@ class GatheringBoardCategoryViewController: UIViewController {
         print("Set category createBoardReq.categoryId \(createBoardReq.categoryId)")
     }
     
-    @objc func saveButtonTapped(_ sender: UIButton) {
+    @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBSDVC = GatheringBoardSelectDetailViewController()
             GBSDVC.createBoardReq = self.createBoardReq

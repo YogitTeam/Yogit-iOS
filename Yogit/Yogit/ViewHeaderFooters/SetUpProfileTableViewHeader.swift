@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 
-class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
+class RequirementTableViewHeader: UITableViewHeaderFooterView {
 
-    static let identifier = "setUpProfileTableViewHeader"
+    static let identifier = "RequirementTableViewHeader"
     
     // requirement expression blue point
     let requirementView: UIView = {
@@ -37,9 +37,13 @@ class SetUpProfileTableViewHeader: UITableViewHeaderFooterView {
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .systemBackground
         contentView.addSubview(requirementView)
         contentView.addSubview(contentNameLabel)
+//        configureViewComponent()
+    }
+    
+    private func configureViewComponent() {
+        contentView.backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {

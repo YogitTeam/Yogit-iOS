@@ -22,9 +22,17 @@ import Alamofire
 //    var userName: String?
 //}
 
-class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
+class SetUpProfileViewController: UIViewController {
 //    var userProfile = UserProfile()
-    private var image: UIImage? = nil
+    private var profileImage: UIImage? = nil {
+        didSet {
+            if profileImage == nil {
+                profileImageLabel.textColor = .placeholderText
+            } else {
+                profileImageLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            }
+        }
+    }
 //    public var userName: String? = nil
 //    private var userAge: Int? = nil
 //    private var languageNames: [String] = []
@@ -39,6 +47,15 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
     private var ageData: [Int] = []
     
     private let placeholderData = ["Nick name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
+    
+    // requirement expression blue point
+    private let requirementView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        view.layer.cornerRadius = 4
+        return view
+    }()
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Sign Up", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -58,9 +75,10 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
     
     private lazy var pickerToolBar: UIToolbar = {
         let toolBar = UIToolbar()
-        toolBar.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 44)
+        toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
+        doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
         toolBar.setItems([flexSpace, doneButton], animated: true)
         return toolBar
     }()
@@ -80,7 +98,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        label.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        label.textColor = .placeholderText
         label.text = "Select photos"
         
         // Label frame size to fit as text of label
@@ -107,6 +125,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         let view = UIView()
         view.backgroundColor = .systemBackground
         view.addSubview(profileImageStackView)
+        view.addSubview(requirementView)
         return view
     }()
     
@@ -117,7 +136,7 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         tableView.backgroundColor = .systemBackground
         tableView.sectionHeaderTopPadding = 16
         tableView.register(CommonTextFieldTableViewCell.self, forCellReuseIdentifier: CommonTextFieldTableViewCell.identifier)
-        tableView.register(SetUpProfileTableViewHeader.self, forHeaderFooterViewReuseIdentifier: SetUpProfileTableViewHeader.identifier)
+        tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
 //        tableView.register(SetUpProfileTableViewFooter.self, forHeaderFooterViewReuseIdentifier: SetUpProfileTableViewFooter.identifier)
         return tableView
     }()
@@ -173,6 +192,11 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
             make.top.equalToSuperview()
             make.width.equalToSuperview()
         }
+        requirementView.snp.makeConstraints { make in
+            make.width.height.equalTo(8)
+            make.top.equalTo(profileImageStackView.snp.top).offset(0)
+            make.leading.equalTo(profileImageStackView.snp.leading).offset(0)
+        }
         infoTableView.snp.makeConstraints { make in
             make.height.equalTo(850)
 //            make.height.equalTo(infoTableView.contentSize.height)
@@ -203,18 +227,6 @@ class SetUpProfileViewController: UIViewController, UITextFieldDelegate {
         self.navigationItem.title = "Profile"
         self.navigationItem.rightBarButtonItem = self.rightButton
         view.backgroundColor = .systemBackground
-    }
-
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        userProfile.userName = textField.text
-        print("userName = \(userProfile.userName!)")
-//        userName = textField.text
-//        print("userName = \(userName!)")
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
     }
 
     @objc private func buttonPressed(_ sender: Any) {
@@ -345,42 +357,44 @@ extension SetUpProfileViewController: UITableViewDataSource {
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommonTextFieldTableViewCell.identifier, for: indexPath) as? CommonTextFieldTableViewCell else { return UITableViewCell() }
-        cell.profileTextField.delegate = nil
+//        cell.profileTextField.delegate = nil
+        cell.profileTextField.tag = indexPath.section
+        cell.profileTextField.delegate = self
         cell.profileTextField.placeholder = placeholderData[indexPath.section]
         cell.selectionStyle = .none
         switch indexPath.section {
             case 0:
-            cell.configure(text: userProfile.userName, section: indexPath.section, kind: Kind.profile.rawValue)
-            cell.profileTextField.delegate = self // action component assign 가능
+            cell.configure(text: userProfile.userName, image: nil, section: indexPath.section, kind: Kind.profile.rawValue)
+//            cell.profileTextField.delegate = self // action component assign 가능
             case 1:
-            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", section: indexPath.section, kind: Kind.profile.rawValue) // "International age"
+            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "International age"
             cell.profileTextField.inputView = agePickerView
             cell.profileTextField.inputAccessoryView = pickerToolBar
             agePickerView.tag = indexPath.section // picker data, event 분기
             case 2:
             cell.selectionStyle = .blue
             if indexPath.row < (userProfile.languageNames?.count ?? 0) {
-                cell.configure(text: userProfile.languageNames?[indexPath.row], section: indexPath.section, kind: Kind.profile.rawValue) // "Add conversational
+                cell.configure(text: userProfile.languageNames?[indexPath.row], image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "Add conversational
                 cell.levelLabel.text = userProfile.languageLevels?[indexPath.row]
                 cell.selectionStyle = .none
             } else {
-                cell.configure(text: nil, section: indexPath.section, kind: Kind.profile.rawValue)
+                cell.configure(text: nil, image: nil, section: indexPath.section, kind: Kind.profile.rawValue)
             }
             cell.languageDeleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
             cell.languageDeleteButton.tag = indexPath.row
             case 3:
-            cell.configure(text: userProfile.gender, section: indexPath.section, kind: Kind.profile.rawValue) // "Select gender"
+            cell.configure(text: userProfile.gender, image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "Select gender"
             cell.profileTextField.inputView = genderPickerView
             cell.profileTextField.inputAccessoryView = pickerToolBar
             // profileTextField.delegate = ?
             genderPickerView.tag = indexPath.section
             case 4:
             cell.selectionStyle = .blue
-            cell.configure(text: userProfile.nationality, section: indexPath.section, kind: Kind.profile.rawValue) // "Select nationaltiy"
+            cell.configure(text: userProfile.nationality, image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "Select nationaltiy"
             default: fatalError("Out of Setup Profile table view section")
         }
         cell.layoutIfNeeded()
-        cell.addBottomBorderWithColor(color: UIColor(rgb: 0xD9D9D9, alpha: 1.0), width: 0.3)
+        cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
         print("cell update section = \(indexPath.section)")
         return cell
         
@@ -396,7 +410,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewHeader.identifier) as? SetUpProfileTableViewHeader else { return UITableViewHeaderFooterView() }
+        guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: RequirementTableViewHeader.identifier) as? RequirementTableViewHeader else { return UITableViewHeaderFooterView() }
     
         // userName, age, lanages, gender, nationality
         switch section {
@@ -480,10 +494,53 @@ extension SetUpProfileViewController: UITableViewDelegate {
     }
 }
 
+extension SetUpProfileViewController: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+//        userProfile.userName = textField.text
+//        print("userName = \(userProfile.userName!)")
+        switch textField.tag {
+        case 0:
+            userProfile.userName = textField.text
+            print("userName = \(userProfile.userName!)")
+        default: break
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+//    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+//        switch textField.tag {
+//        case 0: return true
+//        default: return false
+//        }
+//    }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        switch textField.tag {
+        case 0: return true
+        default: return false
+        }
+    }
+    
+//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+//        guard let text = textField.text else { return false }
+//
+//        // 최대 글자수 이상을 입력한 이후에는 중간에 다른 글자를 추가할 수 없게끔 작동
+//        if text.count >= maxLength && range.length == 0 && range.location < maxLength {
+//            return false
+//        }
+//
+//        return true
+//    }
+}
+
 extension SetUpProfileViewController: ImagesProtocol {
     func imagesSend(profileImage: UIImage?) {
-        image = profileImage
-        profileImageView.image = image
+        self.profileImage = profileImage
+        profileImageView.image = self.profileImage
     }
 }
 
