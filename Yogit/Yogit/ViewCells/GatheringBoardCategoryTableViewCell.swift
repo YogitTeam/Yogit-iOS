@@ -16,11 +16,11 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     var isTapped: Bool? = nil {
         didSet {
             if isTapped == nil {
-                categoryContentView.layer.borderColor = UIColor.black.cgColor
-                categoryContentView.backgroundColor = .white
-                categoryImageView.tintColor = .black
-                categoryTitleLabel.textColor = .black
-                categoryDescriptionLabel.textColor = .black
+                categoryContentView.layer.borderColor = UIColor.label.cgColor
+                categoryContentView.backgroundColor = .systemBackground
+                categoryImageView.tintColor = UIColor.label
+                categoryTitleLabel.textColor = UIColor.label
+                categoryDescriptionLabel.textColor = UIColor.label
             }
             else if isTapped == true {
                 categoryContentView.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
@@ -30,7 +30,7 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
                 categoryDescriptionLabel.textColor = .white
             } else {
                 categoryContentView.layer.borderColor = UIColor.placeholderText.cgColor
-                categoryContentView.backgroundColor = .white
+                categoryContentView.backgroundColor = .systemBackground
                 categoryImageView.tintColor = .placeholderText
                 categoryTitleLabel.textColor = .placeholderText
                 categoryDescriptionLabel.textColor = .placeholderText
@@ -43,6 +43,8 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 10
         view.layer.borderWidth = 1.4
+        view.layer.borderColor = UIColor.label.cgColor
+        view.backgroundColor = .systemBackground
         [self.categoryImageView,
          self.categoryLabelStackView].forEach { view.addSubview($0) }
         return view
@@ -85,7 +87,7 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .systemBackground
         contentView.addSubview(categoryContentView)
     }
     

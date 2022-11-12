@@ -24,22 +24,19 @@ import Alamofire
 
 class SetUpProfileViewController: UIViewController {
 //    var userProfile = UserProfile()
-    private var profileImage: UIImage? = nil {
-        didSet {
-            if profileImage == nil {
-                profileImageLabel.textColor = .placeholderText
-            } else {
-                profileImageLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-            }
-        }
-    }
+    private var profileImage: UIImage? = nil
+    
 //    public var userName: String? = nil
 //    private var userAge: Int? = nil
 //    private var languageNames: [String] = []
 //    private var languageLevels: [String] = []
 //    private var gender: String?
 //    private var nationality: String?
-    private var userProfile = UserProfile()
+    private var userProfile = UserProfile() {
+        didSet {
+            print(userProfile)
+        }
+    }
 //    private var userProfile = UserProfile(from: nil)
     
     private let genderData = ["Prefer not to say", "Male", "Female"]
@@ -73,13 +70,15 @@ class SetUpProfileViewController: UIViewController {
         return pickerView
     }()
     
-    private lazy var pickerToolBar: UIToolbar = {
+    private lazy var pickerViewToolBar: UIToolbar = {
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPressed))
+        cancelButton.tintColor = .systemGray
         doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        toolBar.setItems([flexSpace, doneButton], animated: true)
+        toolBar.setItems([cancelButton, flexSpace, doneButton], animated: true)
         return toolBar
     }()
 
@@ -98,7 +97,7 @@ class SetUpProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        label.textColor = .placeholderText
+//        label.textColor = .placeholderText
         label.text = "Select photos"
         
         // Label frame size to fit as text of label
@@ -289,6 +288,10 @@ class SetUpProfileViewController: UIViewController {
         self.view.endEditing(true)
     }
     
+    @objc func cancelPressed(_ sender: UIButton) {
+        self.view.endEditing(true)
+    }
+    
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 5
@@ -305,7 +308,7 @@ class SetUpProfileViewController: UIViewController {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 24
+        return 22
     }
     
     
@@ -357,40 +360,40 @@ extension SetUpProfileViewController: UITableViewDataSource {
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommonTextFieldTableViewCell.identifier, for: indexPath) as? CommonTextFieldTableViewCell else { return UITableViewCell() }
-//        cell.profileTextField.delegate = nil
-        cell.profileTextField.tag = indexPath.section
-        cell.profileTextField.delegate = self
-        cell.profileTextField.placeholder = placeholderData[indexPath.section]
+//        cell.commonTextField.delegate = nil
+        cell.commonTextField.tag = indexPath.section
+        cell.commonTextField.delegate = self
+        cell.commonTextField.placeholder = placeholderData[indexPath.section]
         cell.selectionStyle = .none
         switch indexPath.section {
             case 0:
-            cell.configure(text: userProfile.userName, image: nil, section: indexPath.section, kind: Kind.profile.rawValue)
-//            cell.profileTextField.delegate = self // action component assign 가능
+            cell.configure(text: userProfile.userName, image: nil, section: indexPath.section, kind: Kind.profile)
+//            cell.commonTextField.delegate = self // action component assign 가능
             case 1:
-            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "International age"
-            cell.profileTextField.inputView = agePickerView
-            cell.profileTextField.inputAccessoryView = pickerToolBar
+            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", image: nil, section: indexPath.section, kind: Kind.profile) // "International age"
+            cell.commonTextField.inputView = agePickerView
+            cell.commonTextField.inputAccessoryView = pickerViewToolBar
             agePickerView.tag = indexPath.section // picker data, event 분기
             case 2:
             cell.selectionStyle = .blue
             if indexPath.row < (userProfile.languageNames?.count ?? 0) {
-                cell.configure(text: userProfile.languageNames?[indexPath.row], image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "Add conversational
-                cell.levelLabel.text = userProfile.languageLevels?[indexPath.row]
+                cell.configure(text: userProfile.languageNames?[indexPath.row], image: nil, section: indexPath.section, kind: Kind.profile) // "Add conversational
+                cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
                 cell.selectionStyle = .none
             } else {
-                cell.configure(text: nil, image: nil, section: indexPath.section, kind: Kind.profile.rawValue)
+                cell.configure(text: nil, image: nil, section: indexPath.section, kind: Kind.profile)
             }
-            cell.languageDeleteButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-            cell.languageDeleteButton.tag = indexPath.row
+            cell.rightButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
+            cell.rightButton.tag = indexPath.row
             case 3:
-            cell.configure(text: userProfile.gender, image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "Select gender"
-            cell.profileTextField.inputView = genderPickerView
-            cell.profileTextField.inputAccessoryView = pickerToolBar
-            // profileTextField.delegate = ?
+            cell.configure(text: userProfile.gender, image: nil, section: indexPath.section, kind: Kind.profile) // "Select gender"
+            cell.commonTextField.inputView = genderPickerView
+            cell.commonTextField.inputAccessoryView = pickerViewToolBar
+            // commonTextField.delegate = ?
             genderPickerView.tag = indexPath.section
             case 4:
             cell.selectionStyle = .blue
-            cell.configure(text: userProfile.nationality, image: nil, section: indexPath.section, kind: Kind.profile.rawValue) // "Select nationaltiy"
+            cell.configure(text: userProfile.nationality, image: nil, section: indexPath.section, kind: Kind.profile) // "Select nationaltiy"
             default: fatalError("Out of Setup Profile table view section")
         }
         cell.layoutIfNeeded()
@@ -479,6 +482,7 @@ extension SetUpProfileViewController: UITableViewDelegate {
                 DispatchQueue.main.async {
                     let LVC = LanguagesViewController()
                     LVC.delegate = self
+                    LVC.userLangs = self.userProfile.languageNames
                     self.navigationController?.pushViewController(LVC, animated: true)
                 }
             }
@@ -547,6 +551,11 @@ extension SetUpProfileViewController: ImagesProtocol {
 
 extension SetUpProfileViewController: LanguageProtocol {
     func languageSend(language: String, level: String) {
+        if userProfile.languageNames == nil {
+            userProfile.languageNames = []
+            userProfile.languageNames = []
+            userProfile.languageLevels = []
+        }
         userProfile.languageNames?.append(language)
         userProfile.languageLevels?.append(level)
         infoTableView.reloadData()

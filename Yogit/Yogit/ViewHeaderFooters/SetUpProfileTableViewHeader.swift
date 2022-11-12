@@ -63,7 +63,7 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
         contentNameLabel.snp.makeConstraints { make in
             make.leading.equalTo(requirementView.snp.trailing).offset(4)
             make.top.bottom.equalToSuperview().inset(0)
-            make.height.equalTo(24)
+            make.height.equalTo(22)
         }
     }
     

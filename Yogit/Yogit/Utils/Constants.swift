@@ -20,6 +20,13 @@ enum Service {
     static let FACEBOOK_SIGNIN: String = "facebook"
 }
 
+enum Kind: Int {
+    case profile = 0
+    case boardSelectDetail
+    case boardTextDetail
+}
+
+
 enum ProfileSectionData: Int {
 //    case image = 0
     case name = 0
@@ -31,15 +38,7 @@ enum ProfileSectionData: Int {
 
 enum BoardSelectDetailSectionData: Int {
 //    case image = 0
-    case name = 0
-    case age
-    case languages
-    case gender
-    case nationality
-}
-
-enum Kind: String {
-    case profile = "Profile"
-    case boardSelectDetail = "BoardSelectDetail"
-    case boardTextDetail = "BoardTextDetail"
+    case numberOfMember = 0
+    case dateTime
+    case location
 }

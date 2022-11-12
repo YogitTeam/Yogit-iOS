@@ -20,11 +20,12 @@ class CommonTextFieldTableViewCell: UITableViewCell {
 //    var placeholder: String? {
 //        didSet {
 //             guard let item = placeholder else { return }
-//             profileTextField.placeholder = item
+//             commonTextField.placeholder = item
 //        }
 //    }
     
-    let profileTextField: UITextField = {
+    // commonTextField
+    let commonTextField: UITextField = {
         let textField = UITextField()
         textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textField.isEnabled = false
@@ -36,7 +37,8 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         return textField
     }()
     
-    let levelLabel: UILabel = {
+
+    let subLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.light)
@@ -49,7 +51,7 @@ class CommonTextFieldTableViewCell: UITableViewCell {
         return label
     }()
     
-    let languageDeleteButton: UIButton = {
+    let rightButton: UIButton = {
         let button = UIButton()
         button.isHidden = true
         button.isEnabled = false
@@ -74,9 +76,9 @@ class CommonTextFieldTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         print("SetUpProfileTableViewCell init")
-        contentView.addSubview(profileTextField)
-        contentView.addSubview(languageDeleteButton)
-        contentView.addSubview(levelLabel)
+        contentView.addSubview(commonTextField)
+        contentView.addSubview(rightButton)
+        contentView.addSubview(subLabel)
         configureViewComponent()
 //        contentView.addSubview(leftImageView)
     }
@@ -93,31 +95,22 @@ class CommonTextFieldTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        profileTextField.snp.makeConstraints { make in
+        commonTextField.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.bottom.equalTo(levelLabel.snp.top)
-//            make.leading.equalTo(leftImageView.snp.trailing)
+            make.bottom.equalTo(subLabel.snp.top)
             make.leading.equalToSuperview().inset(20)
             make.trailing.equalToSuperview().inset(20)
         }
-
-//        profileTextField.addLeftPadding()
         
-        levelLabel.snp.makeConstraints { make in
+        subLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(0)
         }
-        languageDeleteButton.snp.makeConstraints { make in
+        rightButton.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.width.equalTo(44)
             make.trailing.equalToSuperview().inset(20)
         }
-//        leftImageView.snp.makeConstraints { make in
-//            make.leading.equalToSuperview().inset(20)
-//            make.centerY.equalToSuperview()
-////            make.width.height.equalTo(leftImageView.contentsize)
-////            make.width.height.equalTo(44)
-//        }
     }
     
     override func prepareForReuse() {
@@ -131,23 +124,23 @@ class CommonTextFieldTableViewCell: UITableViewCell {
     }
     
     func prepareForReuseTextField() {
-        self.profileTextField.text = nil
-        self.profileTextField.isEnabled = false
-        self.profileTextField.placeholder = nil
-        self.profileTextField.inputView = nil
-        self.profileTextField.inputAccessoryView = nil
-        self.profileTextField.leftView = nil
-        self.profileTextField.tintColor = .clear
+        self.commonTextField.text = nil
+        self.commonTextField.isEnabled = false
+        self.commonTextField.placeholder = nil
+        self.commonTextField.inputView = nil
+        self.commonTextField.inputAccessoryView = nil
+        self.commonTextField.leftView = nil
+        self.commonTextField.tintColor = .clear
     }
     
     func prepareForReuseButton() {
-        self.languageDeleteButton.isEnabled = false
-        self.languageDeleteButton.isHidden = true
+        self.rightButton.isEnabled = false
+        self.rightButton.isHidden = true
     }
     
     func prepareForReuseLabel() {
-        self.levelLabel.text = nil
-        self.levelLabel.isHidden = true
+        self.subLabel.text = nil
+        self.subLabel.isHidden = true
     }
     
 //    func prepareForReuseimageView() {
@@ -155,27 +148,36 @@ class CommonTextFieldTableViewCell: UITableViewCell {
 //    }
     
     // cell content update
-    func configure(text: String?, image: UIImage?, section: Int, kind: String) {
+    func configure(text: String?, image: UIImage?, section: Int, kind: Kind) {
         switch kind {
-        case Kind.profile.rawValue:
-            profileTextField.text = text
+        case .profile:
+            commonTextField.text = text
             switch section {
             case ProfileSectionData.name.rawValue:
-                profileTextField.isEnabled = true
-                profileTextField.tintColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
+                commonTextField.isEnabled = true
+                commonTextField.tintColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
             case ProfileSectionData.age.rawValue:
-                profileTextField.isEnabled = true
+                commonTextField.isEnabled = true
             case ProfileSectionData.languages.rawValue:
-                languageDeleteButton.isHidden = false
-                levelLabel.isHidden = false
-                if text != nil { languageDeleteButton.isEnabled = true }
-            case ProfileSectionData.gender.rawValue: profileTextField.isEnabled = true
+                rightButton.isHidden = false
+                subLabel.isHidden = false
+                if text != nil { rightButton.isEnabled = true }
+            case ProfileSectionData.gender.rawValue: commonTextField.isEnabled = true
             case ProfileSectionData.nationality.rawValue:
-                languageDeleteButton.isHidden = false
-                profileTextField.addleftimage(image: image)
+                rightButton.isHidden = false
+                commonTextField.addleftimage(image: image)
             default: fatalError("Out of section index SetUpProfileTableVeiwCell")
             }
-        default: fatalError("Out of common cell kind")
+        case .boardSelectDetail:
+            commonTextField.text = text
+            commonTextField.addleftimage(image: image)
+            switch section {
+            case BoardSelectDetailSectionData.numberOfMember.rawValue: commonTextField.isEnabled = true
+            case BoardSelectDetailSectionData.dateTime.rawValue: commonTextField.isEnabled = true
+            case BoardSelectDetailSectionData.location.rawValue: rightButton.isHidden = false
+            default: fatalError("Out of section index cell of GatheringBoardSelectDetailViewController")
+            }
+        default: fatalError("Out of common textfleid kind")
         }
     }
     

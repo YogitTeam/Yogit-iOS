@@ -42,14 +42,14 @@ class StepHeaderView: UIView {
 
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .white
-        label.font = UIFont.systemFont(ofSize: 22, weight: UIFont.Weight.bold)
+//        label.backgroundColor = .s
+        label.font = UIFont.systemFont(ofSize: 24, weight: UIFont.Weight.bold)
         label.sizeToFit()
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
         return label
     }()
-    
+//    
 //    init(frame: CGRect, step: CGFloat) {
 //        super.init(frame: frame)
 //        self.step = step
@@ -57,7 +57,7 @@ class StepHeaderView: UIView {
 //        addSubview(stateDefaultView)
 //        addSubview(titleLabel)
 //    }
-    
+//    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(stateDefaultView)
@@ -70,6 +70,7 @@ class StepHeaderView: UIView {
     
     override func layoutSubviews() {
         stateDefaultView.snp.makeConstraints { make in
+//            make.top.equalToSuperview().inset(4)
             make.height.equalTo(5)
             make.leading.trailing.equalToSuperview().inset(140)
         }
@@ -78,7 +79,7 @@ class StepHeaderView: UIView {
             make.width.equalToSuperview().multipliedBy(step * (1 / 3))
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(stateDefaultView.snp.bottom).offset(20)
+            make.top.equalTo(stateDefaultView.snp.bottom).offset(30)
             make.leading.trailing.equalToSuperview().inset(20)
         }
     }

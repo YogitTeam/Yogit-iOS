@@ -27,6 +27,8 @@ class LanguagesViewController: UIViewController {
     
     private var sections = [Section]()
     
+    var userLangs: [String]?
+    
     var delegate: LanguageProtocol?
     
     private var oldSection: Int? = nil
@@ -57,6 +59,17 @@ class LanguagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        DispatchQueue.global().async {
+//            if self.userLangs != nil {
+//                for i in 0..<self.userLangs!.count {
+//                    for j in 0..<self.sections.count {
+//                        if self.userLangs![i] == self.sections[j].title {
+//                            self.sections.remove(at: j)
+//                        }
+//                    }
+//                }
+//            }
+//        }
         print("처음 oldfilter section \(oldFilterSection)")
         sections = [
             Section(title: "English", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
@@ -66,6 +79,7 @@ class LanguagesViewController: UIViewController {
             Section(title: "kdada", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
             Section(title: "Jann", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
             Section(title: "Japanese", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"])]
+        duplicateRemove(userLanuages: userLangs)
         configureViewComponent()
     }
     
@@ -83,6 +97,14 @@ class LanguagesViewController: UIViewController {
         self.view.backgroundColor = .systemBackground
         languagesTableView.delegate = self
         languagesTableView.dataSource = self
+    }
+    
+    private func duplicateRemove(userLanuages: [String]?) {
+        if userLanuages != nil {
+            for i in 0..<userLanuages!.count {
+                self.sections = self.sections.filter { !$0.title.hasPrefix(userLanuages![i]) }
+            }
+        }
     }
     
     func setupSearchController() {

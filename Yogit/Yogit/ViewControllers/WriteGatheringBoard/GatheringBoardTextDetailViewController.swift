@@ -40,6 +40,7 @@ class GatheringBoardTextDetailViewController: UIViewController {
     }
     
     private func configureViewComponent() {
+//        self.navigationItem.title = "Profile"
         view.backgroundColor = .systemBackground
     }
 

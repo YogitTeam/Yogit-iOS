@@ -14,6 +14,9 @@ enum Mode {
 
 class GatheringBoardCategoryViewController: UIViewController {
 
+    let stepHeaderView = StepHeaderView()
+    
+    
     let step = 1.0
     let categoryText = ["Daily Spot", "Traditional Culture", "Nature", "Language exchange"]
     let categoryDescription = ["example, example, example", "example, example, example", "example, example, example", "example, example, example"]
@@ -36,6 +39,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     private let categoryTableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
+        tableView.backgroundColor = .systemBackground
         tableView.register(GatheringBoardCategoryTableViewCell.self, forCellReuseIdentifier: GatheringBoardCategoryTableViewCell.identifier)
         return tableView
     }()
@@ -54,6 +58,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(stepHeaderView)
         view.addSubview(categoryTableView)
         view.addSubview(nextButton)
         configureViewComponent()
@@ -63,7 +68,15 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        categoryTableView.frame = view.bounds
+        stepHeaderView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.right.equalToSuperview()
+            make.height.equalTo(40)
+        }
+        categoryTableView.snp.makeConstraints { make in
+            make.top.equalTo(stepHeaderView.snp.bottom).offset(0)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
         nextButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(view.snp.bottom).inset(30)
@@ -72,7 +85,10 @@ class GatheringBoardCategoryViewController: UIViewController {
     }
     
     private func configureViewComponent() {
+//        self.navigationItem.title = "Category"
         view.backgroundColor = .systemBackground
+        stepHeaderView.step = self.step
+        stepHeaderView.titleLabel.text = "Category"
     }
     
     @objc func categoryContentViewTapped(sender: UITapGestureRecognizer) {
@@ -125,15 +141,15 @@ extension GatheringBoardCategoryViewController: UITableViewDelegate {
         return 100
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-
-        let headerView = StepHeaderView()
-        headerView.step = self.step
-        headerView.titleLabel.text = "Category"
-//        headerView.layoutIfNeeded()
-        
-        return headerView
-    }
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//
+//        let headerView = StepHeaderView()
+//        headerView.step = self.step
+//        headerView.titleLabel.text = "Category"
+////        headerView.layoutIfNeeded()
+//
+//        return headerView
+//    }
 }
 
 extension GatheringBoardCategoryViewController: UITableViewDataSource {

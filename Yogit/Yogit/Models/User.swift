@@ -10,8 +10,8 @@ import Foundation
 // click sign up >> post
 struct UserProfile {
     var gender: String? = nil
-    var languageNames: [String]? = []
-    var languageLevels: [String]? = []
+    var languageNames: [String]? = nil
+    var languageLevels: [String]? = nil
     var nationality: String? = nil
     var userAge: Int? = nil
     var userId: Int? = nil
