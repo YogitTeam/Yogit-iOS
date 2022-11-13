@@ -16,9 +16,10 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         }
     }
     
-    var reportDate: Date? {
+    private var images: [UIImage] = [] {
         didSet {
-            print("report date = \(reportDate)")
+            imagesCollectionView.reloadData()
+            print("reload")
         }
     }
     
@@ -30,6 +31,8 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
     private let placeholderData = ["Number of member including host", "2022.08.31 14:00", "Gathering place"]
     
+    private let imagePicker = UIImagePickerController()
+    
     private let numberPickerView: UIPickerView = {
         let pickerView = UIPickerView()
         return pickerView
@@ -39,7 +42,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
       let datePicker = UIDatePicker(frame: .zero)
 //      datePicker.timeZone = TimeZone.current
         datePicker.datePickerMode = .dateAndTime
-        datePicker.locale = Locale(identifier: "en-EN")
+        datePicker.locale = Locale(identifier: "en")
 //        datePicker.addTarget(self, action: #selector(dateChanged(datePikcer:)), for: .valueChanged)
         datePicker.frame.size = CGSize(width: 0, height: 300)
         datePicker.preferredDatePickerStyle = .wheels
@@ -78,21 +81,23 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     private let imagesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
-        collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
+        collectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
+//        collectionView.layer.borderColor = UIColor.systemGray.cgColor
+//        collectionView.layer.borderWidth = 1
         collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
     
     private let selectDetailTableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
-        tableView.sectionHeaderTopPadding = 30
-        tableView.register(CommonTextFieldTableViewCell.self, forCellReuseIdentifier: CommonTextFieldTableViewCell.identifier)
+        tableView.sectionHeaderTopPadding = 20
+        tableView.register(MyTextFieldTableViewCell.self, forCellReuseIdentifier: MyTextFieldTableViewCell.identifier)
         tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
         return tableView
     }()
@@ -120,6 +125,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         selectDetailTableView.delegate = self
         selectDetailTableView.dataSource = self
         numberPickerView.delegate = self
+        imagePicker.delegate = self
 //        dateTimePickerView.delegate = self
         for i in 3...30 { memberNumberData.append(i) }
         configureViewComponent()
@@ -133,8 +139,14 @@ class GatheringBoardSelectDetailViewController: UIViewController {
             make.leading.right.equalToSuperview()
             make.height.equalTo(30)
         }
+        imagesCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(stepHeaderView.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(100)
+        }
         selectDetailTableView.snp.makeConstraints { make in
-            make.top.equalTo(stepHeaderView.snp.bottom).offset(0)
+            make.top.equalTo(imagesCollectionView.snp.bottom).offset(0)
+//            make.top.equalTo(stepHeaderView.snp.bottom).offset(0)
             make.leading.trailing.bottom.equalToSuperview()
         }
         nextButton.snp.makeConstraints { make in
@@ -149,37 +161,21 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
 //        self.configureDatePicker()
         stepHeaderView.step = self.step
-        stepHeaderView.titleLabel.text = "Setup detail"
+        stepHeaderView.titleLabel.text = "Select detail"
     }
     
-//    private func configureDatePicker() {
-//        let datePicker = UIDatePicker()
-//        datePicker.datePickerMode = .dateAndTime
-//        datePicker.locale = Locale(identifier: "ko-KR")
-//        datePicker.addTarget(self, action: #selector(dateChange(datePikcer:)), for: .)
-//        datePicker.frame.size = CGSize(width: 0, height: 300)
-//        datePicker.preferredDatePickerStyle = .wheels
-////        dateTextField.inputView = datePicker
-////        dateTextField.text = formatDate(date: Date())
-////        reportDate = Date()
-//    }
-    
     private func formatDate(date: Date) -> String{
+//        print("raw date\(date.)")
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "YYYY.MM.dd HH:mm"
+//        return formatter.string(from: date)
+        
         let formatter = DateFormatter()
-        formatter.dateFormat = "YYYY.MM.dd HH:mm"
+        formatter.dateFormat = "E, MMM d, h:mm a"
         return formatter.string(from: date)
     }
     
-//    @objc func dateDoned(datePikcer: UIDatePicker){
-////        dateTextField.text = formatDate(date: datePikcer.date) // 보여주는 데이터
-//        print("dateChange")
-//        createBoardReq.date = formatDate(date: datePikcer.date)
-//        self.reportDate = datePikcer.date // 데이터 저장
-//        selectDetailTableView.reloadData()
-//    }
-    
     @objc func dateDone(_ sender: UIButton) {
-//        datePicker.date
         createBoardReq.date = formatDate(date: self.datePicker.date)
         print(createBoardReq.date)
         selectDetailTableView.reloadData()
@@ -229,7 +225,7 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CommonTextFieldTableViewCell.identifier, for: indexPath) as? CommonTextFieldTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MyTextFieldTableViewCell.identifier, for: indexPath) as? MyTextFieldTableViewCell else { return UITableViewCell() }
         cell.commonTextField.tag = indexPath.section
         cell.commonTextField.placeholder = placeholderData[indexPath.section]
         cell.selectionStyle = .none
@@ -322,22 +318,70 @@ extension GatheringBoardSelectDetailViewController: UITableViewDelegate {
 }
 
 extension GatheringBoardSelectDetailViewController: UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        collectionView.deselectItem(at: indexPath, animated: true)
+//        print("Tapped collectionview")
+////        let viewModel = viewModels[indexPath.row]
+////        delegate?.collectionTableViewTapIteom(with: viewModel)
+//    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        print("Tapped gatherging board collectionview image")
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.view.tintColor = UIColor.label
+        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        
+        if indexPath.row < images.count {
+            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
+            alert.addAction(delete)
+            alert.addAction(cancel)
+        } else {
+            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary()}
+            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera()}
+            alert.addAction(library)
+            alert.addAction(camera)
+            alert.addAction(cancel)
+        }
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
     
 }
 
 extension GatheringBoardSelectDetailViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (createBoardReq.images?.count ?? 0) < 5 ? ((createBoardReq.images?.count ?? 0) + 1) : 5
+//        return 10
+        return images.count < 5 ? (images.count + 1) : 5
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImagesCollectionViewCell.identifier, for: indexPath) as? ProfileImagesCollectionViewCell else    {
-            fatalError()
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
+        print("ProfileImages indexpath update \(indexPath)")
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
+        if indexPath.row < images.count {
+            cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+        } else {
+            cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
         }
-//        cell.configure(with: viewModels[indexPath.row])
         return cell
     }
 }
+
+extension GatheringBoardSelectDetailViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    
+//        let size: CGFloat = imagesCollectionView.frame.size.width/2
+////        CGSize(width: size, height: size)
+//
+//        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
+        
+        return CGSize(width: collectionView.frame.height - 20, height: collectionView.frame.height - 20)
+    }
+}
+
+
 
 //extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
 //    func textFieldDidChangeSelection(_ textField: UITextField) {
@@ -420,8 +464,6 @@ extension GatheringBoardSelectDetailViewController: UIPickerViewDataSource {
         }
     }
 }
-//
-// textfield 터치시 어디에서 터치 했는지 알아야함
 
 extension GatheringBoardSelectDetailViewController: UIPickerViewDelegate {
 
@@ -446,6 +488,38 @@ extension GatheringBoardSelectDetailViewController: UIPickerViewDelegate {
     }
 }
 
+extension GatheringBoardSelectDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func openLibrary() {
+        imagePicker.sourceType = .photoLibrary
+        DispatchQueue.main.async {
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+    }
+
+    func openCamera() {
+        imagePicker.sourceType = .camera
+        DispatchQueue.main.async {
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+    }
+
+    func deleteImage(_ index: Int) {
+        images.remove(at: index)
+    }
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // action 각기 다르게
+        if let img = info[UIImagePickerController.InfoKey.originalImage] {
+            print("image pick")
+            if let image = img as? UIImage {
+                images.append(image)
+            }
+        }
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+}
 
 
 

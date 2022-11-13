@@ -15,7 +15,7 @@ protocol ImagesProtocol {
 
 class ProfileImagesViewController: UIViewController {
 
-    private let picker = UIImagePickerController()
+    private let imagePicker = UIImagePickerController()
     
     var delegate: ImagesProtocol?
 
@@ -44,100 +44,11 @@ class ProfileImagesViewController: UIViewController {
         return label
     }()
     
-//    // original: UICollectionViewLayout
-//    private let collectionViewLayout: UICollectionViewCompositionalLayout = {
-//        print("generate LayoutSubviews")
-//        // First type: Main with pair
-//        let mainItem = NSCollectionLayoutItem(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(2/3),
-//            heightDimension: .fractionalHeight(1.0)))
-//
-//        // 1
-//        mainItem.contentInsets = NSDirectionalEdgeInsets(
-//          top: 5,
-//          leading: 5,
-//          bottom: 5,
-//          trailing: 5)
-//
-//        // 2, 3
-//        let pairItem = NSCollectionLayoutItem(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1.0),
-//            heightDimension: .fractionalHeight(0.5)))
-//
-//        pairItem.contentInsets = NSDirectionalEdgeInsets(
-//          top: 5,
-//          leading: 5,
-//          bottom: 5,
-//          trailing: 5)
-//
-//        // 2, 3 group
-//        let pairGroup = NSCollectionLayoutGroup.vertical(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1/3),
-//            heightDimension: .fractionalHeight(1.0)),
-//          subitem: pairItem,
-//          count: 2)
-//
-//        // 1, 2, 3 group
-//        let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1.0),
-//            heightDimension: .fractionalWidth(2/3)),
-//          subitems: [mainItem, pairGroup])
-//
-//        // Second type. Triplet
-//        let tripletItem = NSCollectionLayoutItem(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1/3),
-//            heightDimension: .fractionalHeight(1.0)))
-//
-//        // 4, 5, 6
-//        tripletItem.contentInsets = NSDirectionalEdgeInsets(
-//          top: 5,
-//          leading: 5,
-//          bottom: 5,
-//          trailing: 5)
-//
-//        // 4, 5, 6 group
-//        let tripletGroup = NSCollectionLayoutGroup.horizontal(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1.0),
-//            heightDimension: .fractionalWidth(1/3)),
-//          subitems: [tripletItem, tripletItem, tripletItem])
-//
-//        // total group
-//        let containerGroup = NSCollectionLayoutGroup.vertical(
-//          layoutSize: NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1.0),
-//            heightDimension: .fractionalWidth(1.0)),
-//          subitems: [
-//            mainWithPairGroup,
-//            tripletGroup,
-//          ]
-//        )
-//
-//        let section = NSCollectionLayoutSection(group: containerGroup) // 0,1 section
-//        let layout = UICollectionViewCompositionalLayout(section: section)
-//        return layout
-//    }()
-//
-//    private lazy var imagesCollectionView: UICollectionView = {
-//        let collectionView = UICollectionView(
-//            frame: .zero, collectionViewLayout: collectionViewLayout
-//          )
-//        collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
-//        collectionView.backgroundColor = .systemBackground
-//        collectionView.isScrollEnabled = false
-//        return collectionView
-//    }()
-    
     private let imagesCollectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero, collectionViewLayout: createCollectionViewLayout()
           )
-        collectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
+        collectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
         collectionView.backgroundColor = .systemBackground
         collectionView.isScrollEnabled = false
         return collectionView
@@ -159,12 +70,12 @@ class ProfileImagesViewController: UIViewController {
         view.addSubview(noticeLabel)
         view.addSubview(imagesCollectionView)
         view.addSubview(saveButton)
-//        self.imagesCollectionView.register(ProfileImagesCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImagesCollectionViewCell.identifier)
+//        self.imagesCollectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
 //        self.imagesCollectionView.collectionViewLayout = createCollectionViewLayout()
         configureViewComponent()
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
-        picker.delegate = self
+        imagePicker.delegate = self
 //        configureConstranit()
 //        self.configDataSource()
     }
@@ -205,11 +116,11 @@ class ProfileImagesViewController: UIViewController {
     }
     
 //    func configDataSource() {
-//        let cellRegistration = UICollectionView.CellRegistration<ProfileImagesCollectionViewCell, UIImage> { cell, indexPath, image in
+//        let cellRegistration = UICollectionView.CellRegistration<MyImagesCollectionViewCell, UIImage> { cell, indexPath, image in
 //            cell.configure(image: image, sequence: indexPath.row + 1)
 //        }
 //
-//        dataSource = UICollectionViewDiffableDataSource<Section, UIImage>(collectionView: imagesCollectionView, cellProvider: { (collectionView, indexPath, image) -> ProfileImagesCollectionViewCell? in
+//        dataSource = UICollectionViewDiffableDataSource<Section, UIImage>(collectionView: imagesCollectionView, cellProvider: { (collectionView, indexPath, image) -> MyImagesCollectionViewCell? in
 //            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
 //        })
 //
@@ -278,7 +189,7 @@ class ProfileImagesViewController: UIViewController {
 extension ProfileImagesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = .black
+        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
         
         if indexPath.row < images.count {
@@ -304,13 +215,13 @@ extension ProfileImagesViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImagesCollectionViewCell.identifier, for: indexPath)
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
         print("ProfileImages indexpath update \(indexPath)")
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  ProfileImagesCollectionViewCell.identifier, for: indexPath) as? ProfileImagesCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
         if indexPath.row < images.count {
-            cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1)
+            cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.profile)
         } else {
-            cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1)
+            cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1, kind: Kind.profile)
         }
         return cell
     }
@@ -318,16 +229,16 @@ extension ProfileImagesViewController: UICollectionViewDataSource {
 
 extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func openLibrary() {
-        picker.sourceType = .photoLibrary
+        imagePicker.sourceType = .photoLibrary
         DispatchQueue.main.async {
-            self.present(self.picker, animated: true, completion: nil)
+            self.present(self.imagePicker, animated: true, completion: nil)
         }
     }
 
     func openCamera() {
-        picker.sourceType = .camera
+        imagePicker.sourceType = .camera
         DispatchQueue.main.async {
-            self.present(self.picker, animated: true, completion: nil)
+            self.present(self.imagePicker, animated: true, completion: nil)
         }
     }
 

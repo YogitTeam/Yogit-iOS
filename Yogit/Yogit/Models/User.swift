@@ -9,13 +9,21 @@ import Foundation
 
 // click sign up >> post
 struct UserProfile {
-    var gender: String? = nil
-    var languageNames: [String]? = nil
-    var languageLevels: [String]? = nil
-    var nationality: String? = nil
-    var userAge: Int? = nil
-    var userId: Int? = nil
-    var userName: String? = nil
+    var gender: String?
+    var languageNames: [String]?
+    var languageLevels: [String]?
+    var nationality: String?
+    var userAge: Int?
+    var userId: Int?
+    var userName: String? 
+    
+    init(gender: String? = nil, nationality: String? = nil, userAge: Int? = nil, userId: Int? = nil, userName: String? = nil) {
+        self.gender = gender
+        self.nationality = nationality
+        self.userAge = userAge
+        self.userId = userId
+        self.userName = userName
+    }
 
 //    // key 대칭
 //    enum Codingkeys: String, CodingKey {

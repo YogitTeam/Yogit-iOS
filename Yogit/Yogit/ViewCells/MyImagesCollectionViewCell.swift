@@ -1,5 +1,5 @@
 //
-//  ProfileImagesCollectionViewCell.swift
+//  MyImagesCollectionViewCell.swift
 //  Yogit
 //
 //  Created by Junseo Park on 2022/10/27.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-class ProfileImagesCollectionViewCell: UICollectionViewCell {
-    static let identifier = "ProfileImagesCollectionViewCell"
+class MyImagesCollectionViewCell: UICollectionViewCell {
+    static let identifier = "MyImagesCollectionViewCell"
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -115,9 +115,13 @@ class ProfileImagesCollectionViewCell: UICollectionViewCell {
         mainImageView.isHidden = true
     }
 
-    func configure(image: UIImage?, sequence: Int) {
+    func configure(image: UIImage?, sequence: Int, kind: Kind) {
         imageView.image = image
         imageSequenceLabel.text = "\(sequence)"
-        if sequence == 1 { mainImageView.isHidden = false }
+        switch kind {
+        case .profile: if sequence == 1 { mainImageView.isHidden = false }
+        case .boardSelectDetail: break
+        default: fatalError("Not exist kind of imageview")
+        }
     }
 }

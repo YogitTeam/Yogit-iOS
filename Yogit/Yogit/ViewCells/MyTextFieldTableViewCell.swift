@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CommonTextFieldTableViewCell: UITableViewCell {
+class MyTextFieldTableViewCell: UITableViewCell {
 
     static let identifier = "setUpProfileTableViewCell"
     

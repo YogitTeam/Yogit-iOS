@@ -26,9 +26,7 @@ enum Kind: Int {
     case boardTextDetail
 }
 
-
 enum ProfileSectionData: Int {
-//    case image = 0
     case name = 0
     case age
     case languages
@@ -37,7 +35,6 @@ enum ProfileSectionData: Int {
 }
 
 enum BoardSelectDetailSectionData: Int {
-//    case image = 0
     case numberOfMember = 0
     case dateTime
     case location

@@ -72,7 +72,7 @@ class StepHeaderView: UIView {
         stateDefaultView.snp.makeConstraints { make in
 //            make.top.equalToSuperview().inset(4)
             make.height.equalTo(5)
-            make.leading.trailing.equalToSuperview().inset(140)
+            make.leading.trailing.equalToSuperview().inset(100)
         }
         stateStepView.snp.makeConstraints { make in
             make.leading.top.bottom.height.equalToSuperview()
@@ -80,7 +80,7 @@ class StepHeaderView: UIView {
         }
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(stateDefaultView.snp.bottom).offset(30)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview().inset(10)
         }
     }
 }
