@@ -19,9 +19,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
 
-        let setUpVC = GatheringBoardSelectDetailViewController()
+        let setUpVC = LocationSearchTableViewController()
         let rootVC = UINavigationController(rootViewController: setUpVC)
-        rootVC.navigationBar.tintColor = .placeholderText
+        rootVC.navigationBar.tintColor = UIColor.label
         rootVC.navigationBar.topItem?.backButtonTitle = ""
 //        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
         self.window = UIWindow(windowScene: scene)

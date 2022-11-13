@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum Preferences {
+    static let LOCATION: String = "LocationAuthorization"
+    static let LiBRARY: String = "LibraryAuthorization"
+    static let PUSH_NOTIFICATION: String = "PushNotificationAuthorization"
+}
+
 enum API {
     static let BASE_URL: String = "https://yogit.world/"
     

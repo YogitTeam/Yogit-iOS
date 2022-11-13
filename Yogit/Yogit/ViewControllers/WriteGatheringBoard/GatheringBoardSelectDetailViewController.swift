@@ -96,6 +96,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
+        tableView.isScrollEnabled = false
         tableView.sectionHeaderTopPadding = 20
         tableView.register(MyTextFieldTableViewCell.self, forCellReuseIdentifier: MyTextFieldTableViewCell.identifier)
         tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
@@ -238,7 +239,7 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
 //            cell.commonTextField.delegate = self
             cell.commonTextField.inputView = datePicker
             cell.commonTextField.inputAccessoryView = datePickerToolBar
-            cell.configure(text: createBoardReq.date, image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)
+            cell.configure(text: createBoardReq.date, image: UIImage(named: "Time"), section: indexPath.section, kind: Kind.boardSelectDetail)
             case 2:
             cell.selectionStyle = .blue
             cell.configure(text: createBoardReq.address, image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)

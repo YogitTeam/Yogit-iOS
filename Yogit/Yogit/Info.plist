@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>사용자의 위치 권한이 요구됩니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>test</string>
 	<key>NSCameraUsageDescription</key>

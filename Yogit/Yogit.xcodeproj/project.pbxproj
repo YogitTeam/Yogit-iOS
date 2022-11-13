@@ -28,6 +28,11 @@
 		79519FF5291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */; };
 		79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */; };
 		79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FFB291FB6B800D8E6CF /* TextField.swift */; };
+		7951A0022921063D00D8E6CF /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0012921063D00D8E6CF /* LocationManager.swift */; };
+		7951A0032921063D00D8E6CF /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0012921063D00D8E6CF /* LocationManager.swift */; };
+		7951A0042921063D00D8E6CF /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0012921063D00D8E6CF /* LocationManager.swift */; };
+		7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A00529211DF000D8E6CF /* MyMapViewController.swift */; };
+		7951A0082921557D00D8E6CF /* LocationSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0072921557D00D8E6CF /* LocationSearchTableViewController.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */; };
 		795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */; };
@@ -102,6 +107,9 @@
 		79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardTextDetailViewController.swift; sourceTree = "<group>"; };
 		79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardSelectImagesViewController.swift; sourceTree = "<group>"; };
 		79519FFB291FB6B800D8E6CF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
+		7951A0012921063D00D8E6CF /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		7951A00529211DF000D8E6CF /* MyMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMapViewController.swift; sourceTree = "<group>"; };
+		7951A0072921557D00D8E6CF /* LocationSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTableViewController.swift; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewHeader.swift; sourceTree = "<group>"; };
@@ -195,6 +203,7 @@
 				79088AC728D89343008054F6 /* SignInManager.swift */,
 				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
 				79088B8328E5683F008054F6 /* KeyChainManager.swift */,
+				7951A0012921063D00D8E6CF /* LocationManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -229,6 +238,8 @@
 				79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */,
 				79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */,
 				79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */,
+				7951A00529211DF000D8E6CF /* MyMapViewController.swift */,
+				7951A0072921557D00D8E6CF /* LocationSearchTableViewController.swift */,
 			);
 			path = WriteGatheringBoard;
 			sourceTree = "<group>";
@@ -615,6 +626,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */,
+				7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */,
 				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
@@ -635,6 +647,7 @@
 				79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */,
 				79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */,
 				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
+				7951A0022921063D00D8E6CF /* LocationManager.swift in Sources */,
 				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
 				79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */,
@@ -652,6 +665,7 @@
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* MyImagesCollectionViewCell.swift in Sources */,
+				7951A0082921557D00D8E6CF /* LocationSearchTableViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
 				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
@@ -667,6 +681,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79A8F68328C7240500FEBE90 /* YogitTests.swift in Sources */,
+				7951A0032921063D00D8E6CF /* LocationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,6 +689,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7951A0042921063D00D8E6CF /* LocationManager.swift in Sources */,
 				79A8F68D28C7240500FEBE90 /* YogitUITests.swift in Sources */,
 				79A8F68F28C7240500FEBE90 /* YogitUITestsLaunchTests.swift in Sources */,
 			);
