@@ -1,24 +1,28 @@
 PODS:
   - Alamofire (5.6.2)
+  - GooglePlaces (7.2.0)
   - IQKeyboardManagerSwift (6.5.10)
   - SnapKit (5.6.0)
 
 DEPENDENCIES:
   - Alamofire (~> 5.5)
+  - GooglePlaces (= 7.2.0)
   - IQKeyboardManagerSwift
   - SnapKit (~> 5.6.0)
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - GooglePlaces
     - IQKeyboardManagerSwift
     - SnapKit
 
 SPEC CHECKSUMS:
   Alamofire: d368e1ff8a298e6dde360e35a3e68e6c610e7204
+  GooglePlaces: 590dea495d69431454ea92217033c3184995165d
   IQKeyboardManagerSwift: 52962c76ab33532f15ad9f3ff4e5715eda5335bb
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: 28df4436866567fda195439348471bf65a6bd0ef
+PODFILE CHECKSUM: 39d57fc6587e7ce3e35bc994bf5e2c22ec65aff7
 
 COCOAPODS: 1.11.3

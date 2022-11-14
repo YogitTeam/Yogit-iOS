@@ -59,17 +59,6 @@ class LanguagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        DispatchQueue.global().async {
-//            if self.userLangs != nil {
-//                for i in 0..<self.userLangs!.count {
-//                    for j in 0..<self.sections.count {
-//                        if self.userLangs![i] == self.sections[j].title {
-//                            self.sections.remove(at: j)
-//                        }
-//                    }
-//                }
-//            }
-//        }
         print("처음 oldfilter section \(oldFilterSection)")
         sections = [
             Section(title: "English", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
