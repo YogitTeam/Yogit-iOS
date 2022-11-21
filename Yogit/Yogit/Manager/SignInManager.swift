@@ -32,37 +32,38 @@ struct SignInManager {
     
     static func checkUserAuth(completion: @escaping (AuthState) -> ()) {
         
-        // changed to the refresh token
-        // check token is existed
-//        guard let userIdentifier = UserDefaults.standard.string(forKey: userIdentifierKey) else {
-//            print("User Identifier not exist")
+//         changed to the refresh token
+//         check token is existed
+//
+//         real start
+//
+//        guard let userItem = try? KeychainManager.getUserItem() else {
 //            completion(.undefined)
 //            return
 //        }
+//        
+//        if userItem.service == Service.APPLE_SIGNIN {
+//            let appleIDProvider = ASAuthorizationAppleIDProvider()
+//            appleIDProvider.getCredentialState(forUserID: userItem.accunt.userIdentifier) { (credentialState, error) in
+//                switch credentialState {
+//                case .notFound: // The Apple ID credential was not found, so show the sign-in UI.
+//                    completion(.undefined)
+//                    break
+//                case .authorized: // The Apple ID credential is valid.
+//                    completion(.signedIn)
+//                    break
+//                case .revoked: // The Apple ID credential is either revoked, so show the sign-in UI.
+//                    completion(.signedOut)
+//                    break
+//                default:
+//                    break
+//                }
+//            }
+//        }
+//        
         
-        guard let userItem = try? KeychainManager.getUserItem() else {
-            completion(.undefined)
-            return
-        }
         
-        if userItem.service == Service.APPLE_SIGNIN {
-            let appleIDProvider = ASAuthorizationAppleIDProvider()
-            appleIDProvider.getCredentialState(forUserID: userItem.accunt.userIdentifier) { (credentialState, error) in
-                switch credentialState {
-                case .notFound: // The Apple ID credential was not found, so show the sign-in UI.
-                    completion(.undefined)
-                    break
-                case .authorized: // The Apple ID credential is valid.
-                    completion(.signedIn)
-                    break
-                case .revoked: // The Apple ID credential is either revoked, so show the sign-in UI.
-                    completion(.signedOut)
-                    break
-                default:
-                    break
-                }
-            }
-        }
+        
         
 //        guard let tokenElement = UserDefaults.standard.dictionary(forKey: tokenElementKey) else {
 //            print("Token not exist")

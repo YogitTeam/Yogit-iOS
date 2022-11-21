@@ -15,6 +15,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         imageView.clipsToBounds = true
 //        imageView.backgroundColor = UIColor(rgb: 0xD9D9D9, alpha: 1.0)
         imageView.backgroundColor = .placeholderText
+        imageView.tintColor = .systemGray.withAlphaComponent(0.5) // image color
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
         imageView.addSubview(imageSequenceView)
@@ -47,7 +48,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     private lazy var imageSequenceView: UIView = {
         let view = UIView()
-        view.backgroundColor = .placeholderText.withAlphaComponent(0.5)
+        view.backgroundColor = .systemGray.withAlphaComponent(0.5)
         view.layer.cornerRadius = 10
         view.addSubview(imageSequenceLabel)
         return view

@@ -6,23 +6,27 @@
 //
 
 import Foundation
+import UIKit
 
-struct CreateBoardReq: Codable {
-    var address: String? = nil
-    var categoryId: Int? = nil
+// formdata로 통신전 
+struct CreateBoardReq {
     var cityId: Int?
-    var date: String?
     var hostId: Int?
-    var images: [String]?
+    var title: String?
+    var address: String?
+    var addressDetail: String?
+    var longitute: Double?
+    var latitude: Double?
+    var date: String?
+    var notice: String?
+    var city: String?
     var introduction: String?
     var kindOfPerson: String?
-    var latitude: Double?
-    var longitute: Double?
-    var notice: String?
-    var title: String?
     var totalMember: Int?
+    var categoryId: Int?
+    var images: [UIImage]?
     
-    init(address: String? = nil, categoryId: Int? = nil, cityId: Int? = nil, date: String? = nil, hostId: Int? = nil, images: [String]? = nil, introduction: String? = nil, kindOfPerson: String? = nil, latitude: Double? = nil, longitute: Double? = nil, notice: String? = nil, title: String? = nil, totalMember: Int? = nil) {
+    init(address: String? = nil, categoryId: Int? = nil, cityId: Int? = nil, date: String? = nil, hostId: Int? = nil, images: [UIImage]? = nil, introduction: String? = nil, kindOfPerson: String? = nil, latitude: Double? = nil, longitute: Double? = nil, notice: String? = nil, title: String? = nil, totalMember: Int? = nil) {
         self.address = address
         self.categoryId = categoryId
         self.cityId = cityId

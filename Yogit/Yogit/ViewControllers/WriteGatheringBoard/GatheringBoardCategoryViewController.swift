@@ -69,7 +69,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         stepHeaderView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.right.equalToSuperview()
             make.height.equalTo(40)
         }
@@ -83,9 +83,13 @@ class GatheringBoardCategoryViewController: UIViewController {
             make.height.equalTo(50)
         }
     }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        <#code#>
+//    }
     
     private func configureViewComponent() {
 //        self.navigationItem.title = "Category"
+        self.tabBarController?.tabBar.isHidden = true
         view.backgroundColor = .systemBackground
         stepHeaderView.step = self.step
         stepHeaderView.titleLabel.text = "Category"
@@ -100,11 +104,14 @@ class GatheringBoardCategoryViewController: UIViewController {
     }
     
     @objc func nextButtonTapped(_ sender: UIButton) {
-        DispatchQueue.main.async {
+//        print(progressTime {
+//            print(chhh_isPrime(2147483647))
+//        })
+        DispatchQueue.main.async(execute: {
             let GBSDVC = GatheringBoardSelectDetailViewController()
             GBSDVC.createBoardReq = self.createBoardReq
             self.navigationController?.pushViewController(GBSDVC, animated: true)
-        }
+        })
     }
     
     
@@ -131,6 +138,7 @@ class GatheringBoardCategoryViewController: UIViewController {
         } else {
             cell.isTapped = false
         }
+        
         cell.selectionStyle = .none
         return cell
     }

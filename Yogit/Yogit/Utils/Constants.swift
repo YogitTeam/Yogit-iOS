@@ -44,4 +44,11 @@ enum BoardSelectDetailSectionData: Int {
     case numberOfMember = 0
     case dateTime
     case location
+    case locationDetail
+}
+
+enum BoardTextDetailData: Int {
+    case title = 0
+    case introduction
+    case kindOfPerson
 }

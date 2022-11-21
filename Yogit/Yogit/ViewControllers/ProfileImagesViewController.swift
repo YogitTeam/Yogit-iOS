@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Alamofire
 
-protocol ImagesProtocol {
+protocol ImagesProtocol: AnyObject {
     func imagesSend(profileImage: UIImage?)
 }
 
@@ -17,7 +17,7 @@ class ProfileImagesViewController: UIViewController {
 
     private let imagePicker = UIImagePickerController()
     
-    var delegate: ImagesProtocol?
+    weak var delegate: ImagesProtocol?
 
     private var images: [UIImage] = [] {
         didSet(oldVal){
@@ -138,36 +138,43 @@ class ProfileImagesViewController: UIViewController {
     
     @objc func saveButtonTapped(_ sender: UIButton) {
 //        let url = "https://yogit.world/users/image"
-//
-//        guard let profileImage = images.first else { return }
-//    
-//        let parameters: [String: Int64] = [
-//            "userId": 1
-//        ]
-//       
-//        // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
-//        AF.upload(multipartFormData: { multipartFormData in
+
+        guard let profileImage = images.first else { return }
+    
+        let parameters: [String: Int64] = [
+            "userId": 1
+        ]
+        
+        for image in self.images {
+            print(image)
+        }
+       
+        // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
+        AF.upload(multipartFormData: { multipartFormData in
 //            for (key, value) in parameters {
 //                multipartFormData.append(Data(String(value).utf8), withName: key)
 //            }
-//            multipartFormData.append(profileImage.toFile(format: .jpeg(1))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
-//            for image in self.images {
-//                multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-//            }
-//        }, to: url, method: .post)
-//        .validate(statusCode: 200..<500)
-//        .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                self.delegate?.imagesSend(profileImage: self.images.first)
-//                DispatchQueue.main.async {
-//                    self.navigationController?.popViewController(animated: true)
-//                }
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
+            for (key, value) in parameters {
+                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
+            }
+            multipartFormData.append(profileImage.toFile(format: .jpeg(1))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
+            for image in self.images {
+                multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+            }
+        }, to: API.BASE_URL + "users/image", method: .post)
+        .validate(statusCode: 200..<500)
+        .responseData { response in
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                self.delegate?.imagesSend(profileImage: self.images.first)
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            case let .failure(error):
+                print(error)
+            }
+        }
         self.delegate?.imagesSend(profileImage: self.images.first)
         DispatchQueue.main.async {
             self.navigationController?.popViewController(animated: true)
@@ -221,7 +228,7 @@ extension ProfileImagesViewController: UICollectionViewDataSource {
         if indexPath.row < images.count {
             cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.profile)
         } else {
-            cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1, kind: Kind.profile)
+            cell.configure(image: UIImage(named: "imageNULL")?.withRenderingMode(.alwaysTemplate), sequence: indexPath.row + 1, kind: Kind.profile)
         }
         return cell
     }

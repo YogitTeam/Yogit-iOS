@@ -11,7 +11,7 @@ import Alamofire
 
 enum AuthRouter: URLRequestConvertible {
     
-    case auth(term: SignInWithAppleInfo)
+    case auth(term: String)
     case user(term: String) // another
  
     var baseURL: URL {

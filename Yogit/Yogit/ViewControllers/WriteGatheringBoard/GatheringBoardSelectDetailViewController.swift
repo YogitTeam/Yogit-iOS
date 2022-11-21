@@ -12,13 +12,15 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     let step = 2.0
     var createBoardReq = CreateBoardReq() {
         didSet {
-            print("Select Detail createBoardReq.categoryId \(createBoardReq)")
+            hasAllData()
+            print("Select Detail createBoardReq\(createBoardReq)")
         }
     }
     
     private var images: [UIImage] = [] {
         didSet {
             imagesCollectionView.reloadData()
+            createBoardReq.images = self.images
             print("reload")
         }
     }
@@ -27,10 +29,11 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
     private var memberNumberData: [Int] = []
     
+    private var date: String?
+    
 //    private var dateData: [String] = []
     
-    private let placeholderData = ["Number of member including host", "2022.08.31 14:00", "Gathering place"]
-    
+    private let placeholderData = ["Number of member including host", "2022.08.31 14:00", "MeetUp place", "Ex) Gangnamstation 3 exit"]
     private let imagePicker = UIImagePickerController()
     
     private let numberPickerView: UIPickerView = {
@@ -117,27 +120,30 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(stepHeaderView)
-        view.addSubview(imagesCollectionView)
-        view.addSubview(selectDetailTableView)
-        view.addSubview(nextButton)
-        imagesCollectionView.delegate = self
-        imagesCollectionView.dataSource = self
-        selectDetailTableView.delegate = self
-        selectDetailTableView.dataSource = self
-        numberPickerView.delegate = self
-        imagePicker.delegate = self
-//        dateTimePickerView.delegate = self
-        for i in 3...30 { memberNumberData.append(i) }
-        configureViewComponent()
+        
+        print(progressTime {
+            view.addSubview(stepHeaderView)
+            view.addSubview(imagesCollectionView)
+            view.addSubview(selectDetailTableView)
+            view.addSubview(nextButton)
+            imagesCollectionView.delegate = self
+            imagesCollectionView.dataSource = self
+            selectDetailTableView.delegate = self
+            selectDetailTableView.dataSource = self
+            numberPickerView.delegate = self
+            imagePicker.delegate = self
+    //        dateTimePickerView.delegate = self
+            for i in 3...30 { memberNumberData.append(i) }
+            configureViewComponent()
+        })
         // Do any additional setup after loading the view.
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         stepHeaderView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.leading.right.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.leading.trailing.equalToSuperview()
             make.height.equalTo(30)
         }
         imagesCollectionView.snp.makeConstraints { make in
@@ -171,14 +177,30 @@ class GatheringBoardSelectDetailViewController: UIViewController {
 //        formatter.dateFormat = "YYYY.MM.dd HH:mm"
 //        return formatter.string(from: date)
         
+        let formatterReq = DateFormatter()
+        formatterReq.dateFormat = "YYYY-MM-dd HH:mm:ss"
+        createBoardReq.date = formatterReq.string(from: date)
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "E, MMM d, h:mm a"
         return formatter.string(from: date)
     }
     
+    private func hasAllData() {
+        if self.createBoardReq.images?.count ?? 0 > 0 && self.createBoardReq.totalMember != nil && self.createBoardReq.date != nil && self.createBoardReq.latitude != nil && self.createBoardReq.longitute != nil && self.createBoardReq.city != nil && self.createBoardReq.address != nil {
+            self.nextButton.isEnabled = true
+            self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            print("Has all data")
+        } else {
+            print("Not has all data")
+            self.nextButton.isEnabled = false
+            self.nextButton.backgroundColor = .placeholderText
+        }
+    }
+    
     @objc func dateDone(_ sender: UIButton) {
-        createBoardReq.date = formatDate(date: self.datePicker.date)
-        print(createBoardReq.date)
+        date = formatDate(date: self.datePicker.date)
+        print(date)
         selectDetailTableView.reloadData()
     }
     
@@ -203,7 +225,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
 extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return createBoardReq.address == nil ? 3 : 4
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -221,6 +243,7 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
         case 0: return 1
         case 1: return 1
         case 2: return 1
+        case 3: return createBoardReq.address == nil ? 0 : 1
         default: fatalError("GatheringBoardSelectDetailVC out of section")
         }
     }
@@ -228,23 +251,26 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MyTextFieldTableViewCell.identifier, for: indexPath) as? MyTextFieldTableViewCell else { return UITableViewCell() }
         cell.commonTextField.tag = indexPath.section
+        cell.commonTextField.delegate = self
         cell.commonTextField.placeholder = placeholderData[indexPath.section]
         cell.selectionStyle = .none
         switch indexPath.section {
             case 0:
             cell.commonTextField.inputView = numberPickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
-            cell.configure(text: createBoardReq.totalMember == nil ? nil : "\(createBoardReq.totalMember!)", image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)
+            cell.configure(text: createBoardReq.totalMember == nil ? nil : "\(createBoardReq.totalMember!)", image: UIImage(named: "MemberNumber"), section: indexPath.section, kind: Kind.boardSelectDetail)
             case 1:
 //            cell.commonTextField.delegate = self
             cell.commonTextField.inputView = datePicker
             cell.commonTextField.inputAccessoryView = datePickerToolBar
-            cell.configure(text: createBoardReq.date, image: UIImage(named: "Time"), section: indexPath.section, kind: Kind.boardSelectDetail)
+            cell.configure(text: self.date, image: UIImage(named: "Date"), section: indexPath.section, kind: Kind.boardSelectDetail)
             case 2:
-            cell.selectionStyle = .blue
-            cell.configure(text: createBoardReq.address, image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)
-//            cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
-            default: fatalError("Out of Setup Profile table view section")
+            cell.selectionStyle = .default
+            cell.configure(text: createBoardReq.address, image: UIImage(named: "MeetUpPlace"), section: indexPath.section, kind: Kind.boardSelectDetail)
+//                cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
+            case 3:
+            cell.configure(text: createBoardReq.addressDetail, image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)
+            default: fatalError("Out of break GBSDVC section")
         }
         cell.layoutIfNeeded()
         cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
@@ -262,6 +288,9 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
         case 0: headerView.configure(text: "The number of people in a gathering")
         case 1: headerView.configure(text: "Date & Time")
         case 2: headerView.configure(text: "Location")
+        case 3:
+            headerView.configure(text: "Location Detail")
+            headerView.requirementView.isHidden = true
         default: fatalError("Out of header section index")
         }
         return headerView
@@ -301,21 +330,22 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
 }
 
 extension GatheringBoardSelectDetailViewController: UITableViewDelegate {
+    // 지도 화면 으로 이동 인터렉션
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
-//        print("Cell 선택")
-//        switch indexPath.section {
-//        case 2:
-//            DispatchQueue.main.async {
-//                let GBTDVC = GatheringBoardTextDetailViewController()
-//                GBTDVC.delegate = self
-//                self.navigationController?.pushViewController(GBTDVC, animated: true)
-//            }
-//        default:
-//            break
-//        }
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        print("Cell 선택")
+        switch indexPath.section {
+        case 2:
+            DispatchQueue.main.async {
+                let MLSVC = MKMapLocalSearchViewController()
+                MLSVC.delegate = self
+                self.navigationController?.pushViewController(MLSVC, animated: true)
+            }
+        default:
+            break
+        }
+    }
 }
 
 extension GatheringBoardSelectDetailViewController: UICollectionViewDelegate {
@@ -361,10 +391,16 @@ extension GatheringBoardSelectDetailViewController: UICollectionViewDataSource {
 //        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
         print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
-        if indexPath.row < images.count {
-            cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
-        } else {
-            cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+        DispatchQueue.global().async {
+            if indexPath.row < self.images.count {
+                DispatchQueue.main.async {
+                    cell.configure(image: self.images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+                }
+            }
         }
         return cell
     }
@@ -519,6 +555,46 @@ extension GatheringBoardSelectDetailViewController: UIImagePickerControllerDeleg
         DispatchQueue.main.async {
             self.dismiss(animated: true, completion: nil)
         }
+    }
+}
+
+extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
+//    func textFieldDidChangeSelection(_ textField: UITextField) {
+////        userProfile.userName = textField.text
+////        print("userName = \(userProfile.userName!)")
+//        switch textField.tag {
+//        case 0:
+//            userProfile.userName = textField.text
+//            print("userName = \(userProfile.userName!)")
+//        default: break
+//        }
+//    }
+//
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        <#code#>
+//    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        createBoardReq.addressDetail = textField.text
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        switch textField.tag {
+        case 3: return true
+        default: return false
+        }
+    }
+}
+
+extension GatheringBoardSelectDetailViewController: MeetUpPlaceProtocol {
+    func locationSend(meetUpPlace: MeetUpPlace?) {
+        self.createBoardReq.address = meetUpPlace?.address
+        self.createBoardReq.latitude = meetUpPlace?.latitude
+        self.createBoardReq.longitute = meetUpPlace?.longitude
+        self.createBoardReq.city = meetUpPlace?.city
+        selectDetailTableView.reloadData()
     }
 }
 

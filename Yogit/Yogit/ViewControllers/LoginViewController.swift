@@ -14,13 +14,12 @@ import Alamofire
 //    func didAuth()
 //}
 
-
 class LoginViewController: UIViewController {
     
 //    var delegate: LoginViewControllerDelegate?
 
     private lazy var signInWithAppleButton: ASAuthorizationAppleIDButton = {
-        let button = ASAuthorizationAppleIDButton()
+        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .black)
         button.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         return button
     }()
@@ -94,22 +93,29 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             // Create an account in your system.
             // User ID
             let userIdentifier = appleIDCredential.user // not nill
-            
             // Account information
             // name, email >> nil > get from keychain
 //            let userFullName = appleIDCredential.fullName // can nill
-            
             let givenName = appleIDCredential.fullName?.givenName ?? ""
             let middleName = appleIDCredential.fullName?.middleName ?? ""
             let familyName = appleIDCredential.fullName?.familyName ?? ""
+        
             let fullName = givenName + middleName + familyName
             let userName: String? = fullName == "" ? nil : fullName
             
-            let userEmail = appleIDCredential.email // can nil
-
+            guard let userEmail = appleIDCredential.email else { return }// can nil
+            
             
             // Real user indicator
             let realUserStatus = appleIDCredential.realUserStatus// not nil
+            
+//            guard let state = appleIDCredential.state else {
+//                print("state nil")
+//                return
+//            }
+            
+            
+            let state = appleIDCredential.state ?? "test"
             
             guard let identityTokenData = appleIDCredential.identityToken else { return } // can nil
             
@@ -120,7 +126,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             let authorizationCode = String(data: authorizationCodeData, encoding: .utf8)!
             
             
-            let signInWithAppleInfo = SignInWithAppleInfo(userName: userName, userEmail: userEmail, userIdentifier: userIdentifier, identityToken: identityToken, authorizationCode: authorizationCode, realUserStatus: realUserStatus.rawValue)
+//            
+//            let signInWithAppleInfo = SignInWithAppleInfo(userName: userName, userEmail: userEmail, userIdentifier: userIdentifier, identityToken: identityToken, authorizationCode: authorizationCode, realUserStatus: realUserStatus.rawValue)
             
 //            guard let baseUrl = URL(string: API.baseUrl) else { return }
 //            let query: [String: String] = [
@@ -147,11 +154,103 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 //                    }
 //
 ////            guard let baseUrl = URL(string: API.BASE_URL) else { return }
+
+//            {
+//                "name":
+//                {
+//                    "firstName": "태규",
+//                    "lastName": "최"
 //
-//            // paramters into http body
-//            AF.request(API.BASE_URL + "",
+//                },
+//                "[email":"xhaktmchl@naver.com](mailto:email%22:%22xhaktmchl@naver.com)"
+//
+//            }
+            
+            print("IdentityToken \(identityToken)")
+            print("AuthorizationCode \(authorizationCode)")
+            print("User Identifier \(userIdentifier)")
+            print("Full Name \(userName)")
+            print("Email \(userEmail)")
+            print("RealUserStatus \(realUserStatus.rawValue)")
+            
+            let url = "https://yogit.world/sign-up/apple"
+
+            var request = URLRequest(url: URL(string: url)!)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.timeoutInterval = 10
+
+
+
+            let parameters: [String: Any] = [
+                "state": state,
+                "code": authorizationCode,
+                "id_token": identityToken,
+                "user": [
+                    "name": [
+                        "firstName": givenName,
+                        "lastName": familyName
+                        ],
+                    "email": userEmail
+                ]
+            ]
+            
+            print(parameters)
+           
+            do {
+                try request.httpBody = JSONSerialization.data(withJSONObject: parameters, options: [])
+            } catch {
+                print("http Body Error")
+            }
+            
+//            AF.request("http://yogit.com", method: .post, parameters: parameters, encoding: JSONEncoding.default)
+//                .responseJSON { response in
+//                    debugPrint(response)
+//            }
+            
+//            AlamofireManager
+//                    .shared
+//                    .session
+//                    .request(AuthRouter.auth(term: signInWithAppleInfo))
+//                    .validate(statusCode: 200..<500)
+//                    .response { response in
+//                    if let data = response.data {
+//                        do{
+//                            debugPrint(response)
+//                            let decodedData = try JSONDecoder().decode(AppleToken.self, from: data)
+//                            // save keychain & move view function
+//                        } catch {
+//                            print(error)
+//                        }
+//                    }
+//            }
+
+            AF.request(request)
+            .validate(statusCode: 200..<500)
+            .responseData { response in
+                switch response.result {
+                case .success:
+                    debugPrint(response)
+//                    if let data = response.data {
+//                        do{
+//                            debugPrint(response)
+//                            print(data)
+////                            let decodedData = try JSONDecoder().decode(GetCertificationNumber.self, from: data)
+//                        } catch {
+//                            print(error)
+//                        }
+//                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    
+////            // paramters into http body
+////            // redirectios
+////            //
+//            AF.request(API.BASE_URL + "/redirect",
 //                       method: .post,
-//                       parameters: signInWithAppleInfo,
+//                       parameters: parameters,
 //                       encoder: URLEncodedFormParameterEncoder(destination:.httpBody))
 //            .validate(statusCode: 200..<500)
 //            .response { response in // reponseData
@@ -161,7 +260,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 //                    if let data = response.data {
 //                        do{
 //                            debugPrint(response)
-//                            let decodedData = try JSONDecoder().decode(AppleToken.self, from: data)
+////                            let decodedData = try JSONDecoder().decode(AppleToken.self, from: data)
 //                            // save keychain & move view function
 //                        } catch {
 //                            print(error)
@@ -172,16 +271,14 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 //                    print(error)
 //                }
 //            }
-//
-//
-//            saveUserIdentifier(userIdentifier: userIdentifier)
-            // Verification data
+    
+
 //            if let identityToken = appleIDCredential.identityToken {
 //                let string = String(data: identityToken, encoding: .utf8)
 //                print("Identity Token \(String(describing: string))")
 //
-////                let tokenElement: [ String : Data ] = [TokenSource.apple.rawValue : identityToken]
-////                saveToken(token: tokenElement)
+//                let tokenElement: [ String : Data ] = [TokenSource.apple.rawValue : identityToken]
+//                saveToken(token: tokenElement)
 //            }
 //
 //            if let authorizationCode = appleIDCredential.authorizationCode {
@@ -194,13 +291,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             // For the purpose of this demo app, store the `userIdentifier` in the keychain.
 //            save userdefualt make function
 //            saveUserIdentifier(userIdentifier: userIdentifier)
-            print("IdentityToken \(identityToken)")
-            print("AuthorizationCode \(authorizationCode)")
-            print("User Identifier \(userIdentifier)")
-            print("Full Name \(userName)")
-            print("Email \(userEmail)")
-            print("RealUserStatus \(realUserStatus.rawValue)")
-            
+
 //            let account = Account(userName: userName, userEmail: userEmail, userIdentifier: userIdentifier, userId: 1)
 //            let userItem = UserItem(accunt: account, service: Service.APPLE_SIGNIN , token: identityToken) // refresh token으로 변경
             
@@ -238,7 +329,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         // save token in keychain
         
         do {
-            try KeychainManager.saveUserItem(userItem: userItem)
+//            try KeychainManager.saveUserItem(userItem: userItem)
         }
         catch {
             print(error)

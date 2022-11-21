@@ -236,7 +236,7 @@ class SetUpProfileViewController: UIViewController {
         
         if hasAllValue == false {
             print("Not has all value")
-            let alert = UIAlertController(title: "Please input requirement value", message: "Input all requirement value", preferredStyle: UIAlertController.Style.alert)
+            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter all required information", preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
@@ -244,7 +244,7 @@ class SetUpProfileViewController: UIViewController {
             return
         }
         
-        let url = "https://www.yogit.world/users/essential-profile"
+//        let url = "https://www.yogit.world/users/essential-profile"
         
         let parameters: [String: Any] = [
             "gender": userProfile.gender!,
@@ -260,7 +260,7 @@ class SetUpProfileViewController: UIViewController {
             for (key, value) in parameters {
                 multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
             }
-        }, to: url, method: .patch)
+        }, to: API.BASE_URL + "users/essential-profile", method: .patch)
         .validate(statusCode: 200..<500)
         .responseData { response in
             switch response.result {
@@ -276,11 +276,20 @@ class SetUpProfileViewController: UIViewController {
     }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        DispatchQueue.main.async {
+//        let PICV = ProfileImagesViewController()
+//        PICV.delegate = self
+//        self.navigationController?.pushViewController(PICV, animated: true)
+    
+        DispatchQueue.main.async(execute: {
             let PICV = ProfileImagesViewController()
             PICV.delegate = self
             self.navigationController?.pushViewController(PICV, animated: true)
-        }
+        })
+//        DispatchQueue.main.async {
+//            let PICV = ProfileImagesViewController()
+//            PICV.delegate = self
+//            self.navigationController?.pushViewController(PICV, animated: true)
+//        }
     }
     
     @objc func donePressed(_ sender: UIButton) {
@@ -360,7 +369,6 @@ extension SetUpProfileViewController: UITableViewDataSource {
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MyTextFieldTableViewCell.identifier, for: indexPath) as? MyTextFieldTableViewCell else { return UITableViewCell() }
-//        cell.commonTextField.delegate = nil
         cell.commonTextField.tag = indexPath.section
         cell.commonTextField.delegate = self
         cell.commonTextField.placeholder = placeholderData[indexPath.section]

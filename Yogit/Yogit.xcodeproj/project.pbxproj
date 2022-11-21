@@ -11,7 +11,7 @@
 		20F7B8E231E3ED89F5835C7C /* Pods_Yogit_YogitUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7E7385AD69ADB48A08A0C10 /* Pods_Yogit_YogitUITests.framework */; };
 		79088AC828D89343008054F6 /* SignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088AC728D89343008054F6 /* SignInManager.swift */; };
 		79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */; };
-		79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* HomeViewController.swift */; };
+		79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */; };
 		79088B6828DE1A66008054F6 /* MyTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* MyTextFieldTableViewCell.swift */; };
 		79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7428E48D24008054F6 /* AlamofireManager.swift */; };
 		79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7628E490CA008054F6 /* BaseInterceptor.swift */; };
@@ -32,13 +32,18 @@
 		7951A0032921063D00D8E6CF /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0012921063D00D8E6CF /* LocationManager.swift */; };
 		7951A0042921063D00D8E6CF /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0012921063D00D8E6CF /* LocationManager.swift */; };
 		7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A00529211DF000D8E6CF /* MyMapViewController.swift */; };
-		7951A0082921557D00D8E6CF /* MKResultsSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0072921557D00D8E6CF /* MKResultsSearchTableViewController.swift */; };
+		7951A0082921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0072921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift */; };
 		7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A04529217ABA00D8E6CF /* ResultsViewController.swift */; };
 		7951A0482921862A00D8E6CF /* GooglePlacesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */; };
-		7951A0872921B61C00D8E6CF /* MkLocalSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0862921B61C00D8E6CF /* MkLocalSearchViewController.swift */; };
+		7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */; };
 		7951A0892922404B00D8E6CF /* MapTestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0882922404B00D8E6CF /* MapTestTableViewCell.swift */; };
+		7951A08D2923744800D8E6CF /* MyTextViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */; };
+		7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */; };
+		7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */; };
+		7951A0BC292A29F800D8E6CF /* ServiceTapBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */; };
+		7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
-		795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */; };
+		795D9BC028F1993300228E34 /* RequirementTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* RequirementTableViewHeader.swift */; };
 		795D9BC328F1B40F00228E34 /* SetUpProfileTableViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */; };
 		795D9BC528F1D4E300228E34 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC428F1D4E300228E34 /* Color.swift */; };
 		795D9BC728F1F72900228E34 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC628F1F72900228E34 /* Layer.swift */; };
@@ -94,7 +99,7 @@
 		5E704620C3EBC75B7FA6F6DE /* Pods-Yogit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Yogit.release.xcconfig"; path = "Target Support Files/Pods-Yogit/Pods-Yogit.release.xcconfig"; sourceTree = "<group>"; };
 		79088AC728D89343008054F6 /* SignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInManager.swift; sourceTree = "<group>"; };
 		79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementInfoManager.swift; sourceTree = "<group>"; };
-		79088B6528DD8297008054F6 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGatheringBoardViewController.swift; sourceTree = "<group>"; };
 		79088B6728DE1A66008054F6 /* MyTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		79088B7428E48D24008054F6 /* AlamofireManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireManager.swift; sourceTree = "<group>"; };
 		79088B7628E490CA008054F6 /* BaseInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInterceptor.swift; sourceTree = "<group>"; };
@@ -113,14 +118,19 @@
 		79519FFB291FB6B800D8E6CF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		7951A0012921063D00D8E6CF /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		7951A00529211DF000D8E6CF /* MyMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMapViewController.swift; sourceTree = "<group>"; };
-		7951A0072921557D00D8E6CF /* MKResultsSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKResultsSearchTableViewController.swift; sourceTree = "<group>"; };
+		7951A0072921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKResultsLocalSearchTableViewController.swift; sourceTree = "<group>"; };
 		7951A04529217ABA00D8E6CF /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesManager.swift; sourceTree = "<group>"; };
-		7951A0862921B61C00D8E6CF /* MkLocalSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MkLocalSearchViewController.swift; sourceTree = "<group>"; };
+		7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapLocalSearchViewController.swift; sourceTree = "<group>"; };
 		7951A0882922404B00D8E6CF /* MapTestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTestTableViewCell.swift; sourceTree = "<group>"; };
+		7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTextViewTableViewCell.swift; sourceTree = "<group>"; };
+		7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLocationOptionViewController.swift; sourceTree = "<group>"; };
+		7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchProfileViewController.swift; sourceTree = "<group>"; };
+		7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTapBarViewController.swift; sourceTree = "<group>"; };
+		7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMeasure.swift; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewHeader.swift; sourceTree = "<group>"; };
+		795D9BBF28F1993300228E34 /* RequirementTableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementTableViewHeader.swift; sourceTree = "<group>"; };
 		795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileTableViewFooter.swift; sourceTree = "<group>"; };
 		795D9BC428F1D4E300228E34 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		795D9BC628F1F72900228E34 /* Layer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
@@ -209,8 +219,8 @@
 			isa = PBXGroup;
 			children = (
 				79088AC728D89343008054F6 /* SignInManager.swift */,
-				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
 				79088B8328E5683F008054F6 /* KeyChainManager.swift */,
+				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
 				7951A0012921063D00D8E6CF /* LocationManager.swift */,
 				7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */,
 			);
@@ -225,6 +235,7 @@
 				795D9BC628F1F72900228E34 /* Layer.swift */,
 				79519FF0291E95E600D8E6CF /* Image.swift */,
 				79519FFB291FB6B800D8E6CF /* TextField.swift */,
+				7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -234,6 +245,7 @@
 			children = (
 				79088B6728DE1A66008054F6 /* MyTextFieldTableViewCell.swift */,
 				79F022CB290A40F1007D59B8 /* MyImagesCollectionViewCell.swift */,
+				7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */,
 				79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */,
 				79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */,
 			);
@@ -247,6 +259,7 @@
 				7951A08A29226BF200D8E6CF /* GooglePlaceApi */,
 				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
 				79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */,
+				7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */,
 				79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */,
 				79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */,
 				7951A0882922404B00D8E6CF /* MapTestTableViewCell.swift */,
@@ -266,16 +279,26 @@
 		7951A08B29226C0800D8E6CF /* AppleMKLocalSearch */ = {
 			isa = PBXGroup;
 			children = (
-				7951A0862921B61C00D8E6CF /* MkLocalSearchViewController.swift */,
-				7951A0072921557D00D8E6CF /* MKResultsSearchTableViewController.swift */,
+				7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */,
+				7951A0072921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift */,
 			);
 			path = AppleMKLocalSearch;
+			sourceTree = "<group>";
+		};
+		7951A0BA292A247100D8E6CF /* ServiceVC */ = {
+			isa = PBXGroup;
+			children = (
+				7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */,
+				79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */,
+				7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */,
+			);
+			path = ServiceVC;
 			sourceTree = "<group>";
 		};
 		795D9BC128F1993F00228E34 /* ViewHeaderFooters */ = {
 			isa = PBXGroup;
 			children = (
-				795D9BBF28F1993300228E34 /* SetUpProfileTableViewHeader.swift */,
+				795D9BBF28F1993300228E34 /* RequirementTableViewHeader.swift */,
 				795D9BC228F1B40F00228E34 /* SetUpProfileTableViewFooter.swift */,
 			);
 			path = ViewHeaderFooters;
@@ -359,8 +382,8 @@
 				79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */,
 				79F022D529111100007D59B8 /* LanguagesViewController.swift */,
 				79F022D72913C0F5007D59B8 /* NationalityViewController.swift */,
+				7951A0BA292A247100D8E6CF /* ServiceVC */,
 				79519FF8291EA92F00D8E6CF /* WriteGatheringBoard */,
-				79088B6528DD8297008054F6 /* HomeViewController.swift */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
 				79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */,
@@ -376,6 +399,7 @@
 		79A8F69D28C75F4B00FEBE90 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				79088B7828E4A58F008054F6 /* Auth.swift */,
 				79A8F6A628CDC95000FEBE90 /* User.swift */,
 				79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */,
 			);
@@ -385,7 +409,6 @@
 		79A8F6E928D1F16000FEBE90 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				79088B7828E4A58F008054F6 /* Auth.swift */,
 				79088B8128E4C2FE008054F6 /* AuthRouter.swift */,
 				79088B7428E48D24008054F6 /* AlamofireManager.swift */,
 				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
@@ -426,7 +449,6 @@
 				79A8F66528C7240300FEBE90 /* Frameworks */,
 				79A8F66628C7240300FEBE90 /* Resources */,
 				E2E7FAE294A5DDE32D500ED5 /* [CP] Embed Pods Frameworks */,
-				1F8E3AD2AF1BA833779D986E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -465,7 +487,6 @@
 				79A8F68528C7240500FEBE90 /* Frameworks */,
 				79A8F68628C7240500FEBE90 /* Resources */,
 				C0F86E40C7633309CD0CC6E3 /* [CP] Embed Pods Frameworks */,
-				C1CB944FAA0317BE169C3AAE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -570,23 +591,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1F8E3AD2AF1BA833779D986E /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Yogit/Pods-Yogit-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Yogit/Pods-Yogit-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Yogit/Pods-Yogit-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		395530ECDC6CBC3D64A4428B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -648,23 +652,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Yogit-YogitUITests/Pods-Yogit-YogitUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C1CB944FAA0317BE169C3AAE /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Yogit-YogitUITests/Pods-Yogit-YogitUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Yogit-YogitUITests/Pods-Yogit-YogitUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Yogit-YogitUITests/Pods-Yogit-YogitUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		E2E7FAE294A5DDE32D500ED5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -690,10 +677,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */,
+				7951A08D2923744800D8E6CF /* MyTextViewTableViewCell.swift in Sources */,
 				7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */,
-				7951A0872921B61C00D8E6CF /* MkLocalSearchViewController.swift in Sources */,
+				7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
+				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,
 				79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */,
 				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
 				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
@@ -703,6 +692,7 @@
 				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
 				79F023042919394A007D59B8 /* TextFieldViewController.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
+				7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */,
 				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
 				79519FF1291E95E600D8E6CF /* Image.swift in Sources */,
 				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
@@ -712,6 +702,7 @@
 				79088B6828DE1A66008054F6 /* MyTextFieldTableViewCell.swift in Sources */,
 				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
 				79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */,
+				7951A0BC292A29F800D8E6CF /* ServiceTapBarViewController.swift in Sources */,
 				79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */,
 				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
 				7951A0022921063D00D8E6CF /* LocationManager.swift in Sources */,
@@ -729,17 +720,18 @@
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79519FF3291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift in Sources */,
 				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
+				7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */,
-				79088B6628DD8297008054F6 /* HomeViewController.swift in Sources */,
+				79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* MyImagesCollectionViewCell.swift in Sources */,
-				7951A0082921557D00D8E6CF /* MKResultsSearchTableViewController.swift in Sources */,
+				7951A0082921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
 				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
 				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
 				79519FF5291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift in Sources */,
-				795D9BC028F1993300228E34 /* SetUpProfileTableViewHeader.swift in Sources */,
+				795D9BC028F1993300228E34 /* RequirementTableViewHeader.swift in Sources */,
 				79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -931,7 +923,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -964,7 +956,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

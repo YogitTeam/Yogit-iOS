@@ -165,16 +165,17 @@ class MyTextFieldTableViewCell: UITableViewCell {
             case ProfileSectionData.gender.rawValue: commonTextField.isEnabled = true
             case ProfileSectionData.nationality.rawValue:
                 rightButton.isHidden = false
-                commonTextField.addleftimage(image: image)
+                commonTextField.addLeftimage(image: image)
             default: fatalError("Out of section index SetUpProfileTableVeiwCell")
             }
         case .boardSelectDetail:
             commonTextField.text = text
-            commonTextField.addleftimage(image: image)
+            commonTextField.addLeftimage(image: image)
             switch section {
             case BoardSelectDetailSectionData.numberOfMember.rawValue: commonTextField.isEnabled = true
             case BoardSelectDetailSectionData.dateTime.rawValue: commonTextField.isEnabled = true
-            case BoardSelectDetailSectionData.location.rawValue: rightButton.isHidden = false
+            case BoardSelectDetailSectionData.location.rawValue: commonTextField.addrightimage(image: UIImage(named: "push"))
+            case BoardSelectDetailSectionData.locationDetail.rawValue: commonTextField.isEnabled = true
             default: fatalError("Out of section index cell of GatheringBoardSelectDetailViewController")
             }
         default: fatalError("Out of common textfleid kind")
