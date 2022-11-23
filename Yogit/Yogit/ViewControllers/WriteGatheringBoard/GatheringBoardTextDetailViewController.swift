@@ -16,7 +16,15 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
             print("BoardTextDetail \(createBoardReq)")
         }
     }
-    
+    private var images: [UIImage] = [] {
+        didSet {
+            imagesCollectionView.reloadData()
+            createBoardReq.images = self.images
+            print("reload")
+        }
+    }
+    private let imagePicker = UIImagePickerController()
+    private let rtvh = RequirementTableViewHeader()
     let stepHeaderView = StepHeaderView()
     let step = 3.0
     let minChar = [10, 50, 50]
@@ -47,10 +55,34 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
+        tableView.isScrollEnabled = false
         tableView.sectionHeaderTopPadding = 10
         tableView.register(MyTextViewTableViewCell.self, forCellReuseIdentifier: MyTextViewTableViewCell.identifier)
         tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
         return tableView
+    }()
+    
+    private let imagesCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 10)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
+        collectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
+//        collectionView.layer.borderColor = UIColor.systemGray.cgColor
+//        collectionView.layer.borderWidth = 1
+        collectionView.backgroundColor = .systemBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
+    }()
+    
+    private lazy var contentScrollView: UIScrollView = {
+       let scrollView = UIScrollView()
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = .systemBackground
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        [self.rtvh, self.imagesCollectionView, self.textDetailTableView].forEach { scrollView.addSubview($0) }
+        return scrollView
     }()
     
 //    private lazy var uploadButton: UIButton = {
@@ -67,26 +99,56 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(stepHeaderView)
-        view.addSubview(textDetailTableView)
+        view.addSubview(contentScrollView)
 //        view.addSubview(uploadButton)
         textDetailTableView.delegate = self
         textDetailTableView.dataSource = self
+        imagesCollectionView.delegate = self
+        imagesCollectionView.dataSource = self
+        imagePicker.delegate = self
         configureViewComponent()
         // Do any additional setup after loading the view.
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.leading.trailing.equalToSuperview()
+//            make.leading.trailing.equalToSuperview()
+            make.width.equalToSuperview()
             make.height.equalTo(30)
+        }
+        
+        contentScrollView.snp.makeConstraints { make in
+            make.top.equalTo(stepHeaderView.snp.bottom).offset(10)
+//            make.width.equalToSuperview()
+            make.leading.trailing.bottom.equalToSuperview()
+//            make.width.equalToSuperview()
+        }
+        
+        rtvh.snp.makeConstraints { make in
+//            make.top.equalTo(stepHeaderView.snp.bottom).offset(20)
+            make.top.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(22)
+        }
+        
+        imagesCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(rtvh.snp.bottom)
+//            make.leading.trailing.equalToSuperview()
+//            make.top.equalTo(rt)
+            make.width.equalToSuperview()
+            make.height.equalTo(100)
         }
 //        textDetailTableView.frame = view.bounds
         
         textDetailTableView.snp.makeConstraints { make in
-            make.top.equalTo(stepHeaderView.snp.bottom)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(imagesCollectionView.snp.bottom).offset(10)
+//            make.leading.trailing.bottom.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(650)
+            make.bottom.equalToSuperview()
         }
 //        uploadButton.snp.makeConstraints { make in
 //            make.leading.trailing.equalToSuperview().inset(20)
@@ -100,13 +162,15 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
         self.hideKeyboardWhenTappedAround()
         self.navigationItem.rightBarButtonItem = self.rightButton
         self.stepHeaderView.step = step
+        stepHeaderView.titleLabel.text = "Content"
         view.backgroundColor = .systemBackground
+        rtvh.contentNameLabel.text = "Photos"
     }
 
     @objc func buttonPressed(_ sender: UIButton) {
         for i in 0..<3 {
-            if textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i] {
-                createBoardReq.hostId = 1 // 아이디 받으면 아이디로
+            if self.createBoardReq.images?.count ?? 0 > 0 && textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i] {
+                createBoardReq.hostId = 2 // 아이디 받으면 아이디로
                 createBoardReq.cityId = 1 // 수정 필요
 //                createBoardReq.notice = "" // 빈값
             
@@ -120,31 +184,22 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
                     "longitute": createBoardReq.longitute!,
                     "latitude": createBoardReq.latitude!,
                     "date": createBoardReq.date!,
-                    "notice": createBoardReq.notice ?? "",
+                    "notice": "",
                     "introduction": createBoardReq.introduction!,
                     "kindOfPerson": createBoardReq.kindOfPerson!,
                     "totalMember": createBoardReq.totalMember!,
                     "categoryId": createBoardReq.categoryId!,
                 ]
-                print(parameters)
                 
-//                for (key, value) in parameters {
-//                    print(key, value)
-//                }
-//                for image in self.createBoardReq.images! {
-//                    print(image)
-//                }
-
-//                let url = "https://www.yogit.world/boards"
+                self.navigationController?.popToRootViewController(animated: true)
+                
                 
                 AF.upload(multipartFormData: { multipartFormData in
                     for (key, value) in parameters {
-                        multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
-                        print("\(value)".data(using: String.Encoding.utf8)!)
+                        multipartFormData.append(Data("\(value)".utf8), withName: key)
                     }
                     for image in self.createBoardReq.images! {
-                        multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-                        print(image.toFile(format: .jpeg(1))!)
+                        multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
                     }
                 }, to: API.BASE_URL + "boards", method: .post)
                 .validate(statusCode: 200..<500)
@@ -163,18 +218,13 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
             } else {
                 // 경고창
                 print("Not has all value")
-                let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the number of text", preferredStyle: UIAlertController.Style.alert)
+                let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the conditionㄴ", preferredStyle: UIAlertController.Style.alert)
                 let okAction = UIAlertAction(title: "OK", style: .default)
                 alert.addAction(okAction)
                 present(alert, animated: false, completion: nil)
             }
         }
-        // pop root까지
-//        DispatchQueue.main.async {
-//            let GBSDVC = GatheringBoardSelectDetailViewController()
-//            GBSDVC.createBoardReq = self.createBoardReq
-//            self.navigationController?.pushViewController(GBSDVC, animated: true)
-//        }
+
     }
 }
 
@@ -201,8 +251,8 @@ extension GatheringBoardTextDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case 0: return 54
-        case 1: return 150
-        case 2: return 150
+        case 1: return 200
+        case 2: return 200
         default: fatalError("GatheringBoardTextDetailViewController out of section index")
         }
     }
@@ -237,6 +287,103 @@ extension GatheringBoardTextDetailViewController: UITableViewDataSource {
         return headerView
     }
 }
+
+extension GatheringBoardTextDetailViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        print("Tapped gatherging board collectionview image")
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.view.tintColor = UIColor.label
+        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        
+        if indexPath.row < images.count {
+            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
+            alert.addAction(delete)
+            alert.addAction(cancel)
+        } else {
+            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary()}
+            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera()}
+            alert.addAction(library)
+            alert.addAction(camera)
+            alert.addAction(cancel)
+        }
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+}
+
+extension GatheringBoardTextDetailViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return 10
+        return images.count < 5 ? (images.count + 1) : 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
+        print("ProfileImages indexpath update \(indexPath)")
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
+        DispatchQueue.global().async {
+            if indexPath.row < self.images.count {
+                DispatchQueue.main.async {
+                    cell.configure(image: self.images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    cell.configure(image: UIImage(named: "imageNULL")?.withRenderingMode(.alwaysTemplate), sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+                }
+            }
+        }
+        return cell
+    }
+}
+
+extension GatheringBoardTextDetailViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    
+//        let size: CGFloat = imagesCollectionView.frame.size.width/2
+////        CGSize(width: size, height: size)
+//
+//        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
+        
+        return CGSize(width: collectionView.frame.height - 20, height: collectionView.frame.height - 20)
+    }
+}
+
+extension GatheringBoardTextDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func openLibrary() {
+        imagePicker.sourceType = .photoLibrary
+        DispatchQueue.main.async {
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+    }
+
+    func openCamera() {
+        imagePicker.sourceType = .camera
+        DispatchQueue.main.async {
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
+    }
+
+    func deleteImage(_ index: Int) {
+        images.remove(at: index)
+    }
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // action 각기 다르게
+        if let img = info[UIImagePickerController.InfoKey.originalImage] {
+            print("image pick")
+            if let image = img as? UIImage {
+                images.append(image)
+            }
+        }
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+}
+
 
 extension GatheringBoardTextDetailViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

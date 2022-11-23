@@ -21,15 +21,17 @@ class ProfileImagesViewController: UIViewController {
 
     private var images: [UIImage] = [] {
         didSet(oldVal){
-            imagesCollectionView.reloadData()
-            if images.count > 0 {
-                saveButton.isEnabled = true
-                saveButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-            } else {
-                saveButton.isEnabled = false
-                saveButton.backgroundColor = .placeholderText
+            DispatchQueue.main.async {
+                self.imagesCollectionView.reloadData()
+                if self.images.count > 0 {
+                    self.saveButton.isEnabled = true
+                    self.saveButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                } else {
+                    self.saveButton.isEnabled = false
+                    self.saveButton.backgroundColor = .placeholderText
+                }
             }
-            print("reload")
+            print("Profile images reloaded")
         }
     }
     
@@ -67,35 +69,42 @@ class ProfileImagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        getProfileImages(userId: 1)
+        //        { (userProfileImages) in
+        //            guard let userProfileImages = userProfileImages else { print("userProfileImages")
+        //                return
+        //            }
+        //            print(userProfileImages)
+        //            print("imageUrls \(imageUrls)")
+        //            guard let imageUrls = userProfileImages.imageUrls else { print("imageUrls")
+        //                return
+        //            }
+        //            if userProfileImages?.imageUrls == nil { userProfileImages?.imageUrls = []}
+        //            for imageUrl in userProfileImages?.imageUrls {
+//                        guard let url = URL(string: imageUrl) else {
+//                            print("imageUrl url")
+//                            return
+//                        }
+//                        guard let data = try? Data(contentsOf: url) else {
+//                            print("imageUrl data")
+//                            return
+//                        }
+//                        guard let image = UIImage(data: data) else {
+//                            print("imageUrl image")
+//                            return
+//                        }
+//                        self.images.append(image)
+        //            }
+        //            self.imagesCollectionView.reloadData()
+//    }
         view.addSubview(noticeLabel)
         view.addSubview(imagesCollectionView)
         view.addSubview(saveButton)
-//        self.imagesCollectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
-//        self.imagesCollectionView.collectionViewLayout = createCollectionViewLayout()
         configureViewComponent()
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
         imagePicker.delegate = self
-//        configureConstranit()
-//        self.configDataSource()
     }
-    
-//    func configureConstranit() {
-//        print("profileimagecollectionview viewDidLayoutSubviews")
-//        noticeLabel.snp.makeConstraints { make in
-//            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        imagesCollectionView.snp.makeConstraints { make in
-//            make.top.equalTo(noticeLabel.snp.bottom).offset(10)
-//            make.leading.trailing.bottom.equalToSuperview().inset(15)
-//        }
-//        saveButton.snp.makeConstraints { make in
-//            make.leading.trailing.equalToSuperview().inset(20)
-//            make.bottom.equalTo(view.snp.bottom).inset(30)
-//            make.height.equalTo(50)
-//        }
-//    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -115,25 +124,42 @@ class ProfileImagesViewController: UIViewController {
         }
     }
     
-//    func configDataSource() {
-//        let cellRegistration = UICollectionView.CellRegistration<MyImagesCollectionViewCell, UIImage> { cell, indexPath, image in
-//            cell.configure(image: image, sequence: indexPath.row + 1)
-//        }
-//
-//        dataSource = UICollectionViewDiffableDataSource<Section, UIImage>(collectionView: imagesCollectionView, cellProvider: { (collectionView, indexPath, image) -> MyImagesCollectionViewCell? in
-//            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
-//        })
-//
-//
-//        var snapShot = NSDiffableDataSourceSnapshot<Section, Animal>()
-//        snapShot.appendSections([.main])
-//        snapShot.appendItems(animalData)
-//        dataSource.apply(snapShot)
-//    }
-//
     private func configureViewComponent() {
         self.navigationItem.title = "Profile Photos"
         view.backgroundColor = .systemBackground
+    }
+    
+    
+    func getProfileImages(userId: Int64) {
+        AF.request(API.BASE_URL + "users/image/\(userId)",
+                   method: .get,
+                   parameters: nil,
+                   encoding: JSONEncoding.default)
+            .validate(statusCode: 200..<500)
+            .responseData { response in
+            switch response.result {
+            case .success:
+                guard let data = response.value else { return }
+                debugPrint(response)
+                do{
+                    let decodedData = try JSONDecoder().decode(APIResponse<UserProfileImages>.self, from: data)
+                    guard let imageUrls = decodedData.data?.imageUrls else { return }
+                    DispatchQueue.global().async {
+                        for imageUrl in imageUrls {
+                            guard let url = URL(string: imageUrl) else { return }
+                            guard let data = try? Data(contentsOf: url) else { return }
+                            guard let image = UIImage(data: data) else { return }
+                            self.images.append(image)
+                        }
+                    }
+                }
+                catch{
+                    print(error.localizedDescription)
+                }
+            case let .failure(error):
+                print(error)
+            }
+        }
     }
     
     @objc func saveButtonTapped(_ sender: UIButton) {
@@ -148,18 +174,15 @@ class ProfileImagesViewController: UIViewController {
         for image in self.images {
             print(image)
         }
-       
         // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
         AF.upload(multipartFormData: { multipartFormData in
-//            for (key, value) in parameters {
-//                multipartFormData.append(Data(String(value).utf8), withName: key)
-//            }
             for (key, value) in parameters {
-                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
+//                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
+                multipartFormData.append(Data(String(value).utf8), withName: key)
             }
-            multipartFormData.append(profileImage.toFile(format: .jpeg(1))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
+            multipartFormData.append(profileImage.toFile(format: .jpeg(0.5))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
             for image in self.images {
-                multipartFormData.append(image.toFile(format: .jpeg(1))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+                multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
             }
         }, to: API.BASE_URL + "users/image", method: .post)
         .validate(statusCode: 200..<500)
@@ -174,10 +197,6 @@ class ProfileImagesViewController: UIViewController {
             case let .failure(error):
                 print(error)
             }
-        }
-        self.delegate?.imagesSend(profileImage: self.images.first)
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
         }
     }
 

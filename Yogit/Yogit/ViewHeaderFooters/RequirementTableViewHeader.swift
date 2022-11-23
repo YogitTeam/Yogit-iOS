@@ -22,7 +22,7 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
     }()
     
     // name of content
-    private let contentNameLabel: UILabel = {
+    let contentNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
@@ -37,13 +37,13 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(requirementView)
-        contentView.addSubview(contentNameLabel)
+        addSubview(requirementView)
+        addSubview(contentNameLabel)
 //        configureViewComponent()
     }
     
     private func configureViewComponent() {
-        contentView.backgroundColor = .systemBackground
+        backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {
@@ -62,7 +62,7 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
 
         contentNameLabel.snp.makeConstraints { make in
             make.leading.equalTo(requirementView.snp.trailing).offset(4)
-            make.top.bottom.equalToSuperview().inset(0)
+            make.top.equalToSuperview().inset(0)
             make.height.equalTo(22)
         }
     }

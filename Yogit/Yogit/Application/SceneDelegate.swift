@@ -19,14 +19,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
 
-//        let setUpVC = LoginViewController() // GatheringBoardSelectDetailViewController()
-//        let rootVC = UINavigationController(rootViewController: setUpVC)
-//        rootVC.navigationBar.tintColor = UIColor.label
-//        rootVC.navigationBar.topItem?.backButtonTitle = ""
-//        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
+        let setUpVC = SetUpProfileViewController()
+        let rootVC = UINavigationController(rootViewController: setUpVC)
+        rootVC.navigationBar.tintColor = UIColor.label
+        rootVC.navigationBar.topItem?.backButtonTitle = ""
+        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
+
         
-        
-        let rootVC = ServiceTapBarViewController()
+//        let rootVC = ServiceTapBarViewController()
         self.window = UIWindow(windowScene: scene)
         self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()

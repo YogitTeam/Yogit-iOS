@@ -43,7 +43,7 @@ class StepHeaderView: UIView {
     let titleLabel: UILabel = {
         let label = UILabel()
 //        label.backgroundColor = .s
-        label.font = UIFont.systemFont(ofSize: 24, weight: UIFont.Weight.bold)
+        label.font = UIFont.systemFont(ofSize: 24, weight: UIFont.Weight.semibold)
         label.sizeToFit()
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true

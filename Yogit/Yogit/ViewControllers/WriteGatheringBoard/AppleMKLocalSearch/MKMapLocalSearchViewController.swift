@@ -880,8 +880,6 @@ extension UIImage {
         let newImageRect = CGRect(x: 0, y: 0, width: newWidth, height: newHeight)
         
         UIGraphicsBeginImageContextWithOptions(CGSize(width: newWidth, height: newHeight), false, 0.0)
-
-//        UIBezierPath(roundedRect: newImageRect, cornerRadius: 50).addClip()
         
         self.draw(in: newImageRect)
         

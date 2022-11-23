@@ -28,7 +28,6 @@ extension UIImage {
     
     func toFile(format: ImageFormat) -> Data? {
         var imageData: Data?
-
         switch format {
         case .png:
             imageData = self.pngData()

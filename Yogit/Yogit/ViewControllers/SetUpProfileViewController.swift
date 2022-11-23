@@ -244,8 +244,6 @@ class SetUpProfileViewController: UIViewController {
             return
         }
         
-//        let url = "https://www.yogit.world/users/essential-profile"
-        
         let parameters: [String: Any] = [
             "gender": userProfile.gender!,
             "languageLevels": userProfile.languageLevels!,
@@ -276,20 +274,11 @@ class SetUpProfileViewController: UIViewController {
     }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-//        let PICV = ProfileImagesViewController()
-//        PICV.delegate = self
-//        self.navigationController?.pushViewController(PICV, animated: true)
-    
         DispatchQueue.main.async(execute: {
             let PICV = ProfileImagesViewController()
             PICV.delegate = self
             self.navigationController?.pushViewController(PICV, animated: true)
         })
-//        DispatchQueue.main.async {
-//            let PICV = ProfileImagesViewController()
-//            PICV.delegate = self
-//            self.navigationController?.pushViewController(PICV, animated: true)
-//        }
     }
     
     @objc func donePressed(_ sender: UIButton) {
@@ -308,12 +297,6 @@ class SetUpProfileViewController: UIViewController {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 48
-//        switch indexPath.section {
-//        case 2:
-//            return 48 // indexPath.row < languageNames.count ? 58 : 44
-//        default:
-//            return 48
-//        }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -376,7 +359,6 @@ extension SetUpProfileViewController: UITableViewDataSource {
         switch indexPath.section {
             case 0:
             cell.configure(text: userProfile.userName, image: nil, section: indexPath.section, kind: Kind.profile)
-//            cell.commonTextField.delegate = self // action component assign 가능
             case 1:
             cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", image: nil, section: indexPath.section, kind: Kind.profile) // "International age"
             cell.commonTextField.inputView = agePickerView
@@ -397,7 +379,6 @@ extension SetUpProfileViewController: UITableViewDataSource {
             cell.configure(text: userProfile.gender, image: nil, section: indexPath.section, kind: Kind.profile) // "Select gender"
             cell.commonTextField.inputView = genderPickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
-            // commonTextField.delegate = ?
             genderPickerView.tag = indexPath.section
             case 4:
             cell.selectionStyle = .blue
@@ -406,13 +387,13 @@ extension SetUpProfileViewController: UITableViewDataSource {
         }
         cell.layoutIfNeeded()
         cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
-        print("cell update section = \(indexPath.section)")
+        print("Setup profile cell update section = \(indexPath.section)")
         return cell
         
     }
     
     @objc func deleteButtonTapped(_ button: UIButton) {
-        print("deleteButtonTapped")
+        print("Language of profile deleteButtonTapped")
         let deletedLanguage = userProfile.languageNames?.remove(at: button.tag)
         let deletedLevel = userProfile.languageLevels?.remove(at: button.tag)
         infoTableView.reloadData()
@@ -425,6 +406,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
     
         // userName, age, lanages, gender, nationality
         switch section {
+            // enum toString 작업 요구
             case 0: headerView.configure(text: "Name")
             case 1: headerView.configure(text: "Age")
             case 2: headerView.configure(text: "Languages")
@@ -436,6 +418,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        // enum toString 작업 요구
         switch section {
         case 2:
             return "Your name, age, languageNames will be public.\n\n"
@@ -445,6 +428,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
             return nil
         }
     }
+    
     
 //    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
 //        guard let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetUpProfileTableViewFooter.identifier) as? SetUpProfileTableViewFooter else { return UITableViewHeaderFooterView() }
@@ -508,8 +492,6 @@ extension SetUpProfileViewController: UITableViewDelegate {
 
 extension SetUpProfileViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
-//        userProfile.userName = textField.text
-//        print("userName = \(userProfile.userName!)")
         switch textField.tag {
         case 0:
             userProfile.userName = textField.text
@@ -561,12 +543,12 @@ extension SetUpProfileViewController: LanguageProtocol {
     func languageSend(language: String, level: String) {
         if userProfile.languageNames == nil {
             userProfile.languageNames = []
-            userProfile.languageNames = []
             userProfile.languageLevels = []
         }
         userProfile.languageNames?.append(language)
         userProfile.languageLevels?.append(level)
         infoTableView.reloadData()
+        infoTableView.constraints
         print(userProfile.languageNames!, userProfile.languageLevels!)
     }
 }

@@ -7,6 +7,13 @@
 
 import Foundation
 
+enum APIMethod {
+    case edit
+    case search
+    case upload
+    case delete
+}
+
 enum Preferences {
     static let LOCATION: String = "LocationAuthorization"
     static let LiBRARY: String = "LibraryAuthorization"
@@ -51,4 +58,25 @@ enum BoardTextDetailData: Int {
     case title = 0
     case introduction
     case kindOfPerson
+}
+
+enum CategoryId: Int {
+    case dailySpot = 1
+    case traditionalCulture
+    case nature
+    case languageExchange
+    
+    func toString() -> String? {
+        switch self.rawValue {
+        case 1:
+            return "Daily Spot"
+        case 2:
+            return "Traditional Culture"
+        case 3:
+            return "Nature"
+        case 4:
+            return "Language exchange"
+        default: fatalError("Not exist categoryId")
+        }
+    }
 }

@@ -17,14 +17,6 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         }
     }
     
-    private var images: [UIImage] = [] {
-        didSet {
-            imagesCollectionView.reloadData()
-            createBoardReq.images = self.images
-            print("reload")
-        }
-    }
-    
     let stepHeaderView = StepHeaderView()
     
     private var memberNumberData: [Int] = []
@@ -81,25 +73,10 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         return toolBar
     }()
     
-    private let imagesCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
-        collectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
-//        collectionView.layer.borderColor = UIColor.systemGray.cgColor
-//        collectionView.layer.borderWidth = 1
-        collectionView.backgroundColor = .systemBackground
-        collectionView.showsHorizontalScrollIndicator = false
-        return collectionView
-    }()
-    
     private let selectDetailTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
-        tableView.isScrollEnabled = false
         tableView.sectionHeaderTopPadding = 20
         tableView.register(MyTextFieldTableViewCell.self, forCellReuseIdentifier: MyTextFieldTableViewCell.identifier)
         tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
@@ -123,15 +100,11 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         
         print(progressTime {
             view.addSubview(stepHeaderView)
-            view.addSubview(imagesCollectionView)
             view.addSubview(selectDetailTableView)
             view.addSubview(nextButton)
-            imagesCollectionView.delegate = self
-            imagesCollectionView.dataSource = self
             selectDetailTableView.delegate = self
             selectDetailTableView.dataSource = self
             numberPickerView.delegate = self
-            imagePicker.delegate = self
     //        dateTimePickerView.delegate = self
             for i in 3...30 { memberNumberData.append(i) }
             configureViewComponent()
@@ -146,13 +119,8 @@ class GatheringBoardSelectDetailViewController: UIViewController {
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(30)
         }
-        imagesCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(stepHeaderView.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(100)
-        }
         selectDetailTableView.snp.makeConstraints { make in
-            make.top.equalTo(imagesCollectionView.snp.bottom).offset(0)
+            make.top.equalTo(stepHeaderView.snp.bottom).offset(0)
 //            make.top.equalTo(stepHeaderView.snp.bottom).offset(0)
             make.leading.trailing.bottom.equalToSuperview()
         }
@@ -168,26 +136,19 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
 //        self.configureDatePicker()
         stepHeaderView.step = self.step
-        stepHeaderView.titleLabel.text = "Select detail"
+        stepHeaderView.titleLabel.text = "Setting"
     }
     
     private func formatDate(date: Date) -> String{
-//        print("raw date\(date.)")
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "YYYY.MM.dd HH:mm"
-//        return formatter.string(from: date)
-        
-        let formatterReq = DateFormatter()
-        formatterReq.dateFormat = "YYYY-MM-dd HH:mm:ss"
-        createBoardReq.date = formatterReq.string(from: date)
-        
         let formatter = DateFormatter()
+        formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+        createBoardReq.date = formatter.string(from: date)
         formatter.dateFormat = "E, MMM d, h:mm a"
         return formatter.string(from: date)
     }
     
     private func hasAllData() {
-        if self.createBoardReq.images?.count ?? 0 > 0 && self.createBoardReq.totalMember != nil && self.createBoardReq.date != nil && self.createBoardReq.latitude != nil && self.createBoardReq.longitute != nil && self.createBoardReq.city != nil && self.createBoardReq.address != nil {
+        if self.createBoardReq.totalMember != nil && self.createBoardReq.date != nil && self.createBoardReq.latitude != nil && self.createBoardReq.longitute != nil && self.createBoardReq.city != nil && self.createBoardReq.address != nil {
             self.nextButton.isEnabled = true
             self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
             print("Has all data")
@@ -200,7 +161,6 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
     @objc func dateDone(_ sender: UIButton) {
         date = formatDate(date: self.datePicker.date)
-        print(date)
         selectDetailTableView.reloadData()
     }
     
@@ -260,21 +220,18 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
             cell.configure(text: createBoardReq.totalMember == nil ? nil : "\(createBoardReq.totalMember!)", image: UIImage(named: "MemberNumber"), section: indexPath.section, kind: Kind.boardSelectDetail)
             case 1:
-//            cell.commonTextField.delegate = self
             cell.commonTextField.inputView = datePicker
             cell.commonTextField.inputAccessoryView = datePickerToolBar
             cell.configure(text: self.date, image: UIImage(named: "Date"), section: indexPath.section, kind: Kind.boardSelectDetail)
             case 2:
             cell.selectionStyle = .default
             cell.configure(text: createBoardReq.address, image: UIImage(named: "MeetUpPlace"), section: indexPath.section, kind: Kind.boardSelectDetail)
-//                cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
             case 3:
             cell.configure(text: createBoardReq.addressDetail, image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)
             default: fatalError("Out of break GBSDVC section")
         }
         cell.layoutIfNeeded()
         cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
-        print("cell update section = \(indexPath.section)")
         return cell
         
     }
@@ -283,7 +240,7 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
         
         guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: RequirementTableViewHeader.identifier) as? RequirementTableViewHeader else { return UITableViewHeaderFooterView() }
         
-        // userName, age, lanages, gender, nationality
+        // enum toString 요구
         switch section {
         case 0: headerView.configure(text: "The number of people in a gathering")
         case 1: headerView.configure(text: "Date & Time")
@@ -348,121 +305,6 @@ extension GatheringBoardSelectDetailViewController: UITableViewDelegate {
     }
 }
 
-extension GatheringBoardSelectDetailViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        collectionView.deselectItem(at: indexPath, animated: true)
-//        print("Tapped collectionview")
-////        let viewModel = viewModels[indexPath.row]
-////        delegate?.collectionTableViewTapIteom(with: viewModel)
-//    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.deselectItem(at: indexPath, animated: true)
-        print("Tapped gatherging board collectionview image")
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor.label
-        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-        
-        if indexPath.row < images.count {
-            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
-            alert.addAction(delete)
-            alert.addAction(cancel)
-        } else {
-            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary()}
-            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera()}
-            alert.addAction(library)
-            alert.addAction(camera)
-            alert.addAction(cancel)
-        }
-        DispatchQueue.main.async {
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-}
-
-extension GatheringBoardSelectDetailViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 10
-        return images.count < 5 ? (images.count + 1) : 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
-        print("ProfileImages indexpath update \(indexPath)")
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
-        DispatchQueue.global().async {
-            if indexPath.row < self.images.count {
-                DispatchQueue.main.async {
-                    cell.configure(image: self.images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    cell.configure(image: UIImage(named: "imageNULL"), sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
-                }
-            }
-        }
-        return cell
-    }
-}
-
-extension GatheringBoardSelectDetailViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    
-//        let size: CGFloat = imagesCollectionView.frame.size.width/2
-////        CGSize(width: size, height: size)
-//
-//        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
-        
-        return CGSize(width: collectionView.frame.height - 20, height: collectionView.frame.height - 20)
-    }
-}
-
-
-
-//extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
-//    func textFieldDidChangeSelection(_ textField: UITextField) {
-////        userProfile.userName = textField.text
-////        print("userName = \(userProfile.userName!)")
-//        switch textField.tag {
-//        case 0:
-//            userProfile.userName = textField.text
-//            print("userName = \(userProfile.userName!)")
-//        default: break
-//        }
-//    }
-//
-////    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-////        textField.resignFirstResponder()
-////        return true
-////    }
-//
-////    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-////        switch textField.tag {
-////        case 0: return true
-////        default: return false
-////        }
-////    }
-//
-////    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-////        switch textField.tag {
-////        case 0: return true
-////        default: return false
-////        }
-////    }
-////
-////    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-////        guard let text = textField.text else { return false }
-////
-////        // 최대 글자수 이상을 입력한 이후에는 중간에 다른 글자를 추가할 수 없게끔 작동
-////        if text.count >= maxLength && range.length == 0 && range.location < maxLength {
-////            return false
-////        }
-////
-////        return true
-////    }
-//}
-
 extension GatheringBoardSelectDetailViewController: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -525,39 +367,6 @@ extension GatheringBoardSelectDetailViewController: UIPickerViewDelegate {
     }
 }
 
-extension GatheringBoardSelectDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func openLibrary() {
-        imagePicker.sourceType = .photoLibrary
-        DispatchQueue.main.async {
-            self.present(self.imagePicker, animated: true, completion: nil)
-        }
-    }
-
-    func openCamera() {
-        imagePicker.sourceType = .camera
-        DispatchQueue.main.async {
-            self.present(self.imagePicker, animated: true, completion: nil)
-        }
-    }
-
-    func deleteImage(_ index: Int) {
-        images.remove(at: index)
-    }
-
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        // action 각기 다르게
-        if let img = info[UIImagePickerController.InfoKey.originalImage] {
-            print("image pick")
-            if let image = img as? UIImage {
-                images.append(image)
-            }
-        }
-        DispatchQueue.main.async {
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-}
-
 extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
 //    func textFieldDidChangeSelection(_ textField: UITextField) {
 ////        userProfile.userName = textField.text
@@ -573,10 +382,17 @@ extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
 //    func textFieldDidEndEditing(_ textField: UITextField) {
 //        <#code#>
 //    }
+//
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if textField.tag == 3 {
+            createBoardReq.addressDetail = textField.text
+        }
+    }
+//
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        createBoardReq.addressDetail = textField.text
+//        createBoardReq.addressDetail = textField.text
         return true
     }
     

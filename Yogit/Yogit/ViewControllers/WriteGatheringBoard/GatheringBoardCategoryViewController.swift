@@ -25,11 +25,15 @@ class GatheringBoardCategoryViewController: UIViewController {
         didSet {
             print("tapIndex \(tapIndex)")
             if tapIndex != nil {
-                nextButton.isEnabled = true
-                nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                DispatchQueue.main.async {
+                    self.nextButton.isEnabled = true
+                    self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                }
             } else {
-                nextButton.isEnabled = false
-                nextButton.backgroundColor = .placeholderText
+                DispatchQueue.main.async {
+                    self.nextButton.isEnabled = false
+                    self.nextButton.backgroundColor = .placeholderText
+                }
             }
         }
     }
@@ -89,7 +93,8 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     private func configureViewComponent() {
 //        self.navigationItem.title = "Category"
-        self.tabBarController?.tabBar.isHidden = true
+//        self.tabBarController?.tabBar.isHidden = true
+
         view.backgroundColor = .systemBackground
         stepHeaderView.step = self.step
         stepHeaderView.titleLabel.text = "Category"
@@ -99,19 +104,16 @@ class GatheringBoardCategoryViewController: UIViewController {
         // 3 state toggle 값
         tapIndex == sender.view?.tag ? (tapIndex = nil) : (tapIndex = sender.view?.tag)
         categoryTableView.reloadData()
-        createBoardReq.categoryId = sender.view?.tag
+        createBoardReq.categoryId = (sender.view?.tag ?? 0) + 1
         print("Set category createBoardReq.categoryId \(createBoardReq.categoryId)")
     }
     
     @objc func nextButtonTapped(_ sender: UIButton) {
-//        print(progressTime {
-//            print(chhh_isPrime(2147483647))
-//        })
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             let GBSDVC = GatheringBoardSelectDetailViewController()
             GBSDVC.createBoardReq = self.createBoardReq
             self.navigationController?.pushViewController(GBSDVC, animated: true)
-        })
+        }
     }
     
     

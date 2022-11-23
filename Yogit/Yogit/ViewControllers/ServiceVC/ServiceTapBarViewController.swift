@@ -17,6 +17,7 @@ class ServiceTapBarViewController: UITabBarController {
 
     private func configureTapBarVC() {
         self.view.backgroundColor = .systemBackground
+        self.hidesBottomBarWhenPushed = true
         self.tabBar.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
     }
     

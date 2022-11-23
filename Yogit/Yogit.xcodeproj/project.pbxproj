@@ -19,6 +19,11 @@
 		79088B7E28E4A81A008054F6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B7D28E4A81A008054F6 /* Constants.swift */; };
 		79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B8128E4C2FE008054F6 /* AuthRouter.swift */; };
 		79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B8328E5683F008054F6 /* KeyChainManager.swift */; };
+		791C1E98292D3C9200623936 /* BoardMainCollectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1E97292D3C9200623936 /* BoardMainCollectionTableViewCell.swift */; };
+		791C1E9A292D3CB000623936 /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1E99292D3CB000623936 /* ThumbnailCollectionViewCell.swift */; };
+		791C1E9E292E5F8E00623936 /* APIUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1E9D292E5F8E00623936 /* APIUser.swift */; };
+		791C1EA1292E600B00623936 /* APIGatheringBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EA0292E600B00623936 /* APIGatheringBoard.swift */; };
+		791C1EA3292E686900623936 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EA2292E686900623936 /* APIConstants.swift */; };
 		794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C728EBD504007C3C89 /* ImageViewController.swift */; };
 		794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */; };
 		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
@@ -36,7 +41,6 @@
 		7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A04529217ABA00D8E6CF /* ResultsViewController.swift */; };
 		7951A0482921862A00D8E6CF /* GooglePlacesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */; };
 		7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */; };
-		7951A0892922404B00D8E6CF /* MapTestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0882922404B00D8E6CF /* MapTestTableViewCell.swift */; };
 		7951A08D2923744800D8E6CF /* MyTextViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */; };
 		7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */; };
 		7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */; };
@@ -61,8 +65,6 @@
 		79A8F6A728CDC95000FEBE90 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A628CDC95000FEBE90 /* User.swift */; };
 		79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */; };
 		79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AA28CDD65800FEBE90 /* SetUpProfileViewController.swift */; };
-		79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */; };
-		79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */; };
 		79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */; };
 		79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228B28FD0ECB007D59B8 /* Logger.swift */; };
 		79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */; };
@@ -70,8 +72,6 @@
 		79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */; };
 		79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D529111100007D59B8 /* LanguagesViewController.swift */; };
 		79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022D72913C0F5007D59B8 /* NationalityViewController.swift */; };
-		79F02300291558EC007D59B8 /* testViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F022FF291558EC007D59B8 /* testViewController.swift */; };
-		79F023042919394A007D59B8 /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F023032919394A007D59B8 /* TextFieldViewController.swift */; };
 		79F0230B291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */; };
 		79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0230D291CDD82007D59B8 /* StepViewHeader.swift */; };
 		B21896BB7E58864D8E368584 /* Pods_YogitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF43C87CD39B98E37C5472DC /* Pods_YogitTests.framework */; };
@@ -107,6 +107,11 @@
 		79088B7D28E4A81A008054F6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		79088B8128E4C2FE008054F6 /* AuthRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
 		79088B8328E5683F008054F6 /* KeyChainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainManager.swift; sourceTree = "<group>"; };
+		791C1E97292D3C9200623936 /* BoardMainCollectionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardMainCollectionTableViewCell.swift; sourceTree = "<group>"; };
+		791C1E99292D3CB000623936 /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
+		791C1E9D292E5F8E00623936 /* APIUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIUser.swift; sourceTree = "<group>"; };
+		791C1EA0292E600B00623936 /* APIGatheringBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIGatheringBoard.swift; sourceTree = "<group>"; };
+		791C1EA2292E686900623936 /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		794FF7C728EBD504007C3C89 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewTeestViewController.swift; sourceTree = "<group>"; };
 		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
@@ -122,7 +127,6 @@
 		7951A04529217ABA00D8E6CF /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
 		7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesManager.swift; sourceTree = "<group>"; };
 		7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapLocalSearchViewController.swift; sourceTree = "<group>"; };
-		7951A0882922404B00D8E6CF /* MapTestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTestTableViewCell.swift; sourceTree = "<group>"; };
 		7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTextViewTableViewCell.swift; sourceTree = "<group>"; };
 		7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLocationOptionViewController.swift; sourceTree = "<group>"; };
 		7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchProfileViewController.swift; sourceTree = "<group>"; };
@@ -152,8 +156,6 @@
 		79A8F6A628CDC95000FEBE90 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCode.swift; sourceTree = "<group>"; };
 		79A8F6AA28CDD65800FEBE90 /* SetUpProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUpProfileViewController.swift; sourceTree = "<group>"; };
-		79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
-		79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailTableViewCell.swift; sourceTree = "<group>"; };
 		79F0227228F7E61B007D59B8 /* ProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImagesViewController.swift; sourceTree = "<group>"; };
 		79F0228B28FD0ECB007D59B8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiStatusLogger.swift; sourceTree = "<group>"; };
@@ -161,8 +163,6 @@
 		79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesTableViewCell.swift; sourceTree = "<group>"; };
 		79F022D529111100007D59B8 /* LanguagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagesViewController.swift; sourceTree = "<group>"; };
 		79F022D72913C0F5007D59B8 /* NationalityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalityViewController.swift; sourceTree = "<group>"; };
-		79F022FF291558EC007D59B8 /* testViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = testViewController.swift; sourceTree = "<group>"; };
-		79F023032919394A007D59B8 /* TextFieldViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
 		79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryViewController.swift; sourceTree = "<group>"; };
 		79F0230D291CDD82007D59B8 /* StepViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepViewHeader.swift; sourceTree = "<group>"; };
 		7C23BBF16282160894DB4A74 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -252,6 +252,26 @@
 			path = ViewCells;
 			sourceTree = "<group>";
 		};
+		791C1E96292D3C5800623936 /* SearchGatheringBoard */ = {
+			isa = PBXGroup;
+			children = (
+				79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */,
+				791C1E97292D3C9200623936 /* BoardMainCollectionTableViewCell.swift */,
+				791C1E99292D3CB000623936 /* ThumbnailCollectionViewCell.swift */,
+			);
+			path = SearchGatheringBoard;
+			sourceTree = "<group>";
+		};
+		791C1E9F292E5FD800623936 /* APIModel */ = {
+			isa = PBXGroup;
+			children = (
+				791C1EA2292E686900623936 /* APIConstants.swift */,
+				791C1E9D292E5F8E00623936 /* APIUser.swift */,
+				791C1EA0292E600B00623936 /* APIGatheringBoard.swift */,
+			);
+			path = APIModel;
+			sourceTree = "<group>";
+		};
 		79519FF8291EA92F00D8E6CF /* WriteGatheringBoard */ = {
 			isa = PBXGroup;
 			children = (
@@ -259,10 +279,9 @@
 				7951A08A29226BF200D8E6CF /* GooglePlaceApi */,
 				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
 				79519FF2291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift */,
-				7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */,
 				79519FF4291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift */,
 				79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */,
-				7951A0882922404B00D8E6CF /* MapTestTableViewCell.swift */,
+				7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */,
 			);
 			path = WriteGatheringBoard;
 			sourceTree = "<group>";
@@ -289,7 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */,
-				79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */,
+				791C1E96292D3C5800623936 /* SearchGatheringBoard */,
 				7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */,
 			);
 			path = ServiceVC;
@@ -386,12 +405,8 @@
 				79519FF8291EA92F00D8E6CF /* WriteGatheringBoard */,
 				79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */,
 				79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */,
-				79A8F6AC28CEFA0E00FEBE90 /* UserDetailViewController.swift */,
-				79A8F6AE28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift */,
 				794FF7C728EBD504007C3C89 /* ImageViewController.swift */,
 				794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */,
-				79F022FF291558EC007D59B8 /* testViewController.swift */,
-				79F023032919394A007D59B8 /* TextFieldViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -409,10 +424,11 @@
 		79A8F6E928D1F16000FEBE90 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				791C1E9F292E5FD800623936 /* APIModel */,
 				79088B8128E4C2FE008054F6 /* AuthRouter.swift */,
 				79088B7428E48D24008054F6 /* AlamofireManager.swift */,
-				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
 				79F0228B28FD0ECB007D59B8 /* Logger.swift */,
+				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
 				79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */,
 				79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */,
 			);
@@ -680,24 +696,24 @@
 				7951A08D2923744800D8E6CF /* MyTextViewTableViewCell.swift in Sources */,
 				7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */,
 				7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */,
+				791C1E9E292E5F8E00623936 /* APIUser.swift in Sources */,
+				791C1EA3292E686900623936 /* APIConstants.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
 				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,
-				79A8F6AF28CF1FFF00FEBE90 /* UserDetailTableViewCell.swift in Sources */,
 				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
 				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
 				79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */,
 				79F0227328F7E61B007D59B8 /* ProfileImagesViewController.swift in Sources */,
+				791C1E98292D3C9200623936 /* BoardMainCollectionTableViewCell.swift in Sources */,
 				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
-				79F023042919394A007D59B8 /* TextFieldViewController.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
 				7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */,
 				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
 				79519FF1291E95E600D8E6CF /* Image.swift in Sources */,
 				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
 				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
-				7951A0892922404B00D8E6CF /* MapTestTableViewCell.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
 				79088B6828DE1A66008054F6 /* MyTextFieldTableViewCell.swift in Sources */,
 				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
@@ -716,7 +732,6 @@
 				795D9BC528F1D4E300228E34 /* Color.swift in Sources */,
 				794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
-				79F02300291558EC007D59B8 /* testViewController.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79519FF3291EA84A00D8E6CF /* GatheringBoardSelectDetailViewController.swift in Sources */,
 				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
@@ -724,10 +739,11 @@
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetUpProfileViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */,
+				791C1EA1292E600B00623936 /* APIGatheringBoard.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* MyImagesCollectionViewCell.swift in Sources */,
 				7951A0082921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
-				79A8F6AD28CEFA0E00FEBE90 /* UserDetailViewController.swift in Sources */,
+				791C1E9A292D3CB000623936 /* ThumbnailCollectionViewCell.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
 				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
 				79519FF5291EA87B00D8E6CF /* GatheringBoardTextDetailViewController.swift in Sources */,

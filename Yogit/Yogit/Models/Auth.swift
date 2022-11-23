@@ -32,23 +32,6 @@ import Foundation
 //]
 
 // request to server: userName, userEmail, userIdentifier
-struct Account: Codable {
-    let userName: String
-    let userEmail: String
-    let userIdentifier: String
-    let userId: Int
-    var hasRequirementInfo: Bool = false
-}
-
-struct UserItem: Codable {
-    let accunt: Account
-    let service: String
-    let access_token: String
-    let expires_in: Int64
-    let id_token: String
-    let refresh_token: String
-    let token_type: String
-}
 
 //access_token: "a66b1154c60e84f239cbdc174fc022616.0.sryrq.Ng_12fnDPcnHmB-XH_76Bg",
 //expires_in: 3600,
