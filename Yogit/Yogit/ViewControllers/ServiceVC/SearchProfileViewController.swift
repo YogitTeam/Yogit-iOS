@@ -11,7 +11,19 @@ class SearchProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        do {
+            try KeychainManager.deleteUserItem()
+        } catch {
+            print("userItem \(error.localizedDescription)")
+        }
+        guard let userItem = try? KeychainManager.getUserItem() else {
+            print("loginview user item get nil ")
+            return
+        }
+        print("Get in loginview \(userItem)")
+        print(userItem.userId)
+        print(userItem.account.user.email)
+        print(userItem.refresh_token)
         // Do any additional setup after loading the view.
     }
     

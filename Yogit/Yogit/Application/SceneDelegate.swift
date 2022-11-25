@@ -16,72 +16,76 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-//        guard let _ = (scene as? UIWindowScene) else { return }
+        //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
-
+        
         let setUpVC = SetUpProfileViewController()
         let rootVC = UINavigationController(rootViewController: setUpVC)
         rootVC.navigationBar.tintColor = UIColor.label
         rootVC.navigationBar.topItem?.backButtonTitle = ""
         rootVC.navigationBar.topItem?.titleView?.tintColor = .green
-
         
-//        let rootVC = ServiceTapBarViewController()
         self.window = UIWindow(windowScene: scene)
         self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()
         
-//        SignInManager .checkUserAuth { (AuthState) in
+        
+        //        let rootVC = LoginViewController()
+        //        self.window = UIWindow(windowScene: scene)
+        //        self.window?.rootViewController = rootVC
+        //        self.window?.makeKeyAndVisible()
+        
+        // loginView에서 처음 token으로 서버 넘겨줄때, 필수 데이터 상태 받아옴 (init nil)
+        
+        // keychain token 저장시, 앱삭제 후에도 바로 로그인 가능하기때문에
+        // 필수데이터 api 요청을 하여 값 있는지 확인해야한다.
+        // 아니면 필수 데이터 입력 되었는지도 keychain에 저장 (이걸로 간다)
+        
+        // 필수 데이터 있으면 homeView, 없으면 loginViewController로 이동
+        
+        //            RequirementInfoManager.checkIsFullRequirementInfo { (RequirementInfoState) in
+        //                switch RequirementInfoState {
+        //                case .full:
+        //                    rootViewState = .homeView   // home view
+        //                    break
+        //                case .notFull:
+        //                    rootViewState = .setUpProfileView   // profile view
+        //                    break
+        //                }
+        //            }
+        
+//        SignInManager.checkUserAuth { (AuthState) in
 //            var rootViewState = RootViewState.loginView
 //            switch AuthState {
-//            case .undefined, .signedOut:
-//                // no has authorization
-//                break
-//            case .signedIn:
-//                // loginView에서 처음 token으로 서버 넘겨줄때, 필수 데이터 상태 받아옴 (init nil)
-//
-//                // keychain token 저장시, 앱삭제 후에도 바로 로그인 가능하기때문에
-//                // 필수데이터 api 요청을 하여 값 있는지 확인해야한다.
-//                // 아니면 필수 데이터 입력 되었는지도 keychain에 저장 (이걸로 간다)
-//
-//                // 필수 데이터 있으면 homeView, 없으면 loginViewController로 이동
-//                RequirementInfoManager.checkIsFullRequirementInfo { (RequirementInfoState) in
-//                    switch RequirementInfoState {
-//                    case .full:
-//                        rootViewState = .homeView   // home view
+//            case .undefine, .signOut: break
+//            case .signInFull: rootViewState = .homeView
+//            case .signInNotFull: rootViewState = .setUpProfileView
+//                
+//                DispatchQueue.main.async {
+//                    let rootVC: UIViewController
+//                    switch rootViewState {
+//                    case .loginView:
+//                        let loginVC = LoginViewController()
+//                        rootVC = UINavigationController(rootViewController: loginVC)
 //                        break
-//                    case .notFull:
-//                        rootViewState = .setUpProfileView   // profile view
+//                    case .homeView: // 필수 데이터 있으면
+//                        let homeVC = SearchGatheringBoardController()
+//                        let tabBarVC = UITabBarController()
+//                        tabBarVC.viewControllers = [homeVC]
+//                        rootVC = tabBarVC
+//                        break
+//                    case .setUpProfileView:
+//                        let setUpProfileVC = SetUpProfileViewController()
+//                        rootVC = UINavigationController(rootViewController: setUpProfileVC)
 //                        break
 //                    }
+//                    self.window = UIWindow(windowScene: scene)
+//                    self.window?.rootViewController = rootVC
+//                    self.window?.makeKeyAndVisible()
 //                }
-//                break
 //            }
-//
-//            DispatchQueue.main.async {
-//                let rootVC: UIViewController
-//                switch rootViewState {
-//                case .loginView:
-//                    let loginVC = LoginViewController()
-//                    rootVC = UINavigationController(rootViewController: loginVC)
-//                    break
-//                case .homeView: // 필수 데이터 있으면
-//                    let homeVC = HomeViewController()
-//                    let tabBarVC = UITabBarController()
-//                    tabBarVC.viewControllers = [homeVC]
-//                    rootVC = tabBarVC
-//                    break
-//                case .setUpProfileView:
-//                    let setUpProfileVC = SetUpProfileTableViewController()
-//                    rootVC = UINavigationController(rootViewController: setUpProfileVC)
-//                    break
-//                }
-//                self.window = UIWindow(windowScene: scene)
-//                self.window?.rootViewController = rootVC
-//                self.window?.makeKeyAndVisible()
-//            }
+//            
 //        }
-        
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

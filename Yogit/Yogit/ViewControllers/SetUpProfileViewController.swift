@@ -5,39 +5,20 @@
 //  Created by Junseo Park on 2022/09/11.
 //
 
-// 셀업데이트 하면서 모든값 저장
-// 피커뷰 donpress 누르면 값 저장 후 reload
-// 피커뷰 나눠야댐 >> 누른 textfield 에따라 피커뷰 데이터 종류 구분
+// pickerview >> keyboard constraint error
 
 import UIKit
 import Alamofire
 
-//class UserProfile: Codable {
-//    var gender: String?
-//    var languageNames: [String]?
-//    var languageLevels: [String]?
-//    var nationality: String?
-//    var userAge: Int?
-//    var userId: Int64?
-//    var userName: String?
-//}
-
 class SetUpProfileViewController: UIViewController {
-//    var userProfile = UserProfile()
     private var profileImage: UIImage? = nil
     
-//    public var userName: String? = nil
-//    private var userAge: Int? = nil
-//    private var languageNames: [String] = []
-//    private var languageLevels: [String] = []
-//    private var gender: String?
-//    private var nationality: String?
+
     private var userProfile = UserProfile() {
         didSet {
             print(userProfile)
         }
     }
-//    private var userProfile = UserProfile(from: nil)
     
     private let genderData = ["Prefer not to say", "Male", "Female"]
     
@@ -97,14 +78,8 @@ class SetUpProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-//        label.textColor = .placeholderText
         label.text = "Select photos"
-        
-        // Label frame size to fit as text of label
-//        label.sizeToFit()
         label.numberOfLines = 1
-//        label.adjustsFontSizeToFitWidth =true
-
         return label
     }()
     
@@ -222,6 +197,29 @@ class SetUpProfileViewController: UIViewController {
         
     }
     
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowHandle(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHideHandle), name: UIResponder.keyboardWillHideNotification, object: nil)
+//    }
+//    
+//    @objc func keyboardWillShowHandle(notification: NSNotification){
+//            print("HomeVC - keyboardWillShowHandle() called")
+//            // 키보드 사이즈 가져오기
+//            
+//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+//            
+//            print("keyboardSize.height: \(keyboardSize.height)")
+//               
+//        }
+//
+//    }
+//        
+//    @objc func keyboardWillHideHandle(){
+//        print("HomeVC - keyboardWillHideHandle() called")
+//        self.view.frame.origin.y = 0
+//    }
+//    
     private func configureViewComponent() {
         self.navigationItem.title = "Profile"
         self.navigationItem.rightBarButtonItem = self.rightButton
@@ -348,6 +346,8 @@ extension SetUpProfileViewController: UITableViewDataSource {
                 return 0
         }
     }
+    
+    // 
     
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -505,13 +505,15 @@ extension SetUpProfileViewController: UITextFieldDelegate {
         return true
     }
     
-//    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
 //        switch textField.tag {
-//        case 0: return true
-//        default: return false
+//        case 0:
+//
+//        default: break
 //        }
 //    }
-
+    
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         switch textField.tag {
         case 0: return true
@@ -548,7 +550,6 @@ extension SetUpProfileViewController: LanguageProtocol {
         userProfile.languageNames?.append(language)
         userProfile.languageLevels?.append(level)
         infoTableView.reloadData()
-        infoTableView.constraints
         print(userProfile.languageNames!, userProfile.languageLevels!)
     }
 }
@@ -581,7 +582,6 @@ extension SetUpProfileViewController: UIPickerViewDataSource {
 // textfield 터치시 어디에서 터치 했는지 알아야함
 // 
 extension SetUpProfileViewController: UIPickerViewDelegate {
-    
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView.tag {
         case ProfileSectionData.age.rawValue: userProfile.userAge = self.ageData[row]

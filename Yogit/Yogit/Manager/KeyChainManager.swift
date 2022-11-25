@@ -1,89 +1,123 @@
-////
-////  KeyChainManager.swift
-////  Yogit
-////
-////  Created by Junseo Park on 2022/09/29.
-////
 //
-//import Foundation
+//  KeyChainManager.swift
+//  Yogit
 //
-////struct Account {
-////    let userName: String?
-////    let userEmail: String?
-////    let userIdentifier: String
-////    let userId: Int
-////}
-////
-////struct UserItem {
-////    let accunt: Account
-////    var service: String
-////    let token: String
-////}
+//  Created by Junseo Park on 2022/09/29.
 //
-//final class KeychainManager {
-//    static let shared = KeychainManager()
-//    
-//    enum KeychainError: Error {
-//        case duplicateEntry // keychain data dulicated
-//        case unexpectedTokenData // unexpected token data type
-//        case unhandledError(status: OSStatus) // unknowed: throw OS status
-//    }
-//     
-//    // 저장
-//    static func saveUserItem(userItem: UserItem) throws {
-//        // class, service, account (user email & full Name), token (refesh token)
-//        let service = userItem.service
-//        let account = userItem.accunt
-//        let token = userItem.refresh_token.data(using: String.Encoding.utf8)!
-//        
-//        let query: [String: Any] = [
-//            kSecClass as String: kSecClassGenericPassword,
-//            kSecAttrService as String: service,
-//            kSecAttrAccount as String: account,
-//            kSecValueData as String: token
-//        ]
-//        
-//        let status = SecItemAdd(query as CFDictionary, nil)
-//        
-//        print("Read status \(status)")
-//        
-//        guard status != errSecDuplicateItem else { throw KeychainError.duplicateEntry }
-//        
-//        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-//    }
-//    
-//    // 조회
-//    static func getUserItem() throws -> UserItem? {
-//        // service, account, return-data, class, matchlimit
-//        
-//        let query: [String: Any] = [
-//            kSecClass as String: kSecClassGenericPassword,
-//            kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
-//            kSecReturnAttributes as String: true,
-//            kSecReturnData as String: true
-//        ]
-//        
-//        var item: AnyObject?
-//        let status = SecItemCopyMatching(query as CFDictionary, &item)
-//        
-//        guard status != errSecItemNotFound else { return nil }
-//        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-//        
-//        print("Read status \(status)")
-//        
-//        guard let existingItem = item as? [String : Any],
-//            let tokenData = existingItem[kSecValueData as String] as? Data,
-//            let token = String(data: tokenData, encoding: String.Encoding.utf8),
-//            let account = existingItem[kSecAttrAccount as String] as? Account,
-//            let service = existingItem[kSecAttrService as String] as? String
-//        else {
-//            throw KeychainError.unexpectedTokenData
-//        }
-//        
-//        // 변경 요구 데이터 변경됨
-//        let userItem = UserItem(accunt: account, service: service, token: token)
-//        
-//        return userItem
-//    }
-//     
-//}
+
+import Foundation
+
+final class KeychainManager {
+    static let shared = KeychainManager()
+    
+    enum KeychainError: Error {
+        case duplicateEntry // keychain data dulicated
+        case unexpectedTokenData // unexpected token data type
+        case unhandledError(status: OSStatus) // unknowed: throw OS status
+    }
+    
+    static func saveUserItem(userItem: UserItem) throws -> Bool {
+        guard let data = try? JSONEncoder().encode(userItem) else { return false }
+
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: userItem.userType, // service name
+            kSecAttrAccount as String: userItem.account.user.email, // user email (private key)
+            kSecValueData as String: data
+        ]
+        
+        print("keychain save query \(query)")
+        
+        let status = SecItemAdd(query as CFDictionary, nil)
+        
+        print("keychain saved")
+        print("Read status \(status)")
+        
+        guard status != errSecDuplicateItem else { throw KeychainError.duplicateEntry }
+        
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        
+        return true
+    }
+    
+    // 조회
+    static func getUserItem() throws -> UserItem? {
+        // service, account, return-data, class, matchlimit
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
+            kSecReturnAttributes as String: true,
+            kSecReturnData as String: true
+        ]
+        
+        var item: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &item) // get
+        
+        print("get Item \(String(describing: item))")
+        print("get query \(query)")
+        
+        guard status != errSecItemNotFound else { return nil }
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        
+        print("Read status \(status)")
+
+        guard let existingItem = item as? [String : Any],
+            let data = existingItem[kSecValueData as String] as? Data,
+            let userItem = try? JSONDecoder().decode(UserItem.self, from: data)
+//            let userType = existingItem[kSecAttrService as String] as? String,
+//            let userEmail =  existingItem[kSecAttrAccount as String] as? String
+        else {
+            throw KeychainError.unexpectedTokenData
+        }
+        
+        print(userItem)
+        
+        return userItem
+    }
+    
+    // 업데이트
+    static func updateUserItem(userItem: UserItem) throws {
+        guard let data = try? JSONEncoder().encode(userItem) else { return }
+        print("keychain save data \(data)")
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: userItem.userType,
+            kSecAttrAccount as String: userItem.account.user.email,
+            kSecValueData as String: data
+        ]
+        
+        print("save userItem \(userItem)")
+        print("save query \(query)")
+        
+       // new query
+        let item: [String: Any] = [
+            kSecAttrService as String: userItem.userType,
+            kSecAttrAccount as String: userItem.account.user.email,
+            kSecValueData as String: data
+        ]
+        
+        let status = SecItemUpdate(query as CFDictionary, item as CFDictionary) // save
+        
+        print("Read status \(status)")
+        
+        guard status != errSecItemNotFound else { return }
+        
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        
+        print("keychain update")
+    }
+    
+    static func deleteUserItem() throws {
+        let query: NSDictionary = [
+                kSecClass as String: kSecClassGenericPassword,
+//                kSecAttrService as String: userType // service name
+            ]
+        let status = SecItemDelete(query)
+        
+        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        
+//        assert(status == noErr, "failed to delete the value, status code = \(status)")
+    }
+     
+}

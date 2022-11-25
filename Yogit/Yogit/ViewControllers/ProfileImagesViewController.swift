@@ -124,6 +124,7 @@ class ProfileImagesViewController: UIViewController {
         }
     }
     
+    
     private func configureViewComponent() {
         self.navigationItem.title = "Profile Photos"
         view.backgroundColor = .systemBackground
@@ -175,28 +176,32 @@ class ProfileImagesViewController: UIViewController {
             print(image)
         }
         // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
-        AF.upload(multipartFormData: { multipartFormData in
-            for (key, value) in parameters {
-//                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
-                multipartFormData.append(Data(String(value).utf8), withName: key)
-            }
-            multipartFormData.append(profileImage.toFile(format: .jpeg(0.5))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
-            for image in self.images {
-                multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-            }
-        }, to: API.BASE_URL + "users/image", method: .post)
-        .validate(statusCode: 200..<500)
-        .responseData { response in
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                self.delegate?.imagesSend(profileImage: self.images.first)
-                DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            case let .failure(error):
-                print(error)
-            }
+//        AF.upload(multipartFormData: { multipartFormData in
+//            for (key, value) in parameters {
+////                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
+//                multipartFormData.append(Data(String(value).utf8), withName: key)
+//            }
+//            multipartFormData.append(profileImage.toFile(format: .jpeg(0.5))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
+//            for image in self.images {
+//                multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+//            }
+//        }, to: API.BASE_URL + "users/image", method: .post)
+//        .validate(statusCode: 200..<500)
+//        .responseData { response in
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                self.delegate?.imagesSend(profileImage: self.images.first)
+//                DispatchQueue.main.async {
+//                    self.navigationController?.popViewController(animated: true)
+//                }
+//            case let .failure(error):
+//                print(error)
+//            }
+//        }
+        self.delegate?.imagesSend(profileImage: self.images.first)
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
         }
     }
 

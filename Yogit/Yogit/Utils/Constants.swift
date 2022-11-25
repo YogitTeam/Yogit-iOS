@@ -29,8 +29,8 @@ enum API {
 }
 
 enum Service {
-    static let APPLE_SIGNIN: String = "apple"
-    static let FACEBOOK_SIGNIN: String = "facebook"
+    static let APPLE_SIGNIN: String = "APPLE"
+    static let FACEBOOK_SIGNIN: String = "FACEBOOK"
 }
 
 enum Kind: Int {
