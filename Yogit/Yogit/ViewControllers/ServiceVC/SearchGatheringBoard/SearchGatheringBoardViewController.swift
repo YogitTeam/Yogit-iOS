@@ -24,6 +24,8 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         return button
     }()
     
+    private let refreshControl = UIRefreshControl()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         
@@ -34,19 +36,44 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         return tableView
     }()
     
-    private let viewModels: [BoardMainCollectionTableViewCellViewModel] = [
-        BoardMainCollectionTableViewCellViewModel(
-            viewModels: [
-                ThumbnailCollectionCellViewModel(name: "Red", backgroundColor: .systemRed),
-                ThumbnailCollectionCellViewModel(name: "Orange", backgroundColor: .systemOrange),
-                ThumbnailCollectionCellViewModel(name: "Yellow", backgroundColor: .systemYellow),
-                ThumbnailCollectionCellViewModel(name: "Green", backgroundColor: .systemGreen),
-                ThumbnailCollectionCellViewModel(name: "Blue", backgroundColor: .systemBlue),
-                ThumbnailCollectionCellViewModel(name: "Purple", backgroundColor: .systemPurple),
-            ]
-        ),
-        
-    ]
+    // 0, 1, 2, 3
+//    private let viewModels: [BoardMainCollectionTableViewCellViewModel] = []
+    
+//    [
+//        BoardMainCollectionTableViewCellViewModel(
+//            viewModels: [
+//                ThumbnailCollectionCellViewModel(name: "Red", backgroundColor: .systemRed),
+//                ThumbnailCollectionCellViewModel(name: "Orange", backgroundColor: .systemOrange),
+//                ThumbnailCollectionCellViewModel(name: "Yellow", backgroundColor: .systemYellow),
+//                ThumbnailCollectionCellViewModel(name: "Green", backgroundColor: .systemGreen),
+//                ThumbnailCollectionCellViewModel(name: "Blue", backgroundColor: .systemBlue),
+//                ThumbnailCollectionCellViewModel(name: "Purple", backgroundColor: .systemPurple),
+//            ]
+//        ),
+//        BoardMainCollectionTableViewCellViewModel(
+//            viewModels: [
+//                ThumbnailCollectionCellViewModel(name: "Red", backgroundColor: .systemRed),
+//                ThumbnailCollectionCellViewModel(name: "Orange", backgroundColor: .systemOrange),
+//                ThumbnailCollectionCellViewModel(name: "Yellow", backgroundColor: .systemYellow),
+//                ThumbnailCollectionCellViewModel(name: "Green", backgroundColor: .systemGreen),
+//                ThumbnailCollectionCellViewModel(name: "Blue", backgroundColor: .systemBlue),
+//                ThumbnailCollectionCellViewModel(name: "Purple", backgroundColor: .systemPurple),
+//            ]
+//        ),
+//        BoardMainCollectionTableViewCellViewModel(
+//            viewModels: [
+//                ThumbnailCollectionCellViewModel(name: "Red", backgroundColor: .systemRed),
+//                ThumbnailCollectionCellViewModel(name: "Orange", backgroundColor: .systemOrange),
+//                ThumbnailCollectionCellViewModel(name: "Yellow", backgroundColor: .systemYellow),
+//                ThumbnailCollectionCellViewModel(name: "Green", backgroundColor: .systemGreen),
+//                ThumbnailCollectionCellViewModel(name: "Blue", backgroundColor: .systemBlue),
+//                ThumbnailCollectionCellViewModel(name: "Purple", backgroundColor: .systemPurple),
+//            ]
+//        )
+//
+//    ]
+    
+    private var boardAllData: [[Board]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +82,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         tableView.delegate = self
         tableView.dataSource = self
         configureViewComponent()
+        
         getBoardThumbnail()
         // Do any additional setup after loading the view.
     }
@@ -68,13 +96,24 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         }
     }
     
+//    override func viewDidAppear(_ animated: Bool) {
+//        print(self.view.window?.rootViewController)
+//    }
+//
     private func configureViewComponent() {
         view.backgroundColor = .systemBackground
-        
+        self.tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+    }
+    
+    @objc func refresh(){
+        self.boardAllData.removeAll()
+        self.tableView.reloadData() // Reload하여 뷰를 비워줍니다.
     }
    
     func getBoardThumbnail() {
-        let getAllBoardsReq = GetAllBoardsReq(cursor: 1, userId: 1)
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        let getAllBoardsReq = GetAllBoardsReq(cursor: 0, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AF.request(API.BASE_URL + "boards/get",
                    method: .post,
                    parameters: getAllBoardsReq,
@@ -83,11 +122,17 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         .response { response in // reponseData
             switch response.result {
             case .success:
+                debugPrint(response)
                 if let data = response.data {
                     do{
-                        debugPrint(response)
-                    } catch {
-                        print(error)
+                        let decodedData = try JSONDecoder().decode(APIBoardResponse.self, from: data)
+                        print(decodedData)
+                        self.boardAllData = decodedData.data
+                        print(self.boardAllData)
+                        self.tableView.reloadData()
+                    }
+                    catch{
+                        print(error.localizedDescription)
                     }
                 }
             case .failure(let error):
@@ -99,22 +144,30 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     
     // Reporting the number of sections and rows in the table.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModels.count
+//        return viewModels.count
+        return boardAllData.count
     }
     
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = viewModels[indexPath.row]
+//        let viewModel = viewModels[indexPath.row]
+        let boardsInCategory = boardAllData[indexPath.row]
         guard  let cell = tableView.dequeueReusableCell(withIdentifier: BoardMainCollectionTableViewCell.identifier, for: indexPath) as? BoardMainCollectionTableViewCell else {
             fatalError()
         }
         cell.delegate = self
-        cell.configure(with: viewModel)
+        
+//        cell.configure(with: viewModel)
+        cell.configure(with: boardsInCategory)
+        
+        let categoryId = CategoryId(rawValue: indexPath.row + 1)
+        print("categoryId, categoryString \(categoryId) \(categoryId?.toString())")
+        cell.headerLabel.text = categoryId?.toString()
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return view.frame.size.width/2
+        return view.frame.size.width/1.2
      }
     
     @objc func boardButtonTapped(_ sender: UIButton) {
@@ -122,13 +175,42 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //        let objCreateEventVC = CreateEventVC()
 //        objCreateEventVC.hidesBottomBarWhenPushed = true
 //        self.navigationController?.pushViewController(objCreateEventVC, animated: false)
-        DispatchQueue.main.async(execute: {
+        print("boardButtonTapped")
+//        DispatchQueue.main.async(execute: {
+//            let GBCVC = GatheringBoardCategoryViewController()
+////            GBCVC.hidesBottomBarWhenPushed = true
+//            self.navigationController?.pushViewController(GBCVC, animated: true)
+//        })
+        DispatchQueue.main.async{
             let GBCVC = GatheringBoardCategoryViewController()
-            GBCVC.hidesBottomBarWhenPushed = true
+//            GBCVC.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(GBCVC, animated: true)
-        })
+        }
     }
     
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if (refreshControl.isRefreshing) {
+            self.refreshControl.endRefreshing()
+            getBoardThumbnail()
+//            if(self.searchFlag == 0){
+//                self.currentPage = 1
+//                fetchData(page: self.currentPage)
+//            }
+//            else{
+//                self.searchCurrentPage = 1
+//                fetchSearchedData(category: self.category, condition: self.condition, page: self.searchCurrentPage)
+//            }
+            
+        }
+    }
+    
+    
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        print(section)
+//        let categoryId = CategoryId(rawValue: section + 1)
+//        return categoryId?.toString()
+//    }
+   
 
     /*
     // MARK: - Navigation
@@ -142,10 +224,21 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 
 }
 
+//extension SearchGatheringBoardController: BoardMainCollectionTableViewCellDelegate {
+//    func collectionTableViewTapIteom(with viewModel: ThumbnailCollectionCellViewModel) {
+//        let alert = UIAlertController(title: viewModel.name, message: "Success", preferredStyle: .alert)
+//        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+//        present(alert, animated: true)
+//    }
+//}
+
 extension SearchGatheringBoardController: BoardMainCollectionTableViewCellDelegate {
-    func collectionTableViewTapIteom(with viewModel: ThumbnailCollectionCellViewModel) {
-        let alert = UIAlertController(title: viewModel.name, message: "Success", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
-        present(alert, animated: true)
+    func collectionTableViewTapItem(with board: Board) {
+        DispatchQueue.main.async {
+            let GDBVC = GatheringDetailBoardViewController()
+            GDBVC.boardId = board.boardID
+//            self.present(GDBVC, animated: true)
+            self.navigationController?.pushViewController(GDBVC, animated: true)
+        }
     }
 }

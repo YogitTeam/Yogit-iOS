@@ -13,7 +13,7 @@ class Account: Codable {
     let id_token: String
     let user: User
     let identifier: String
-    let hasRequirementInfo: Bool
+    var hasRequirementInfo: Bool
     
     init(state: String, code: String, id_token: String, user: User, identifier: String, hasRequirementInfo: Bool) {
         self.state = state
@@ -81,4 +81,41 @@ class UserProfileImages: Decodable {
         self.profileImageUrl = profileImageUrl
     }
 }
+
+class ServiceUserProfile: Codable {
+    let age: Int
+    let gender: String
+    let city, phone, aboutMe, administrativeArea: String?
+    let interests: [String]?
+    let languageLevels, languageNames: [String]
+    let latitude: Double?
+    let longtitude: Double?
+    let memberTemp: Double?
+    let name, nationality, profileImg: String
+    let userId: Int64
+    let userStatus: String?
+    let login_id: String?
+    
+    init(age: Int, gender: String, city: String?, interests: [String]?, phone: String?, aboutMe: String?, administrativeArea: String?, languageLevels: [String], languageNames: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, userId: Int64, userStatus: String?, login_id: String?) {
+        self.age = age
+        self.gender = gender
+        self.city = city
+        self.interests = interests
+        self.phone = phone
+        self.aboutMe = aboutMe
+        self.administrativeArea = administrativeArea
+        self.languageLevels = languageLevels
+        self.languageNames = languageNames
+        self.latitude = latitude
+        self.longtitude = longtitude
+        self.memberTemp = memberTemp
+        self.name = name
+        self.nationality = nationality
+        self.profileImg = profileImg
+        self.userId = userId
+        self.userStatus = userStatus
+        self.login_id = login_id
+    }
+}
+
 

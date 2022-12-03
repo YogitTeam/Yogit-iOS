@@ -498,8 +498,8 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
 //            }
 //
 //        }
-    
-        
+//
+//
 //        CLGeocoder().reverseGeocodeLocation(pLocation!, completionHandler: { (placemarks, error) -> Void in
 //            if let pm: CLPlacemark = placemarks?.first {
 //                let address: String = "\(pm.locality ?? "") \(pm.name ?? "")"
@@ -587,12 +587,16 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
 //        print(str)
         // range NSMakeRange(0, 6)
 //        let locale = Locale(identifier: "ko-KR")
-        self.searchRequest.naturalLanguageQuery = text.localizedLowercase
+        
+        
+        // 37.5495209, 127.075086 (위경도로 검색 가능)
+        // 좌표 검색 시켜 >> 사용자마다 주소를 로컬라이즈화(자동) 불러와서
+        self.searchRequest.naturalLanguageQuery = text
         self.searchRequest.resultTypes = [.address, .pointOfInterest]
         self.searchRequest.region = searchRegion
-        
         let search = MKLocalSearch(request: searchRequest)
         resultsVC.delegate = self
+        
         search.start { (response, error) in
             guard let response = response else {
                 if self.searchVC.searchBar.text != nil && self.searchVC.searchBar.text != "" {
@@ -601,6 +605,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
                     self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
                 }
             return }
+            
             for item in response.mapItems {
                 if let name = item.name,
                    let countryCode = item.placemark.countryCode,
@@ -637,28 +642,11 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
     func findAddress(lat: CLLocationDegrees, long: CLLocationDegrees, completion: @escaping (ReverGedoData?) -> Void) {
         let findLocation = CLLocation(latitude: lat, longitude: long)
         let geocoder = CLGeocoder()
+        
         // locale 설정 가능
 //        let locale = Locale(identifier: "ko-KR")
-//        let locale = Locale(identifier: "en-KR")
-//        geocoder.reverseGeocodeLocation(findLocation, preferredLocale: locale, completionHandler: { (placemarks, error) in
-//            guard let pm = placemarks?.last else { return }
-//            var resultAddress: String?
-//            let administrativeArea = "\(pm.administrativeArea ?? "")"
-//            let locality = "\(pm.locality ?? "")"
-//            if administrativeArea == locality {
-//                resultAddress = locality
-//            } else {
-//                resultAddress = administrativeArea + " " + locality
-//            }
-//            resultAddress = "\(resultAddress ?? "") \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
-//            self.city = administrativeArea
-//
-//            completion(resultAddress)
-//
-//        })
-        
-        geocoder.reverseGeocodeLocation(findLocation, completionHandler: {
-            (placemarks, error) in
+        let locale = Locale(identifier: "en_US")
+        geocoder.reverseGeocodeLocation(findLocation, preferredLocale: locale, completionHandler: { (placemarks, error) in
             guard let pm = placemarks?.last else { return }
             let administrativeArea = "\(pm.administrativeArea ?? "")"
             let locality = "\(pm.locality ?? "")"
@@ -668,11 +656,31 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             } else {
                 centerAddress = administrativeArea + " " + locality
             }
+    
+            let city: String = centerAddress ?? ""
             centerAddress = "\(centerAddress ?? "") \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
-            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, city: administrativeArea)
-            print("administrativeArea\(administrativeArea)")
+//            self.cityName = administrativeArea
+            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, city: city.uppercased())
             completion(reverseGeoData)
+
         })
+//
+//        geocoder.reverseGeocodeLocation(findLocation, completionHandler: {
+//            (placemarks, error) in
+//            guard let pm = placemarks?.last else { return }
+//            let administrativeArea = "\(pm.administrativeArea ?? "")"
+//            let locality = "\(pm.locality ?? "")"
+//            var centerAddress: String?
+//            if administrativeArea == locality {
+//                centerAddress = locality
+//            } else {
+//                centerAddress = administrativeArea + " " + locality
+//            }
+//            centerAddress = "\(centerAddress ?? "") \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
+//            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, city: administrativeArea)
+//            print("administrativeArea\(administrativeArea)")
+//            completion(reverseGeoData)
+//        })
     }
 }
 
@@ -862,8 +870,12 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
         setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: placeName, subtitle: placeTitle)
         self.meetUpPlace.latitude = coordinate.latitude
         self.meetUpPlace.longitude = coordinate.longitude
+        findAddress(lat: coordinate.latitude, long: coordinate.longitude) { (centerAddress) in
+            print("find address \(centerAddress)")
+            self.meetUpPlace.city = centerAddress?.city
+        }
         self.meetUpPlace.address = "\(placeTitle) (\(placeName))"
-        self.meetUpPlace.city = placeAdministrativeArea
+//        self.meetUpPlace.city = placeAdministrativeArea
         print("meetUpPlace = \(self.meetUpPlace)")
         self.saveButton.isHidden = false
 //        if self.saveButton.isHidden == true { self.saveButton.isHidden = false }

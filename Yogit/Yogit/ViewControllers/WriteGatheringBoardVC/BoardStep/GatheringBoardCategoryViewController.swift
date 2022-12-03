@@ -24,13 +24,11 @@ class GatheringBoardCategoryViewController: UIViewController {
     var tapIndex: Int? = nil {
         didSet {
             print("tapIndex \(tapIndex)")
-            if tapIndex != nil {
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                if self.tapIndex != nil {
                     self.nextButton.isEnabled = true
                     self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-                }
-            } else {
-                DispatchQueue.main.async {
+                } else {
                     self.nextButton.isEnabled = false
                     self.nextButton.backgroundColor = .placeholderText
                 }
@@ -110,10 +108,15 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
-            let GBSDVC = GatheringBoardSelectDetailViewController()
+            let GBSDVC = TestBoardViewController() // GatheringBoardOptionViewController()
             GBSDVC.createBoardReq = self.createBoardReq
             self.navigationController?.pushViewController(GBSDVC, animated: true)
         }
+//        DispatchQueue.main.async {
+//            let GBSDVC = GatheringBoardOptionViewController()
+//            GBSDVC.createBoardReq = self.createBoardReq
+//            self.navigationController?.pushViewController(GBSDVC, animated: true)
+//        }
     }
     
     

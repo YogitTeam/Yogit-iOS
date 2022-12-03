@@ -19,22 +19,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        let setUpVC = SetUpProfileViewController()
+        let setUpVC = GatheringBoardCategoryViewController() // ServiceTapBarViewController()
         let rootVC = UINavigationController(rootViewController: setUpVC)
         rootVC.navigationBar.tintColor = UIColor.label
         rootVC.navigationBar.topItem?.backButtonTitle = ""
-        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
-        
+//        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
+
         self.window = UIWindow(windowScene: scene)
         self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()
-        
-        
-        //        let rootVC = LoginViewController()
-        //        self.window = UIWindow(windowScene: scene)
-        //        self.window?.rootViewController = rootVC
-        //        self.window?.makeKeyAndVisible()
-        
+//
+//
+//        let rootVC = SearchProfileImagesViewController()
+//        self.window = UIWindow(windowScene: scene)
+//        self.window?.rootViewController = rootVC
+//        self.window?.makeKeyAndVisible()
+//
         // loginView에서 처음 token으로 서버 넘겨줄때, 필수 데이터 상태 받아옴 (init nil)
         
         // keychain token 저장시, 앱삭제 후에도 바로 로그인 가능하기때문에
@@ -59,32 +59,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            switch AuthState {
 //            case .undefine, .signOut: break
 //            case .signInFull: rootViewState = .homeView
-//            case .signInNotFull: rootViewState = .setUpProfileView
-//                
-//                DispatchQueue.main.async {
-//                    let rootVC: UIViewController
-//                    switch rootViewState {
-//                    case .loginView:
-//                        let loginVC = LoginViewController()
-//                        rootVC = UINavigationController(rootViewController: loginVC)
-//                        break
-//                    case .homeView: // 필수 데이터 있으면
-//                        let homeVC = SearchGatheringBoardController()
-//                        let tabBarVC = UITabBarController()
-//                        tabBarVC.viewControllers = [homeVC]
-//                        rootVC = tabBarVC
-//                        break
-//                    case .setUpProfileView:
-//                        let setUpProfileVC = SetUpProfileViewController()
-//                        rootVC = UINavigationController(rootViewController: setUpProfileVC)
-//                        break
-//                    }
-//                    self.window = UIWindow(windowScene: scene)
-//                    self.window?.rootViewController = rootVC
-//                    self.window?.makeKeyAndVisible()
-//                }
+//            case .signInNotFull: rootViewState = .setProfileView
 //            }
-//            
+//            DispatchQueue.main.async {
+//                let currentVC: UIViewController
+//                switch rootViewState {
+//                case .loginView:
+//                    let loginVC = LoginViewController()
+//                    currentVC = loginVC
+//                    break
+//                case .homeView: // 필수 데이터 있으면
+//                    let homeVC = ServiceTapBarViewController()
+//                    currentVC = homeVC
+//                    break
+//                case .setProfileView:
+//                    let setProfileVC = SetProfileViewController()
+//                    currentVC = setProfileVC
+//                    break
+//                }
+//                let rootVC = UINavigationController(rootViewController: currentVC)
+//                rootVC.navigationBar.tintColor = UIColor.label
+//                rootVC.navigationBar.topItem?.backButtonTitle = ""
+//                self.window = UIWindow(windowScene: scene)
+//                self.window?.rootViewController = rootVC
+//                self.window?.makeKeyAndVisible()
+//            }
 //        }
     }
 

@@ -10,9 +10,10 @@
 import UIKit
 import Alamofire
 
-class SetUpProfileViewController: UIViewController {
+class SetProfileViewController: UIViewController {
     private var profileImage: UIImage? = nil
     
+    private var standardImageIdx = 0
 
     private var userProfile = UserProfile() {
         didSet {
@@ -27,7 +28,7 @@ class SetUpProfileViewController: UIViewController {
     private let placeholderData = ["Nick name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
     
     // requirement expression blue point
-    private let requirementView: UIView = {
+    private lazy var requirementView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -172,8 +173,8 @@ class SetUpProfileViewController: UIViewController {
             make.leading.equalTo(profileImageStackView.snp.leading).offset(0)
         }
         infoTableView.snp.makeConstraints { make in
-            make.height.equalTo(850)
-//            make.height.equalTo(infoTableView.contentSize.height)
+            make.height.equalTo(750)
+
             make.top.equalTo(profileImageContentView.snp.bottom)
             make.width.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -196,7 +197,6 @@ class SetUpProfileViewController: UIViewController {
 //        infoTableView.constant = infoTableView.contentSize.height
         
     }
-    
 //    override func viewWillAppear(_ animated: Bool) {
 //        super.viewWillAppear(animated)
 //        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShowHandle(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -229,7 +229,9 @@ class SetUpProfileViewController: UIViewController {
     @objc private func buttonPressed(_ sender: Any) {
         // 값 다 있는지 확인 하고 없으면 alert창
         //
-        userProfile.userId = 1
+        
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        userProfile.userId = userItem.userId
         print(userProfile)
         
         if hasAllValue == false {
@@ -262,8 +264,16 @@ class SetUpProfileViewController: UIViewController {
             switch response.result {
             case .success:
                 debugPrint(response)
-                DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
+                do {
+                    userItem.account.hasRequirementInfo = true
+                    try KeychainManager.updateUserItem(userItem: userItem)
+                    DispatchQueue.main.async {
+                        let rootVC = ServiceTapBarViewController()
+                        self.view.window?.rootViewController = rootVC
+                        self.view.window?.makeKeyAndVisible()
+                    }
+                } catch {
+                    print("KeychainManager.update \(error.localizedDescription)")
                 }
             case let .failure(error):
                 print(error)
@@ -272,11 +282,11 @@ class SetUpProfileViewController: UIViewController {
     }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
-        DispatchQueue.main.async(execute: {
-            let PICV = ProfileImagesViewController()
-            PICV.delegate = self
-            self.navigationController?.pushViewController(PICV, animated: true)
-        })
+        DispatchQueue.main.async {
+            let SPICV = SetProfileImagesViewController()
+            SPICV.delegate = self
+            self.navigationController?.pushViewController(SPICV, animated: true)
+        }
     }
     
     @objc func donePressed(_ sender: UIButton) {
@@ -324,7 +334,7 @@ class SetUpProfileViewController: UIViewController {
 
 }
 
-extension SetUpProfileViewController: UITableViewDataSource {
+extension SetProfileViewController: UITableViewDataSource {
     // Reporting the number of sections and rows in the table.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
@@ -335,7 +345,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
             // age
                 return 1
             case 2:
-            return (userProfile.languageNames?.count ?? 0) < 5 ? ((userProfile.languageNames?.count ?? 0) + 1) : 5// languageNames.count < 5 ? languageNames.count + 1 : 5
+            return (userProfile.languageNames?.count ?? 0) < 3 ? ((userProfile.languageNames?.count ?? 0) + 1) : 3// languageNames.count < 5 ? languageNames.count + 1 : 5
             case 3:
             // gender
                 return 1
@@ -358,35 +368,35 @@ extension SetUpProfileViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         switch indexPath.section {
             case 0:
-            cell.configure(text: userProfile.userName, image: nil, section: indexPath.section, kind: Kind.profile)
+            cell.configure(text: userProfile.userName, image: nil, section: indexPath.section)
             case 1:
-            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", image: nil, section: indexPath.section, kind: Kind.profile) // "International age"
+            cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", image: nil, section: indexPath.section) // "International age"
             cell.commonTextField.inputView = agePickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
             agePickerView.tag = indexPath.section // picker data, event 분기
             case 2:
-            cell.selectionStyle = .blue
+            cell.selectionStyle = .gray
             if indexPath.row < (userProfile.languageNames?.count ?? 0) {
-                cell.configure(text: userProfile.languageNames?[indexPath.row], image: nil, section: indexPath.section, kind: Kind.profile) // "Add conversational
+                cell.configure(text: userProfile.languageNames?[indexPath.row], image: nil, section: indexPath.section) // "Add conversational
                 cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
                 cell.selectionStyle = .none
             } else {
-                cell.configure(text: nil, image: nil, section: indexPath.section, kind: Kind.profile)
+                cell.configure(text: nil, image: nil, section: indexPath.section)
             }
             cell.rightButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
             cell.rightButton.tag = indexPath.row
             case 3:
-            cell.configure(text: userProfile.gender, image: nil, section: indexPath.section, kind: Kind.profile) // "Select gender"
+            cell.configure(text: userProfile.gender, image: nil, section: indexPath.section) // "Select gender"
             cell.commonTextField.inputView = genderPickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
             genderPickerView.tag = indexPath.section
             case 4:
-            cell.selectionStyle = .blue
-            cell.configure(text: userProfile.nationality, image: nil, section: indexPath.section, kind: Kind.profile) // "Select nationaltiy"
+            cell.selectionStyle = .gray
+            cell.configure(text: userProfile.nationality, image: nil, section: indexPath.section) // "Select nationaltiy"
             default: fatalError("Out of Setup Profile table view section")
         }
         cell.layoutIfNeeded()
-        cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
+        cell.addBottomBorderWithColor2(color: .placeholderText, width: 1)
         print("Setup profile cell update section = \(indexPath.section)")
         return cell
         
@@ -463,7 +473,7 @@ extension SetUpProfileViewController: UITableViewDataSource {
 
 }
 
-extension SetUpProfileViewController: UITableViewDelegate {
+extension SetProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -490,7 +500,7 @@ extension SetUpProfileViewController: UITableViewDelegate {
     }
 }
 
-extension SetUpProfileViewController: UITextFieldDelegate {
+extension SetProfileViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
         switch textField.tag {
         case 0:
@@ -533,7 +543,7 @@ extension SetUpProfileViewController: UITextFieldDelegate {
 //    }
 }
 
-extension SetUpProfileViewController: ImagesProtocol {
+extension SetProfileViewController: ImagesProtocol {
     func imagesSend(profileImage: UIImage?) {
         self.profileImage = profileImage
         profileImageView.image = self.profileImage
@@ -541,7 +551,7 @@ extension SetUpProfileViewController: ImagesProtocol {
 }
 
 
-extension SetUpProfileViewController: LanguageProtocol {
+extension SetProfileViewController: LanguageProtocol {
     func languageSend(language: String, level: String) {
         if userProfile.languageNames == nil {
             userProfile.languageNames = []
@@ -554,7 +564,7 @@ extension SetUpProfileViewController: LanguageProtocol {
     }
 }
 
-extension SetUpProfileViewController: UIPickerViewDataSource {
+extension SetProfileViewController: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -581,7 +591,7 @@ extension SetUpProfileViewController: UIPickerViewDataSource {
 
 // textfield 터치시 어디에서 터치 했는지 알아야함
 // 
-extension SetUpProfileViewController: UIPickerViewDelegate {
+extension SetProfileViewController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView.tag {
         case ProfileSectionData.age.rawValue: userProfile.userAge = self.ageData[row]
@@ -595,7 +605,7 @@ extension SetUpProfileViewController: UIPickerViewDelegate {
     }
 }
 
-extension SetUpProfileViewController: NationalityProtocol {
+extension SetProfileViewController: NationalityProtocol {
     func nationalitySend(nationality: String) {
         userProfile.nationality = nationality
         infoTableView.reloadData()

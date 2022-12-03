@@ -10,7 +10,7 @@ import Alamofire
 import SnapKit
 
 // 글자수 n 글자 이상 m 이하
-class GatheringBoardTextDetailViewController: UIViewController, UITableViewDelegate {
+class GatheringBoardContentViewController: UIViewController, UITableViewDelegate {
     var createBoardReq = CreateBoardReq() {
         didSet {
             print("BoardTextDetail \(createBoardReq)")
@@ -28,22 +28,9 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
     let stepHeaderView = StepHeaderView()
     let step = 3.0
     let minChar = [10, 50, 50]
-    let maxChar = [35, 200, 200]
+    let maxChar = [30, 200, 200]
     let placeholderData = ["Ex) Hangout", "Ex) Hangout", "Ex) Hangout"]
-    var textViewCount = [0, 0, 0] {
-        didSet {
-//            for i in 0..<3 {
-//                if textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i] {
-//                    uploadButton.isEnabled = true
-//                    uploadButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//                } else {
-//                    uploadButton.isEnabled = false
-//                    uploadButton.backgroundColor = .placeholderText
-//                    break
-//                }
-//            }
-        }
-    }
+    var textViewCount = [0, 0, 0]
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -166,69 +153,80 @@ class GatheringBoardTextDetailViewController: UIViewController, UITableViewDeleg
         view.backgroundColor = .systemBackground
         rtvh.contentNameLabel.text = "Photos"
     }
-
-    @objc func buttonPressed(_ sender: UIButton) {
+    
+    func textVaildation() -> Bool {
         for i in 0..<3 {
             if self.createBoardReq.images?.count ?? 0 > 0 && textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i] {
-                createBoardReq.hostId = 2 // 아이디 받으면 아이디로
-                createBoardReq.cityId = 1 // 수정 필요
-//                createBoardReq.notice = "" // 빈값
-            
-                // 통신완료 후 pop root까지
-                let parameters: [String: Any] = [
-                    "cityId": createBoardReq.cityId!,
-                    "hostId": createBoardReq.hostId!,
-                    "title": createBoardReq.title!,
-                    "address": createBoardReq.address!,
-                    "addressDetail": createBoardReq.addressDetail ?? "",
-                    "longitute": createBoardReq.longitute!,
-                    "latitude": createBoardReq.latitude!,
-                    "date": createBoardReq.date!,
-                    "notice": "",
-                    "introduction": createBoardReq.introduction!,
-                    "kindOfPerson": createBoardReq.kindOfPerson!,
-                    "totalMember": createBoardReq.totalMember!,
-                    "categoryId": createBoardReq.categoryId!,
-                ]
-                
-                self.navigationController?.popToRootViewController(animated: true)
-                
-                
-                AF.upload(multipartFormData: { multipartFormData in
-                    for (key, value) in parameters {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-                    }
-                    for image in self.createBoardReq.images! {
-                        multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-                    }
-                }, to: API.BASE_URL + "boards", method: .post)
-                .validate(statusCode: 200..<500)
-                .responseData { response in
-                    switch response.result {
-                    case .success:
-                        debugPrint(response)
-                        DispatchQueue.main.async {
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                    case let .failure(error):
-                        print(error)
-                    }
-                }
                 
             } else {
-                // 경고창
-                print("Not has all value")
-                let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the conditionㄴ", preferredStyle: UIAlertController.Style.alert)
-                let okAction = UIAlertAction(title: "OK", style: .default)
-                alert.addAction(okAction)
-                present(alert, animated: false, completion: nil)
+                return false
             }
+        }
+        return true
+    }
+
+    @objc func buttonPressed(_ sender: UIButton) {
+        
+        if textVaildation() {
+            // 통신완료 후 pop root까지
+            guard let userItem = try? KeychainManager.getUserItem() else { return }
+            createBoardReq.hostId = userItem.userId  // 아이디 받으면 아이디로
+            let parameters: [String: Any] = [
+                "cityName": "SEOUL",
+                "hostId": createBoardReq.hostId!,
+                "title": createBoardReq.title!,
+                "address": createBoardReq.address!,
+                "addressDetail": createBoardReq.addressDetail ?? "",
+                "longitute": createBoardReq.longitute!,
+                "latitude": createBoardReq.latitude!,
+                "date": createBoardReq.date!,
+                "notice": "",
+                "introduction": createBoardReq.introduction!,
+                "kindOfPerson": createBoardReq.kindOfPerson!,
+                "totalMember": createBoardReq.totalMember!,
+                "categoryId": createBoardReq.categoryId!,
+                "refreshToken": userItem.refresh_token
+            ]
+            
+            for image in self.createBoardReq.images! {
+                print(image.toFile(format: .jpeg(1))!)
+            }
+            
+            AF.upload(multipartFormData: { multipartFormData in
+                for (key, value) in parameters {
+                    multipartFormData.append(Data("\(value)".utf8), withName: key)
+                }
+                for image in self.createBoardReq.images! {
+                    multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+                }
+                print(multipartFormData)
+            }, to: API.BASE_URL + "boards", method: .post)
+            .validate(statusCode: 200..<500)
+            .responseData { response in
+                switch response.result {
+                case .success:
+                    debugPrint(response)
+                    DispatchQueue.main.async {
+                        self.navigationController?.popToRootViewController(animated: true)
+                        // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
+                    }
+
+                case let .failure(error):
+                    print(error)
+                }
+            }
+        } else {
+            print("Not has all value")
+            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the conditionㄴ", preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(okAction)
+            present(alert, animated: false, completion: nil)
         }
 
     }
 }
 
-extension GatheringBoardTextDetailViewController: UITableViewDataSource {
+extension GatheringBoardContentViewController: UITableViewDataSource {
     // Reporting the number of sections and rows in the table.
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -253,7 +251,7 @@ extension GatheringBoardTextDetailViewController: UITableViewDataSource {
         case 0: return 54
         case 1: return 200
         case 2: return 200
-        default: fatalError("GatheringBoardTextDetailViewController out of section index")
+        default: fatalError("GatheringBoardContentViewController out of section index")
         }
     }
     
@@ -288,7 +286,7 @@ extension GatheringBoardTextDetailViewController: UITableViewDataSource {
     }
 }
 
-extension GatheringBoardTextDetailViewController: UICollectionViewDelegate {
+extension GatheringBoardContentViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         print("Tapped gatherging board collectionview image")
@@ -314,7 +312,7 @@ extension GatheringBoardTextDetailViewController: UICollectionViewDelegate {
     
 }
 
-extension GatheringBoardTextDetailViewController: UICollectionViewDataSource {
+extension GatheringBoardContentViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 //        return 10
         return images.count < 5 ? (images.count + 1) : 5
@@ -339,7 +337,7 @@ extension GatheringBoardTextDetailViewController: UICollectionViewDataSource {
     }
 }
 
-extension GatheringBoardTextDetailViewController: UICollectionViewDelegateFlowLayout {
+extension GatheringBoardContentViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
 //        let size: CGFloat = imagesCollectionView.frame.size.width/2
@@ -351,9 +349,14 @@ extension GatheringBoardTextDetailViewController: UICollectionViewDelegateFlowLa
     }
 }
 
-extension GatheringBoardTextDetailViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func openLibrary() {
         imagePicker.sourceType = .photoLibrary
+        if images.count == 0 {
+            self.imagePicker.allowsEditing = true
+        } else {
+            self.imagePicker.allowsEditing = false
+        }
         DispatchQueue.main.async {
             self.present(self.imagePicker, animated: true, completion: nil)
         }
@@ -361,6 +364,11 @@ extension GatheringBoardTextDetailViewController: UIImagePickerControllerDelegat
 
     func openCamera() {
         imagePicker.sourceType = .camera
+        if images.count == 0 {
+            self.imagePicker.allowsEditing = true
+        } else {
+            self.imagePicker.allowsEditing = false
+        }
         DispatchQueue.main.async {
             self.present(self.imagePicker, animated: true, completion: nil)
         }
@@ -372,12 +380,29 @@ extension GatheringBoardTextDetailViewController: UIImagePickerControllerDelegat
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         // action 각기 다르게
-        if let img = info[UIImagePickerController.InfoKey.originalImage] {
-            print("image pick")
-            if let image = img as? UIImage {
-                images.append(image)
-            }
+//        if let img = info[UIImagePickerController.InfoKey.originalImage] {
+//            print("image pick")
+//            if let image = img as? UIImage {
+//                images.append(image)
+//            }
+//        }
+        
+        var newImage: UIImage? = nil // update 할 이미지
+
+        if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            newImage = img // 수정된 이미지
+            print(newImage)
+        } else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            newImage = img // 원본 이미지
+            print(newImage)
         }
+        guard let image = newImage else { return }
+        let resizeImage = image.resize(targetSize: CGSize(width: view.frame.size.width, height: view.frame.size.width))
+//        print(resizeImage)
+//        print(image.toFile(format: .jpeg(0.5))!)
+        images.append(resizeImage)
+        
+        // tabbar notification get 요청
         DispatchQueue.main.async {
             self.dismiss(animated: true, completion: nil)
         }
@@ -385,7 +410,7 @@ extension GatheringBoardTextDetailViewController: UIImagePickerControllerDelegat
 }
 
 
-extension GatheringBoardTextDetailViewController: UITextViewDelegate {
+extension GatheringBoardContentViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if textView.tag == 0 && text == "\n" { textView.resignFirstResponder() }
         

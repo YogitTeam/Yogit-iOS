@@ -10,8 +10,7 @@ import UIKit
 
 // formdata로 통신전 
 struct CreateBoardReq {
-    var cityId: Int?
-    var hostId: Int?
+    var hostId: Int64?
     var title: String?
     var address: String?
     var addressDetail: String?
@@ -19,26 +18,27 @@ struct CreateBoardReq {
     var latitude: Double?
     var date: String?
     var notice: String?
-    var city: String?
+    var cityName: String?
     var introduction: String?
     var kindOfPerson: String?
     var totalMember: Int?
     var categoryId: Int?
     var images: [UIImage]?
     
-    init(address: String? = nil, categoryId: Int? = nil, cityId: Int? = nil, date: String? = nil, hostId: Int? = nil, images: [UIImage]? = nil, introduction: String? = nil, kindOfPerson: String? = nil, latitude: Double? = nil, longitute: Double? = nil, notice: String? = nil, title: String? = nil, totalMember: Int? = nil) {
-        self.address = address
-        self.categoryId = categoryId
-        self.cityId = cityId
-        self.date = date
+    init(hostId: Int64? = nil, title: String? = nil, address: String? = nil, addressDetail: String? = nil, longitute: Double? = nil, latitude: Double? = nil, date: String? = nil, notice: String? = nil, cityName: String? = nil, introduction: String? = nil, kindOfPerson: String? = nil, totalMember: Int? = nil, categoryId: Int? = nil, images: [UIImage]? = nil) {
         self.hostId = hostId
-        self.images = images
+        self.title = title
+        self.address = address
+        self.addressDetail = addressDetail
+        self.longitute = longitute
+        self.latitude = latitude
+        self.date = date
+        self.notice = notice
+        self.cityName = cityName
         self.introduction = introduction
         self.kindOfPerson = kindOfPerson
-        self.latitude = latitude
-        self.longitute = longitute
-        self.notice = notice
-        self.title = title
         self.totalMember = totalMember
+        self.categoryId = categoryId
+        self.images = images
     }
 }

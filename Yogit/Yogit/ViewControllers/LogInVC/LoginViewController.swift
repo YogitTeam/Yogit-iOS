@@ -126,11 +126,10 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                 return
                             }
                             do {
-                                if try KeychainManager.saveUserItem(userItem: userItem) {
-                                    DispatchQueue.main.async {
-                                        let SPVC = SetUpProfileViewController()
-                                        self.navigationController?.pushViewController(SPVC, animated: true)
-                                    }
+                                try KeychainManager.saveUserItem(userItem: userItem)
+                                DispatchQueue.main.async {
+                                    let SPVC = SetProfileViewController()
+                                    self.navigationController?.pushViewController(SPVC, animated: true)
                                 }
                             } catch {
                                 print("KeychainManager.saveUserItem \(error.localizedDescription)")

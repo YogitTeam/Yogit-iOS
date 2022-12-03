@@ -14,10 +14,10 @@ struct UserProfile {
     var languageLevels: [String]?
     var nationality: String?
     var userAge: Int?
-    var userId: Int?
+    var userId: Int64?
     var userName: String? 
     
-    init(gender: String? = nil, nationality: String? = nil, userAge: Int? = nil, userId: Int? = nil, userName: String? = nil) {
+    init(gender: String? = nil, nationality: String? = nil, userAge: Int? = nil, userId: Int64? = nil, userName: String? = nil) {
         self.gender = gender
         self.nationality = nationality
         self.userAge = userAge

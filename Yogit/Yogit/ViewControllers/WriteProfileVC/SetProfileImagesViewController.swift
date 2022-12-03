@@ -1,5 +1,5 @@
 //
-//  ProfileImagesViewController.swift
+//  SetProfileImagesViewController.swift
 //  Yogit
 //
 //  Created by Junseo Park on 2022/10/13.
@@ -9,11 +9,17 @@ import UIKit
 import SnapKit
 import Alamofire
 
+
+// 첫번째 사진(프로필) >> 프레임 정사각형 크기 편집(profileimage) - 리사이즈, images 에는 원본 업로드 >> 압축해서 압럳,
+// 검색, 수정, 업로드 나눔
+// 삭제시 인덱스 전송 >> patch
+// 사진 추가시, 추가 시작 인덱스 저장 >> 추가 시작 인덱스부터 끝까지만 post
+
 protocol ImagesProtocol: AnyObject {
     func imagesSend(profileImage: UIImage?)
 }
 
-class ProfileImagesViewController: UIViewController {
+class SetProfileImagesViewController: UIViewController {
 
     private let imagePicker = UIImagePickerController()
     
@@ -69,7 +75,7 @@ class ProfileImagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getProfileImages(userId: 1)
+        getProfileImages()
         //        { (userProfileImages) in
         //            guard let userProfileImages = userProfileImages else { print("userProfileImages")
         //                return
@@ -131,8 +137,9 @@ class ProfileImagesViewController: UIViewController {
     }
     
     
-    func getProfileImages(userId: Int64) {
-        AF.request(API.BASE_URL + "users/image/\(userId)",
+    func getProfileImages() {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        AF.request(API.BASE_URL + "users/image/\(userItem.userId)",
                    method: .get,
                    parameters: nil,
                    encoding: JSONEncoding.default)
@@ -144,14 +151,26 @@ class ProfileImagesViewController: UIViewController {
                 debugPrint(response)
                 do{
                     let decodedData = try JSONDecoder().decode(APIResponse<UserProfileImages>.self, from: data)
-                    guard let imageUrls = decodedData.data?.imageUrls else { return }
+                    print(decodedData)
                     DispatchQueue.global().async {
-                        for imageUrl in imageUrls {
-                            guard let url = URL(string: imageUrl) else { return }
-                            guard let data = try? Data(contentsOf: url) else { return }
-                            guard let image = UIImage(data: data) else { return }
-                            self.images.append(image)
+                        guard let imageUrls = decodedData.data?.imageUrls else {
+                            print("imageUrls null")
+                            return
                         }
+                        var getImages: [UIImage] = []
+                        print("get imageUrls \(imageUrls)")
+                        for imageUrl in imageUrls {
+                            imageUrl.urlToImage { (image) in
+                                guard let image = image else { return }
+                                getImages.append(image)
+                            }
+//                            guard let url = URL(string: imageUrl) else { return }
+//                            guard let data = try? Data(contentsOf: url) else { return }
+//                            guard let image = UIImage(data: data) else { return }
+//                            images.append(image)
+//                            print("get image \(image)")
+                        }
+                        self.images = getImages
                     }
                 }
                 catch{
@@ -164,44 +183,39 @@ class ProfileImagesViewController: UIViewController {
     }
     
     @objc func saveButtonTapped(_ sender: UIButton) {
-//        let url = "https://yogit.world/users/image"
-
         guard let profileImage = images.first else { return }
-    
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
         let parameters: [String: Int64] = [
-            "userId": 1
+            "userId": userItem.userId
         ]
+        let imgs = self.images
         
-        for image in self.images {
-            print(image)
+        for img in imgs {
+            print(img.toFile(format: .jpeg(0.3))!)
         }
+        
         // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
-//        AF.upload(multipartFormData: { multipartFormData in
-//            for (key, value) in parameters {
-////                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
-//                multipartFormData.append(Data(String(value).utf8), withName: key)
-//            }
-//            multipartFormData.append(profileImage.toFile(format: .jpeg(0.5))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
-//            for image in self.images {
-//                multipartFormData.append(image.toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-//            }
-//        }, to: API.BASE_URL + "users/image", method: .post)
-//        .validate(statusCode: 200..<500)
-//        .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                self.delegate?.imagesSend(profileImage: self.images.first)
-//                DispatchQueue.main.async {
-//                    self.navigationController?.popViewController(animated: true)
-//                }
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
-        self.delegate?.imagesSend(profileImage: self.images.first)
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
+        AF.upload(multipartFormData: { multipartFormData in
+            for (key, value) in parameters {
+                multipartFormData.append(Data(String(value).utf8), withName: key)
+            }
+            multipartFormData.append(profileImage.toFile(format: .jpeg(0.3))!, withName: "profileImage", fileName: "profileImage.jpeg", mimeType: "profileImage/jpeg")
+            for image in self.images {
+                multipartFormData.append(image.toFile(format: .jpeg(0.3))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+            }
+        }, to: API.BASE_URL + "users/image", method: .post)
+        .validate(statusCode: 200..<500)
+        .responseData { response in
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                self.delegate?.imagesSend(profileImage: self.images.first)
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            case let .failure(error):
+                print(error)
+            }
         }
     }
 
@@ -217,12 +231,11 @@ class ProfileImagesViewController: UIViewController {
 
 }
 
-extension ProfileImagesViewController: UICollectionViewDelegate {
+extension SetProfileImagesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-        
         if indexPath.row < images.count {
             let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
             alert.addAction(delete)
@@ -240,13 +253,12 @@ extension ProfileImagesViewController: UICollectionViewDelegate {
     }
 }
 
-extension ProfileImagesViewController: UICollectionViewDataSource {
+extension SetProfileImagesViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
         print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
         if indexPath.row < images.count {
@@ -258,9 +270,14 @@ extension ProfileImagesViewController: UICollectionViewDataSource {
     }
 }
 
-extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func openLibrary() {
-        imagePicker.sourceType = .photoLibrary
+        self.imagePicker.sourceType = .photoLibrary
+//        if images.count == 0 {
+//            self.imagePicker.allowsEditing = true
+//        } else {
+//            self.imagePicker.allowsEditing = false
+//        }
         DispatchQueue.main.async {
             self.present(self.imagePicker, animated: true, completion: nil)
         }
@@ -268,6 +285,11 @@ extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINaviga
 
     func openCamera() {
         imagePicker.sourceType = .camera
+//        if images.count == 0 {
+//            self.imagePicker.allowsEditing = true
+//        } else {
+//            self.imagePicker.allowsEditing = false
+//        }
         DispatchQueue.main.async {
             self.present(self.imagePicker, animated: true, completion: nil)
         }
@@ -278,11 +300,35 @@ extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINaviga
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
         // action 각기 다르게
+//        if let img = info[UIImagePickerController.InfoKey.originalImage] {
+//            print("image pick")
+//            if let image = img as? UIImage {
+//                images.append(image)
+//                print(image.size, view.frame.size)
+//            }
+//        }
+        
+//        var newImage: UIImage? = nil // update 할 이미지
+//
+//        if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+//            newImage = img // 수정된 이미지가 있을 경우
+//        } else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+//            newImage = img // 원본 이미지가 있을 경우
+//        }
+//        guard let image = newImage else { return }
+//        images.append(image)
+        
         if let img = info[UIImagePickerController.InfoKey.originalImage] {
             print("image pick")
             if let image = img as? UIImage {
-                images.append(image)
+//                let ratio = (view.frame.size.width /  image.size.width)
+                images.append(image.resize(targetSize: CGSize(width: view.frame.size.width, height: view.frame.height)))
+//                print("image sizse \(image.size)")
+//                print("image file bytes \(image.toFile(format: .jpeg(1)))")
+//                print("resized image size \(resizedImage.size)")
+//                print("resized image file size \(resizedImage.toFile(format: .jpeg(1)))")
             }
         }
         DispatchQueue.main.async {
@@ -291,7 +337,7 @@ extension ProfileImagesViewController: UIImagePickerControllerDelegate, UINaviga
     }
 }
 
-extension ProfileImagesViewController {
+extension SetProfileImagesViewController {
     fileprivate static func createCollectionViewLayout() -> UICollectionViewLayout  {
         print("generate LayoutSubviews")
         let layout = UICollectionViewCompositionalLayout {
@@ -328,7 +374,7 @@ extension ProfileImagesViewController {
                 layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1/3),
                     heightDimension: .fractionalHeight(1.0)),
-                subitem: pairItem,
+                repeatingSubitem: pairItem,
                 count: 2)
             
             // 1, 2, 3 group

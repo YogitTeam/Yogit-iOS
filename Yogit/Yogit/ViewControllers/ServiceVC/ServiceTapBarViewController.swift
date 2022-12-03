@@ -13,12 +13,17 @@ class ServiceTapBarViewController: UITabBarController {
         super.viewDidLoad()
         configureTapBarVC()
         configureInstanceVC()
+        print("DEBUG : \(String(describing: self.view.window?.rootViewController))")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print(self.view.window?.rootViewController)
     }
 
     private func configureTapBarVC() {
         self.view.backgroundColor = .systemBackground
-        self.hidesBottomBarWhenPushed = true
-        self.tabBar.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        self.hidesBottomBarWhenPushed = true
+//        self.tabBar.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
     }
     
     private func configureInstanceVC() {
@@ -35,18 +40,25 @@ class ServiceTapBarViewController: UITabBarController {
         homeVC.tabBarItem.image = UIImage.init(named: "Home")
         profileVC.tabBarItem.image = UIImage.init(named: "Profile")
         
+        
+        
         // navigationController의 root view 설정
-        let navigationHome = UINavigationController(rootViewController: homeVC)
+//        let navigationHome = UINavigationController(rootViewController: homeVC)
+//
+//        navigationHome.navigationBar.tintColor = UIColor.label
+//        navigationHome.navigationBar.topItem?.backButtonTitle = ""
+//
+//        let navigationProfile = UINavigationController(rootViewController: profileVC)
+//
+//        navigationProfile.navigationBar.tintColor = UIColor.label
+//        navigationProfile.navigationBar.topItem?.backButtonTitle = ""
+//
         
-        navigationHome.navigationBar.tintColor = UIColor.label
-        navigationHome.navigationBar.topItem?.backButtonTitle = ""
-        
-        let navigationProfile = UINavigationController(rootViewController: profileVC)
         
 //        navigationHome.navigationBar.prefersLargeTitles = true
 //        navigationProfile.navigationBar.prefersLargeTitles = true
         
-        setViewControllers([navigationHome, navigationProfile], animated: false)
+        setViewControllers([homeVC, profileVC], animated: true)
     }
 
     /*

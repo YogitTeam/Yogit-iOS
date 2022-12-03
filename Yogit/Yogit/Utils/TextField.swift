@@ -21,14 +21,14 @@ extension UITextField {
   //      self.leftViewMode = .always
         self.rightViewMode = ViewMode.always
     }
-  func addLeftimage(image: UIImage?) {
+  func addLeftImage(image: UIImage?) {
       guard let image = image else { return }
       let leftImage = UIImageView(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
       leftImage.image = image
       self.leftView = leftImage
       self.leftViewMode = .always
   }
-    func addrightimage(image: UIImage?) {
+    func addRightImage(image: UIImage?) {
         guard let image = image else { return }
         let rightimage = UIImageView(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
         rightimage.image = image
@@ -38,9 +38,34 @@ extension UITextField {
     
     func addrightView(view: UIView?) {
         guard let view = view else { return }
+        
         let rightView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
 //        rightImage.image = view
         self.rightView = view
         self.rightViewMode = .always
     }
+    
+    func addBottomBorderWithColor(color: UIColor, width: CGFloat) {
+        self.layoutIfNeeded()
+        let border = CALayer()
+        border.backgroundColor = color.cgColor
+//        border.borderWidth = width
+//        border.frame = CGRect(x: bounds.minX,
+//                              y: bounds.maxX - width,
+//                              width: bounds.width,
+//                              height: width)
+        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
+        self.layer.addSublayer(border)
+//        self.layer.masksToBounds = true
+//        return border
+    }
+    
+    func addHeaderView(title: String) {
+        let view = MyHeaderView()
+        view.contentNameLabel.text = title
+        view.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: view.frame.size.height)
+        self.addSubview(view)
+//        return border
+    }
 }
+

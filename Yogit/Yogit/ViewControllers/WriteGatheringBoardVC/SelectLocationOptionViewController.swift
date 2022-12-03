@@ -94,7 +94,7 @@ class SelectLocationOptionViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tintColor = .clear
         textField.isEnabled = true
-        textField.addrightimage(image: UIImage(named: "push"))
+        textField.addRightImage(image: UIImage(named: "push"))
         textField.placeholder = "Search address in map"
         
 //        textField.addTarget(self, action: #selector(self.mapInputButtonTapped(_:)), for: .touchUpInside)
@@ -212,9 +212,9 @@ class SelectLocationOptionViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.borderLayer[0] = directInputTextField.addBottomBorderWithColor(color: .placeholderText, width: 1)
-        self.borderLayer[1] = mapInputTextField.addBottomBorderWithColor(color: .placeholderText, width: 1)
-        self.borderLayer[2] = mapSubInputTextField.addBottomBorderWithColor(color: .placeholderText, width: 1)
+//        self.borderLayer[0] = directInputTextField.addBottomBorderWithColor(color: .placeholderText, width: 1)
+//        self.borderLayer[1] = mapInputTextField.addBottomBorderWithColor(color: .placeholderText, width: 1)
+//        self.borderLayer[2] = mapSubInputTextField.addBottomBorderWithColor(color: .placeholderText, width: 1)
     }
 
     private func configureViewComponent() {
@@ -275,19 +275,19 @@ class SelectLocationOptionViewController: UIViewController {
 
 }
 
-extension UITextField {
-    func addBottomBorderWithColor(color: UIColor, width: CGFloat) -> CALayer {
-        let border = CALayer()
-        border.backgroundColor = color.cgColor
-//        border.frame = CGRect(x: bounds.minX,
-//                              y: bounds.maxX - width,
-//                              width: bounds.width,
-//                              height: width)
-        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height:width)
-        self.layer.addSublayer(border)
-        return border
-    }
-}
+//extension UITextField {
+//    func addBottomBorderWithColor(color: UIColor, width: CGFloat) -> CALayer {
+//        let border = CALayer()
+//        border.backgroundColor = color.cgColor
+////        border.frame = CGRect(x: bounds.minX,
+////                              y: bounds.maxX - width,
+////                              width: bounds.width,
+////                              height: width)
+//        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height:width)
+//        self.layer.addSublayer(border)
+//        return border
+//    }
+//}
 
 extension SelectLocationOptionViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {

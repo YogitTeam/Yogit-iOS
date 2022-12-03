@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GatheringBoardSelectDetailViewController: UIViewController {
+class GatheringBoardOptionViewController: UIViewController {
 
     let step = 2.0
     var createBoardReq = CreateBoardReq() {
@@ -25,8 +25,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
 //    private var dateData: [String] = []
     
-    private let placeholderData = ["Number of member including host", "2022.08.31 14:00", "MeetUp place", "Ex) Gangnamstation 3 exit"]
-    private let imagePicker = UIImagePickerController()
+    private let placeholderData = ["Number of member including host", "Sun, Dec 4, 11:14 AM", "MeetUp place", "Ex) Gangnamstation 3 exit"]
     
     private let numberPickerView: UIPickerView = {
         let pickerView = UIPickerView()
@@ -37,17 +36,12 @@ class GatheringBoardSelectDetailViewController: UIViewController {
       let datePicker = UIDatePicker(frame: .zero)
 //      datePicker.timeZone = TimeZone.current
         datePicker.datePickerMode = .dateAndTime
-        datePicker.locale = Locale(identifier: "en")
+        datePicker.locale = Locale(identifier: "en") // localized 필요
 //        datePicker.addTarget(self, action: #selector(dateChanged(datePikcer:)), for: .valueChanged)
         datePicker.frame.size = CGSize(width: 0, height: 300)
         datePicker.preferredDatePickerStyle = .wheels
       return datePicker
     }()
-    
-//    private let dateTimePickerView: UIPickerView = {
-//        let pickerView = UIPickerView()
-//        return pickerView
-//    }()
     
     private lazy var pickerViewToolBar: UIToolbar = {
         let toolBar = UIToolbar()
@@ -78,7 +72,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemBackground
         tableView.sectionHeaderTopPadding = 20
-        tableView.register(MyTextFieldTableViewCell.self, forCellReuseIdentifier: MyTextFieldTableViewCell.identifier)
+        tableView.register(BoardOptionsTableViewCell.self, forCellReuseIdentifier: BoardOptionsTableViewCell.identifier)
         tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
         return tableView
     }()
@@ -97,18 +91,15 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print(progressTime {
-            view.addSubview(stepHeaderView)
-            view.addSubview(selectDetailTableView)
-            view.addSubview(nextButton)
-            selectDetailTableView.delegate = self
-            selectDetailTableView.dataSource = self
-            numberPickerView.delegate = self
-    //        dateTimePickerView.delegate = self
-            for i in 3...30 { memberNumberData.append(i) }
-            configureViewComponent()
-        })
+        view.addSubview(stepHeaderView)
+        view.addSubview(selectDetailTableView)
+        view.addSubview(nextButton)
+        selectDetailTableView.delegate = self
+        selectDetailTableView.dataSource = self
+        numberPickerView.delegate = self
+//        dateTimePickerView.delegate = self
+        for i in 3...30 { memberNumberData.append(i) }
+        configureViewComponent()
         // Do any additional setup after loading the view.
     }
     
@@ -148,7 +139,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     }
     
     private func hasAllData() {
-        if self.createBoardReq.totalMember != nil && self.createBoardReq.date != nil && self.createBoardReq.latitude != nil && self.createBoardReq.longitute != nil && self.createBoardReq.city != nil && self.createBoardReq.address != nil {
+        if self.createBoardReq.totalMember != nil && self.createBoardReq.date != nil && self.createBoardReq.latitude != nil && self.createBoardReq.longitute != nil && self.createBoardReq.cityName != nil && self.createBoardReq.address != nil {
             self.nextButton.isEnabled = true
             self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
             print("Has all data")
@@ -166,7 +157,7 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
-            let GBTDVC = GatheringBoardTextDetailViewController()
+            let GBTDVC = GatheringBoardContentViewController()
             GBTDVC.createBoardReq = self.createBoardReq
             self.navigationController?.pushViewController(GBTDVC, animated: true)
         }
@@ -182,10 +173,10 @@ class GatheringBoardSelectDetailViewController: UIViewController {
     }
 }
 
-extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
+extension GatheringBoardOptionViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return createBoardReq.address == nil ? 3 : 4
+        return 3
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -202,15 +193,15 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
         switch section {
         case 0: return 1
         case 1: return 1
-        case 2: return 1
-        case 3: return createBoardReq.address == nil ? 0 : 1
+        case 2: return createBoardReq.address == nil ? 1 : 2
+//        case 3: return createBoardReq.address == nil ? 0 : 1
         default: fatalError("GatheringBoardSelectDetailVC out of section")
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: MyTextFieldTableViewCell.identifier, for: indexPath) as? MyTextFieldTableViewCell else { return UITableViewCell() }
-        cell.commonTextField.tag = indexPath.section
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: BoardOptionsTableViewCell.identifier, for: indexPath) as? BoardOptionsTableViewCell else { return UITableViewCell() }
+        cell.commonTextField.tag = indexPath.section + indexPath.row
         cell.commonTextField.delegate = self
         cell.commonTextField.placeholder = placeholderData[indexPath.section]
         cell.selectionStyle = .none
@@ -218,20 +209,30 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
             case 0:
             cell.commonTextField.inputView = numberPickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
-            cell.configure(text: createBoardReq.totalMember == nil ? nil : "\(createBoardReq.totalMember!)", image: UIImage(named: "MemberNumber"), section: indexPath.section, kind: Kind.boardSelectDetail)
+            cell.configure(text: createBoardReq.totalMember == nil ? nil : "\(createBoardReq.totalMember!)", image: UIImage(named: "MemberNumber"))
+            cell.commonTextField.isEnabled = true
             case 1:
             cell.commonTextField.inputView = datePicker
             cell.commonTextField.inputAccessoryView = datePickerToolBar
-            cell.configure(text: self.date, image: UIImage(named: "Date"), section: indexPath.section, kind: Kind.boardSelectDetail)
+            cell.configure(text: self.date, image: UIImage(named: "Date"))
+            cell.commonTextField.isEnabled = true
             case 2:
             cell.selectionStyle = .default
-            cell.configure(text: createBoardReq.address, image: UIImage(named: "MeetUpPlace"), section: indexPath.section, kind: Kind.boardSelectDetail)
-            case 3:
-            cell.configure(text: createBoardReq.addressDetail, image: nil, section: indexPath.section, kind: Kind.boardSelectDetail)
+            if indexPath.row == 0 {
+                cell.configure(text: createBoardReq.address, image: UIImage(named: "MeetUpPlace"))
+                cell.commonTextField.isEnabled = false
+                cell.commonTextField.addRightImage(image: UIImage(named: "push"))
+            } else {
+                cell.commonTextField.isEnabled = true
+                cell.configure(text: createBoardReq.addressDetail, image: nil)
+            }
+//            case 3:
+//            cell.configure(text: createBoardReq.addressDetail, image: nil)
+//            cell.commonTextField.isEnabled = true
             default: fatalError("Out of break GBSDVC section")
         }
         cell.layoutIfNeeded()
-        cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
+        cell.addBottomBorderWithColor2(color: .placeholderText, width: 1)
         return cell
         
     }
@@ -245,9 +246,9 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
         case 0: headerView.configure(text: "The number of people in a gathering")
         case 1: headerView.configure(text: "Date & Time")
         case 2: headerView.configure(text: "Location")
-        case 3:
-            headerView.configure(text: "Location Detail")
-            headerView.requirementView.isHidden = true
+//        case 3:
+//            headerView.configure(text: "Location Detail")
+//            headerView.requirementView.isHidden = true
         default: fatalError("Out of header section index")
         }
         return headerView
@@ -286,80 +287,66 @@ extension GatheringBoardSelectDetailViewController: UITableViewDataSource {
 
 }
 
-extension GatheringBoardSelectDetailViewController: UITableViewDelegate {
+extension GatheringBoardOptionViewController: UITableViewDelegate {
     // 지도 화면 으로 이동 인터렉션
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         print("Cell 선택")
-        switch indexPath.section {
-        case 2:
+        if indexPath.section + indexPath.row == 2 {
             DispatchQueue.main.async {
                 let MLSVC = MKMapLocalSearchViewController()
                 MLSVC.delegate = self
                 self.navigationController?.pushViewController(MLSVC, animated: true)
             }
-        default:
-            break
         }
+//        switch indexPath.section {
+//        case 2:
+//            DispatchQueue.main.async {
+//                let MLSVC = MKMapLocalSearchViewController()
+//                MLSVC.delegate = self
+//                self.navigationController?.pushViewController(MLSVC, animated: true)
+//            }
+//        default:
+//            break
+//        }
     }
 }
 
-extension GatheringBoardSelectDetailViewController: UIPickerViewDataSource {
+extension GatheringBoardOptionViewController: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        switch pickerView.tag {
-        case BoardSelectDetailSectionData.numberOfMember.rawValue:
-            return self.memberNumberData.count
-//        case BoardSelectDetailSectionData.dateTime.rawValue:
-//            switch <#value#> {
-//            case <#pattern#>:
-//                <#code#>
-//            default:
-//                <#code#>
-//            }
-//            return self.genderData.count
-        default:
-            fatalError("일치하는 피커뷰 없다")
-        }
+        return self.memberNumberData.count
+//        switch pickerView.tag {
+//        case BoardSelectDetailSectionData.numberOfMember.rawValue:
+//            return self.memberNumberData.count
+//        default:
+//            fatalError("일치하는 피커뷰 없다")
+//        }
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        switch pickerView.tag {
-        case BoardSelectDetailSectionData.numberOfMember.rawValue:
-            return "\(self.memberNumberData[row])"
-//        case BoardSelectDetailSectionData.dateTime.rawValue:
-//            switch <#value#> {
-//            case <#pattern#>:
-//                <#code#>
-//            default:
-//                <#code#>
-//            }
-//            return self.genderData.count
-        default: fatalError("Pickerview tag error")
-        }
+        return "\(self.memberNumberData[row])"
+//        switch pickerView.tag {
+//        case BoardSelectDetailSectionData.numberOfMember.rawValue:
+//            return "\(self.memberNumberData[row])"
+//        default: fatalError("Pickerview tag error")
+//        }
     }
 }
 
-extension GatheringBoardSelectDetailViewController: UIPickerViewDelegate {
+extension GatheringBoardOptionViewController: UIPickerViewDelegate {
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        switch pickerView.tag {
-        case BoardSelectDetailSectionData.numberOfMember.rawValue:
-            return createBoardReq.totalMember = self.memberNumberData[row]
-//        case BoardSelectDetailSectionData.dateTime.rawValue:
-//            switch <#value#> {
-//            case <#pattern#>:
-//                <#code#>
-//            default:
-//                <#code#>
-//            }
-//            return self.genderData.count
-        default: fatalError("Pickerview tag error")
-        }
+        return createBoardReq.totalMember = self.memberNumberData[row]
+//        switch pickerView.tag {
+//        case BoardSelectDetailSectionData.numberOfMember.rawValue:
+//            return createBoardReq.totalMember = self.memberNumberData[row]
+//        default: fatalError("Pickerview tag error")
+//        }
     }
 
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
@@ -367,7 +354,7 @@ extension GatheringBoardSelectDetailViewController: UIPickerViewDelegate {
     }
 }
 
-extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
+extension GatheringBoardOptionViewController: UITextFieldDelegate {
 //    func textFieldDidChangeSelection(_ textField: UITextField) {
 ////        userProfile.userName = textField.text
 ////        print("userName = \(userProfile.userName!)")
@@ -404,19 +391,19 @@ extension GatheringBoardSelectDetailViewController: UITextFieldDelegate {
     }
 }
 
-extension GatheringBoardSelectDetailViewController: MeetUpPlaceProtocol {
+extension GatheringBoardOptionViewController: MeetUpPlaceProtocol {
     func locationSend(meetUpPlace: MeetUpPlace?) {
         self.createBoardReq.address = meetUpPlace?.address
         self.createBoardReq.latitude = meetUpPlace?.latitude
         self.createBoardReq.longitute = meetUpPlace?.longitude
-        self.createBoardReq.city = meetUpPlace?.city
+        self.createBoardReq.cityName = meetUpPlace?.city
         selectDetailTableView.reloadData()
     }
 }
 
 
 
-//extension GatheringBoardSelectDetailViewController: NationalityProtocol {
+//extension GatheringBoardOptionViewController: NationalityProtocol {
 //    func nationalitySend(nationality: String) {
 //        userProfile.nationality = nationality
 //        infoTableView.reloadData()

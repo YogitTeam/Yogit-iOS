@@ -67,8 +67,8 @@ class LanguagesViewController: UIViewController {
             Section(title: "Spanish", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
             Section(title: "French", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
             Section(title: "Italian", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-            Section(title: "Japanese", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-            Section(title: "", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"])]
+            Section(title: "Japanese", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"])
+        ]
         duplicateRemove(userLanuages: userLangs)
         configureViewComponent()
     }

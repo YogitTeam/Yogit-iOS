@@ -1,28 +1,18 @@
 //
-//  FirstSetUpTableViewCell.swift
+//  BoardCategoryTableViewCell.swift
 //  Yogit
 //
-//  Created by Junseo Park on 2022/09/24.
+//  Created by Junseo Park on 2022/12/01.
 //
 
 import UIKit
 
-class MyTextFieldTableViewCell: UITableViewCell {
+class BoardOptionsTableViewCell: UITableViewCell {
 
-    static let identifier = "setUpProfileTableViewCell"
+    static let identifier = "BoardCategoryTableViewCelll"
     
-//    private let placeholderData = ["userName", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
     
     weak var borderLayer: CALayer?  // cell bottom border
-    
-//    let placeholderData = ["Name", "International age", "Add conversational language", "Select gender", "Select nationaltiy"]
-//
-//    var placeholder: String? {
-//        didSet {
-//             guard let item = placeholder else { return }
-//             commonTextField.placeholder = item
-//        }
-//    }
     
     // commonTextField
     let commonTextField: UITextField = {
@@ -37,20 +27,6 @@ class MyTextFieldTableViewCell: UITableViewCell {
         return textField
     }()
     
-
-    let subLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.light)
-        label.isHidden = true
-        label.sizeToFit()
-        label.numberOfLines = 0
-        label.adjustsFontSizeToFitWidth = true
-//        label.layer.borderColor = UIColor.systemRed.cgColor
-//        label.layer.borderWidth = 1
-        return label
-    }()
-    
     let rightButton: UIButton = {
         let button = UIButton()
         button.isHidden = true
@@ -61,24 +37,11 @@ class MyTextFieldTableViewCell: UITableViewCell {
         return button
     }()
     
-//    private let leftImageView: UIImageView = {
-//        let imageView = UIImageView()
-////        imageView.clipsToBounds = true
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.backgroundColor = .white
-//        imageView.image = nil
-//        imageView.contentMode = .f
-//        imageView.isHidden = true
-////        imageView.sizeToFit()
-//        return imageView
-//    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         print("SetUpProfileTableViewCell init")
         contentView.addSubview(commonTextField)
         contentView.addSubview(rightButton)
-        contentView.addSubview(subLabel)
         configureViewComponent()
 //        contentView.addSubview(leftImageView)
     }
@@ -97,15 +60,11 @@ class MyTextFieldTableViewCell: UITableViewCell {
         
         commonTextField.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.bottom.equalTo(subLabel.snp.top)
+            make.bottom.equalToSuperview()
             make.leading.equalToSuperview().inset(20)
             make.trailing.equalToSuperview().inset(20)
         }
         
-        subLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(0)
-        }
         rightButton.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.width.equalTo(44)
@@ -119,8 +78,6 @@ class MyTextFieldTableViewCell: UITableViewCell {
         self.removeBorder() // remove bottom border
         prepareForReuseTextField()
         prepareForReuseButton()
-        prepareForReuseLabel()
-//        prepareForReuseimageView()
     }
     
     func prepareForReuseTextField() {
@@ -138,34 +95,18 @@ class MyTextFieldTableViewCell: UITableViewCell {
         self.rightButton.isHidden = true
     }
     
-    func prepareForReuseLabel() {
-        self.subLabel.text = nil
-        self.subLabel.isHidden = true
-    }
-    
-//    func prepareForReuseimageView() {
-//        self.leftImageView.isHidden = true
-//    }
     
     // cell content update
-    func configure(text: String?, image: UIImage?, section: Int) {
+    func configure(text: String?, image: UIImage?) {
         commonTextField.text = text
-        switch section {
-        case ProfileSectionData.name.rawValue:
-            commonTextField.isEnabled = true
-            commonTextField.tintColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
-        case ProfileSectionData.age.rawValue:
-            commonTextField.isEnabled = true
-        case ProfileSectionData.languages.rawValue:
-            rightButton.isHidden = false
-            subLabel.isHidden = false
-            if text != nil { rightButton.isEnabled = true }
-        case ProfileSectionData.gender.rawValue: commonTextField.isEnabled = true
-        case ProfileSectionData.nationality.rawValue:
-            rightButton.isHidden = false
-            commonTextField.addLeftImage(image: image)
-        default: fatalError("Out of section index SetUpProfileTableVeiwCell")
-        }
+        commonTextField.addLeftImage(image: image)
+//        switch section {
+//        case BoardSelectDetailSectionData.numberOfMember.rawValue: commonTextField.isEnabled = true
+//        case BoardSelectDetailSectionData.dateTime.rawValue: commonTextField.isEnabled = true
+//        case BoardSelectDetailSectionData.location.rawValue: commonTextField.addrightimage(image: UIImage(named: "push"))
+//        case BoardSelectDetailSectionData.locationDetail.rawValue: commonTextField.isEnabled = true
+//        default: fatalError("Out of section index cell of GatheringBoardSelectDetailViewController")
+//        }
     }
     
     
@@ -185,3 +126,4 @@ class MyTextFieldTableViewCell: UITableViewCell {
         self.borderLayer?.removeFromSuperlayer()
     }
 }
+

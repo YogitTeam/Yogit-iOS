@@ -17,10 +17,8 @@ enum AuthState {
 //    }
 }
 
-
-
 enum RootViewState {
-    case loginView, homeView, setUpProfileView
+    case loginView, homeView, setProfileView
 }
 
 struct SignInManager {

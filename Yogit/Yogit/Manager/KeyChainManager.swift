@@ -16,8 +16,8 @@ final class KeychainManager {
         case unhandledError(status: OSStatus) // unknowed: throw OS status
     }
     
-    static func saveUserItem(userItem: UserItem) throws -> Bool {
-        guard let data = try? JSONEncoder().encode(userItem) else { return false }
+    static func saveUserItem(userItem: UserItem) throws {
+        guard let data = try? JSONEncoder().encode(userItem) else { return }
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -36,8 +36,6 @@ final class KeychainManager {
         guard status != errSecDuplicateItem else { throw KeychainError.duplicateEntry }
         
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-        
-        return true
     }
     
     // 조회

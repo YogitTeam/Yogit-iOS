@@ -1,0 +1,49 @@
+//
+//  String.swift
+//  Yogit
+//
+//  Created by Junseo Park on 2022/11/29.
+//
+
+import Foundation
+import UIKit
+
+extension String {
+    func urlToImage(completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: self) else { return completion(nil) }
+        guard let data = try? Data(contentsOf: url) else { return completion(nil) }
+        guard let image = UIImage(data: data) else { return completion(nil) }
+        completion(image)
+    }
+    
+//    func toImage(completion: @escaping (UIImage) -> Void) {
+////        let image: UIImage?
+////        DispatchQueue.global().async {
+//            if let url = URL(string: self) {
+//                if let data = try? Data(contentsOf: url) {
+//                    if let image = UIImage(data: data) {
+//
+//                    }
+//                }
+//            }
+//        }
+//        
+////        DispatchQueue.global().async {
+////            guard let url = URL(string: self) else { return }
+////            guard let data = try? Data(contentsOf: url) else { return }
+////            guard let image = UIImage(data: data) else { return }
+////        }
+//        guard let url = URL(string: self) else { return nil }
+//        guard let data = try? Data(contentsOf: url) else { return nil }
+//        guard let image = UIImage(data: data) else { return nil }
+//        return image
+//    }
+    
+    func stringToDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY-mm-dd'T'HH:mm:ss" // "YYYY-MM-dd HH:mm:ss" // yyyy-MM-dd HH:mm:ss
+        // yyyy-MM-dd'T'HH:mm:ssZ
+        dateFormatter.timeZone = TimeZone(identifier: "GTM")
+        return dateFormatter.date(from: self)
+    }
+}

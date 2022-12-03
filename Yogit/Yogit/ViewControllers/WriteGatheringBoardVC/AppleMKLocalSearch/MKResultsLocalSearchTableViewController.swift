@@ -117,13 +117,19 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
         
         // 위경도 전달
         let place = places[indexPath.row]
-        
         guard let coordinate = place.placemark.location?.coordinate else { return }
         guard let placeName = place.placemark.name else { return }
         guard let placeTitle = place.placemark.title else { return }
         guard let placeAdministrativeArea = place.placemark.administrativeArea else { return }
+        guard let placeLocaclity = place.placemark.locality else { return }
+        var resultLocal: String = placeAdministrativeArea
+        if resultLocal != placeLocaclity {
+            resultLocal = resultLocal + " " + placeLocaclity
+        }
+        // 필드 변경 (administerativeArea >> locality)
+        // 로컬라이즈
         self.dismiss(animated: true)
-        self.delegate?.didTapPlace(coordinate: coordinate, placeName: placeName, placeTitle: placeTitle, placeAdministrativeArea: placeAdministrativeArea)
+        self.delegate?.didTapPlace(coordinate: coordinate, placeName: placeName, placeTitle: placeTitle, placeAdministrativeArea: resultLocal)
     }
     /*
     // MARK: - Navigation
