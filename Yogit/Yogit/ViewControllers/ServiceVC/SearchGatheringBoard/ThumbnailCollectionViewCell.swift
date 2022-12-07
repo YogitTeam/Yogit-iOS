@@ -163,7 +163,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
 //            $0.top.bottom.leading.trailing.equalToSuperview()
             $0.top.leading.trailing.equalToSuperview()
             $0.width.equalTo(contentView.frame.size.width)
-            $0.height.equalTo(contentView.frame.size.width*2/3)
+            $0.height.equalTo(contentView.frame.size.width*3/5)
 //            $0.bottom.equalTo(bottomContentView.snp.top)
             
         }
@@ -218,13 +218,15 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
                 boardImage = image
             }
             board.profileImgURL.urlToImage { (image) in
-                guard let image = image else { return }
+                guard let image = image else {
+                    return
+                }
                 hostImage = image
             }
             DispatchQueue.main.async {
-                guard let changeDate = board.date.stringToDate()?.dateToString() else { return }
                 self.boardImageView.image = boardImage
                 self.hostImageView.image = hostImage
+                guard let changeDate = board.date.stringToDate()?.dateToString() else { return }
                 self.titleLabel.text = board.title
                 self.dateLabel.text = changeDate
                 self.cityLabel.text = "Seoul"

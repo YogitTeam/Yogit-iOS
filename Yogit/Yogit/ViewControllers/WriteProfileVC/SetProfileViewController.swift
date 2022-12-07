@@ -268,7 +268,7 @@ class SetProfileViewController: UIViewController {
                     userItem.account.hasRequirementInfo = true
                     try KeychainManager.updateUserItem(userItem: userItem)
                     DispatchQueue.main.async {
-                        let rootVC = ServiceTapBarViewController()
+                        let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
                         self.view.window?.rootViewController = rootVC
                         self.view.window?.makeKeyAndVisible()
                     }

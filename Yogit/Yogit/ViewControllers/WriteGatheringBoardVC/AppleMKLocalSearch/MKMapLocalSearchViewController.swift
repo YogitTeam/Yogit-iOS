@@ -594,6 +594,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         self.searchRequest.naturalLanguageQuery = text
         self.searchRequest.resultTypes = [.address, .pointOfInterest]
         self.searchRequest.region = searchRegion
+        print("searchText",text)
         let search = MKLocalSearch(request: searchRequest)
         resultsVC.delegate = self
         
@@ -857,14 +858,15 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
         searchVC.dismiss(animated: true, completion: nil)
         searchVC.searchBar.text = placeName
         // 그전 핀 삭제
-        mapView.removeAnnotations(mapView.annotations)
+//        mapView.removeAnnotations(mapView.annotations)
 //        let annotations = mapView.annotations
 //        mapView.removeAnnotation(annotations as? MKAnnotation!)
         // add a map min
-        let pin = MKPointAnnotation()
-        pin.coordinate = coordinate
-        mapView.addAnnotation(pin)
-        mapView.setRegion(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)), animated: true)
+//        let pin = MKPointAnnotation()
+//        pin.coordinate = coordinate
+//        mapView.addAnnotation(pin)
+//        mapView.setRegion(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)), animated: true)
+//        mapView.removeAnnotations(mapView.annotations)
         moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
             .longitude, delta: 0.01)
         setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: placeName, subtitle: placeTitle)
@@ -884,21 +886,3 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
 }
 
 
-extension UIImage {
-    
-    func coustomPinSize() -> UIImage? {
-        let newWidth = 40
-        let newHeight = 40
-        let newImageRect = CGRect(x: 0, y: 0, width: newWidth, height: newHeight)
-        
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: newWidth, height: newHeight), false, 0.0)
-        
-        self.draw(in: newImageRect)
-        
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()?.withRenderingMode(.alwaysOriginal)
-        
-        UIGraphicsEndImageContext()
-        
-        return newImage
-    }
-}

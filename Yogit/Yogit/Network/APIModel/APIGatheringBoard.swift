@@ -14,9 +14,82 @@ struct GetAllBoardsReq: Encodable {
 }
 
 struct GetBoardDetail: Encodable {
-    let boardId: Int
+    let boardId: Int64
     let refreshToken: String
     let userId: Int64
+}
+
+struct ApplyGathering: Encodable {
+    let boardId: Int64
+    let refreshToken: String
+    let userId: Int64
+}
+
+struct CreateBoardReq: Encodable { // images 제외
+    var hostId: Int64?
+    var title: String?
+    var address: String?
+    var addressDetail: String?
+    var longitute: Double?
+    var latitude: Double?
+    var date: String?
+    var notice: String?
+    var cityName: String?
+    var introduction: String?
+    var kindOfPerson: String?
+    var totalMember: Int?
+    var categoryId: Int?
+    var refreshToken: String?
+    
+    init(hostId: Int64? = nil, title: String? = nil, address: String? = nil, addressDetail: String? = nil, longitute: Double? = nil, latitude: Double? = nil, date: String? = nil, notice: String? = nil, cityName: String? = nil, introduction: String? = nil, kindOfPerson: String? = nil, totalMember: Int? = nil, categoryId: Int? = nil, refreshToken: String? = nil) {
+        self.hostId = hostId
+        self.title = title
+        self.address = address
+        self.addressDetail = addressDetail
+        self.longitute = longitute
+        self.latitude = latitude
+        self.date = date
+        self.notice = notice
+        self.cityName = cityName
+        self.introduction = introduction
+        self.kindOfPerson = kindOfPerson
+        self.totalMember = totalMember
+        self.categoryId = categoryId
+        self.refreshToken = refreshToken
+    }
+}
+
+struct DeleteBoardImageReq: Encodable {
+    let boardId: Int64
+    let boardImageId: Int64
+    let refreshToken: String
+    let userId: Int64
+
+    init(boardId: Int64, boardImageId: Int64, refreshToken: String, userId: Int64) {
+        self.boardId = boardId
+        self.boardImageId = boardImageId
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
+}
+
+
+struct BoardReport: Encodable {
+    let content: String
+    let refreshToken: String
+    let reportType: String
+    let reportedBoardID: Int64
+    let reportedUserID: Int64
+    let reportingUserID: Int64
+    
+    init(content: String, refreshToken: String, reportType: String, reportedBoardID: Int64, reportedUserID: Int64, reportingUserID: Int64) {
+        self.content = content
+        self.refreshToken = refreshToken
+        self.reportType = reportType
+        self.reportedBoardID = reportedBoardID
+        self.reportedUserID = reportedUserID
+        self.reportingUserID = reportingUserID
+    }
 }
 
 class APIBoardResponse: Decodable {
@@ -36,12 +109,13 @@ class APIBoardResponse: Decodable {
 }
 
 // MARK: - Datum
-class Board: Codable {
-    let boardID, categoryID, cityID, currentMember: Int
+class Board: Decodable {
+    let categoryID, cityID, currentMember: Int
     let date: String
     let imageID: Int
     let imageURL, profileImgURL, status, title: String
     let totalMember: Int
+    let boardID: Int64
 
     enum CodingKeys: String, CodingKey {
         case boardID = "boardId"
@@ -54,7 +128,7 @@ class Board: Codable {
         case status, title, totalMember
     }
 
-    init(boardID: Int, categoryID: Int, cityID: Int, currentMember: Int, date: String, imageID: Int, imageURL: String, profileImgURL: String, status: String, title: String, totalMember: Int) {
+    init(boardID: Int64, categoryID: Int, cityID: Int, currentMember: Int, date: String, imageID: Int, imageURL: String, profileImgURL: String, status: String, title: String, totalMember: Int) {
         self.boardID = boardID
         self.categoryID = categoryID
         self.cityID = cityID
@@ -72,64 +146,55 @@ class Board: Codable {
 // when edit the board, convey after data convert to next vc struct createboardreq
 class BoardDetail: Decodable {
     let address: String
+    let boardId: Int64
     let addressDetail: String?
-    let boardID, categoryID: Int
+    let categoryId: Int
     let categoryName: String
-    let cityID: Int
+    let cityId: Int
     let createdAt: String
     let currentMember: Int
     let date: String
-    let hostID: Int64
+    let hostId: Int64
     let hostName: String
-    let imageIDS: [Int]
+    let cityName: String
+    let imageIds: [Int64]
     let imageUrls: [String]
     let introduction, kindOfPerson: String
     let latitude: Double
     let longitute: Double
-    let profileImgURL, status, title: String
+    let profileImgUrl, status, title: String
     let notice: String?
     let totalMember: Int
     let updatedAt: String
+    let userImageUrls: [String]?
+    let userIds: [Int64]?
 
-    enum CodingKeys: String, CodingKey {
-        case address, addressDetail
-        case boardID = "boardId"
-        case categoryID = "categoryId"
-        case categoryName
-        case cityID = "cityId"
-        case createdAt, currentMember, date
-        case hostID = "hostId"
-        case hostName
-        case imageIDS = "imageIds"
-        case imageUrls, introduction, kindOfPerson, latitude, longitute, notice
-        case profileImgURL = "profileImgUrl"
-        case status, title, totalMember, updatedAt
-    }
-
-    init(address: String, addressDetail: String?, boardID: Int, categoryID: Int, categoryName: String, cityID: Int, createdAt: String, currentMember: Int, date: String, hostID: Int64, hostName: String, imageIDS: [Int], imageUrls: [String], introduction: String, kindOfPerson: String, latitude: Double, longitute: Double, profileImgURL: String, status: String, title: String, notice: String?, totalMember: Int, updatedAt: String) {
+    init(address: String, boardId: Int64, addressDetail: String?, categoryId: Int, categoryName: String, cityId: Int, createdAt: String, currentMember: Int, date: String, hostId: Int64, hostName: String, cityName: String, imageIds: [Int64], imageUrls: [String], introduction: String, kindOfPerson: String, latitude: Double, longitute: Double, profileImgUrl: String, status: String, title: String, notice: String?, totalMember: Int, updatedAt: String, userImageUrls: [String]?, userIds: [Int64]?) {
         self.address = address
+        self.boardId = boardId
         self.addressDetail = addressDetail
-        self.boardID = boardID
-        self.categoryID = categoryID
+        self.categoryId = categoryId
         self.categoryName = categoryName
-        self.cityID = cityID
+        self.cityId = cityId
         self.createdAt = createdAt
         self.currentMember = currentMember
         self.date = date
-        self.hostID = hostID
+        self.hostId = hostId
         self.hostName = hostName
-        self.imageIDS = imageIDS
+        self.cityName = cityName
+        self.imageIds = imageIds
         self.imageUrls = imageUrls
         self.introduction = introduction
         self.kindOfPerson = kindOfPerson
         self.latitude = latitude
         self.longitute = longitute
-        self.profileImgURL = profileImgURL
+        self.profileImgUrl = profileImgUrl
         self.status = status
         self.title = title
         self.notice = notice
         self.totalMember = totalMember
         self.updatedAt = updatedAt
+        self.userImageUrls = userImageUrls
+        self.userIds = userIds
     }
 }
-

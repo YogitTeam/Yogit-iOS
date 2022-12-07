@@ -6,37 +6,77 @@
 //
 
 import UIKit
+import Alamofire
 
-enum Mode {
-    case post
-    case edit
-}
+//enum Mode {
+//    case post
+//    case edit
+//}
 
 class GatheringBoardCategoryViewController: UIViewController {
 
     let stepHeaderView = StepHeaderView()
+//    var mode: Mode? = .post {
+//        didSet {
+//            if self.mode == .edit {
+//                // get board detail
+//                getBoardDetail()
+//            }
+//        }
+//    }
+//    // 수정 타입 일때, tapIndex = createBoardReq.categoryId - 1
+//    var createBoardReq = CreateBoardReq() {
+//        didSet {
+////            if createBoardReq.categoryId != nil { tapIndex = nil }
+////            else { tapIndex = createBoardReq.categoryId! - 1 }
+//            print("Category createBoardReq", createBoardReq)
+//            DispatchQueue.main.async {
+//                self.categoryTableView.reloadData()
+//            }
+//        }
+//    }
     
-    
-    let step = 1.0
-    let categoryText = ["Daily Spot", "Traditional Culture", "Nature", "Language exchange"]
-    let categoryDescription = ["example, example, example", "example, example, example", "example, example, example", "example, example, example"]
-    
-    var tapIndex: Int? = nil {
+    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
         didSet {
-            print("tapIndex \(tapIndex)")
-            DispatchQueue.main.async {
-                if self.tapIndex != nil {
-                    self.nextButton.isEnabled = true
-                    self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            DispatchQueue.main.async { [self] in
+                print("boardWithMode1", boardWithMode)
+                if self.touchCount { return }
+                categoryTableView.reloadData()
+                if boardWithMode.boardReq?.categoryId != nil {
+                    nextButton.isEnabled = true
+                    nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
                 } else {
-                    self.nextButton.isEnabled = false
-                    self.nextButton.backgroundColor = .placeholderText
+                    nextButton.isEnabled = false
+                    nextButton.backgroundColor = .placeholderText
                 }
             }
         }
     }
     
-    var createBoardReq = CreateBoardReq()
+    var touchCount = false
+    
+//    var imageIds: [Int]?
+    
+    let step = 1.0
+    let categoryText = ["Daily Spot", "Traditional Culture", "Nature", "Language exchange"]
+    let categoryDescription = ["example, example, example", "example, example, example", "example, example, example", "example, example, example"]
+    
+//    var tapIndex: Int? = nil {
+//        didSet {
+//            print("tapIndex \(tapIndex)")
+//            DispatchQueue.main.async {
+//                if self.tapIndex != nil {
+//                    self.nextButton.isEnabled = true
+//                    self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//                } else {
+//                    self.nextButton.isEnabled = false
+//                    self.nextButton.backgroundColor = .placeholderText
+//                }
+//            }
+//        }
+//    }
+    
+//    var images: [UIImage] = []
     
     private let categoryTableView: UITableView = {
         let tableView = UITableView()
@@ -63,9 +103,10 @@ class GatheringBoardCategoryViewController: UIViewController {
         view.addSubview(stepHeaderView)
         view.addSubview(categoryTableView)
         view.addSubview(nextButton)
-        configureViewComponent()
         categoryTableView.delegate = self
         categoryTableView.dataSource = self
+        configureViewComponent()
+        getBoardDetail(mode: boardWithMode.mode)
     }
     
     override func viewDidLayoutSubviews() {
@@ -97,19 +138,25 @@ class GatheringBoardCategoryViewController: UIViewController {
         stepHeaderView.step = self.step
         stepHeaderView.titleLabel.text = "Category"
     }
+
     
     @objc func categoryContentViewTapped(sender: UITapGestureRecognizer) {
         // 3 state toggle 값
-        tapIndex == sender.view?.tag ? (tapIndex = nil) : (tapIndex = sender.view?.tag)
-        categoryTableView.reloadData()
-        createBoardReq.categoryId = (sender.view?.tag ?? 0) + 1
-        print("Set category createBoardReq.categoryId \(createBoardReq.categoryId)")
+        boardWithMode.boardReq?.categoryId == sender.view?.tag ? (boardWithMode.boardReq?.categoryId = nil) : (boardWithMode.boardReq?.categoryId = sender.view?.tag)
+//        touchOpCount = 0
+        
+//        tapIndex == sender.view?.tag ? (tapIndex = nil) : (tapIndex = sender.view?.tag)
+//        tapIndex == nil ? (createBoardReq.categoryId = nil) : (createBoardReq.categoryId = tapIndex! + 1)
+////        createBoardReq.categoryId = (sender.view?.tag ?? 0) + 1 // nil 아니면 1
+//        print("Set category createBoardReq.categoryId \(createBoardReq.categoryId)")
     }
     
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBSDVC = TestBoardViewController() // GatheringBoardOptionViewController()
-            GBSDVC.createBoardReq = self.createBoardReq
+            self.touchCount = true
+            self.boardWithMode.boardReq?.categoryId! += 1
+            GBSDVC.boardWithMode = self.boardWithMode
             self.navigationController?.pushViewController(GBSDVC, animated: true)
         }
 //        DispatchQueue.main.async {
@@ -119,6 +166,83 @@ class GatheringBoardCategoryViewController: UIViewController {
 //        }
     }
     
+    func getBoardDetail(mode: Mode?) {
+        if mode != .edit {
+            print("Return getBoardDetail")
+            return
+        }
+        print("Enter getBoardDetail")
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        guard let boardId = createBoardReq.boardId else {
+//            print("getBoardDetail boardId")
+//            return
+//
+//        }
+    
+        guard let boardId = boardWithMode.boardId else {
+            print("getBoardDetail boardId")
+            return
+        }
+        
+        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        AF.request(API.BASE_URL + "boards/get/detail",
+                   method: .post,
+                   parameters: getBoardDetailReq,
+                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+        .validate(statusCode: 200..<500)
+        .responseData { response in
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                guard let data = response.value else { return }
+                do{
+                    let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
+                    guard let myData = decodedData.data else { return }
+                    DispatchQueue.global().async {
+                        var images: [UIImage] = []
+                        for imageUrl in myData.imageUrls {
+                            imageUrl.urlToImage { (image) in
+                                guard let image = image else {
+                                    print("imageUrls can't read")
+                                    return
+                                }
+                                images.append(image)
+                            }
+                        }
+                        var createBoardReq = CreateBoardReq()
+                        createBoardReq.hostId = myData.hostId
+                        createBoardReq.title = myData.title
+                        createBoardReq.address = myData.address
+                        createBoardReq.addressDetail = myData.addressDetail
+                        createBoardReq.longitute = myData.longitute
+                        createBoardReq.latitude = myData.latitude
+                        createBoardReq.notice = myData.notice
+                        createBoardReq.date = myData.date
+                        createBoardReq.cityName = myData.cityName
+                        createBoardReq.introduction = myData.introduction
+                        createBoardReq.kindOfPerson = myData.kindOfPerson
+                        createBoardReq.totalMember = myData.totalMember
+                        createBoardReq.categoryId = myData.categoryId - 1
+//                        self.boardWithMode.boardId = myData.boardId
+//                        self.boardWithMode.imageIds = myData.imageIds
+//                        self.boardWithMode.images = images
+//                        self.tapIndex = myData.categoryId - 1
+//                        self.boardWithMode = BoardWithMode(boardReq: createBoardReq, boardId: myData.boardId, imageIds: myData.imageIds, images: images)
+                        self.boardWithMode.boardReq = createBoardReq
+                        self.boardWithMode.boardId = myData.boardId
+                        self.boardWithMode.imageIds = myData.imageIds
+                        self.boardWithMode.images = images
+                    }
+                }
+                catch{
+                    print("catch can't read")
+                    print(error.localizedDescription)
+                }
+            case let .failure(error):
+                print(error)
+            }
+        }
+    }
     
     // MARK: - Table view data source object
     
@@ -136,9 +260,17 @@ class GatheringBoardCategoryViewController: UIViewController {
         // 기존 탭한 값 있으면 istapped false로 바꿈
 //        tapIndex == indexPath.row ? (cell.isTapped = true) : (cell.isTapped = false) // 현재
         
-        if tapIndex == nil {
+//        if tapIndex == nil {
+//            cell.isTapped = nil
+//        } else if tapIndex == indexPath.row {
+//            cell.isTapped = true
+//        } else {
+//            cell.isTapped = false
+//        }
+//
+        if boardWithMode.boardReq?.categoryId == nil {
             cell.isTapped = nil
-        } else if tapIndex == indexPath.row {
+        } else if boardWithMode.boardReq?.categoryId == indexPath.row {
             cell.isTapped = true
         } else {
             cell.isTapped = false

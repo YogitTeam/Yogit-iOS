@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MyTextViewTableViewCell: UITableViewCell {
+class MyTextView: UIView {
     static let identifier = "MyTextViewTableViewCell"
     
 
@@ -33,16 +33,24 @@ class MyTextViewTableViewCell: UITableViewCell {
         return label
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         print("MyTextViewTableViewCell init")
-        contentView.addSubview(myTextView)
-        contentView.addSubview(textCountLabel)
+        addSubview(myTextView)
+        addSubview(textCountLabel)
         configureViewComponent()
     }
     
+//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//        print("MyTextViewTableViewCell init")
+//        contentView.addSubview(myTextView)
+//        contentView.addSubview(textCountLabel)
+//        configureViewComponent()
+//    }
+//
     private func configureViewComponent() {
-        contentView.backgroundColor = .systemBackground
+        backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {
@@ -74,11 +82,11 @@ class MyTextViewTableViewCell: UITableViewCell {
 //        }
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        print("MyTextViewTableViewCell")
-        myTextView.text = nil
-    }
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//        print("MyTextViewTableViewCell")
+//        myTextView.text = nil
+//    }
 
 //    // cell content update
 //    func configure(text: String?, section: Int) {

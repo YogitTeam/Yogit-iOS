@@ -13,17 +13,37 @@ class TestBoardViewController: UIViewController {
     let stepHeaderView = StepHeaderView()
     var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
     private let placeholderData = ["Number of member including host", "2022.08.31 14:00", "MeetUp place", "Ex) Gangnam station 3 exit (option)"]
+//    var mode: Mode? {
+//        didSet {
+//            if self.mode == .edit {
+//                viewGetValues()
+//            }
+//        }
+//    }
+//    var createBoardReq = CreateBoardReq() {
+//        didSet {
+//            hasAllData()
+//            print("Select Detail createBoardReq\(createBoardReq)")
+//        }
+//    }
+//
+//    var images: [UIImage] = []
     
-    var createBoardReq = CreateBoardReq() {
+    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
         didSet {
-            hasAllData()
-            print("Select Detail createBoardReq\(createBoardReq)")
+            print("boardWitMode2", boardWithMode)
+            DispatchQueue.main.async { 
+                self.hasAllData()
+                print(self.boardWithMode)
+            }
         }
     }
     
     private var memberNumberData: [Int] = []
     
     private var date: String?
+    
+    private var totalNumber = 3
     
     private let numberPickerView: UIPickerView = {
         let pickerView = UIPickerView()
@@ -138,10 +158,12 @@ class TestBoardViewController: UIViewController {
          self.headerView[1],
          self.headerView[2]].forEach { view.addSubview($0) }
         numberPickerView.delegate = self
+        numberPickerView.dataSource = self
         for i in 3...30 { memberNumberData.append(i) }
         configureViewComponent()
         configureTextField()
         configureHeaderView()
+        viewGetValues(mode: boardWithMode.mode)
         // Do any additional setup after loading the view.
     }
     
@@ -248,16 +270,25 @@ class TestBoardViewController: UIViewController {
         }
     }
     
+//    @objc func numberPickerViewTapped(_ sender: UITapGestureRecognizer) {
+//        print(" numberPickerViewTapped")
+//        self.boardWithMode.boardReq?.totalMember = 3
+//        guard let boardReq = boardWithMode.boardReq else { return }
+//        guard let memberNumber = boardReq.totalMember else { return }
+//        self.memberTextField.text = String(memberNumber)
+//    }
+    
     private func formatDate(date: Date) -> String{
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
-        createBoardReq.date = formatter.string(from: date)
+        boardWithMode.boardReq?.date = formatter.string(from: date)
+//        createBoardReq.date = formatter.string(from: date)
         formatter.dateFormat = "E, MMM d, h:mm a"
         return formatter.string(from: date)
     }
     
     private func hasAllData() {
-        if self.createBoardReq.totalMember != nil && self.createBoardReq.date != nil && self.createBoardReq.latitude != nil && self.createBoardReq.longitute != nil && self.createBoardReq.cityName != nil && self.createBoardReq.address != nil {
+        if self.boardWithMode.boardReq?.totalMember != nil && self.boardWithMode.boardReq?.date != nil && self.boardWithMode.boardReq?.latitude != nil && self.boardWithMode.boardReq?.longitute != nil && self.boardWithMode.boardReq?.cityName != nil && self.boardWithMode.boardReq?.address != nil {
             self.nextButton.isEnabled = true
             self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
             print("Has all data")
@@ -265,6 +296,18 @@ class TestBoardViewController: UIViewController {
             print("Not has all data")
             self.nextButton.isEnabled = false
             self.nextButton.backgroundColor = .placeholderText
+        }
+    }
+    
+    private func viewGetValues(mode: Mode?) {
+        if mode != .edit { return }
+        guard let memberNumber = boardWithMode.boardReq?.totalMember else { return }
+        self.memberTextField.text = String(memberNumber)
+        self.dateTextField.text = boardWithMode.boardReq?.date?.stringToDate()?.dateToString()
+        self.placeTextField.text = boardWithMode.boardReq?.address
+        if boardWithMode.boardReq?.address != nil {
+            self.placeDetailTextField.text = boardWithMode.boardReq?.addressDetail
+            self.placeDetailTextField.isHidden = false
         }
     }
     
@@ -277,13 +320,19 @@ class TestBoardViewController: UIViewController {
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBTDVC = GatheringBoardContentViewController()
-            GBTDVC.createBoardReq = self.createBoardReq
+//            GBTDVC.createBoardReq = self.createBoardReq
+//            GBTDVC.images = self.images
+//            GBTDVC.mode = self.mode
+            GBTDVC.boardWithMode = self.boardWithMode
             self.navigationController?.pushViewController(GBTDVC, animated: true)
         }
     }
     
     @objc func donePressed(_ sender: UIButton) {
-        memberTextField.text = createBoardReq.totalMember == nil ? nil : "\(createBoardReq.totalMember!)"
+        boardWithMode.boardReq?.totalMember = self.totalNumber
+        guard let boardReq = boardWithMode.boardReq else { return }
+        guard let memberNumber = boardReq.totalMember else { return }
+        self.memberTextField.text = String(memberNumber)
         self.view.endEditing(true)
     }
     
@@ -302,15 +351,15 @@ extension TestBoardViewController: UIPickerViewDataSource {
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        print("commponent")
         return "\(self.memberNumberData[row])"
     }
 }
 
 extension TestBoardViewController: UIPickerViewDelegate {
-
+    
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        return createBoardReq.totalMember = self.memberNumberData[row]
+        print("select total number")
+        self.totalNumber = self.memberNumberData[row]
     }
 
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
@@ -320,12 +369,9 @@ extension TestBoardViewController: UIPickerViewDelegate {
 
 extension TestBoardViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        boardWithMode.boardReq?.addressDetail = textField.text
         textField.resignFirstResponder()
         return true
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        createBoardReq.addressDetail = textField.text
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -338,11 +384,11 @@ extension TestBoardViewController: UITextFieldDelegate {
 
 extension TestBoardViewController: MeetUpPlaceProtocol {
     func locationSend(meetUpPlace: MeetUpPlace?) {
-        self.createBoardReq.address = meetUpPlace?.address
-        self.createBoardReq.latitude = meetUpPlace?.latitude
-        self.createBoardReq.longitute = meetUpPlace?.longitude
-        self.createBoardReq.cityName = meetUpPlace?.city
-        placeTextField.text = self.createBoardReq.address
+        self.boardWithMode.boardReq?.address = meetUpPlace?.address
+        self.boardWithMode.boardReq?.latitude = meetUpPlace?.latitude
+        self.boardWithMode.boardReq?.longitute = meetUpPlace?.longitude
+        self.boardWithMode.boardReq?.cityName = meetUpPlace?.city
+        placeTextField.text = self.boardWithMode.boardReq?.address
         placeDetailTextField.isHidden = false
     }
 }

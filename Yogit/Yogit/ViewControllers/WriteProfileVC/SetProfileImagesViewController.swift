@@ -139,10 +139,12 @@ class SetProfileImagesViewController: UIViewController {
     
     func getProfileImages() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
+        print("refershtoken \(userItem.refresh_token)")
+        let parameters = ["refreshToken": userItem.refresh_token]
         AF.request(API.BASE_URL + "users/image/\(userItem.userId)",
                    method: .get,
-                   parameters: nil,
-                   encoding: JSONEncoding.default)
+                   parameters: parameters,
+                   encoding: JSONEncoding.default) // JSONEncoding.default
             .validate(statusCode: 200..<500)
             .responseData { response in
             switch response.result {
@@ -183,16 +185,11 @@ class SetProfileImagesViewController: UIViewController {
     }
     
     @objc func saveButtonTapped(_ sender: UIButton) {
-        guard let profileImage = images.first else { return }
+        guard let profileImage = images.first?.resize(targetSize: CGSize(width: 110, height: 110)) else { return }
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         let parameters: [String: Int64] = [
             "userId": userItem.userId
         ]
-        let imgs = self.images
-        
-        for img in imgs {
-            print(img.toFile(format: .jpeg(0.3))!)
-        }
         
         // 이미지 get 요청 후 데이터 있으면 post, 없으면 put
         AF.upload(multipartFormData: { multipartFormData in
@@ -262,9 +259,9 @@ extension SetProfileImagesViewController: UICollectionViewDataSource {
         print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
         if indexPath.row < images.count {
-            cell.configure(image: images[indexPath.row], sequence: indexPath.row + 1, kind: Kind.profile)
+            cell.configure(image: images[indexPath.row], imageId: nil, sequence: indexPath.row + 1, kind: Kind.profile)
         } else {
-            cell.configure(image: UIImage(named: "imageNULL")?.withRenderingMode(.alwaysTemplate), sequence: indexPath.row + 1, kind: Kind.profile)
+            cell.configure(image: UIImage(named: "imageNULL")?.withRenderingMode(.alwaysTemplate), imageId: nil, sequence: indexPath.row + 1, kind: Kind.profile)
         }
         return cell
     }

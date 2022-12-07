@@ -46,7 +46,7 @@ class SearchProfileImagesViewController: UIViewController {
         scrollView.isScrollEnabled = true
         scrollView.isPagingEnabled = true
         scrollView.backgroundColor = .black
-//        scrollView.bounces = false // 경계지점에서 bounce될건지 체크 (첫 or 마지막 페이지에서 바운스 스크롤 효과 여부)
+        scrollView.bounces = true // 경계지점에서 bounce될건지 체크 (첫 or 마지막 페이지에서 바운스 스크롤 효과 여부)
         return scrollView
     }()
     

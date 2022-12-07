@@ -154,7 +154,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
 
             print("User name \(userName)")
             print("Password \(password)")
-        
         default:
             break
         }

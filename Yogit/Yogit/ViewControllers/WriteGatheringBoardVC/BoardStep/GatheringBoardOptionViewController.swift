@@ -17,6 +17,16 @@ class GatheringBoardOptionViewController: UIViewController {
         }
     }
     
+    var mode: Mode? {
+        didSet {
+            if self.mode == .edit {
+                // 화면 뿌려주기
+            }
+        }
+    }
+    
+    var images: [UIImage] = []
+    
     let stepHeaderView = StepHeaderView()
     
     private var memberNumberData: [Int] = []
@@ -158,7 +168,8 @@ class GatheringBoardOptionViewController: UIViewController {
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBTDVC = GatheringBoardContentViewController()
-            GBTDVC.createBoardReq = self.createBoardReq
+//            GBTDVC.createBoardReq = self.createBoardReq
+//            GBTDVC.images = self.images
             self.navigationController?.pushViewController(GBTDVC, animated: true)
         }
     }

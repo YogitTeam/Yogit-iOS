@@ -26,7 +26,6 @@
 		791C1EA3292E686900623936 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EA2292E686900623936 /* APIConstants.swift */; };
 		791C1EBB293126D700623936 /* MoveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EBA293126D700623936 /* MoveVC.swift */; };
 		791C1EBF293251F600623936 /* SearchProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EBE293251F600623936 /* SearchProfileImagesViewController.swift */; };
-		791C1EC12933A1E100623936 /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC02933A1E100623936 /* HeaderCollectionReusableView.swift */; };
 		791C1EC329355F6A00623936 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC229355F6A00623936 /* String.swift */; };
 		791C1EC529355F7600623936 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC429355F7600623936 /* Date.swift */; };
 		791C1EED2937C1A800623936 /* GatheringDetailBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */; };
@@ -61,6 +60,12 @@
 		7962CEE22938EF35007FCC10 /* BoardOptionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE12938EF35007FCC10 /* BoardOptionsTableViewCell.swift */; };
 		7962CEE42939174C007FCC10 /* TestBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE32939174C007FCC10 /* TestBoardViewController.swift */; };
 		7962CEE829392C86007FCC10 /* MyHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE729392C86007FCC10 /* MyHeaderView.swift */; };
+		7962CEEA293BA5F9007FCC10 /* BoardInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE9293BA5F9007FCC10 /* BoardInfoView.swift */; };
+		7962CEEE293C4302007FCC10 /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEED293C4302007FCC10 /* Encodable.swift */; };
+		7962CEF0293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEEF293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift */; };
+		7962CEF629400C34007FCC10 /* ClipBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */; };
+		7962CEF829407B8E007FCC10 /* ClipBoardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF729407B8E007FCC10 /* ClipBoardTableViewCell.swift */; };
+		7962CEFA29408285007FCC10 /* APIClipBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF929408285007FCC10 /* APIClipBoard.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -73,7 +78,6 @@
 		79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */; };
 		79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */; };
 		79A8F6A728CDC95000FEBE90 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A628CDC95000FEBE90 /* User.swift */; };
-		79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */; };
 		79A8F6AB28CDD65800FEBE90 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F6AA28CDD65800FEBE90 /* SetProfileViewController.swift */; };
 		79F0227328F7E61B007D59B8 /* SetProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */; };
 		79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228B28FD0ECB007D59B8 /* Logger.swift */; };
@@ -124,7 +128,6 @@
 		791C1EA2292E686900623936 /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		791C1EBA293126D700623936 /* MoveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveVC.swift; sourceTree = "<group>"; };
 		791C1EBE293251F600623936 /* SearchProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchProfileImagesViewController.swift; sourceTree = "<group>"; };
-		791C1EC02933A1E100623936 /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		791C1EC229355F6A00623936 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		791C1EC429355F7600623936 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringDetailBoardViewController.swift; sourceTree = "<group>"; };
@@ -158,6 +161,12 @@
 		7962CEE12938EF35007FCC10 /* BoardOptionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardOptionsTableViewCell.swift; sourceTree = "<group>"; };
 		7962CEE32939174C007FCC10 /* TestBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBoardViewController.swift; sourceTree = "<group>"; };
 		7962CEE729392C86007FCC10 /* MyHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyHeaderView.swift; sourceTree = "<group>"; };
+		7962CEE9293BA5F9007FCC10 /* BoardInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardInfoView.swift; sourceTree = "<group>"; };
+		7962CEED293C4302007FCC10 /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
+		7962CEEF293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberImagesCollectionViewCell.swift; sourceTree = "<group>"; };
+		7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipBoardViewController.swift; sourceTree = "<group>"; };
+		7962CEF729407B8E007FCC10 /* ClipBoardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipBoardTableViewCell.swift; sourceTree = "<group>"; };
+		7962CEF929408285007FCC10 /* APIClipBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClipBoard.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -174,7 +183,6 @@
 		79A8F69F28C7611000FEBE90 /* PhoneNumberVerificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberVerificationViewController.swift; sourceTree = "<group>"; };
 		79A8F6A128C7615E00FEBE90 /* GetVerificationCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetVerificationCodeViewController.swift; sourceTree = "<group>"; };
 		79A8F6A628CDC95000FEBE90 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCode.swift; sourceTree = "<group>"; };
 		79A8F6AA28CDD65800FEBE90 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileImagesViewController.swift; sourceTree = "<group>"; };
 		79F0228B28FD0ECB007D59B8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -258,6 +266,7 @@
 				791C1EC229355F6A00623936 /* String.swift */,
 				791C1EC429355F7600623936 /* Date.swift */,
 				7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */,
+				7962CEED293C4302007FCC10 /* Encodable.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -267,10 +276,10 @@
 			children = (
 				79088B6728DE1A66008054F6 /* MyTextFieldTableViewCell.swift */,
 				79F022CB290A40F1007D59B8 /* MyImagesCollectionViewCell.swift */,
-				7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */,
 				7962CEE12938EF35007FCC10 /* BoardOptionsTableViewCell.swift */,
 				79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */,
 				79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */,
+				7962CEEF293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift */,
 			);
 			path = ViewCells;
 			sourceTree = "<group>";
@@ -281,7 +290,6 @@
 				79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */,
 				791C1E97292D3C9200623936 /* BoardMainCollectionTableViewCell.swift */,
 				791C1E99292D3CB000623936 /* ThumbnailCollectionViewCell.swift */,
-				791C1EC02933A1E100623936 /* HeaderCollectionReusableView.swift */,
 			);
 			path = SearchGatheringBoard;
 			sourceTree = "<group>";
@@ -292,6 +300,7 @@
 				791C1EA2292E686900623936 /* APIConstants.swift */,
 				791C1E9D292E5F8E00623936 /* APIUser.swift */,
 				791C1EA0292E600B00623936 /* APIGatheringBoard.swift */,
+				7962CEF929408285007FCC10 /* APIClipBoard.swift */,
 			);
 			path = APIModel;
 			sourceTree = "<group>";
@@ -341,6 +350,8 @@
 				7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */,
 				791C1EBD2932507200623936 /* SearchProfile */,
 				791C1E96292D3C5800623936 /* SearchGatheringBoard */,
+				7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */,
+				7962CEF729407B8E007FCC10 /* ClipBoardTableViewCell.swift */,
 			);
 			path = ServiceVC;
 			sourceTree = "<group>";
@@ -358,9 +369,9 @@
 			isa = PBXGroup;
 			children = (
 				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
-				79519FF2291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift */,
-				79519FF4291EA87B00D8E6CF /* GatheringBoardContentViewController.swift */,
 				7962CEE32939174C007FCC10 /* TestBoardViewController.swift */,
+				79519FF4291EA87B00D8E6CF /* GatheringBoardContentViewController.swift */,
+				79519FF2291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift */,
 			);
 			path = BoardStep;
 			sourceTree = "<group>";
@@ -499,7 +510,6 @@
 				79F0228B28FD0ECB007D59B8 /* Logger.swift */,
 				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
 				79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */,
-				79A8F6A828CDC95E00FEBE90 /* VerificationCode.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -508,6 +518,8 @@
 			isa = PBXGroup;
 			children = (
 				7962CEE729392C86007FCC10 /* MyHeaderView.swift */,
+				7962CEE9293BA5F9007FCC10 /* BoardInfoView.swift */,
+				7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */,
 				79F0230D291CDD82007D59B8 /* StepViewHeader.swift */,
 			);
 			path = Views;
@@ -768,6 +780,7 @@
 				7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */,
 				791C1E9E292E5F8E00623936 /* APIUser.swift in Sources */,
 				791C1EA3292E686900623936 /* APIConstants.swift in Sources */,
+				7962CEFA29408285007FCC10 /* APIClipBoard.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
 				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,
@@ -794,12 +807,12 @@
 				791C1EC529355F7600623936 /* Date.swift in Sources */,
 				7951A0BC292A29F800D8E6CF /* ServiceTapBarViewController.swift in Sources */,
 				79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */,
-				791C1EC12933A1E100623936 /* HeaderCollectionReusableView.swift in Sources */,
 				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
 				7951A0022921063D00D8E6CF /* LocationManager.swift in Sources */,
 				7951A0482921862A00D8E6CF /* GooglePlacesManager.swift in Sources */,
 				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
+				7962CEF0293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift in Sources */,
 				79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */,
 				79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */,
 				7962CEE42939174C007FCC10 /* TestBoardViewController.swift in Sources */,
@@ -808,8 +821,11 @@
 				795D9BC528F1D4E300228E34 /* Color.swift in Sources */,
 				794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */,
 				791C1EBB293126D700623936 /* MoveVC.swift in Sources */,
+				7962CEF629400C34007FCC10 /* ClipBoardViewController.swift in Sources */,
+				7962CEEE293C4302007FCC10 /* Encodable.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
 				7962CEE22938EF35007FCC10 /* BoardOptionsTableViewCell.swift in Sources */,
+				7962CEF829407B8E007FCC10 /* ClipBoardTableViewCell.swift in Sources */,
 				791C1EED2937C1A800623936 /* GatheringDetailBoardViewController.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79519FF3291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift in Sources */,
@@ -819,6 +835,7 @@
 				79A8F6AB28CDD65800FEBE90 /* SetProfileViewController.swift in Sources */,
 				79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */,
 				791C1EA1292E600B00623936 /* APIGatheringBoard.swift in Sources */,
+				7962CEEA293BA5F9007FCC10 /* BoardInfoView.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* MyImagesCollectionViewCell.swift in Sources */,
 				7951A0082921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
@@ -828,7 +845,6 @@
 				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
 				79519FF5291EA87B00D8E6CF /* GatheringBoardContentViewController.swift in Sources */,
 				795D9BC028F1993300228E34 /* RequirementTableViewHeader.swift in Sources */,
-				79A8F6A928CDC95E00FEBE90 /* VerificationCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

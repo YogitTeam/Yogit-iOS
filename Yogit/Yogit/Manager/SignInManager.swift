@@ -33,6 +33,7 @@ struct SignInManager {
         
         // 토큰 확인
         guard let userItem = try? KeychainManager.getUserItem() else {
+            print("Keychain item - NULL")
             completion(.undefine)
             return
         }

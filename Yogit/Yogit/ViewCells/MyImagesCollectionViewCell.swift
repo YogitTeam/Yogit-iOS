@@ -10,6 +10,8 @@ import UIKit
 class MyImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "MyImagesCollectionViewCell"
     
+    private var imageId: Int64?
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
@@ -79,18 +81,24 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        imageId = nil
         imageView.image = nil
         imageSequenceLabel.text = nil
         mainImageLabel.isHidden = true
     }
 
-    func configure(image: UIImage?, sequence: Int, kind: Kind) {
-        imageView.image = image
-        imageSequenceLabel.text = "\(sequence)"
+    func configure(image: UIImage?, imageId: Int64?, sequence: Int, kind: Kind) {
+        self.imageView.image = image
+        self.imageId = imageId
+        self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
         case .boardSelectDetail: break
         default: fatalError("Not exist kind of imageview")
         }
+    }
+    
+    func getImageID() -> Int64? {
+        return imageId
     }
 }

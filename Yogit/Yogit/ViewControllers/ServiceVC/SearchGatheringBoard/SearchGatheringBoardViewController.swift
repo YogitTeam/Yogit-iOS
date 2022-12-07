@@ -20,7 +20,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         button.layer.cornerRadius = 24
         button.isEnabled = true
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.addTarget(self, action: #selector(self.boardButtonTapped(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(self.createBoardButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -114,7 +114,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     func getBoardThumbnail() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         let getAllBoardsReq = GetAllBoardsReq(cursor: 0, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AF.request(API.BASE_URL + "boards/get",
+        AF.request(API.BASE_URL + "boards/get/categories",
                    method: .post,
                    parameters: getAllBoardsReq,
                    encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
@@ -152,7 +152,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let viewModel = viewModels[indexPath.row]
         let boardsInCategory = boardAllData[indexPath.row]
-        guard  let cell = tableView.dequeueReusableCell(withIdentifier: BoardMainCollectionTableViewCell.identifier, for: indexPath) as? BoardMainCollectionTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: BoardMainCollectionTableViewCell.identifier, for: indexPath) as? BoardMainCollectionTableViewCell else {
             fatalError()
         }
         cell.delegate = self
@@ -167,10 +167,10 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return view.frame.size.width/1.2
+        return view.frame.size.width/1.4
      }
     
-    @objc func boardButtonTapped(_ sender: UIButton) {
+    @objc func createBoardButtonTapped(_ sender: UIButton) {
         
 //        let objCreateEventVC = CreateEventVC()
 //        objCreateEventVC.hidesBottomBarWhenPushed = true
@@ -183,7 +183,9 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //        })
         DispatchQueue.main.async{
             let GBCVC = GatheringBoardCategoryViewController()
+//            GBCVC.mode = .post
 //            GBCVC.hidesBottomBarWhenPushed = true
+            GBCVC.boardWithMode.mode = .post
             self.navigationController?.pushViewController(GBCVC, animated: true)
         }
     }

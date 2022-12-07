@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        let setUpVC = GatheringBoardCategoryViewController() // ServiceTapBarViewController()
+        let setUpVC = ServiceTapBarViewController()
         let rootVC = UINavigationController(rootViewController: setUpVC)
         rootVC.navigationBar.tintColor = UIColor.label
         rootVC.navigationBar.topItem?.backButtonTitle = ""
@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = UIWindow(windowScene: scene)
         self.window?.rootViewController = rootVC
         self.window?.makeKeyAndVisible()
-//
+
 //
 //        let rootVC = SearchProfileImagesViewController()
 //        self.window = UIWindow(windowScene: scene)
