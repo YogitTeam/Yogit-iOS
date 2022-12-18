@@ -38,13 +38,12 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
     let headerLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.semibold)
-        label.text = "Dfdfdfdf"
+        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.bold)
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 1
-        label.layer.borderColor = UIColor.systemYellow.cgColor
-        label.layer.borderWidth = 1
+//        label.layer.borderColor = UIColor.systemYellow.cgColor
+//        label.layer.borderWidth = 1
         return label
     }()
     
@@ -52,11 +51,12 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         
-        layout.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(ThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: ThumbnailCollectionViewCell.identifier)
-        
+//        collectionView.layer.borderWidth = 1
+//        collectionView.layer.borderColor = UIColor.systemGray.cgColor
 //        collectionView.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.identifier)
         
         collectionView.backgroundColor = .systemBackground
@@ -85,15 +85,19 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
         super.layoutSubviews()
         headerLabel.snp.makeConstraints{ make in
             make.top.equalToSuperview().inset(10)
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(20)
         }
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(headerLabel.snp.bottom).offset(4)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().inset(4)
+            make.top.equalTo(headerLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.bottom.equalToSuperview().inset(10)
         }
 //        collectionView.frame = contentView.bounds
         collectionView.showsHorizontalScrollIndicator = false
+    }
+    
+    override func prepareForReuse() {
+        self.headerLabel.text = nil
     }
     
     // MARK: - Collection view
@@ -114,7 +118,7 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
 //    }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ThumbnailCollectionViewCell.identifier, for: indexPath) as? ThumbnailCollectionViewCell else    {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ThumbnailCollectionViewCell.identifier, for: indexPath) as? ThumbnailCollectionViewCell else {
             fatalError()
         }
         cell.configure(with: boards[indexPath.row])
@@ -132,8 +136,8 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = contentView.frame.size.width/1.8
-        let height: CGFloat = contentView.frame.size.width/1.8
+        let width: CGFloat = contentView.frame.size.width/1.9
+        let height: CGFloat = contentView.frame.size.width/1.9
         return CGSize(width: width, height: height)
     }
     

@@ -29,6 +29,12 @@
 		791C1EC329355F6A00623936 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC229355F6A00623936 /* String.swift */; };
 		791C1EC529355F7600623936 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC429355F7600623936 /* Date.swift */; };
 		791C1EED2937C1A800623936 /* GatheringDetailBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */; };
+		791F6CF1294395A800C1D470 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF0294395A800C1D470 /* TestViewController.swift */; };
+		791F6CF3294398B200C1D470 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF2294398B200C1D470 /* ChatViewController.swift */; };
+		791F6CF5294680D700C1D470 /* PushNoficationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF4294680D700C1D470 /* PushNoficationViewController.swift */; };
+		791F6CF7294680E400C1D470 /* MyClubViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF6294680E400C1D470 /* MyClubViewController.swift */; };
+		791F6CF92948741C00C1D470 /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF82948741C00C1D470 /* AlarmManager.swift */; };
+		791F6CFB294874E300C1D470 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CFA294874E300C1D470 /* Alarm.swift */; };
 		794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C728EBD504007C3C89 /* ImageViewController.swift */; };
 		794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */; };
 		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
@@ -131,6 +137,12 @@
 		791C1EC229355F6A00623936 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		791C1EC429355F7600623936 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringDetailBoardViewController.swift; sourceTree = "<group>"; };
+		791F6CF0294395A800C1D470 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		791F6CF2294398B200C1D470 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		791F6CF4294680D700C1D470 /* PushNoficationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNoficationViewController.swift; sourceTree = "<group>"; };
+		791F6CF6294680E400C1D470 /* MyClubViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyClubViewController.swift; sourceTree = "<group>"; };
+		791F6CF82948741C00C1D470 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
+		791F6CFA294874E300C1D470 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
 		794FF7C728EBD504007C3C89 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewTeestViewController.swift; sourceTree = "<group>"; };
 		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
@@ -248,6 +260,7 @@
 			children = (
 				79088AC728D89343008054F6 /* SignInManager.swift */,
 				79088B8328E5683F008054F6 /* KeyChainManager.swift */,
+				791F6CF82948741C00C1D470 /* AlarmManager.swift */,
 				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
 				7951A0012921063D00D8E6CF /* LocationManager.swift */,
 				7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */,
@@ -314,6 +327,17 @@
 			path = SearchProfile;
 			sourceTree = "<group>";
 		};
+		791F6CAF2940F77000C1D470 /* ClipBoard */ = {
+			isa = PBXGroup;
+			children = (
+				7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */,
+				7962CEF729407B8E007FCC10 /* ClipBoardTableViewCell.swift */,
+				791F6CF0294395A800C1D470 /* TestViewController.swift */,
+				791F6CF2294398B200C1D470 /* ChatViewController.swift */,
+			);
+			path = ClipBoard;
+			sourceTree = "<group>";
+		};
 		79519FF8291EA92F00D8E6CF /* WriteGatheringBoardVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -350,8 +374,8 @@
 				7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */,
 				791C1EBD2932507200623936 /* SearchProfile */,
 				791C1E96292D3C5800623936 /* SearchGatheringBoard */,
-				7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */,
-				7962CEF729407B8E007FCC10 /* ClipBoardTableViewCell.swift */,
+				791F6CF6294680E400C1D470 /* MyClubViewController.swift */,
+				791F6CF4294680D700C1D470 /* PushNoficationViewController.swift */,
 			);
 			path = ServiceVC;
 			sourceTree = "<group>";
@@ -380,6 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */,
+				791F6CAF2940F77000C1D470 /* ClipBoard */,
 			);
 			path = ReadGatheringBoardVC;
 			sourceTree = "<group>";
@@ -497,6 +522,7 @@
 				79088B7828E4A58F008054F6 /* Auth.swift */,
 				79A8F6A628CDC95000FEBE90 /* User.swift */,
 				79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */,
+				791F6CFA294874E300C1D470 /* Alarm.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -783,6 +809,7 @@
 				7962CEFA29408285007FCC10 /* APIClipBoard.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
+				791F6CF92948741C00C1D470 /* AlarmManager.swift in Sources */,
 				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,
 				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
 				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
@@ -791,6 +818,7 @@
 				7962CEE829392C86007FCC10 /* MyHeaderView.swift in Sources */,
 				79F0227328F7E61B007D59B8 /* SetProfileImagesViewController.swift in Sources */,
 				791C1E98292D3C9200623936 /* BoardMainCollectionTableViewCell.swift in Sources */,
+				791F6CF3294398B200C1D470 /* ChatViewController.swift in Sources */,
 				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
 				7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */,
@@ -799,15 +827,18 @@
 				79519FF1291E95E600D8E6CF /* Image.swift in Sources */,
 				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
 				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
+				791F6CF7294680E400C1D470 /* MyClubViewController.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
 				791C1EC329355F6A00623936 /* String.swift in Sources */,
 				79088B6828DE1A66008054F6 /* MyTextFieldTableViewCell.swift in Sources */,
 				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
 				79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */,
 				791C1EC529355F7600623936 /* Date.swift in Sources */,
+				791F6CF5294680D700C1D470 /* PushNoficationViewController.swift in Sources */,
 				7951A0BC292A29F800D8E6CF /* ServiceTapBarViewController.swift in Sources */,
 				79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */,
 				79088B7E28E4A81A008054F6 /* Constants.swift in Sources */,
+				791F6CF1294395A800C1D470 /* TestViewController.swift in Sources */,
 				7951A0022921063D00D8E6CF /* LocationManager.swift in Sources */,
 				7951A0482921862A00D8E6CF /* GooglePlacesManager.swift in Sources */,
 				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
@@ -823,6 +854,7 @@
 				791C1EBB293126D700623936 /* MoveVC.swift in Sources */,
 				7962CEF629400C34007FCC10 /* ClipBoardViewController.swift in Sources */,
 				7962CEEE293C4302007FCC10 /* Encodable.swift in Sources */,
+				791F6CFB294874E300C1D470 /* Alarm.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
 				7962CEE22938EF35007FCC10 /* BoardOptionsTableViewCell.swift in Sources */,
 				7962CEF829407B8E007FCC10 /* ClipBoardTableViewCell.swift in Sources */,
@@ -1030,6 +1062,9 @@
 				EXCLUDED_ARCHS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yogit/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = test;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치 권한이 요구됩니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = test;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1063,6 +1098,9 @@
 				DEVELOPMENT_TEAM = 9487SKDZZB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Yogit/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = test;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치 권한이 요구됩니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = test;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

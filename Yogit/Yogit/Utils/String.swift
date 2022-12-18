@@ -16,9 +16,23 @@ extension String {
         completion(image)
     }
     
+//    func urlToImage() -> UIImage {
+//        var returnImage: UIImage?
+//        DispatchQueue.global().async {
+//            if let url = URL(string: self) {
+//                if let data = try? Data(contentsOf: url) {
+//                    if let image = UIImage(data: data) {
+//                        return Image = image
+//                    }
+//                }
+//            }
+//        }
+//        return image
+//    }
+    
 //    func toImage(completion: @escaping (UIImage) -> Void) {
 ////        let image: UIImage?
-////        DispatchQueue.global().async {
+//        DispatchQueue.global().async {
 //            if let url = URL(string: self) {
 //                if let data = try? Data(contentsOf: url) {
 //                    if let image = UIImage(data: data) {
@@ -41,9 +55,9 @@ extension String {
     
     func stringToDate() -> Date? {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-mm-dd'T'HH:mm:ss" // "YYYY-MM-dd HH:mm:ss" // yyyy-MM-dd HH:mm:ss
+        dateFormatter.dateFormat = "YYYY-mm-dd HH:mm:ss" // "YYYY-MM-dd HH:mm:ss" // yyyy-MM-dd HH:mm:ss
         // yyyy-MM-dd'T'HH:mm:ssZ
-        dateFormatter.timeZone = TimeZone(identifier: "GTM")
+//        dateFormatter.timeZone = TimeZone(identifier: "UTC")
         return dateFormatter.date(from: self)
     }
 }

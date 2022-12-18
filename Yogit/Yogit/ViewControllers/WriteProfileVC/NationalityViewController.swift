@@ -12,7 +12,6 @@ protocol NationalityProtocol {
 }
 
 class NationalityViewController: UIViewController {
-
     // MARK: - TableView
     // 이미지도 같이
     let nationalityData: [String] = ["Korea", "USA"]
@@ -40,9 +39,20 @@ class NationalityViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        self.navigationItem.title = "Nationality"
+        self.setupSearchController()
         // frame: the view’s location and size in its superview’s coordinate system.
         // bound: the view’s location and size in its own coordinate system.
         nationalityTableView.frame = view.bounds
+    }
+    
+    func setupSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Search Language"
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        self.navigationItem.searchController = searchController
+        self.navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     
@@ -80,3 +90,8 @@ extension NationalityViewController: UITableViewDelegate {
     }
 }
 
+extension NationalityViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        //
+    }
+}

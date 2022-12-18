@@ -33,7 +33,7 @@ class GatheringBoardContentViewController: UIViewController {
     private var deletedImageIds: [Int64] = []
     private var newImagesIdx: Int = 0 // 기존 이미지 개수 저장, 삭제한 이미지 개수저장 >> 기존이미지(3개) - 삭제한 이미지(2개) >> post(patch) req: 1번 인덱스 부터 끝지점
     
-    private var imagePicker: UIImagePickerController?
+//    private var imagePicker: UIImagePickerController?
     
     private let rtvh = RequirementTableViewHeader()
     let stepHeaderView = StepHeaderView()
@@ -43,7 +43,7 @@ class GatheringBoardContentViewController: UIViewController {
     let placeholderData = ["Ex) Hangout", "Ex) Hangout", "Ex) Hangout"]
     var textViewCount = [0, 0, 0]
     let minChar = [10, 50, 50]
-    let maxChar = [30, 200, 200]
+    let maxChar = [30, 500, 500]
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -150,10 +150,6 @@ class GatheringBoardContentViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        DispatchQueue.main.async {
-            self.imagePicker = UIImagePickerController()
-            self.imagePicker?.delegate = self
-        }
         view.addSubview(stepHeaderView)
         view.addSubview(contentScrollView)
         imagesCollectionView.delegate = self
@@ -219,7 +215,7 @@ class GatheringBoardContentViewController: UIViewController {
             $0.height.equalTo(22)
         }
         textViews[1].snp.makeConstraints { make in
-            make.top.equalTo(headerView[1].snp.bottom).offset(20)
+            make.top.equalTo(headerView[1].snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(200)
         }
@@ -341,12 +337,11 @@ class GatheringBoardContentViewController: UIViewController {
 //            ]
             guard let parameters = boardWithMode.boardReq?.toDictionary else { return }
             guard let images = boardWithMode.images else { return }
-           
             if boardWithMode.mode == .edit {
+                print("edit", parameters)
                 // 삭제한 받아온 imageIds, 추가한 이미지 imageIds = -1
                 guard let boardId = boardWithMode.boardId else { return }
 //                guard let imageIds = boardWithMode.imageIds else { return }
-                let deletedIdsParam: [String: [Any]] = ["deletedImageIds": deletedImageIds]
                 AF.upload(multipartFormData: { multipartFormData in
                     multipartFormData.append(Data("\(boardId)".utf8), withName: "boardId")
                     for (key, value) in parameters {
@@ -356,8 +351,12 @@ class GatheringBoardContentViewController: UIViewController {
                         multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
                     }
 //                    multipartFormData.append(Data("\(deletedIdsParam.values)".utf8), withName: deletedIdsParam.keys)
-                    for (key, value) in deletedIdsParam {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
+                    if self.deletedImageIds != [] {
+                        let deletedIdsParam: [String: [Any]] = ["deleteImageIds": self.deletedImageIds]
+                        print(deletedIdsParam)
+                        for (key, value) in deletedIdsParam {
+                            multipartFormData.append(Data("\(value)".utf8), withName: key)
+                        }
                     }
                 }, to: API.BASE_URL + "boards", method: .patch) // post
                 .validate(statusCode: 200..<500)
@@ -375,6 +374,8 @@ class GatheringBoardContentViewController: UIViewController {
                 }
             }
             else {
+                print("post Board", parameters)
+                print("post image", images)
                 AF.upload(multipartFormData: { multipartFormData in
                     for (key, value) in parameters {
                         multipartFormData.append(Data("\(value)".utf8), withName: key)
@@ -478,22 +479,23 @@ extension GatheringBoardContentViewController: UICollectionViewDelegate {
         print("Tapped gatherging board collectionview image")
         guard let images = boardWithMode.images else { return }
         guard let mode = self.boardWithMode.mode else { return }
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-        if indexPath.row < images.count {
-            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row, mode: mode)}
-            alert.addAction(delete)
-        } else {
-            guard let imgPicker = self.imagePicker else { return }
-            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in
-                self.openLibrary(imgPicker)}
-            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera(imgPicker)}
-            alert.addAction(library)
-            alert.addAction(camera)
-        }
-        alert.view.tintColor = UIColor.label
-        alert.addAction(cancel)
         DispatchQueue.main.async {
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+            if indexPath.row < images.count {
+                let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row, mode: mode)}
+                alert.addAction(delete)
+            } else {
+                let imgPicker = UIImagePickerController()
+                imgPicker.delegate = self
+                let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in
+                    self.openLibrary(imgPicker)}
+                let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera(imgPicker)}
+                alert.addAction(library)
+                alert.addAction(camera)
+            }
+            alert.view.tintColor = UIColor.label
+            alert.addAction(cancel)
             self.present(alert, animated: true, completion: nil)
         }
     }
@@ -539,11 +541,12 @@ extension GatheringBoardContentViewController: UICollectionViewDelegateFlowLayou
 extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func openLibrary(_ picker: UIImagePickerController) {
         picker.sourceType = .photoLibrary
-        if boardWithMode.images?.count ?? 0 == 0 {
-            picker.allowsEditing = true
-        } else {
-            picker.allowsEditing = false
-        }
+        picker.allowsEditing = true
+//        if boardWithMode.images?.count ?? 0 == 0 {
+//            picker.allowsEditing = true
+//        } else {
+//            picker.allowsEditing = false
+//        }
         DispatchQueue.main.async {
             self.present(picker, animated: true, completion: nil)
         }
@@ -551,11 +554,12 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
 
     func openCamera(_ picker: UIImagePickerController) {
         picker.sourceType = .camera
-        if boardWithMode.images?.count ?? 0 == 0 {
-            picker.allowsEditing = true
-        } else {
-            picker.allowsEditing = false
-        }
+        picker.allowsEditing = true
+//        if boardWithMode.images?.count ?? 0 == 0 {
+//            picker.allowsEditing = true
+//        } else {
+//            picker.allowsEditing = false
+//        }
         DispatchQueue.main.async {
             self.present(picker, animated: true, completion: nil)
         }
@@ -579,6 +583,10 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         }
         print("Deleted imageID", imageId)
         self.deletedImageIds.append(imageId)
+        self.boardWithMode.imageIds?.remove(at: index)
+        self.boardWithMode.images?.remove(at: index)
+        self.newImagesIdx -= 1 // 기존 이미지에 삭제한 개수 카운트
+        self.imagesCollectionView.reloadData()
 //        let deleteBoardImageReq = DeleteBoardImageReq(boardId: boardId, boardImageId: imageId, refreshToken: userItem.refresh_token, userId: userItem.userId)
 //        AF.request(API.BASE_URL + "boards/boardimage",
 //                   method: .patch,
@@ -622,10 +630,11 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
             if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
                 newImage = img // 수정된 이미지
                 print("수정된 이미지", newImage)
-            } else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                newImage = img // 원본 이미지
-                print("원본 이미지", newImage)
             }
+//            else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+//                newImage = img // 원본 이미지
+//                print("원본 이미지", newImage)
+//            }
             guard let image = newImage else { return }
             DispatchQueue.main.async(qos: .userInteractive) {
                 let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.width))
@@ -728,7 +737,7 @@ extension UIViewController {
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard() {
+    @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
 }

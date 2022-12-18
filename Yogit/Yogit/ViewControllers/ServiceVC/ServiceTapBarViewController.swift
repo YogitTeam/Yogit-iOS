@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class ServiceTapBarViewController: UITabBarController {
 
@@ -13,6 +14,7 @@ class ServiceTapBarViewController: UITabBarController {
         super.viewDidLoad()
         configureTapBarVC()
         configureInstanceVC()
+        sendDeviceToken()
         print("DEBUG : \(String(describing: self.view.window?.rootViewController))")
     }
     
@@ -22,6 +24,8 @@ class ServiceTapBarViewController: UITabBarController {
 
     private func configureTapBarVC() {
         self.view.backgroundColor = .systemBackground
+        UITabBar.appearance().tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+
 //        self.hidesBottomBarWhenPushed = true
 //        self.tabBar.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
     }
@@ -29,6 +33,8 @@ class ServiceTapBarViewController: UITabBarController {
     private func configureInstanceVC() {
         let homeVC = SearchGatheringBoardController()
         let profileVC = SearchProfileViewController()
+        let myClubVC = MyClubViewController()
+        let notiVC = PushNoficationViewController()
         
 //        homeVC.title = "Home"
 //        profileVC.title = "Profile"
@@ -38,7 +44,9 @@ class ServiceTapBarViewController: UITabBarController {
 //        profileVC.navigationItem.largeTitleDisplayMode = .always
         
         homeVC.tabBarItem.image = UIImage.init(named: "Home")
+        myClubVC.tabBarItem.image = UIImage.init(named: "MyClub")
         profileVC.tabBarItem.image = UIImage.init(named: "Profile")
+        notiVC.tabBarItem.image = UIImage.init(named: "Noti")
         
         
         
@@ -58,9 +66,37 @@ class ServiceTapBarViewController: UITabBarController {
 //        navigationHome.navigationBar.prefersLargeTitles = true
 //        navigationProfile.navigationBar.prefersLargeTitles = true
         
-        setViewControllers([homeVC, profileVC], animated: true)
+        setViewControllers([homeVC, myClubVC, profileVC, notiVC], animated: true)
     }
-
+    
+    private func sendDeviceToken() {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        let userDefaults = UserDefaults.standard
+        guard let deviceTokenString = userDefaults.object(forKey: "DeviceToken") as? String else { return }
+        do {
+            userItem.deviceToken = deviceTokenString
+            try KeychainManager.updateUserItem(userItem: userItem)
+        } catch {
+            print("KeychainManager.update \(error.localizedDescription)")
+        }
+        print(userItem)
+        guard let deviceToken = userItem.deviceToken else { return }
+        let sendDeviceToken = SendDeviceToken(deviceToken: deviceToken, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        AF.request(API.BASE_URL + "users/device-token",
+                   method: .post,
+                   parameters: sendDeviceToken,
+                   encoder: URLEncodedFormParameterEncoder(destination: .httpBody)) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+        .validate(statusCode: 200..<500)
+        .response { response in // reponseData
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                userDefaults.removeObject(forKey: "DeviceToken")
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
     /*
     // MARK: - Navigation
 

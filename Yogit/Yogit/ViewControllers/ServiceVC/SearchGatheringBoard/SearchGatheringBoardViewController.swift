@@ -15,8 +15,8 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         let button = UIButton()
 //        button.setTitle("", for: .normal)
 //        button.imageView?.image = UIImage(named: "imageNULL")
-        button.setImage(UIImage(named: "imageNULL"), for: .normal)
-        button.tintColor = .white
+        button.setImage(UIImage(named: "imageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+//        button.tintColor = .white
         button.layer.cornerRadius = 24
         button.isEnabled = true
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -28,7 +28,9 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        
+//        tableView.separatorStyle = .none
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .systemBackground
         // register new cell
         // self: reference the type object
         tableView.register(BoardMainCollectionTableViewCell.self, forCellReuseIdentifier: BoardMainCollectionTableViewCell.identifier)
@@ -151,23 +153,25 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let viewModel = viewModels[indexPath.row]
-        let boardsInCategory = boardAllData[indexPath.row]
+
         guard let cell = tableView.dequeueReusableCell(withIdentifier: BoardMainCollectionTableViewCell.identifier, for: indexPath) as? BoardMainCollectionTableViewCell else {
             fatalError()
         }
-        cell.delegate = self
-        
-//        cell.configure(with: viewModel)
-        cell.configure(with: boardsInCategory)
-        
+        cell.delegate = self // touch delegate
+        cell.configure(with: self.boardAllData[indexPath.row])
         let categoryId = CategoryId(rawValue: indexPath.row + 1)
-        print("categoryId, categoryString \(categoryId) \(categoryId?.toString())")
         cell.headerLabel.text = categoryId?.toString()
+//        cell.delegate = self // touch delegate
+//
+////        cell.configure(with: viewModel)
+//        cell.configure(with: boardAllData[indexPath.row])
+        
+        print("categoryId, categoryString \(categoryId) \(categoryId?.toString())")
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return view.frame.size.width/1.4
+        return view.frame.size.width/1.34
      }
     
     @objc func createBoardButtonTapped(_ sender: UIButton) {
@@ -181,7 +185,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 ////            GBCVC.hidesBottomBarWhenPushed = true
 //            self.navigationController?.pushViewController(GBCVC, animated: true)
 //        })
-        DispatchQueue.main.async{
+        DispatchQueue.main.async {
             let GBCVC = GatheringBoardCategoryViewController()
 //            GBCVC.mode = .post
 //            GBCVC.hidesBottomBarWhenPushed = true

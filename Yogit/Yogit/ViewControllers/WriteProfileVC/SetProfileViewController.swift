@@ -66,6 +66,7 @@ class SetProfileViewController: UIViewController {
 
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "profileImageNULL")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .placeholderText
         imageView.layer.cornerRadius = 55
@@ -125,7 +126,7 @@ class SetProfileViewController: UIViewController {
     }()
     
     private var hasAllValue: Bool {
-        let isTrue = (userProfile.userId != nil) && (userProfile.languageNames?.count ?? 0 > 0) && (userProfile.languageLevels?.count ?? 0 > 0) && (userProfile.userName != nil) && (userProfile.userId != nil) && (userProfile.userAge != nil) && (userProfile.gender != nil) && (userProfile.nationality != nil)
+        let isTrue = (userProfile.userId != nil) && (userProfile.languageNames?.count ?? 0 > 0) && (userProfile.languageLevels?.count ?? 0 > 0) && (userProfile.userName != nil) && (userProfile.userId != nil) && (userProfile.userAge != nil) && (userProfile.gender != nil) && (userProfile.nationality != nil) && (profileImageView.image != nil && profileImageView.tag == 1)
         return isTrue
     }
     
@@ -223,7 +224,8 @@ class SetProfileViewController: UIViewController {
     private func configureViewComponent() {
         self.navigationItem.title = "Profile"
         self.navigationItem.rightBarButtonItem = self.rightButton
-        view.backgroundColor = .systemBackground
+        self.view.backgroundColor = .systemBackground
+        self.profileImageView.tag = 0
     }
 
     @objc private func buttonPressed(_ sender: Any) {
@@ -234,16 +236,17 @@ class SetProfileViewController: UIViewController {
         userProfile.userId = userItem.userId
         print(userProfile)
         
-        if hasAllValue == false {
-            print("Not has all value")
-            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter all required information", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alert.addAction(okAction)
-            present(alert, animated: false, completion: nil)
-            // present alert
-            return
-        }
+//        if hasAllValue == false {
+//            print("Not has all value")
+//            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter all required information", preferredStyle: UIAlertController.Style.alert)
+//            let okAction = UIAlertAction(title: "OK", style: .default)
+//            alert.addAction(okAction)
+//            present(alert, animated: false, completion: nil)
+//            // present alert
+//            return
+//        }
         
+//        guard let parameters = userProfile.toDictionary else { return }
         let parameters: [String: Any] = [
             "gender": userProfile.gender!,
             "languageLevels": userProfile.languageLevels!,
@@ -546,7 +549,8 @@ extension SetProfileViewController: UITextFieldDelegate {
 extension SetProfileViewController: ImagesProtocol {
     func imagesSend(profileImage: UIImage?) {
         self.profileImage = profileImage
-        profileImageView.image = self.profileImage
+        self.profileImageView.image = self.profileImage
+        self.profileImageView.tag = 1
     }
 }
 

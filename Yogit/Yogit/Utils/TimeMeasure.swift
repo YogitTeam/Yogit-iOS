@@ -6,13 +6,13 @@
 //
 
 import Foundation
-
-public func progressTime(_ closure: () -> ()) -> TimeInterval {
-    let start = CFAbsoluteTimeGetCurrent()
-    closure()
-    let diff = CFAbsoluteTimeGetCurrent() - start
-    return (diff)
-}
+//
+//public func progressTime(_ closure: () -> ()) -> TimeInterval {
+//    let start = CFAbsoluteTimeGetCurrent()
+//    closure()
+//    let diff = CFAbsoluteTimeGetCurrent() - start
+//    return (diff)
+//}
 
 //progressTime {
 //    // put your func

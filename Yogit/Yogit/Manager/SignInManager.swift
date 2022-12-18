@@ -38,20 +38,24 @@ struct SignInManager {
             return
         }
         
+        // 키체인에 상태 로그인 저장
+        // 로그 아웃시 로그인 뷰
+        // 로그인시 자동로그인
         
         switch userItem.userType { // service name
         case Service.APPLE_SIGNIN: //
             let appleIDProvider = ASAuthorizationAppleIDProvider()
             appleIDProvider.getCredentialState(forUserID: userItem.account.identifier) { (credentialState, error) in
                 switch credentialState {
-                case .notFound: // The Apple ID credential was not found, so show the sign-in UI.
+                case .notFound: // 애플 계정 없거나 삭제, so show the sign-in UI.
                     completion(.undefine)
                     break
                 case .authorized: // The Apple ID credential is valid.
+                    print("Authorized userItem.account.hasRequirementInfo", userItem.account.hasRequirementInfo)
                     if userItem.account.hasRequirementInfo { completion(.signInFull) }
                     else { completion(.signInNotFull) }
                     break
-                case .revoked: // The Apple ID credential is either revoked, so show the sign-in UI.
+                case .revoked: // 애플 계정 사용 중단, so show the sign-in UI.
                     completion(.signOut)
                     break
                 default:

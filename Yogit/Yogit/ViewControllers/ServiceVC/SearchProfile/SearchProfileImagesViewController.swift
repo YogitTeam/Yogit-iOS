@@ -130,19 +130,21 @@ class SearchProfileImagesViewController: UIViewController {
     func getProfileImages() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         print(userItem.userId)
+        let getUserProfileImages = GetUserProfileImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
         AF.request(API.BASE_URL + "users/image/\(userItem.userId)",
-                   method: .get,
-                   parameters: nil,
-                   encoding: JSONEncoding.default)
+                   method: .post,
+                   parameters: getUserProfileImages,
+                   encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
             .validate(statusCode: 200..<500)
             .responseData { response in
             switch response.result {
             case .success:
                 debugPrint(response)
                 guard let data = response.value else { return }
-                do{
+                do {
                     let decodedData = try JSONDecoder().decode(APIResponse<UserProfileImages>.self, from: data)
                     DispatchQueue.global().async {
+                        print(decodedData.data?.imageUrls)
                         guard let imageUrls = decodedData.data?.imageUrls else {
                             print("imageUrls null")
                             return
@@ -155,6 +157,8 @@ class SearchProfileImagesViewController: UIViewController {
                                 getImages.append(image)
                             }
                         }
+                        getImages.append(UIImage(named: "pro1")!)
+                        getImages.append(UIImage(named: "pro2")!)
                         self.profileImages = getImages
                     }
                 }

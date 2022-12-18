@@ -19,6 +19,12 @@ struct GetBoardDetail: Encodable {
     let userId: Int64
 }
 
+struct DeleteBoardReq: Encodable {
+    let boardId: Int64
+    let refreshToken: String
+    let hostId: Int64
+}
+
 struct ApplyGathering: Encodable {
     let boardId: Int64
     let refreshToken: String
@@ -111,7 +117,7 @@ class APIBoardResponse: Decodable {
 // MARK: - Datum
 class Board: Decodable {
     let categoryID, cityID, currentMember: Int
-    let date: String
+    let date, cityName: String
     let imageID: Int
     let imageURL, profileImgURL, status, title: String
     let totalMember: Int
@@ -126,20 +132,22 @@ class Board: Decodable {
         case imageURL = "imageUrl"
         case profileImgURL = "profileImgUrl"
         case status, title, totalMember
+        case cityName
     }
 
-    init(boardID: Int64, categoryID: Int, cityID: Int, currentMember: Int, date: String, imageID: Int, imageURL: String, profileImgURL: String, status: String, title: String, totalMember: Int) {
-        self.boardID = boardID
+    init(categoryID: Int, cityID: Int, currentMember: Int, date: String, cityName: String, imageID: Int, imageURL: String, profileImgURL: String, status: String, title: String, totalMember: Int, boardID: Int64) {
         self.categoryID = categoryID
         self.cityID = cityID
         self.currentMember = currentMember
         self.date = date
+        self.cityName = cityName
         self.imageID = imageID
         self.imageURL = imageURL
         self.profileImgURL = profileImgURL
         self.status = status
         self.title = title
         self.totalMember = totalMember
+        self.boardID = boardID
     }
 }
 

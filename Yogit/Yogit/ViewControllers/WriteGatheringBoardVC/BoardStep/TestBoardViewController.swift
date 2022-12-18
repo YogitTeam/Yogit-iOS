@@ -41,7 +41,7 @@ class TestBoardViewController: UIViewController {
     
     private var memberNumberData: [Int] = []
     
-    private var date: String?
+    private var meetDate: String?
     
     private var totalNumber = 3
     
@@ -278,14 +278,14 @@ class TestBoardViewController: UIViewController {
 //        self.memberTextField.text = String(memberNumber)
 //    }
     
-    private func formatDate(date: Date) -> String{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
-        boardWithMode.boardReq?.date = formatter.string(from: date)
-//        createBoardReq.date = formatter.string(from: date)
-        formatter.dateFormat = "E, MMM d, h:mm a"
-        return formatter.string(from: date)
-    }
+//    private func formatDate(date: Date) -> String{
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+//        boardWithMode.boardReq?.date = date.dateToStringAPI() // formatter.string(from: date) // api 데이터
+////        createBoardReq.date = formatter.string(from: date)
+//        formatter.dateFormat = "E, MMM d, h:mm a"
+//        return formatter.string(from: date) // 보여줄 데이터
+//    }
     
     private func hasAllData() {
         if self.boardWithMode.boardReq?.totalMember != nil && self.boardWithMode.boardReq?.date != nil && self.boardWithMode.boardReq?.latitude != nil && self.boardWithMode.boardReq?.longitute != nil && self.boardWithMode.boardReq?.cityName != nil && self.boardWithMode.boardReq?.address != nil {
@@ -303,7 +303,7 @@ class TestBoardViewController: UIViewController {
         if mode != .edit { return }
         guard let memberNumber = boardWithMode.boardReq?.totalMember else { return }
         self.memberTextField.text = String(memberNumber)
-        self.dateTextField.text = boardWithMode.boardReq?.date?.stringToDate()?.dateToString()
+        self.dateTextField.text = boardWithMode.boardReq?.date?.stringToDate()?.dateToStringUser()
         self.placeTextField.text = boardWithMode.boardReq?.address
         if boardWithMode.boardReq?.address != nil {
             self.placeDetailTextField.text = boardWithMode.boardReq?.addressDetail
@@ -312,8 +312,9 @@ class TestBoardViewController: UIViewController {
     }
     
     @objc func dateDone(_ sender: UIButton) {
-        date = formatDate(date: self.datePicker.date)
-        dateTextField.text = date
+//        self.meetDate = formatDate(date: self.datePicker.date)
+        self.boardWithMode.boardReq?.date = self.datePicker.date.dateToStringAPI()
+        self.dateTextField.text = self.datePicker.date.dateToStringUser() //self.meetDate
         self.view.endEditing(true)
     }
     

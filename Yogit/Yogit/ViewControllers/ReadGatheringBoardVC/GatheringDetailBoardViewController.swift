@@ -23,7 +23,11 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    var hostId: Int64?
+    var hostId: Int64? {
+        didSet {
+            self.rightButton.isHidden = false
+        }
+    }
     
     private var boardImages: [UIImage] = [] {
         didSet(oldVal){
@@ -112,7 +116,7 @@ class GatheringDetailBoardViewController: UIViewController {
 
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(rightButtonPressed(_:))) //
-        
+        button.isHidden = true
         button.tintColor = UIColor.label
         return button
     }()
@@ -185,13 +189,13 @@ class GatheringDetailBoardViewController: UIViewController {
     private let imagesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
         collectionView.register(MemberImagesCollectionViewCell.self, forCellWithReuseIdentifier: MemberImagesCollectionViewCell.identifier)
 //        collectionView.layer.borderColor = UIColor.systemGray.cgColor
 //        collectionView.layer.borderWidth = 1
-//        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
@@ -354,6 +358,8 @@ class GatheringDetailBoardViewController: UIViewController {
         configureViewComponent()
         configureInteractionInfoComponent()
         boardImagesScrollView.delegate = self
+        imagesCollectionView.delegate = self
+        imagesCollectionView.dataSource = self
         mapView.delegate = self
         getBoardDetail()
     }
@@ -435,8 +441,8 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         imagesCollectionView.snp.makeConstraints {
-            $0.top.equalTo(memberLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.top.equalTo(memberLabel.snp.bottom).offset(0)
+            $0.leading.trailing.equalToSuperview().inset(10)
             $0.height.equalTo(68)
         }
         footerView2.snp.makeConstraints {
@@ -533,11 +539,11 @@ class GatheringDetailBoardViewController: UIViewController {
     
     @objc func clipBoardTapped(_ sender: UITapGestureRecognizer) {
         print("clipBoardTapped")
-//        DispatchQueue.main.async {
-//            let CBVC = ClipBoardViewController()
-//            CBVC.boardId = self.boardId
-//            self.navigationController?.pushViewController(CBVC, animated: true)
-//        }
+        DispatchQueue.main.async {
+            let CBVC = ClipBoardViewController()
+            CBVC.boardId = self.boardId
+            self.navigationController?.pushViewController(CBVC, animated: true)
+        }
     }
     
     @objc func copyAddressTapped(_ sender: UITapGestureRecognizer) {
@@ -574,7 +580,9 @@ class GatheringDetailBoardViewController: UIViewController {
             alert.addAction(report)
         } else {
             let edit = UIAlertAction(title: "Edit", style: .default) { (action) in self.editBoard() }
+            let delete = UIAlertAction(title: "Delete", style: .default) { (action) in self.deleteBoard() }
             alert.addAction(edit)
+            alert.addAction(delete)
         }
         alert.addAction(cancel)
         DispatchQueue.main.async {
@@ -607,6 +615,32 @@ class GatheringDetailBoardViewController: UIViewController {
             GBCVC.boardWithMode.boardId = self.boardId
             self.navigationController?.pushViewController(GBCVC, animated: true)
         }
+    }
+    
+    func deleteBoard() {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let boardId = boardId else { return }
+        let deleteBoardReq = DeleteBoardReq(boardId: boardId, refreshToken: userItem.refresh_token, hostId: userItem.userId)
+        AF.request(API.BASE_URL + "boards/status",
+                   method: .patch,
+                   parameters: deleteBoardReq,
+                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+        .validate(statusCode: 200..<500)
+        .response { response in // reponseData
+            switch response.result {
+            case .success:
+                debugPrint(response)
+                if let data = response.data {
+                    DispatchQueue.main.async {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+            case .failure(let error):
+                debugPrint(response)
+                print(error)
+            }
+        }
+        
     }
     
     func reportRequest(content: String) {
@@ -646,18 +680,20 @@ class GatheringDetailBoardViewController: UIViewController {
     private func configureScrollView() {
 //        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
         // CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
-        boardImagesScrollView.isPagingEnabled = true
-        for x in 0..<boardImages.count {
-            print("configure")
-            let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * boardImagesScrollView.frame.width, y: self.boardImagesScrollView.bounds.minY, width: boardImagesScrollView.frame.width, height: boardImagesScrollView.frame.width*2/3))
-//            self.boardImagesScrollView.bounds.minY
-            self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(boardImages.count)
-                imageView.backgroundColor = .systemRed
-                print(boardImages[x].size)
+        DispatchQueue.main.async {
+            self.boardImagesScrollView.isPagingEnabled = true
+            for x in 0..<self.boardImages.count {
+                print("configure")
+                let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.bounds.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width*2/3))
+    //            self.boardImagesScrollView.bounds.minY
+                self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(self.boardImages.count)
+                    imageView.backgroundColor = .systemRed
+                print(self.boardImages[x].size)
                 imageView.clipsToBounds = true
                 imageView.contentMode = .scaleAspectFill
-                imageView.image = boardImages[x]
-                boardImagesScrollView.addSubview(imageView)
+                imageView.image = self.boardImages[x]
+                self.boardImagesScrollView.addSubview(imageView)
+            }
         }
     }
     
@@ -710,14 +746,18 @@ class GatheringDetailBoardViewController: UIViewController {
                                 }
                             }
                         }
-                        DispatchQueue.main.async {
+//                        memberImages.append(UIImage(named: "user2")!)
+//                        memberImages.append(UIImage(named: "user1")!)
+//                        memberImages.append(UIImage(named: "user3")!)
+                        print("print(memberImages)", memberImages)
+                        DispatchQueue.main.async() {
                             self.boardImages = boardImages
                             self.memberImages = memberImages
                             self.hostImageView.image = hostImage
                             self.titleLabel.text = myData.title
                             self.placeBoardInfoView.infoLabel.text = myData.address
                             self.placeBoardInfoView.subInfoLabel.text = myData.addressDetail
-                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToString()
+                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToStringUser() //?.dateToString()
                             self.hostNameLabel.text = myData.hostName
                             self.hostId = myData.hostId
                             self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
@@ -753,6 +793,8 @@ extension GatheringDetailBoardViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         print("Tapped gatherging board collectionview image")
+        
+        
 //        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 //        alert.view.tintColor = UIColor.label
 //        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
@@ -796,7 +838,7 @@ extension GatheringDetailBoardViewController: UICollectionViewDelegateFlowLayout
 ////        CGSize(width: size, height: size)
 //
 //        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
-        
+        print("Sizing collectionView")
         return CGSize(width: collectionView.frame.height - 20, height: collectionView.frame.height - 20)
     }
 }

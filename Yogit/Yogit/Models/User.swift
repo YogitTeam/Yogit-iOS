@@ -8,7 +8,8 @@
 import Foundation
 
 // click sign up >> post
-struct UserProfile {
+    
+struct UserProfile: Encodable {
     var gender: String?
     var languageNames: [String]?
     var languageLevels: [String]?

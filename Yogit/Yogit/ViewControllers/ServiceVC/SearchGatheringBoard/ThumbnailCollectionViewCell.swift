@@ -37,7 +37,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.spacing = 2
+        stackView.spacing = 10
         stackView.alignment = .top
         stackView.backgroundColor = .systemBackground
         [self.hostImageView,
@@ -51,31 +51,31 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         stackView.axis = .vertical
         stackView.spacing = 2
         stackView.alignment = .leading
-        stackView.layer.borderWidth = 1
-        stackView.layer.borderColor = UIColor.red.cgColor
+//        stackView.layer.borderWidth = 1
+//        stackView.layer.borderColor = UIColor.red.cgColor
         [self.titleLabel,
-         self.cityLabel,
          self.dateLabel,
+         self.cityLabel,
          self.memberNumberLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
 
-    private lazy var boardImageView: UIImageView = {
+    private let boardImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .clear
+        imageView.backgroundColor = .placeholderText
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
 //        imageView.layer.cornerRadius = 6
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.green.cgColor
+//        imageView.layer.borderWidth = 1
+//        imageView.layer.borderColor = UIColor.green.cgColor
 //        imageView.isHidden = true
 //        let customSize: CGFloat = contentView.frame.size.height * 2/3
 //        imageView.frame.size = CGSize(width:  contentView.frame.size.width, height: customSize)
         return imageView
     }()
     
-    private lazy var hostImageView: UIImageView = {
+    private let hostImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.backgroundColor = .placeholderText
@@ -89,7 +89,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
        let label = UILabel()
 //        label.textColor = .black
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.sizeToFit()
         label.numberOfLines = 2
 //        label.adjustsFontSizeToFitWidth = true
@@ -105,6 +105,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.sizeToFit()
+        label.textColor = .systemBrown
         label.numberOfLines = 1
 //        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -146,9 +147,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         [self.bottomStackView, self.boardImageView].forEach { contentView.addSubview($0) }
-//        contentView.addSubview(thumbnailContentView)
         contentView.clipsToBounds = true
-//        contentView.layer.cornerRadius = 10
         contentView.layer.shadowOffset = CGSize(width: 1, height: 1)
         contentView.layer.shadowOpacity = 0.5
 //        contentView.layer.borderColor = UIColor.black.cgColor
@@ -208,6 +207,15 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
 //        label.text = viewModels.name
 //    }
     
+    override func prepareForReuse() {
+        self.hostImageView.image = nil
+        self.boardImageView.image = nil
+        self.titleLabel.text = nil
+        self.dateLabel.text = nil
+        self.cityLabel.text = nil 
+        self.memberNumberLabel.text = nil
+    }
+    
     func configure(with board: Board) {
         DispatchQueue.global().async {
             var boardImage: UIImage?
@@ -223,14 +231,14 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
                 }
                 hostImage = image
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.async() {
                 self.boardImageView.image = boardImage
                 self.hostImageView.image = hostImage
-                guard let changeDate = board.date.stringToDate()?.dateToString() else { return }
+                guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString() 
                 self.titleLabel.text = board.title
                 self.dateLabel.text = changeDate
-                self.cityLabel.text = "Seoul"
-                self.memberNumberLabel.text = "3/10"
+                self.cityLabel.text = board.cityName// "Seoul"
+                self.memberNumberLabel.text = "" // "\(board.currentMember) / \(board.totalMember)"
             }
         }
     }

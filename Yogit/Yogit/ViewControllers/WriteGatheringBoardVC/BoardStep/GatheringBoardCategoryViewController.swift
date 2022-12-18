@@ -36,13 +36,14 @@ class GatheringBoardCategoryViewController: UIViewController {
 //        }
 //    }
     
-    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
+    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: [])
+    
+    private var categoryId: Int? {
         didSet {
+//            if self.touchCount { return }
             DispatchQueue.main.async { [self] in
-                print("boardWithMode1", boardWithMode)
-                if self.touchCount { return }
                 categoryTableView.reloadData()
-                if boardWithMode.boardReq?.categoryId != nil {
+                if categoryId != nil {
                     nextButton.isEnabled = true
                     nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
                 } else {
@@ -142,7 +143,8 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     @objc func categoryContentViewTapped(sender: UITapGestureRecognizer) {
         // 3 state toggle 값
-        boardWithMode.boardReq?.categoryId == sender.view?.tag ? (boardWithMode.boardReq?.categoryId = nil) : (boardWithMode.boardReq?.categoryId = sender.view?.tag)
+        self.categoryId == sender.view?.tag ? (self.categoryId = nil) : (self.categoryId = sender.view?.tag)
+//        boardWithMode.boardReq?.categoryId == sender.view?.tag ? (boardWithMode.boardReq?.categoryId = nil) : (boardWithMode.boardReq?.categoryId = sender.view?.tag)
 //        touchOpCount = 0
         
 //        tapIndex == sender.view?.tag ? (tapIndex = nil) : (tapIndex = sender.view?.tag)
@@ -154,8 +156,9 @@ class GatheringBoardCategoryViewController: UIViewController {
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBSDVC = TestBoardViewController() // GatheringBoardOptionViewController()
-            self.touchCount = true
-            self.boardWithMode.boardReq?.categoryId! += 1
+//            self.touchCount = true
+            guard let apiCategoryId = self.categoryId else { return }
+            self.boardWithMode.boardReq?.categoryId = apiCategoryId + 1
             GBSDVC.boardWithMode = self.boardWithMode
             self.navigationController?.pushViewController(GBSDVC, animated: true)
         }
@@ -198,7 +201,7 @@ class GatheringBoardCategoryViewController: UIViewController {
                 do{
                     let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
                     guard let myData = decodedData.data else { return }
-                    DispatchQueue.global().async {
+                    DispatchQueue.global(qos: .userInteractive).async {
                         var images: [UIImage] = []
                         for imageUrl in myData.imageUrls {
                             imageUrl.urlToImage { (image) in
@@ -210,6 +213,9 @@ class GatheringBoardCategoryViewController: UIViewController {
                             }
                         }
                         var createBoardReq = CreateBoardReq()
+//                        createBoardReq.categoryId = myData.categoryId - 1
+                        createBoardReq.categoryId = myData.categoryId
+                        self.categoryId = myData.categoryId - 1
                         createBoardReq.hostId = myData.hostId
                         createBoardReq.title = myData.title
                         createBoardReq.address = myData.address
@@ -217,12 +223,11 @@ class GatheringBoardCategoryViewController: UIViewController {
                         createBoardReq.longitute = myData.longitute
                         createBoardReq.latitude = myData.latitude
                         createBoardReq.notice = myData.notice
-                        createBoardReq.date = myData.date
+                        createBoardReq.date = myData.date.stringToDate()?.dateToStringAPI() // ?.dateToString() // 보여줄 데이터
                         createBoardReq.cityName = myData.cityName
                         createBoardReq.introduction = myData.introduction
                         createBoardReq.kindOfPerson = myData.kindOfPerson
                         createBoardReq.totalMember = myData.totalMember
-                        createBoardReq.categoryId = myData.categoryId - 1
 //                        self.boardWithMode.boardId = myData.boardId
 //                        self.boardWithMode.imageIds = myData.imageIds
 //                        self.boardWithMode.images = images
@@ -268,9 +273,17 @@ class GatheringBoardCategoryViewController: UIViewController {
 //            cell.isTapped = false
 //        }
 //
-        if boardWithMode.boardReq?.categoryId == nil {
+//        if boardWithMode.boardReq?.categoryId == nil {
+//            cell.isTapped = nil
+//        } else if boardWithMode.boardReq?.categoryId == indexPath.row {
+//            cell.isTapped = true
+//        } else {
+//            cell.isTapped = false
+//        }
+        
+        if self.categoryId == nil {
             cell.isTapped = nil
-        } else if boardWithMode.boardReq?.categoryId == indexPath.row {
+        } else if self.categoryId == indexPath.row {
             cell.isTapped = true
         } else {
             cell.isTapped = false

@@ -14,9 +14,9 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.backgroundColor = .placeholderText
-        imageView.tintColor = .systemGray.withAlphaComponent(0.5) // image color
+//        imageView.tintColor = .systemGray.withAlphaComponent(0.5) // image color
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 6
+//        imageView.layer.cornerRadius = 6
         return imageView
     }()
     
