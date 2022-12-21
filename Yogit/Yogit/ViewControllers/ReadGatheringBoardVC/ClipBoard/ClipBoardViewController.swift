@@ -146,25 +146,31 @@ class ClipBoardViewController: UIViewController {
     }
     
     func unsubscribeFromKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     
     override func viewWillAppear(_ animated: Bool) {
        super.viewWillAppear(animated)
-       subscribeToKeyboardNotifications()
+        print("😀appear")
        IQKeyboardManager.shared.enable = false
+//        chatTextView.becomeFirstResponder()
+        subscribeToKeyboardNotifications()
     }
    
-    override func viewDidDisappear(_ animated: Bool) {
-       super.viewDidDisappear(animated)
-       unsubscribeFromKeyboardNotifications()
+    override func viewWillDisappear(_ animated: Bool) {
+       super.viewWillDisappear(animated)
+        print("🥲disappear")
         IQKeyboardManager.shared.enable = true
+//        chatTextView.resignFirstResponder()
+        unsubscribeFromKeyboardNotifications()
     }
     
     private func configureViewCompoent() {
         self.view.backgroundColor = .systemBackground
+        self.chatTableView.keyboardDismissMode = .interactive
+//        self.chatTableView.keyboardDismissMode = .interactive
     }
     
     func getKeyboardHeight(_ notification: Notification) -> CGFloat {
@@ -197,13 +203,20 @@ class ClipBoardViewController: UIViewController {
         print("keyboardWillShow")
         print("self.chatTableView.contentSize.height self.view.safeAreaInsets.top", self.chatTableView.contentSize.height, self.view.safeAreaInsets.top)
         print("tableViewY inputViewAndKeyboardY", tableViewY, inputViewAndKeyboardY)
+        self.inputTextContentView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight + self.view.safeAreaInsets.bottom)
+        self.chatTableView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight + self.view.safeAreaInsets.bottom)
         UIView.animate(withDuration: animationDuration) {
 //            self.inputTextContentView.transform = .identity
 //            self.chatTableView.transform = .identity
+//            self.inputTextContentView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight + self.view.safeAreaInsets.bottom)
+//            self.chatTableView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight + self.view.safeAreaInsets.bottom)
+            self.view.layoutIfNeeded()
             if tableViewY > inputViewAndKeyboardY { // 테이블뷰 콘텐츠 사이즈 y > 입력화면 y
-                self.view.frame.origin.y = -self.keyboardHeight
+                print("넘음")
+//                self.view.frame.origin.y = -self.keyboardHeight
             } else {
-                self.inputTextContentView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight + self.view.safeAreaInsets.bottom)
+                print("안넘음")
+//                self.inputTextContentView.transform = CGAffineTransform(translationX: 0, y: -self.keyboardHeight + self.view.safeAreaInsets.bottom)
             }
         }
 //        self.chatTableView.snp.makeConstraints {
@@ -245,12 +258,12 @@ class ClipBoardViewController: UIViewController {
         print("keyboardWillHiden")
         print("self.chatTableView.contentSize.height self.view.safeAreaInsets.top", self.chatTableView.contentSize.height, self.view.safeAreaInsets.top)
         print("tableViewY inputViewAndKeyboardY", tableViewY, inputViewAndKeyboardY)
-        
+
         UIView.animate(withDuration: animationDuration) {
             self.inputTextContentView.transform = .identity
-            self.view.frame.origin.y = 0
+//            self.view.frame.origin.y = 0
 //            self.inputTextContentView.transform = .identity
-//            self.chatTableView.transform = .identity
+            self.chatTableView.transform = .identity
 //            self.view.frame.origin.y = 0
         }
     }
@@ -567,17 +580,18 @@ extension ClipBoardViewController: UITextViewDelegate {
         let size = CGSize(width: textView.frame.size.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)
         print("size height, estimatedSize height", size.height, estimatedSize.height)
-//
+        textView.isScrollEnabled = false
         if textView.text.count <= 0 {
             self.sendButton.isEnabled = false
         } else {
             self.sendButton.isEnabled = true
         }
+        textView.setNeedsUpdateConstraints()
         if estimatedSize.height < 100 { return }
-        print("넘음")
+//        print("넘음")
         textView.isScrollEnabled = true
 //        textView.reloadInputViews()
-        textView.setNeedsUpdateConstraints()
+//        textView.setNeedsUpdateConstraints()
 
     }
 }

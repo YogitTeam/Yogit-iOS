@@ -88,9 +88,9 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
             make.leading.equalToSuperview().inset(20)
         }
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(headerLabel.snp.bottom).offset(10)
+            make.top.equalTo(headerLabel.snp.bottom)
             make.leading.trailing.equalToSuperview().inset(10)
-            make.bottom.equalToSuperview().inset(10)
+            make.bottom.equalToSuperview()
         }
 //        collectionView.frame = contentView.bounds
         collectionView.showsHorizontalScrollIndicator = false
@@ -136,8 +136,8 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = contentView.frame.size.width/1.9
-        let height: CGFloat = contentView.frame.size.width/1.9
+        let width: CGFloat = contentView.frame.size.width/1.8
+        let height: CGFloat = contentView.frame.size.width/1.8
         return CGSize(width: width, height: height)
     }
     

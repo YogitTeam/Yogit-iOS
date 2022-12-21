@@ -35,6 +35,7 @@
 		791F6CF7294680E400C1D470 /* MyClubViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF6294680E400C1D470 /* MyClubViewController.swift */; };
 		791F6CF92948741C00C1D470 /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CF82948741C00C1D470 /* AlarmManager.swift */; };
 		791F6CFB294874E300C1D470 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CFA294874E300C1D470 /* Alarm.swift */; };
+		791F6CFE294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6CFD294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift */; };
 		794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C728EBD504007C3C89 /* ImageViewController.swift */; };
 		794FF7CA28EC1FC8007C3C89 /* StackViewTeestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */; };
 		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
@@ -143,6 +144,7 @@
 		791F6CF6294680E400C1D470 /* MyClubViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyClubViewController.swift; sourceTree = "<group>"; };
 		791F6CF82948741C00C1D470 /* AlarmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmManager.swift; sourceTree = "<group>"; };
 		791F6CFA294874E300C1D470 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
+		791F6CFD294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
 		794FF7C728EBD504007C3C89 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		794FF7C928EC1FC8007C3C89 /* StackViewTeestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewTeestViewController.swift; sourceTree = "<group>"; };
 		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 				79F022CF290D8D91007D59B8 /* LanguagesTableViewCell.swift */,
 				79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */,
 				7962CEEF293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift */,
+				791F6CFD294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift */,
 			);
 			path = ViewCells;
 			sourceTree = "<group>";
@@ -861,6 +864,7 @@
 				791C1EED2937C1A800623936 /* GatheringDetailBoardViewController.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				79519FF3291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift in Sources */,
+				791F6CFE294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift in Sources */,
 				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
 				7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,

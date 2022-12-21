@@ -11,24 +11,61 @@ struct GetAllBoardsReq: Encodable {
     let cursor: Int
     let refreshToken: String
     let userId: Int64
+    
+    init(cursor: Int, refreshToken: String, userId: Int64) {
+        self.cursor = cursor
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
 }
 
 struct GetBoardDetail: Encodable {
     let boardId: Int64
     let refreshToken: String
     let userId: Int64
+    
+    init(boardId: Int64, refreshToken: String, userId: Int64) {
+        self.boardId = boardId
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
 }
 
 struct DeleteBoardReq: Encodable {
     let boardId: Int64
     let refreshToken: String
     let hostId: Int64
+    
+    init(boardId: Int64, refreshToken: String, hostId: Int64) {
+        self.boardId = boardId
+        self.refreshToken = refreshToken
+        self.hostId = hostId
+    }
 }
 
 struct ApplyGathering: Encodable {
     let boardId: Int64
     let refreshToken: String
     let userId: Int64
+    
+    init(boardId: Int64, refreshToken: String, userId: Int64) {
+        self.boardId = boardId
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
+}
+
+struct GetMyClub: Encodable {
+    let cursor: Int
+    let myClubType, refreshToken: String
+    let userId: Int64
+    
+    init(cursor: Int, myClubType: String, refreshToken: String, userId: Int64) {
+        self.cursor = cursor
+        self.myClubType = myClubType
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
 }
 
 struct CreateBoardReq: Encodable { // images 제외
@@ -98,23 +135,8 @@ struct BoardReport: Encodable {
     }
 }
 
-class APIBoardResponse: Decodable {
-    let data: [[Board]]
-    let httpCode: Int
-    let httpStatus, localDateTime, message: String
-    let success: Bool
-
-    init(data: [[Board]], httpCode: Int, httpStatus: String, localDateTime: String, message: String, success: Bool) {
-        self.data = data
-        self.httpCode = httpCode
-        self.httpStatus = httpStatus
-        self.localDateTime = localDateTime
-        self.message = message
-        self.success = success
-    }
-}
-
 // MARK: - Datum
+
 class Board: Decodable {
     let categoryID, cityID, currentMember: Int
     let date, cityName: String

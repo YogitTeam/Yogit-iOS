@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-//        let setUpVC = SetProfileViewController() // LoginViewController() // ClipBoardViewController()
+//        let setUpVC = TestBoardViewController() // SetProfileViewController() // LoginViewController() // ClipBoardViewController()
 //        let rootVC = UINavigationController(rootViewController: setUpVC)
 //        rootVC.navigationBar.tintColor = UIColor.label
 //        rootVC.navigationBar.topItem?.backButtonTitle = ""

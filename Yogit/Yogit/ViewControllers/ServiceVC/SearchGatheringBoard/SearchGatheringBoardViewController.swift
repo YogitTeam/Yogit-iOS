@@ -75,7 +75,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //
 //    ]
     
-    private var boardAllData: [[Board]] = []
+    private var boardAllData: [[Board]] = [[]]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,7 +113,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         self.tableView.reloadData() // Reload하여 뷰를 비워줍니다.
     }
    
-    func getBoardThumbnail() {
+    private func getBoardThumbnail() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         let getAllBoardsReq = GetAllBoardsReq(cursor: 0, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AF.request(API.BASE_URL + "boards/get/categories",
@@ -127,9 +127,10 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
                 debugPrint(response)
                 if let data = response.data {
                     do{
-                        let decodedData = try JSONDecoder().decode(APIBoardResponse.self, from: data)
+                        let decodedData = try JSONDecoder().decode(APIResponse<[[Board]]>.self, from: data)
                         print(decodedData)
-                        self.boardAllData = decodedData.data
+                        guard let boardsData = decodedData.data else { return }
+                        self.boardAllData = boardsData
                         print(self.boardAllData)
                         self.tableView.reloadData()
                     }

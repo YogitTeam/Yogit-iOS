@@ -33,7 +33,7 @@ class GatheringBoardContentViewController: UIViewController {
     private var deletedImageIds: [Int64] = []
     private var newImagesIdx: Int = 0 // 기존 이미지 개수 저장, 삭제한 이미지 개수저장 >> 기존이미지(3개) - 삭제한 이미지(2개) >> post(patch) req: 1번 인덱스 부터 끝지점
     
-//    private var imagePicker: UIImagePickerController?
+    private var imagePicker: UIImagePickerController?
     
     private let rtvh = RequirementTableViewHeader()
     let stepHeaderView = StepHeaderView()
@@ -152,6 +152,7 @@ class GatheringBoardContentViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(stepHeaderView)
         view.addSubview(contentScrollView)
+        loadImagePicker()
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
         configureViewComponent()
@@ -259,6 +260,13 @@ class GatheringBoardContentViewController: UIViewController {
         self.stepHeaderView.titleLabel.text = "Content"
         self.view.backgroundColor = .systemBackground
         self.rtvh.contentNameLabel.text = "Photos"
+    }
+    
+    private func loadImagePicker() {
+        DispatchQueue.main.async(qos: .userInteractive) {
+            self.imagePicker = UIImagePickerController()
+            self.imagePicker?.delegate = self
+        }
     }
     
     private func configureTextView() {
@@ -479,25 +487,22 @@ extension GatheringBoardContentViewController: UICollectionViewDelegate {
         print("Tapped gatherging board collectionview image")
         guard let images = boardWithMode.images else { return }
         guard let mode = self.boardWithMode.mode else { return }
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-            if indexPath.row < images.count {
-                let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row, mode: mode)}
-                alert.addAction(delete)
-            } else {
-                let imgPicker = UIImagePickerController()
-                imgPicker.delegate = self
-                let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in
-                    self.openLibrary(imgPicker)}
-                let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera(imgPicker)}
-                alert.addAction(library)
-                alert.addAction(camera)
-            }
-            alert.view.tintColor = UIColor.label
-            alert.addAction(cancel)
-            self.present(alert, animated: true, completion: nil)
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        if indexPath.row < images.count {
+            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row, mode: mode)}
+            alert.addAction(delete)
+        } else {
+            guard let imagePicker = self.imagePicker else { return }
+            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in
+                self.openLibrary(imagePicker) }
+            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera(imagePicker) }
+            alert.addAction(library)
+            alert.addAction(camera)
         }
+        alert.view.tintColor = UIColor.label
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
     }
     
 }

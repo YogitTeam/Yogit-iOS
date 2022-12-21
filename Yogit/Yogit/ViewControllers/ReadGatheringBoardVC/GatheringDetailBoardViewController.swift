@@ -521,14 +521,8 @@ class GatheringDetailBoardViewController: UIViewController {
             case .success:
                 debugPrint(response)
                 if let data = response.data {
-                    do{
-                        let decodedData = try JSONDecoder().decode(APIBoardResponse.self, from: data)
-                        self.applyButton.isEnabled = false
-                        self.applyButton.backgroundColor = .placeholderText
-                    }
-                    catch{
-                        print(error.localizedDescription)
-                    }
+                    self.applyButton.isEnabled = false
+                    self.applyButton.backgroundColor = .placeholderText
                 }
             case .failure(let error):
                 debugPrint(response)
@@ -658,18 +652,6 @@ class GatheringDetailBoardViewController: UIViewController {
             switch response.result {
             case .success:
                 debugPrint(response)
-                if let data = response.data {
-                    do{
-                        let decodedData = try JSONDecoder().decode(APIBoardResponse.self, from: data)
-                        print(decodedData)
-//                        self.boardAllData = decodedData.data
-//                        print(self.boardAllData)
-//                        self.tableView.reloadData()
-                    }
-                    catch{
-                        print(error.localizedDescription)
-                    }
-                }
             case .failure(let error):
                 debugPrint(response)
                 print(error)

@@ -1,22 +1,14 @@
 //
-//  ThumbnailCollectionViewCell.swift
+//  GatheringGatheringThumbnailCollectionViewCell.swift
 //  Yogit
 //
-//  Created by Junseo Park on 2022/11/23.
+//  Created by Junseo Park on 2022/12/19.
 //
 
 import UIKit
 
-import UIKit
-import SnapKit
-
-//struct ThumbnailCollectionCellViewModel {
-//    let name: String
-//    let backgroundColor: UIColor
-//}
-
-class ThumbnailCollectionViewCell: UICollectionViewCell {
-    static let identifier = "ThumbnailCollectionViewCell"
+class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
+    static let identifier = "GatheringThumbnailCollectionViewCell"
     
 //    private lazy var thumbnailContentView: UIView = {
 //        let view = UIView()
@@ -32,17 +24,13 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
 //        view.addSubview(bottomStackView)
 //        return view
 //    }()
-//
-    private lazy var bottomStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.spacing = 10
-        stackView.alignment = .top
-        stackView.backgroundColor = .systemBackground
-        [self.hostImageView,
-         self.labelStackView].forEach { stackView.addArrangedSubview($0) }
-        return stackView
+    
+    private lazy var backView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(labelStackView)
+        view.backgroundColor = .black.withAlphaComponent(0.3)
+        return view
     }()
 
     private lazy var labelStackView: UIStackView = {
@@ -60,12 +48,14 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         return stackView
     }()
 
-    private let boardImageView: UIImageView = {
+    private lazy var boardImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.backgroundColor = .placeholderText
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.addSubview(backView)
+//        imageView.tintColor = .black.withAlphaComponent(0.7)
 //        imageView.layer.cornerRadius = 6
 //        imageView.layer.borderWidth = 1
 //        imageView.layer.borderColor = UIColor.green.cgColor
@@ -75,15 +65,15 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    private let hostImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.backgroundColor = .placeholderText
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 18
-        return imageView
-    }()
+//    private let hostImageView: UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.clipsToBounds = true
+//        imageView.backgroundColor = .placeholderText
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.contentMode = .scaleAspectFill
+//        imageView.layer.cornerRadius = 18
+//        return imageView
+//    }()
 
     private let titleLabel: UILabel = {
        let label = UILabel()
@@ -92,6 +82,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.sizeToFit()
         label.numberOfLines = 2
+        label.textColor = .white
 //        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
 //        label.layer.borderWidth = 1
@@ -120,6 +111,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.sizeToFit()
+        label.textColor = .white
         label.numberOfLines = 1
 //        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -134,6 +126,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.sizeToFit()
+        label.textColor = .white
         label.numberOfLines = 1
 //        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -146,10 +139,11 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [self.bottomStackView, self.boardImageView].forEach { contentView.addSubview($0) }
+        [self.boardImageView].forEach { contentView.addSubview($0) }
         contentView.clipsToBounds = true
         contentView.layer.shadowOffset = CGSize(width: 1, height: 1)
         contentView.layer.shadowOpacity = 0.5
+        contentView.layer.cornerRadius = 6
 //        contentView.layer.borderColor = UIColor.black.cgColor
 //        contentView.layer.borderWidth = 1
         contentView.backgroundColor = .systemBackground
@@ -157,44 +151,32 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-//        boardImageView.frame = contentView.bounds
         boardImageView.snp.makeConstraints {
-//            $0.top.bottom.leading.trailing.equalToSuperview()
-            $0.top.leading.trailing.equalToSuperview()
-            $0.width.equalTo(contentView.frame.size.width)
-            $0.height.equalTo(contentView.frame.size.width*3/5)
-//            $0.bottom.equalTo(bottomContentView.snp.top)
-            
+            $0.edges.equalToSuperview()
         }
         
-        boardImageView.layer.cornerRadius = contentView.frame.size.width / 18
-    
-        bottomStackView.snp.makeConstraints {
-            $0.top.equalTo(boardImageView.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
+        backView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
-        hostImageView.snp.makeConstraints {
-            $0.width.height.equalTo(contentView.frame.size.width / 5.5)
-            $0.leading.equalTo(contentView)
-        }
-        
-        hostImageView.layer.cornerRadius = contentView.frame.size.width / 11
+//        labelStackView.snp.makeConstraints {
+//            $0.bottom.equalTo(contentView).inset(10)
+//        }
         
         cityLabel.snp.makeConstraints {
-            $0.trailing.equalTo(contentView)
+            $0.leading.trailing.bottom.equalTo(contentView).inset(10)
         }
         
         memberNumberLabel.snp.makeConstraints {
-            $0.trailing.equalTo(contentView)
+            $0.leading.trailing.equalTo(contentView).inset(10)
         }
         
         dateLabel.snp.makeConstraints {
-            $0.trailing.equalTo(contentView)
+            $0.leading.trailing.equalTo(contentView).inset(10)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.trailing.equalTo(contentView)
+            $0.leading.trailing.equalTo(contentView).inset(10)
         }
     }
     
@@ -202,39 +184,34 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         fatalError()
     }
     
-//    func configure(with viewModels: ThumbnailCollectionCellViewModel) {
-//        contentView.backgroundColor = viewModels.backgroundColor
-//        label.text = viewModels.name
-//    }
-    
     override func prepareForReuse() {
-        self.hostImageView.image = nil
+//        self.hostImageView.image = nil
         self.boardImageView.image = nil
         self.titleLabel.text = nil
         self.dateLabel.text = nil
-        self.cityLabel.text = nil 
+        self.cityLabel.text = nil
         self.memberNumberLabel.text = nil
     }
     
     func configure(with board: Board) {
         DispatchQueue.global().async {
             var boardImage: UIImage?
-            var hostImage: UIImage?
+//            var hostImage: UIImage?
             print(board.imageURL)
             board.imageURL.urlToImage { (image) in
                 guard let image = image else { return }
                 boardImage = image
             }
-            board.profileImgURL.urlToImage { (image) in
-                guard let image = image else {
-                    return
-                }
-                hostImage = image
-            }
+//            board.profileImgURL.urlToImage { (image) in
+//                guard let image = image else {
+//                    return
+//                }
+//                hostImage = image
+//            }
             DispatchQueue.main.async() {
                 self.boardImageView.image = boardImage
-                self.hostImageView.image = hostImage
-                guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString() 
+//                self.hostImageView.image = hostImage
+                guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString()
                 self.titleLabel.text = board.title
                 self.dateLabel.text = changeDate
                 self.cityLabel.text = board.cityName// "Seoul"

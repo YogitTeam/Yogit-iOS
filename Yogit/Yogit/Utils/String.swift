@@ -55,9 +55,10 @@ extension String {
     
     func stringToDate() -> Date? {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY-mm-dd HH:mm:ss" // "YYYY-MM-dd HH:mm:ss" // yyyy-MM-dd HH:mm:ss
+        dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss" // "YYYY-MM-dd HH:mm:ss" // yyyy-MM-dd HH:mm:ss
         // yyyy-MM-dd'T'HH:mm:ssZ
-//        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+//        dateFormatter.timeZone = TimeZone(identifier: "GMT")
         return dateFormatter.date(from: self)
     }
 }
