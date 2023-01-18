@@ -38,7 +38,7 @@ class BoardMainCollectionTableViewCell: UITableViewCell, UICollectionViewDelegat
     let headerLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.bold)
+        label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.bold)
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 1

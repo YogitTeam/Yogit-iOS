@@ -10,7 +10,7 @@ import SnapKit
 import Alamofire
 
 class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
     private lazy var boardButton: UIButton = {
         let button = UIButton()
 //        button.setTitle("", for: .normal)
@@ -85,8 +85,13 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         tableView.dataSource = self
         configureViewComponent()
         
-        getBoardThumbnail()
+//        getBoardThumbnail()
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        initNavigationBar()
+        getBoardThumbnail()
     }
     
     override func viewDidLayoutSubviews() {
@@ -104,13 +109,25 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //
     private func configureViewComponent() {
         view.backgroundColor = .systemBackground
-        self.tableView.refreshControl = refreshControl
+        tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+
     }
+    
+    private func initNavigationBar() {
+        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue)
+        //        if let tabController = self.parent as? UITabBarController {
+        //            tabController.navigationItem.title = "My Title"
+        ////            tabController.navigationController?.makeLabel(title: "Home")
+        //        }
+        //        self.tabBarController?.navigationItem.title = "Home"
+        //        self.tabBarController?.navigationController?.navigationBar.topItem?.title = "Home"
+    }
+    
     
     @objc func refresh(){
         self.boardAllData.removeAll()
-        self.tableView.reloadData() // Reload하여 뷰를 비워줍니다.
+        self.tableView.reloadData() 
     }
    
     private func getBoardThumbnail() {

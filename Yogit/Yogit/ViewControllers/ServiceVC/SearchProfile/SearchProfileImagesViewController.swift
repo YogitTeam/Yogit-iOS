@@ -142,7 +142,7 @@ class SearchProfileImagesViewController: UIViewController {
                 debugPrint(response)
                 guard let data = response.value else { return }
                 do {
-                    let decodedData = try JSONDecoder().decode(APIResponse<UserProfileImages>.self, from: data)
+                    let decodedData = try JSONDecoder().decode(APIResponse<FetchedUserImages>.self, from: data)
                     DispatchQueue.global().async {
                         print(decodedData.data?.imageUrls)
                         guard let imageUrls = decodedData.data?.imageUrls else {
@@ -157,8 +157,8 @@ class SearchProfileImagesViewController: UIViewController {
                                 getImages.append(image)
                             }
                         }
-                        getImages.append(UIImage(named: "pro1")!)
-                        getImages.append(UIImage(named: "pro2")!)
+//                        getImages.append(UIImage(named: "pro1")!)
+//                        getImages.append(UIImage(named: "pro2")!)
                         self.profileImages = getImages
                     }
                 }

@@ -1,34 +1,32 @@
 PODS:
-  - Alamofire (5.6.2)
-  - InputBarAccessoryView (5.5.0):
-    - InputBarAccessoryView/Core (= 5.5.0)
-  - InputBarAccessoryView/Core (5.5.0)
-  - IQKeyboardManagerSwift (6.5.10)
-  - MessageKit (3.8.0):
-    - InputBarAccessoryView (~> 5.5.0)
+  - Alamofire (5.6.4)
+  - BSImagePicker (3.3.1)
+  - IQKeyboardManagerSwift (6.5.11)
+  - Kingfisher (7.5.0)
   - SnapKit (5.6.0)
 
 DEPENDENCIES:
   - Alamofire (~> 5.5)
-  - IQKeyboardManagerSwift
-  - MessageKit
+  - BSImagePicker (~> 3.1)
+  - IQKeyboardManagerSwift (~> 6.5.0)
+  - Kingfisher (~> 7.0)
   - SnapKit (~> 5.6.0)
 
 SPEC REPOS:
   trunk:
     - Alamofire
-    - InputBarAccessoryView
+    - BSImagePicker
     - IQKeyboardManagerSwift
-    - MessageKit
+    - Kingfisher
     - SnapKit
 
 SPEC CHECKSUMS:
-  Alamofire: d368e1ff8a298e6dde360e35a3e68e6c610e7204
-  InputBarAccessoryView: 1d7b0a672b36e370f01f264b3907ef39d03328e3
-  IQKeyboardManagerSwift: 52962c76ab33532f15ad9f3ff4e5715eda5335bb
-  MessageKit: a1ba0c69ebead94029867853eb44dd05b9b3f453
+  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  BSImagePicker: 0fe04b574d4d6b81093785d2af6c26227efc8428
+  IQKeyboardManagerSwift: c7955c0bdbf7b2eb29bb7daaa44e3d90f55a9a85
+  Kingfisher: b9c2a4a4af2990a768445c277359b27bde287d71
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: 0cd61c5b10e8f361d8b355908ab4e4152672bf37
+PODFILE CHECKSUM: 4e030701c31474557fee13158a4102eca74d1802
 
 COCOAPODS: 1.11.3

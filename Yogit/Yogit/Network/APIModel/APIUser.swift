@@ -19,6 +19,16 @@ struct SendDeviceToken: Encodable {
     }
 }
 
+struct LogOut: Encodable {
+    let refreshToken: String
+    let userId: Int64
+
+    init(refreshToken: String, userId: Int64) {
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
+}
+
 struct GetUserProfileImages: Encodable {
     let refreshToken: String
     let userId: Int64
@@ -29,8 +39,31 @@ struct GetUserProfileImages: Encodable {
     }
 }
 
+struct UserProfile: Decodable {
+    var gender: String?
+    var languageNames: [String]?
+    var languageLevels: [String]?
+    var nationality: String?
+    var refreshToken: String?
+    var userAge: Int?
+    var userId: Int64?
+    var userName: String?
+    
+    init(gender: String? = nil, languageNames: [String]? = nil, languageLevels: [String]? = nil, nationality: String? = nil, refreshToken: String? = nil, userAge: Int? = nil, userId: Int64? = nil, userName: String? = nil) {
+        self.gender = gender
+        self.languageNames = languageNames
+        self.languageLevels = languageLevels
+        self.nationality = nationality
+        self.refreshToken = refreshToken
+        self.userAge = userAge
+        self.userId = userId
+        self.userName = userName
+    }
+}
+
+// accout id_token 삭제함
 class Account: Codable {
-    let state: String
+    var state: String
     let code: String
     let id_token: String
     let user: User
@@ -67,6 +100,7 @@ class User: Codable {
     }
 }
 
+
 class UserItem: Codable {
     let account: Account
     let access_token: String
@@ -76,9 +110,8 @@ class UserItem: Codable {
     let token_type: String
     let userType: String
     let userId: Int64
-    var deviceToken: String?
     
-    init(account: Account, access_token: String, expires_in: Int64, id_token: String, refresh_token: String, token_type: String, userType: String, userId: Int64, deviceToken: String?) {
+    init(account: Account, access_token: String, expires_in: Int64, id_token: String, refresh_token: String, token_type: String, userType: String, userId: Int64) {
         self.account = account
         self.access_token = access_token
         self.expires_in = expires_in
@@ -87,11 +120,10 @@ class UserItem: Codable {
         self.token_type = token_type
         self.userType = userType
         self.userId = userId
-        self.deviceToken = deviceToken
     }
 }
 
-class UserProfileImages: Decodable {
+class FetchedUserImages: Decodable {
     let imageUrls: [String]
     let profileImageUrl: String
     let userImageIds: [Int64]

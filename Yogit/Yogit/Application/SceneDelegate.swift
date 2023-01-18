@@ -19,17 +19,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-//        let setUpVC = TestBoardViewController() // SetProfileViewController() // LoginViewController() // ClipBoardViewController()
-//        let rootVC = UINavigationController(rootViewController: setUpVC)
-//        rootVC.navigationBar.tintColor = UIColor.label
-//        rootVC.navigationBar.topItem?.backButtonTitle = ""
-////        rootVC.navigationBar.topItem?.titleView?.tintColor = .green
-//
-//        self.window = UIWindow(windowScene: scene)
-//        self.window?.rootViewController = rootVC
-//        self.window?.makeKeyAndVisible()
+        let setUpVC = SetProfileViewController() // ClipBoardViewController2()
+        let rootVC = UINavigationController(rootViewController: setUpVC)
+        rootVC.navigationBar.tintColor = UIColor.label
+        rootVC.navigationBar.topItem?.backButtonTitle = ""
+//        rootVC.navigationBar.isTranslucent = false
+
+        self.window = UIWindow(windowScene: scene)
+        self.window?.rootViewController = rootVC
+        self.window?.makeKeyAndVisible()
 ////
-////
+//////
 //        let rootVC = SearchProfileImagesViewController()
 //        self.window = UIWindow(windowScene: scene)
 //        self.window?.rootViewController = rootVC
@@ -54,37 +54,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //                }
         //            }
         
-        SignInManager.checkUserAuth { (AuthState) in
-            var rootViewState = RootViewState.loginView
-            switch AuthState {
-            case .undefine, .signOut: break
-            case .signInFull: rootViewState = .homeView
-            case .signInNotFull: rootViewState = .setProfileView
-            }
-            DispatchQueue.main.async {
-                let currentVC: UIViewController
-                switch rootViewState {
-                case .loginView:
-                    let loginVC = LoginViewController()
-                    currentVC = loginVC
-                    break
-                case .homeView: // 필수 데이터 있으면
-                    let homeVC = ServiceTapBarViewController()
-                    currentVC = homeVC
-                    break
-                case .setProfileView:
-                    let setProfileVC = SetProfileViewController()
-                    currentVC = setProfileVC
-                    break
-                }
-                let rootVC = UINavigationController(rootViewController: currentVC)
-                rootVC.navigationBar.tintColor = UIColor.label
-                rootVC.navigationBar.topItem?.backButtonTitle = ""
-                self.window = UIWindow(windowScene: scene)
-                self.window?.rootViewController = rootVC
-                self.window?.makeKeyAndVisible()
-            }
-        }
+//        SignInManager.checkUserAuth { (AuthState) in
+//            var rootViewState: RootViewState
+//            switch AuthState {
+//            case .undefine, .signOut: rootViewState = .loginView
+//            case .signInFull: rootViewState = .homeView
+//            case .signInNotFull: rootViewState = .setProfileView
+//            }
+//            DispatchQueue.main.async {
+//                let currentVC: UIViewController
+//                switch rootViewState {
+//                case .loginView:
+//                    let loginVC = LoginViewController()
+//                    currentVC = loginVC
+//                    break
+//                case .homeView: // 필수 데이터 있으면
+//                    let homeVC = ServiceTapBarViewController()
+//                    currentVC = homeVC
+//                    break
+//                case .setProfileView:
+//                    let setProfileVC = SetProfileViewController()
+//                    currentVC = setProfileVC
+//                    break
+//                }
+//                let rootVC = UINavigationController(rootViewController: currentVC)
+//                rootVC.navigationBar.tintColor = UIColor.label
+//                rootVC.navigationBar.topItem?.backButtonTitle = ""
+//                self.window = UIWindow(windowScene: scene)
+//                self.window?.rootViewController = rootVC
+//                self.window?.makeKeyAndVisible()
+//            }
+//        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

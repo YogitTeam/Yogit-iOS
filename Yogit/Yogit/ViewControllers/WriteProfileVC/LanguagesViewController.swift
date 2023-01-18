@@ -49,11 +49,28 @@ class LanguagesViewController: UIViewController {
         let tableView = UITableView()
 //        tableView.separatorStyle = .none
         tableView.separatorStyle = .singleLine
+        tableView.separatorColor = .systemGray
         tableView.backgroundColor = .systemBackground
         tableView.register(LanguagesTableViewCell.self, forCellReuseIdentifier: "LanguagesTableViewCell")
         return tableView
     }()
     
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Choose a language you can speak"
+        label.sizeToFit()
+        label.font = .systemFont(ofSize: 19, weight: .semibold)
+        return label
+    }()
+    
+    private lazy var titleView: UIView = {
+        let view = UIView()
+//        view.translatesAutoresizingMaskIntoConstraints = false
+        view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 36)
+        view.addSubview(titleLabel)
+        
+        return view
+    }()
     
     // MARK: - Lifecycle
     
@@ -75,8 +92,12 @@ class LanguagesViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        languagesTableView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+        languagesTableView.frame = view.bounds
+        languagesTableView.tableHeaderView = titleView
+        languagesTableView.tableHeaderView?.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 16, marginRight: 0, color: .systemGray3, width: 1)
+        titleLabel.snp.makeConstraints { (make) in
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalToSuperview().inset(0)
         }
     }
     
@@ -161,7 +182,7 @@ extension LanguagesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 0: return 52
-        default: return 44
+        default: return 48
         }
     }
     
@@ -194,11 +215,14 @@ extension LanguagesViewController: UITableViewDataSource {
             }
         } else {
             if isFiltering {
-                cell.configure(text: "      " + filteredSections[indexPath.section].options[indexPath.row - 1], isSelected: nil)
+                // "      "
+                cell.configure(text: filteredSections[indexPath.section].options[indexPath.row - 1], isSelected: nil)
             } else {
-                cell.configure(text: "      " + sections[indexPath.section].options[indexPath.row - 1], isSelected: nil)
+                cell.configure(text: sections[indexPath.section].options[indexPath.row - 1], isSelected: nil)
             }
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 40, bottom: 0, right: 0)
+            if indexPath.row != 5 {
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 40, bottom: 0, right: 0)
+            }
         }
         cell.selectionStyle = .blue
         return cell

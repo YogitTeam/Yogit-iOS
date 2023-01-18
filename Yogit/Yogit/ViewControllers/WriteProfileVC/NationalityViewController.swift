@@ -24,6 +24,7 @@ class NationalityViewController: UIViewController {
         let tableView = UITableView()
         // register new cell
         // self: reference the type object
+        tableView.backgroundColor = .systemBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         return tableView
@@ -35,24 +36,31 @@ class NationalityViewController: UIViewController {
         view.addSubview(nationalityTableView)
         nationalityTableView.dataSource = self
         nationalityTableView.delegate = self
+        configureViewComponent()
+        setupSearchController()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.navigationItem.title = "Nationality"
-        self.setupSearchController()
         // frame: the view’s location and size in its superview’s coordinate system.
         // bound: the view’s location and size in its own coordinate system.
         nationalityTableView.frame = view.bounds
+    }
+    
+    private func configureViewComponent() {
+        self.navigationItem.title = "Nationality"
+        self.setupSearchController()
+        self.view.backgroundColor = .systemBackground
     }
     
     func setupSearchController() {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Search Language"
         searchController.hidesNavigationBarDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
-        self.navigationItem.searchController = searchController
-        self.navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     

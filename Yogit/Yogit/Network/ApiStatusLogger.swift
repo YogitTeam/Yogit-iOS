@@ -20,14 +20,12 @@ final class ApiStatusLogger : EventMonitor {
 //    }
     
     func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
-        
-        guard let statusCode = request.response?.statusCode else { return }
+        guard let statusCode = request.response?.statusCode else {
+            return
+        }
         
         print("MyApiStatusLogger - request.didParseResponse() / statusCode : \(statusCode)")
         
-        
 //        debugPrint(response)
     }
-    
-    
 }

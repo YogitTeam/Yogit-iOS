@@ -27,23 +27,21 @@ class GatheringBoardContentViewController: UIViewController {
     var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
         didSet {
             print("boardWithMode 3 \(boardWithMode)")
-//            newImagesLastIdx = boardWithMode.images?.count ?? 0
         }
     }
     private var deletedImageIds: [Int64] = []
     private var newImagesIdx: Int = 0 // 기존 이미지 개수 저장, 삭제한 이미지 개수저장 >> 기존이미지(3개) - 삭제한 이미지(2개) >> post(patch) req: 1번 인덱스 부터 끝지점
     
     private var imagePicker: UIImagePickerController?
-    
-    private let rtvh = RequirementTableViewHeader()
+
     let stepHeaderView = StepHeaderView()
     let step = 3.0
-    var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
+    var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView(), MyHeaderView()]
     var textViews = [MyTextView(), MyTextView(), MyTextView()]
     let placeholderData = ["Ex) Hangout", "Ex) Hangout", "Ex) Hangout"]
     var textViewCount = [0, 0, 0]
-    let minChar = [10, 50, 50]
-    let maxChar = [30, 500, 500]
+    let minChar = [10, 30, 30]
+    let maxChar = [30, 2000, 2000]
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -89,13 +87,13 @@ class GatheringBoardContentViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = .systemBackground
         view.translatesAutoresizingMaskIntoConstraints = false
-        [self.rtvh,
+        [self.headerView[0],
          self.imagesCollectionView,
-         self.headerView[0],
-         self.textViews[0],
          self.headerView[1],
-         self.textViews[1],
+         self.textViews[0],
          self.headerView[2],
+         self.textViews[1],
+         self.headerView[3],
          self.textViews[2]].forEach { view.addSubview($0) }
         return view
     }()
@@ -185,48 +183,45 @@ class GatheringBoardContentViewController: UIViewController {
             $0.centerX.bottom.equalToSuperview()
         }
 
-        rtvh.snp.makeConstraints { make in
-//            make.top.equalTo(stepHeaderView.snp.bottom).offset(20)
-            make.top.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(22)
+        headerView[0].snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.height.equalTo(22)
         }
-
-
         imagesCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(rtvh.snp.bottom)
+            make.top.equalTo(headerView[0].snp.bottom)
 //            make.leading.trailing.equalToSuperview()
 //            make.top.equalTo(rt)
             make.width.equalToSuperview()
             make.height.equalTo(90)
         }
-        headerView[0].snp.makeConstraints {
+        headerView[1].snp.makeConstraints {
             $0.top.equalTo(imagesCollectionView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(10)
             $0.height.equalTo(22)
         }
         textViews[0].snp.makeConstraints { make in
-            make.top.equalTo(headerView[0].snp.bottom).offset(10)
+            make.top.equalTo(headerView[1].snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(54)
         }
-        headerView[1].snp.makeConstraints {
+        headerView[2].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
             $0.top.equalTo(textViews[0].snp.bottom).offset(20)
             $0.height.equalTo(22)
         }
         textViews[1].snp.makeConstraints { make in
-            make.top.equalTo(headerView[1].snp.bottom).offset(10)
+            make.top.equalTo(headerView[2].snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(200)
         }
-        headerView[2].snp.makeConstraints {
+        headerView[3].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
             $0.top.equalTo(textViews[1].snp.bottom).offset(20)
             $0.height.equalTo(22)
         }
         textViews[2].snp.makeConstraints { make in
-            make.top.equalTo(headerView[2].snp.bottom).offset(10)
+            make.top.equalTo(headerView[3].snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(200)
             make.bottom.equalToSuperview().inset(30)
@@ -253,13 +248,11 @@ class GatheringBoardContentViewController: UIViewController {
     }
     
     private func configureViewComponent() {
-//        self.navigationItem.title = "Profile"
         self.hideKeyboardWhenTappedAround()
         self.navigationItem.rightBarButtonItem = self.rightButton
         self.stepHeaderView.step = step
         self.stepHeaderView.titleLabel.text = "Content"
         self.view.backgroundColor = .systemBackground
-        self.rtvh.contentNameLabel.text = "Photos"
     }
     
     private func loadImagePicker() {
@@ -286,9 +279,10 @@ class GatheringBoardContentViewController: UIViewController {
     }
     
     private func configureHeader() {
-        self.headerView[0].contentNameLabel.text = "Title"
-        self.headerView[1].contentNameLabel.text = "Gathering introduction"
-        self.headerView[2].contentNameLabel.text = "Please apply this kind of person"
+        self.headerView[0].contentNameLabel.text = "Photos"
+        self.headerView[1].contentNameLabel.text = "Title"
+        self.headerView[2].contentNameLabel.text = "Gathering introduction"
+        self.headerView[3].contentNameLabel.text = "Please apply this kind of person"
     }
     
     private func configureDeleteCount() {
@@ -359,7 +353,7 @@ class GatheringBoardContentViewController: UIViewController {
                         multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
                     }
 //                    multipartFormData.append(Data("\(deletedIdsParam.values)".utf8), withName: deletedIdsParam.keys)
-                    if self.deletedImageIds != [] {
+                    if self.deletedImageIds != [] {  // -1이 있을 가능성 존재
                         let deletedIdsParam: [String: [Any]] = ["deleteImageIds": self.deletedImageIds]
                         print(deletedIdsParam)
                         for (key, value) in deletedIdsParam {
@@ -504,7 +498,6 @@ extension GatheringBoardContentViewController: UICollectionViewDelegate {
         alert.addAction(cancel)
         self.present(alert, animated: true, completion: nil)
     }
-    
 }
 
 extension GatheringBoardContentViewController: UICollectionViewDataSource {
@@ -518,6 +511,8 @@ extension GatheringBoardContentViewController: UICollectionViewDataSource {
 //        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
         print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
+        
+        //
         if indexPath.row < self.boardWithMode.images?.count ?? 0 {
 //            print("🏞Id", self.boardWithMode.imageIds?[indexPath.row])
             print("boardWithMode", boardWithMode)
@@ -697,7 +692,7 @@ extension GatheringBoardContentViewController: UITextViewDelegate {
         if textView.text == placeholderData[textView.tag] {
             textView.text = nil
             textView.text = nil
-            textView.textColor = .black
+            textView.textColor = .label
         }
     }
     
@@ -735,10 +730,10 @@ extension GatheringBoardContentViewController: UITextViewDelegate {
     }
 }
 
-extension UIViewController {
+extension GatheringBoardContentViewController {
     func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
-        tap.cancelsTouchesInView = false
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false // 해당 뷰컨의 뷰안에는 터치 못하게
         view.addGestureRecognizer(tap)
     }
     
@@ -746,4 +741,17 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
+
+
+//extension UIViewController {
+//    func hideKeyboardWhenTappedAround() {
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+//        tap.cancelsTouchesInView = false
+//        view.addGestureRecognizer(tap)
+//    }
+//    
+//    @objc private func dismissKeyboard() {
+//        view.endEditing(true)
+//    }
+//}
 

@@ -59,7 +59,7 @@ class MoveVC: UIViewController {
 }
 
 extension MoveVC: ImagesProtocol {
-    func imagesSend(profileImage: UIImage?) {
+    func imagesSend(profileImage: UIImage) {
         self.profileImage = profileImage
     }
 }

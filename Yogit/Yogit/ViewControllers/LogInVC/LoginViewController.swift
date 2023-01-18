@@ -18,17 +18,6 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private lazy var deleteButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("delete", for: .normal)
-        button.tintColor = .white
-        button.layer.cornerRadius = 8
-        button.isEnabled = false
-        button.backgroundColor = .placeholderText
-        button.addTarget(self, action: #selector(self.delteButtonTapped(_:)), for: .touchUpInside)
-        return button
-    }()
-    
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Yogit")?.withRenderingMode(.alwaysTemplate)
@@ -43,7 +32,6 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(iconImageView)
         view.addSubview(signInWithAppleButton)
-        view.addSubview(deleteButton)
         configureViewComponent()
     }
     
@@ -58,10 +46,6 @@ class LoginViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().inset(300)
         }
-        deleteButton.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.height.equalTo(50)
-        }
     }
     
     
@@ -69,19 +53,37 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .systemBackground
     }
     
-    @objc func delteButtonTapped(_ sender: UITapGestureRecognizer) {
-        do {
-            try KeychainManager.deleteUserItem()
-        } catch {
-            print(error)
-        }
-    }
     
     @objc func handleAuthorizationAppleIDButtonPress() {
         
-        
         // face id 거치고 뷰 전환 필요함
         // token 있는지 없는지 확인 후에
+        // 로그아웃시 세션 및 화면 처리 요구
+        // 키체인 status로 구분
+        SignInManager.checkUserAuth { (AuthState) in
+            var rootViewState = RootViewState.loginView
+            switch AuthState {
+            case .undefine, .signOut: return
+            case .signInFull: rootViewState = .homeView
+            case .signInNotFull: rootViewState = .setProfileView
+            }
+            DispatchQueue.main.async {
+                switch rootViewState {
+                case .loginView:
+                    break
+                case .homeView: // 필수 데이터 있으면
+                    // 루트뷰 전환 요규
+                    let homeVC = ServiceTapBarViewController()
+                    let rootVC = UINavigationController(rootViewController: homeVC)
+                    self.view.window?.rootViewController = rootVC
+                    self.view.window?.makeKeyAndVisible()
+                case .setProfileView:
+                    // 푸쉬로 이동
+                    let setProfileVC = SetProfileViewController()
+                    self.navigationController?.pushViewController(setProfileVC, animated: true)
+                }
+            }
+        }
         
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
@@ -131,35 +133,11 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
     // 애플 아이디 사용 중지하면 즉각적으로 알아야함 (화면 바로 들어가면 정보 용청을 하닌깐)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         print("Run authorizationController")
+        
+        
         switch authorization.credential {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
             print("appleIDCredential")
-            
-            // 로그아웃시 세션 및 화면 처리
-            SignInManager.checkUserAuth { (AuthState) in
-                var rootViewState = RootViewState.loginView
-                switch AuthState {
-                case .undefine, .signOut: return
-                case .signInFull: rootViewState = .homeView
-                case .signInNotFull: rootViewState = .setProfileView
-                }
-                DispatchQueue.main.async {
-                    switch rootViewState {
-                    case .loginView:
-                        break
-                    case .homeView: // 필수 데이터 있으면
-                        // 루트뷰 전환 요규
-                        let homeVC = ServiceTapBarViewController()
-                        let rootVC = UINavigationController(rootViewController: homeVC)
-                        self.view.window?.rootViewController = rootVC
-                        self.view.window?.makeKeyAndVisible()
-                    case .setProfileView:
-                        // 푸쉬로 이동
-                        let setProfileVC = SetProfileViewController()
-                        self.navigationController?.pushViewController(setProfileVC, animated: true)
-                    }
-                }
-            }
             
             let identifier = appleIDCredential.user // apple id
             

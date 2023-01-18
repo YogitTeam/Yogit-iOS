@@ -9,25 +9,33 @@ import Foundation
 import UIKit
 
 extension CALayer {
-    func addBorder(arr_edge: [UIRectEdge], color: UIColor?, width: CGFloat) {
+    func addBorderWithMargin(arr_edge: [UIRectEdge], marginLeft: CGFloat, marginRight: CGFloat,color: UIColor?, width: CGFloat) {
         for edge in arr_edge {
             let border = CALayer()
             switch edge {
-                case UIRectEdge.top: border.frame = CGRect.init(x: 0, y: 0, width: frame.width, height: width)
-                break
-                case UIRectEdge.bottom: border.frame = CGRect.init(x: 0, y: self.frame.height - width, width: self.frame.width, height: width)
-                    break
+                case UIRectEdge.top: border.frame = CGRect.init(x: marginLeft, y: 0, width: frame.width + marginRight, height: width)
+                case UIRectEdge.bottom: border.frame = CGRect.init(x: marginLeft, y: frame.height - width, width: self.frame.width + marginRight, height: width)
                 case UIRectEdge.left: border.frame = CGRect.init(x: 0, y: 0, width: width, height: frame.height)
-                break
                 case UIRectEdge.right: border.frame = CGRect.init(x: frame.width - width, y: 0, width: width, height: frame.height)
-                break
-                default:
-                break
+                default: break
             }
             border.backgroundColor = color?.cgColor
             self.addSublayer(border)
         }
     }
+    
+//    func addBottomBorderWithColor(color: UIColor, width: CGFloat) -> CALayer {
+//        let border = CALayer()
+//        border.backgroundColor = color.cgColor
+////        border.frame = CGRect(x: bounds.minX,
+////                              y: bounds.maxX - width,
+////                              width: bounds.width,
+////                              height: width)
+//        border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 40, height:width)
+//        self.layer.addSublayer(border)
+//        return border
+////        self.borderLayer = border
+//    }
 }
 
 extension CALayer {
@@ -36,7 +44,7 @@ extension CALayer {
         case Left, Right, Top, Bottom
     }
 
-    func addViewBorder(withColor color: UIColor, width: CGFloat) {
+    func addViewBottomBorderWithLeftMargin(withColor color: UIColor, width: CGFloat, margin: CGFloat) {
        
         let border = CALayer()
         border.backgroundColor = color.cgColor
@@ -44,7 +52,7 @@ extension CALayer {
 //        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height:width)
         
         // coustom
-        border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 40, height: width)
+        border.frame = CGRect(x: margin, y: self.frame.size.height - width, width: self.frame.size.width - margin, height: width)
         self.addSublayer(border)
 //        self.layer.addSublayer(border)
     }

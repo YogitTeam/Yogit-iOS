@@ -9,11 +9,27 @@ import Foundation
 import UIKit
 
 extension String {
+    func urlToImage2() -> UIImage? {
+        guard let url = URL(string: self) else { return nil }
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        guard let image = UIImage(data: data) else { return nil }
+        return image
+    }
+    
+    
     func urlToImage(completion: @escaping (UIImage?) -> Void) {
         guard let url = URL(string: self) else { return completion(nil) }
         guard let data = try? Data(contentsOf: url) else { return completion(nil) }
         guard let image = UIImage(data: data) else { return completion(nil) }
         completion(image)
+    }
+    
+    
+    func urlToImage() async -> UIImage? {
+        guard let url = URL(string: self) else { return nil }
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        guard let image = UIImage(data: data) else { return nil }
+        return image
     }
     
 //    func urlToImage() -> UIImage {

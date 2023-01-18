@@ -15,16 +15,19 @@ class SearchProfileViewController: UIViewController {
     
     var otherUserId: Int64?
     
+    private var essentialProfile = UserProfile()
+    
     private var languagesInfo: String = ""
     
-    private let aboutMe: UILabel = {
+    private let lanuageLabel: UILabel = {
         let label = UILabel()
+        label.text = "Language Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.semibold)
+        label.numberOfLines = 1
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
-        label.numberOfLines = 0
         return label
     }()
     
@@ -32,13 +35,50 @@ class SearchProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        label.textColor = .systemGray
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 0
         return label
     }()
     
+    private let aboutMeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "About Me"
+        label.textAlignment = .left
+        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.semibold)
+        label.numberOfLines = 1
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    private let aboutMe: UILabel = {
+        let label = UILabel()
+        label.text = "I love global friends\nI am also studying English conversation\nI am attending Sejong University."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .left
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+        label.textColor = .systemGray
+        label.numberOfLines = 0
+        label.sizeToFit()
+        return label
+    }()
+    
+    private let footerView1: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        return view
+    }()
+
+    private let footerView2: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        return view
+    }()
+
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,7 +94,7 @@ class SearchProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.medium)
         label.text = "Select photos"
         label.numberOfLines = 1
         return label
@@ -78,18 +118,15 @@ class SearchProfileViewController: UIViewController {
         return view
     }()
     
-    private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "", image: UIImage(named: "Edit"), target: self, action: #selector(self.rightButtonPressed(_:)))
-//        let button = UIBarButtonItem(title: "Sign Up", style: .plain, target: self, action: #selector(buttonPressed(_:)))
-        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
-        return button
-    }()
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(profileContentView)
+        view.addSubview(footerView1)
+        view.addSubview(lanuageLabel)
         view.addSubview(profileLanguagesLabel)
+        view.addSubview(footerView2)
+        view.addSubview(aboutMeLabel)
+        view.addSubview(aboutMe)
         getProfile()
         configureViewComponent()
         // Do any additional setup after loading the view.
@@ -108,8 +145,30 @@ class SearchProfileViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.top.equalTo(profileContentView).inset(20)
         }
+        footerView1.snp.makeConstraints {
+            $0.top.equalTo(profileImageStackView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(6)
+        }
+        lanuageLabel.snp.makeConstraints { make in
+            make.top.equalTo(footerView1.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
         profileLanguagesLabel.snp.makeConstraints { make in
-            make.top.equalTo(profileImageStackView.snp.bottom).offset(20)
+            make.top.equalTo(lanuageLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        footerView2.snp.makeConstraints {
+            $0.top.equalTo(profileLanguagesLabel.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(6)
+        }
+        aboutMeLabel.snp.makeConstraints { make in
+            make.top.equalTo(footerView2.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        aboutMe.snp.makeConstraints { make in
+            make.top.equalTo(aboutMeLabel.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         profileContentView.snp.makeConstraints { make in
@@ -119,10 +178,46 @@ class SearchProfileViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        initNavigationBar()
+//        getProfile()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+    }
+    
 
     private func configureViewComponent() {
         self.view.backgroundColor = .systemBackground
-        self.navigationItem.rightBarButtonItem = self.rightButton
+    }
+    
+    private func initNavigationBar() {
+        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue)
+        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
+        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
+        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacer.width = 15
+        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
+    }
+    
+    @objc func editButtonTapped(_ sender: UIButton) {
+
+        print("editButtonTapped")
+        DispatchQueue.main.async {
+            let SPVC = SetProfileViewController()
+            SPVC.userProfile = self.essentialProfile
+            SPVC.profileImage = self.profileImageView.image
+            self.navigationController?.pushViewController(SPVC, animated: true)
+        }
+    }
+    
+    @objc func settingButtonTapped(_ sender: UIButton) {
+        print("settingButtonTapped")
+        DispatchQueue.main.async {
+            let SPVC = SettingProfileViewController()
+            self.navigationController?.pushViewController(SPVC, animated: true)
+        }
     }
     
     func getProfile() {
@@ -148,21 +243,32 @@ class SearchProfileViewController: UIViewController {
                 do{
                     let decodedData = try JSONDecoder().decode(APIResponse<ServiceUserProfile>.self, from: data)
                     print(decodedData.data)
-                    var getImage: UIImage?
-                    DispatchQueue.global().async {
-                        guard let imageUrl = decodedData.data?.profileImg else { return }
-                        imageUrl.urlToImage { (image) in
-                            guard let image = image else { return }
-                            getImage = image
-                        }
-                        let langCnt = decodedData.data?.languageNames.count ?? 0
-                        for i in 0..<langCnt {
-                            self.languagesInfo += "\(decodedData.data?.languageNames[i] ?? "") (\(decodedData.data?.languageLevels[i] ?? ""))\n"
-                        }
-                        DispatchQueue.main.async {
-                            self.profileImageView.image = getImage
-                            self.profileImageLabel.text = decodedData.data?.name
-                            self.profileLanguagesLabel.text = self.languagesInfo
+                    if let data = decodedData.data {
+
+                        var getImage: UIImage?
+                        DispatchQueue.global().async {
+                            guard let imageUrl = decodedData.data?.profileImg else { return }
+                            imageUrl.urlToImage { (image) in
+                                guard let image = image else { return }
+                                getImage = image
+                            }
+                            let langCnt = decodedData.data?.languageNames.count ?? 0
+                            
+                            // 변경 필요 계속 추가됨
+                            for i in 0..<langCnt {
+                                self.languagesInfo += "\(decodedData.data?.languageNames[i] ?? "") (\(decodedData.data?.languageLevels[i] ?? ""))\n"
+                            }
+                            DispatchQueue.main.async {
+                                self.profileImageView.image = getImage // 따로 넣어줌
+                                self.profileImageLabel.text = data.name
+                                self.profileLanguagesLabel.text = self.languagesInfo
+                                self.essentialProfile.userName = data.name
+                                self.essentialProfile.nationality = data.nationality
+                                self.essentialProfile.userAge = data.age
+                                self.essentialProfile.gender = data.gender
+                                self.essentialProfile.languageNames = data.languageNames
+                                self.essentialProfile.languageLevels = data.languageLevels
+                            }
                         }
                     }
                 }
@@ -213,7 +319,10 @@ class SearchProfileViewController: UIViewController {
 //        }
     }
     
-    @objc private func rightButtonPressed(_ sender: Any) {
+    @objc func rightButtonPressed(_ sender: Any) {
+//        navigationController.push
+        
+        
 //        guard let userItem = try? KeychainManager.getUserItem() else { return }
 //        userProfile.userId = userItem.userId
 //        print(userProfile)

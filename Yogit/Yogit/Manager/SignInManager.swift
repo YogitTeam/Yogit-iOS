@@ -55,7 +55,7 @@ struct SignInManager {
                     if userItem.account.hasRequirementInfo { completion(.signInFull) }
                     else { completion(.signInNotFull) }
                     break
-                case .revoked: // 애플 계정 사용 중단, so show the sign-in UI.
+                case .revoked: // 애플 계정 사용 중단, so show the sign-in UI., 애플 자격증명 삭제됨
                     completion(.signOut)
                     break
                 default:

@@ -18,6 +18,7 @@ target 'Yogit' do
 
   pod 'Alamofire', '~> 5.5'
   pod 'SnapKit', '~> 5.6.0'
-  pod 'IQKeyboardManagerSwift'
-  pod 'MessageKit'
+  pod 'IQKeyboardManagerSwift', '~> 6.5.0'
+  pod "BSImagePicker", "~> 3.1" 
+  pod 'Kingfisher', '~> 7.0'
 end

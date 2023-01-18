@@ -40,8 +40,8 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         stackView.spacing = 10
         stackView.alignment = .top
         stackView.backgroundColor = .systemBackground
-        [self.hostImageView,
-         self.labelStackView].forEach { stackView.addArrangedSubview($0) }
+        [hostImageView,
+         labelStackView].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
 
@@ -53,10 +53,10 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         stackView.alignment = .leading
 //        stackView.layer.borderWidth = 1
 //        stackView.layer.borderColor = UIColor.red.cgColor
-        [self.titleLabel,
-         self.dateLabel,
-         self.cityLabel,
-         self.memberNumberLabel].forEach { stackView.addArrangedSubview($0) }
+        [titleLabel,
+         dateLabel,
+         cityLabel,
+         memberNumberLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
 
@@ -208,39 +208,60 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
 //    }
     
     override func prepareForReuse() {
-        self.hostImageView.image = nil
-        self.boardImageView.image = nil
-        self.titleLabel.text = nil
-        self.dateLabel.text = nil
-        self.cityLabel.text = nil 
-        self.memberNumberLabel.text = nil
+        hostImageView.image = nil
+        boardImageView.image = nil
+        titleLabel.text = nil
+        dateLabel.text = nil
+        cityLabel.text = nil
+        memberNumberLabel.text = nil
     }
     
     func configure(with board: Board) {
-        DispatchQueue.global().async {
-            var boardImage: UIImage?
-            var hostImage: UIImage?
-            print(board.imageURL)
-            board.imageURL.urlToImage { (image) in
-                guard let image = image else { return }
-                boardImage = image
+        Task(priority: .high) {
+            async let boardImage = board.imageURL.urlToImage()
+            async let hostImage = board.profileImgURL.urlToImage()
+            boardImageView.image = await boardImage
+            hostImageView.image = await hostImage
+            titleLabel.text = board.title
+            if let changeDate = board.date.stringToDate()?.dateToStringUser() {
+                dateLabel.text = changeDate
             }
-            board.profileImgURL.urlToImage { (image) in
-                guard let image = image else {
-                    return
-                }
-                hostImage = image
-            }
-            DispatchQueue.main.async() {
-                self.boardImageView.image = boardImage
-                self.hostImageView.image = hostImage
-                guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString() 
-                self.titleLabel.text = board.title
-                self.dateLabel.text = changeDate
-                self.cityLabel.text = board.cityName// "Seoul"
-                self.memberNumberLabel.text = "" // "\(board.currentMember) / \(board.totalMember)"
-            }
+            cityLabel.text = board.cityName// "Seoul"
+            memberNumberLabel.text = ""
         }
+//        DispatchQueue.main.async(qos: .userInteractive) {
+//            self.titleLabel.text = board.title
+//            if let changeDate = board.date.stringToDate()?.dateToStringUser() {
+//                self.dateLabel.text = changeDate
+//            }
+//            self.cityLabel.text = board.cityName// "Seoul"
+//            self.memberNumberLabel.text = ""
+//        }
+        
+//        DispatchQueue.global().async {
+//            var boardImage: UIImage?
+//            var hostImage: UIImage?
+//            print(board.imageURL)
+//            board.imageURL.urlToImage { (image) in
+//                guard let image = image else { return }
+//                boardImage = image
+//            }
+//            board.profileImgURL.urlToImage { (image) in
+//                guard let image = image else {
+//                    return
+//                }
+//                hostImage = image
+//            }
+//            DispatchQueue.main.async() {
+//                self.boardImageView.image = boardImage
+//                self.hostImageView.image = hostImage
+//                guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString()
+//                self.titleLabel.text = board.title
+//                self.dateLabel.text = changeDate
+//                self.cityLabel.text = board.cityName// "Seoul"
+//                self.memberNumberLabel.text = "" // "\(board.currentMember) / \(board.totalMember)"
+//            }
+//        }
     }
 }
 

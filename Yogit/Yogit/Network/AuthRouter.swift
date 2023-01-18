@@ -28,12 +28,6 @@ enum AuthRouter: URLRequestConvertible {
         case .user:
             return .get
         }
-//        switch self {
-//        case .searchPhotos:
-//            return .get
-//        case .searchUsers:
-//            return .post
-//        }
     }
 
     var endPoint: String {

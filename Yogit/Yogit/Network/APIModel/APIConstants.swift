@@ -22,3 +22,6 @@ class APIResponse<T: Decodable> : Decodable {
         self.success = success
     }
 }
+
+
+

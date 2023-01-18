@@ -45,6 +45,16 @@ enum ProfileSectionData: Int {
     case languages
     case gender
     case nationality
+    
+    func toString() -> String {
+        switch self {
+        case .name: return "Name"
+        case .age: return "Age"
+        case .languages: return "Languages"
+        case .gender: return "Gender"
+        case .nationality: return "Nationality"
+        }
+    }
 }
 
 enum BoardSelectDetailSectionData: Int {
@@ -68,15 +78,24 @@ enum CategoryId: Int {
     
     func toString() -> String? {
         switch self.rawValue {
-        case 1:
-            return "Daily Spot"
-        case 2:
-            return "Traditional Culture"
-        case 3:
-            return "Nature"
-        case 4:
-            return "Language exchange"
+        case 1: return "Daily Spot"
+        case 2: return "Traditional Culture"
+        case 3: return "Nature"
+        case 4: return "Language exchange"
         default: fatalError("Not exist categoryId")
         }
     }
+}
+
+enum NOTIFICATION {
+    enum API {
+        
+    }
+}
+
+enum TabBarKind: String {
+    case home = "Home"
+    case myClub = "MyClub"
+    case profile = "Profile"
+    case notification = "Notification"
 }

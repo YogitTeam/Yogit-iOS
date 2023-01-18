@@ -29,6 +29,12 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
+    var isClipBoardAlarm: Bool? = false {
+        didSet {
+            if isClipBoardAlarm == true { moveToClipBoard() }
+        }
+    }
+    
     private var boardImages: [UIImage] = [] {
         didSet(oldVal){
             DispatchQueue.main.async {
@@ -508,6 +514,53 @@ class GatheringDetailBoardViewController: UIViewController {
     
     @objc func applyButtonTapped(_ sender: UIButton) {
         
+//        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//        alert.view.tintColor = UIColor.label
+//        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        if userItem.userId != hostId {
+//            let apply = UIAlertAction(title: "Apply", style: .default) { (action) in self.applyAlert() }
+//            alert.addAction(apply)
+//        }
+//        alert.addAction(cancel)
+//        DispatchQueue.main.async {
+//            self.present(alert, animated: true, completion: nil)
+//        }
+//        let alert = UIAlertController(title: "Apply", message: "Would you like to apply for that meeting?", preferredStyle: .alert)
+//        let cancel = UIAlertAction(title: "cancel", style: .cancel)
+//        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+//            self.applyRequest()
+//        }
+//        alert.addAction(cancel)
+//        alert.addAction(ok)
+//        DispatchQueue.main.async {
+//            self.present(alert, animated: true, completion: nil)
+//        }
+        
+        if userItem.userId != hostId {
+            let alert = UIAlertController(title: "Apply", message: "Would you like to apply for that meeting?", preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "cancel", style: .cancel)
+            let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+                self.applyRequest()
+            }
+            alert.addAction(cancel)
+            alert.addAction(ok)
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
+        } else {
+            let alert = UIAlertController(title: "Applied", message: "Host is already applied", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default) { (ok) in }
+            alert.addAction(ok)
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
+    }
+    
+
+    
+    func applyRequest() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         guard let boardId = boardId else { return }
         let getAllBoardsReq = ApplyGathering(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
@@ -520,10 +573,8 @@ class GatheringDetailBoardViewController: UIViewController {
             switch response.result {
             case .success:
                 debugPrint(response)
-                if let data = response.data {
-                    self.applyButton.isEnabled = false
-                    self.applyButton.backgroundColor = .placeholderText
-                }
+                self.applyButton.isEnabled = false
+                self.applyButton.backgroundColor = .placeholderText
             case .failure(let error):
                 debugPrint(response)
                 print(error)
@@ -533,8 +584,12 @@ class GatheringDetailBoardViewController: UIViewController {
     
     @objc func clipBoardTapped(_ sender: UITapGestureRecognizer) {
         print("clipBoardTapped")
+        moveToClipBoard()
+    }
+    
+    func moveToClipBoard() {
         DispatchQueue.main.async {
-            let CBVC = ClipBoardViewController()
+            let CBVC = ClipBoardViewController2() // ClipBoardViewController()
             CBVC.boardId = self.boardId
             self.navigationController?.pushViewController(CBVC, animated: true)
         }
@@ -697,6 +752,27 @@ class GatheringDetailBoardViewController: UIViewController {
                     let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
                     guard let myData = decodedData.data else { return }
                     print("APIResponse<BoardDetail>", myData)
+                    
+                    // 리펙토링 예장
+//                    Task(priority: .high) {
+//                        for imageUrl in myData.imageUrls {
+//                            async let boardImage = imageUrl.urlToImage()
+//                            boardImages.append(boardImage)
+//                        }
+//                    }
+                    
+//
+//                    let images = await withTaskGroup(of: UIImage) { taskGroup in
+////                        let photoNames = await listPhotos(inGallery: "Summer Vacation")
+//                        for imageUrl in myData.imageUrls {
+//                            taskGroup.addTask { await imageUrl.urlToImage()! }
+//                        }
+//                    }
+                    
+                    
+                    
+                    
+                    
                     var boardImages: [UIImage] = []
                     var hostImage: UIImage?
                     var memberImages: [UIImage] = []

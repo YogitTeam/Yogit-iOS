@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class MyImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "MyImagesCollectionViewCell"
@@ -86,8 +87,50 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         imageSequenceLabel.text = nil
         mainImageLabel.isHidden = true
     }
+    
+    func configureDownload(imageString: String, sequence: Int, kind: Kind) { // imageString: String,
+        guard let url = URL(string: imageString) else { return }
+        self.imageView.kf.setImage(
+            with: url,
+            placeholder: nil,
+            options: [.transition(.fade(1.2))],
+            completionHandler: nil
+        )
+        self.imageSequenceLabel.text = "\(sequence)"
+        switch kind {
+        case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
+        case .boardSelectDetail: break
+        default: fatalError("Not exist kind of imageview")
+        }
+    }
+    
+    func configureUpload(image: UIImage, imageId: Int64?, sequence: Int, kind: Kind) { // imageString: String,
+//        guard let url = URL(string: imageString) else { return }
+//        self.imageView.kf.setImage(
+//            with: url,
+//            placeholder: nil,
+//            options: [.transition(.fade(1.2))],
+//            completionHandler: nil
+//          )
+        self.imageView.image = image
+        self.imageId = imageId
+        self.imageSequenceLabel.text = "\(sequence)"
+        switch kind {
+        case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
+        case .boardSelectDetail: break
+        default: fatalError("Not exist kind of imageview")
+        }
+    }
+    
 
-    func configure(image: UIImage?, imageId: Int64?, sequence: Int, kind: Kind) {
+    func configure(image: UIImage?, imageId: Int64?, sequence: Int, kind: Kind) { // imageString: String,
+//        guard let url = URL(string: imageString) else { return }
+//        self.imageView.kf.setImage(
+//            with: url,
+//            placeholder: nil,
+//            options: [.transition(.fade(1.2))],
+//            completionHandler: nil
+//          )
         self.imageView.image = image
         self.imageId = imageId
         self.imageSequenceLabel.text = "\(sequence)"
