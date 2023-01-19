@@ -205,7 +205,6 @@ class SetProfileViewController: UIViewController {
         userProfile.nationality = "GH"
         
         if hasAllValue == false {
-            print("Not has all value")
             let alert = UIAlertController(title: "Can't sign up", message: "Please enter all required information correctly", preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alert.addAction(okAction)

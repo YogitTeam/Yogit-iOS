@@ -173,7 +173,6 @@ class SetProfileImagesViewController: UIViewController {
         } else if userImagesData.uploadImages.count != 0  {
             profileImage = userImagesData.uploadImages.first
         } else {
-            print("Not has all value")
             let alert = UIAlertController(title: "Can't save photos", message: "Please upload at least one photo", preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alert.addAction(okAction)
