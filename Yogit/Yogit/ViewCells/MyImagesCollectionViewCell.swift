@@ -11,19 +11,15 @@ import Kingfisher
 class MyImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "MyImagesCollectionViewCell"
     
-    private var imageId: Int64?
-    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .placeholderText
-        imageView.tintColor = .systemGray.withAlphaComponent(0.5) // image color
+        imageView.backgroundColor = UIColor(rgb: 0xCDCCCC, alpha: 1)
+        imageView.tintColor = UIColor(rgb: 0xEBEBEB, alpha: 1)// .systemGray.withAlphaComponent(0.5) // image color
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
         return imageView
     }()
-    
-
     
     private let imageSequenceLabel: UILabel = {
         let label = UILabel()
@@ -33,7 +29,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 10
         label.numberOfLines = 1
-        label.backgroundColor = .systemGray.withAlphaComponent(0.5)
+        label.backgroundColor = UIColor(rgb: 0xEBEBEB, alpha: 0.5)//.systemGray.withAlphaComponent(0.5)
         return label
     }()
 
@@ -47,7 +43,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         label.numberOfLines = 1
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 10
-        label.backgroundColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
+        label.backgroundColor = .black.withAlphaComponent(0.5) //UIColor(rgb: 0x3246FF, alpha: 1.0)
         label.isHidden = true
         return label
     }()
@@ -61,14 +57,11 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("profile images layoutSubviews")
         imageView.frame = contentView.bounds
-
         imageSequenceLabel.snp.makeConstraints { make in
             make.width.height.equalTo(20)
             make.top.leading.equalToSuperview().inset(6)
         }
-
         mainImageLabel.snp.makeConstraints { make in
             make.width.equalTo(80)
             make.height.equalTo(20)
@@ -82,20 +75,20 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageId = nil
         imageView.image = nil
         imageSequenceLabel.text = nil
         mainImageLabel.isHidden = true
     }
     
     func configureDownload(imageString: String, sequence: Int, kind: Kind) { // imageString: String,
-        guard let url = URL(string: imageString) else { return }
-        self.imageView.kf.setImage(
-            with: url,
-            placeholder: nil,
-            options: [.transition(.fade(1.2))],
-            completionHandler: nil
-        )
+//        guard let url = URL(string: imageString) else { return }
+//        self.imageView.kf.setImage(
+//            with: url,
+//            placeholder: nil,
+//            options: [.transition(.flipFromRight(1.2))],
+//            completionHandler: nil
+//        )
+        self.imageView.setImage(with: imageString)
         self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
@@ -104,7 +97,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configureUpload(image: UIImage, imageId: Int64?, sequence: Int, kind: Kind) { // imageString: String,
+    func configureUpload(image: UIImage, sequence: Int, kind: Kind) { // imageString: String,
 //        guard let url = URL(string: imageString) else { return }
 //        self.imageView.kf.setImage(
 //            with: url,
@@ -113,7 +106,6 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
 //            completionHandler: nil
 //          )
         self.imageView.image = image
-        self.imageId = imageId
         self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
@@ -123,7 +115,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     }
     
 
-    func configure(image: UIImage?, imageId: Int64?, sequence: Int, kind: Kind) { // imageString: String,
+    func configureNull(image: UIImage?, sequence: Int, kind: Kind) { // imageString: String,
 //        guard let url = URL(string: imageString) else { return }
 //        self.imageView.kf.setImage(
 //            with: url,
@@ -132,7 +124,6 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
 //            completionHandler: nil
 //          )
         self.imageView.image = image
-        self.imageId = imageId
         self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
@@ -141,7 +132,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func getImageID() -> Int64? {
-        return imageId
-    }
+//    func getImageID() -> Int64? {
+//        return imageId
+//    }
 }

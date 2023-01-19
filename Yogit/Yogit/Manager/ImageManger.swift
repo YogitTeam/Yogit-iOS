@@ -7,60 +7,50 @@
 
 import Foundation
 import Kingfisher
+import Photos
+import UIKit
 
-
-private func downloadImage(with urlString: String) {
-      guard let url = URL(string: urlString) else { return }
-      let resource = ImageResource(downloadURL: url)
-      KingfisherManager.shared.retrieveImage(with: resource,
-                                             options: nil,
-                                             progressBlock: nil) { result in
-        switch result {
-        case .success(let value):
-          print(value.image)
-        case .failure(let error):
-          print("Error: \(error)")
+final class ImageManager {
+    static let shared = ImageManager()
+    
+    weak var vc: UIViewController?
+    
+    func downloadImage(with urlString: String, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: urlString) else { return completion(nil) }
+        let resource = ImageResource(downloadURL: url)
+        KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
+            switch result {
+            case .success(let value):
+                print("Success - Downloaded Image", value.image)
+                completion(value.image)
+            case .failure(let error):
+                print("Error - Downloaded Image:", error)
+                completion(nil)
+            }
         }
-      }
-}
-
-
-extension UIImageView {
-  func setImage(with urlString: String) {
-    ImageCache.default.retrieveImage(forKey: urlString, options: nil) { result in
-      switch result {
-      case .success(let value):
-        if let image = value.image {
-          //캐시가 존재하는 경우
-          self.image = image
-        } else {
-          //캐시가 존재하지 않는 경우
-          guard let url = URL(string: urlString) else { return }
-          let resource = ImageResource(downloadURL: url, cacheKey: urlString)
-          self.kf.setImage(with: resource)
-        }
-      case .failure(let error):
-        print(error)
-      }
     }
-  }
     
-    
+    func requestPHPhotoLibraryAuthorization(completion: @escaping(Bool) -> Void) {
+        if #available(iOS 14, *) {
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { authorizationStatus in
+                switch authorizationStatus {
+//                case .limited:
+////                    completion()
+//                    print("limited authorization granted")
+//                case .authorized:
+////                    completion()
+//                    print("authorization granted")
+//                case .notDetermined:
+//                    print("notDetermined")
+//                case .restricted:
+//                    print("restricted")
+                case .denied, .restricted:
+                    completion(false)
+                default:
+                    completion(true)
+                    print("Unimplemented")
+                }
+            }
+        }
+    }
 }
-
-//let url = URL(string: "https://example.com/image.jpg")
-//let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-//    guard let data = data, error == nil else { return }
-//    DispatchQueue.main.async() {
-//        let image = UIImage(data: data)
-//    }
-//}
-//task.resume()
-//
-//let imageView = UIImageView()
-//let url = URL(string: "https://example.com/image.jpg")
-//imageView.sd_setImage(with: url, completed: nil)
-//
-//let url = URL(string: "https://example.com/image.jpg")
-//let data = try Data(contentsOf: url!)
-//let image = UIImage(data: data)

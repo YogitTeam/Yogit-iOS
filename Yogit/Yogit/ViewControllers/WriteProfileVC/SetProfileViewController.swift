@@ -8,6 +8,7 @@
 // pickerview >> keyboard constraint error
 
 import UIKit
+//import Kingfisher
 
 class SetProfileViewController: UIViewController {
     
@@ -19,17 +20,17 @@ class SetProfileViewController: UIViewController {
     private var userAge = 18
     private var userGender = "Prefer not to say"
     
-    weak var profileImage: UIImage? = nil {
+    var profileImage: String? {
         didSet {
-            if profileImage == nil {
-                profileImageLabel.textColor = .placeholderText
-            } else {
-                profileImageView.image = profileImage
+            if let imageString = profileImage {
+                profileImageView.setImage(with: imageString)
                 profileImageLabel.textColor = .label
+            } else {
+                profileImageLabel.textColor = .placeholderText
             }
         }
     }
-
+    
     var userProfile = UserProfile() {
         didSet {
             print(userProfile)
@@ -211,17 +212,6 @@ class SetProfileViewController: UIViewController {
             present(alert, animated: false, completion: nil)
             return
         }
-
-//        let parameters: [String: Any] = [
-//            "gender": userProfile.gender!,
-//            "languageLevels": userProfile.languageLevels!,
-//            "languageNames": userProfile.languageNames!,
-//            "nationality": userProfile.nationality!,
-//            "refreshToken": userProfile.refreshToken!
-////            "userAge": userProfile.userAge!,
-////            "userId": userProfile.userId!,
-////            "userName": userProfile.userName!
-//        ]
         
         let urlConvertible = ProfileRouter.uploadEssentialProfile(parameter: userProfile)
         if let parameters = urlConvertible.toDictionary {
@@ -249,42 +239,13 @@ class SetProfileViewController: UIViewController {
                             }
                         } 
                     } catch {
-                        print("KeychainManager.update \(error.localizedDescription)")
+                        print("Error - KeychainManager.update \(error.localizedDescription)")
                     }
                 case let .failure(error):
                     print("SetProfileVC - upload response result Not return", error)
                 }
             }
         }
-        
-//        let parameters1 = ProfileRouter.createEssentialProfile(parameter: userProfile).toDictionary
-//        print("parameters1", parameters1)
-//        print("parameters", parameters)
-//        AF.upload(multipartFormData: { multipartFormData in
-//            for (key, value) in parameters {
-//                multipartFormData.append("\(value)".data(using: String.Encoding.utf8)!, withName: key)
-//            }
-//        }, to: API.BASE_URL + "users/essential-profile", method: .patch)
-//        .validate(statusCode: 200..<500)
-//        .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                do {
-//                    userItem.account.hasRequirementInfo = true
-//                    try KeychainManager.updateUserItem(userItem: userItem)
-//                    DispatchQueue.main.async {
-//                        let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
-//                        self.view.window?.rootViewController = rootVC
-//                        self.view.window?.makeKeyAndVisible()
-//                    }
-//                } catch {
-//                    print("KeychainManager.update \(error.localizedDescription)")
-//                }
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
     }
     
     @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
@@ -322,7 +283,7 @@ extension SetProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
             case 0, 1, 3, 4: return 1
-            case 2: return (userProfile.languageNames?.count ?? 0) < 5 ? ((userProfile.languageNames?.count ?? 0) + 1) : 5// languageNames.count < 5 ? languageNames.count + 1 : 5
+            case 2: return (userProfile.languageNames?.count ?? 0) < 5 ? ((userProfile.languageNames?.count ?? 0) + 1) : 5
             default: return 0
         }
     }
@@ -411,8 +372,8 @@ extension SetProfileViewController: UITableViewDataSource {
         // userName, age, lanages, gender, nationality
         switch section {
             case 0: footerView.configure(text: userProfile.userName ?? "", kind: section)
-            case 2: footerView.configure(text: "Your photos, name, age, languages will be public.\n\n\n", kind: section)
-            case 4: footerView.configure(text: "Gender, nationality help improve recommendations but are not shown publicly.", kind: section)
+//            case 2: footerView.configure(text: "Your photos, name, age, languages will be public.\n\n\n", kind: section)
+            case 4: footerView.configure(text: "Your photos, name, age, languages, nationality will be public. But gender is not shown publicly.", kind: section)
             default: return nil
         }
         return footerView
@@ -421,8 +382,8 @@ extension SetProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         switch section {
             case 0: return 18
-            case 2, 4: return 36
-            default: return 0 // footerView.configure(text: "")
+            case 4: return 36
+            default: return 0 
         }
     }
 }
@@ -527,7 +488,7 @@ extension SetProfileViewController: UITextFieldDelegate {
 }
 
 extension SetProfileViewController: ImagesProtocol {
-    func imagesSend(profileImage: UIImage) {
+    func imagesSend(profileImage: String) {
         self.profileImage = profileImage
     }
 }

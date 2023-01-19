@@ -101,6 +101,7 @@
 		79C45CC6296B1FF200A5A59E /* UITabBarController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C45CC5296B1FF000A5A59E /* UITabBarController+Extensions.swift */; };
 		79C45CC8296F527200A5A59E /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */; };
 		79D28AB7297882B600F4FD64 /* ImageManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AB6297882B600F4FD64 /* ImageManger.swift */; };
+		79D28AB92978A0F600F4FD64 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */; };
 		79F0227328F7E61B007D59B8 /* SetProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */; };
 		79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228B28FD0ECB007D59B8 /* Logger.swift */; };
 		79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */; };
@@ -231,6 +232,7 @@
 		79C45CC5296B1FF000A5A59E /* UITabBarController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Extensions.swift"; sourceTree = "<group>"; };
 		79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		79D28AB6297882B600F4FD64 /* ImageManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManger.swift; sourceTree = "<group>"; };
+		79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
 		79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileImagesViewController.swift; sourceTree = "<group>"; };
 		79F0228B28FD0ECB007D59B8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiStatusLogger.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				79C45CC5296B1FF000A5A59E /* UITabBarController+Extensions.swift */,
 				79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */,
 				7953ED30297435C8003ACB27 /* URLConvertible+Extension.swift */,
+				79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -900,6 +903,7 @@
 				792A11DF2966956D00F67094 /* SettingProfileViewController.swift in Sources */,
 				79A8F6A228C7615E00FEBE90 /* GetVerificationCodeViewController.swift in Sources */,
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
+				79D28AB92978A0F600F4FD64 /* UIImageView+Extension.swift in Sources */,
 				792A11DB2962D73700F67094 /* ClipBoardRouter.swift in Sources */,
 				791F6CF92948741C00C1D470 /* AlarmManager.swift in Sources */,
 				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,

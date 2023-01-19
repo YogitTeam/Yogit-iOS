@@ -204,12 +204,12 @@ class SearchProfileViewController: UIViewController {
     @objc func editButtonTapped(_ sender: UIButton) {
 
         print("editButtonTapped")
-        DispatchQueue.main.async {
-            let SPVC = SetProfileViewController()
-            SPVC.userProfile = self.essentialProfile
-            SPVC.profileImage = self.profileImageView.image
-            self.navigationController?.pushViewController(SPVC, animated: true)
-        }
+//        DispatchQueue.main.async {
+//            let SPVC = SetProfileViewController()
+//            SPVC.userProfile = self.essentialProfile
+//            SPVC.profileImage = self.profileImageView.image
+//            self.navigationController?.pushViewController(SPVC, animated: true)
+//        }
     }
     
     @objc func settingButtonTapped(_ sender: UIButton) {

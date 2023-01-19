@@ -11,10 +11,6 @@ import AuthenticationServices
 enum AuthState {
     case undefine, signOut
     case signInNotFull, signInFull
-    
-//    enum RequirementInfoState  {
-//        case full, notFull
-//    }
 }
 
 enum RootViewState {
@@ -22,13 +18,6 @@ enum RootViewState {
 }
 
 struct SignInManager {
-    
-//    static let userIdentifierKey = "userIdentifier"
-//    static let identityTokenKey = "identityToken"
-//    static let accessTokenKey = "accessToken"
-//    static let refreshTokenKey = "refreshToken"
-
-    
     static func checkUserAuth(completion: @escaping (AuthState) -> ()) {
         
         // 토큰 확인

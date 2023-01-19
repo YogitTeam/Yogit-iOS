@@ -13,10 +13,11 @@ struct UserImagesData {
     var uploadImages: [UIImage]
     var downloadImages: [String]
     var uploadProfileImage: UIImage?
+    var downloadProfileImage: String?
     var imageIds: [Int64]
     var newImagesIdx: Int
 
-    init(deleteUserImageIds: [Int64]? = nil, uploadImages: [UIImage] = [], downloadImages: [String] = [],uploadProfileImage: UIImage? = nil, imageIds: [Int64] = [], newImagesIdx: Int = 0) {
+    init(deleteUserImageIds: [Int64]? = nil, uploadImages: [UIImage] = [], downloadImages: [String] = [],uploadProfileImage: UIImage? = nil, downloadProfileImage: String? = nil, imageIds: [Int64] = [], newImagesIdx: Int = 0) {
         self.deleteUserImageIds = deleteUserImageIds
         self.uploadImages = uploadImages
         self.downloadImages = downloadImages
@@ -42,14 +43,30 @@ struct UserImagesData {
 //    }
 //}
 
+//struct PatchUserImages {
+//    let userId: Int64
+//    let refreshToken: String
+//    let deleteUserImageIds: [Int64]?
+//    let uploadImages: [UIImage]
+//    let uploadProfileImage: UIImage
+//
+//    init(userId: Int64, refreshToken: String, deleteUserImageIds: [Int64]? = nil, uploadImages: [UIImage], uploadProfileImage: UIImage) {
+//        self.userId = userId
+//        self.refreshToken = refreshToken
+//        self.deleteUserImageIds = deleteUserImageIds
+//        self.uploadImages = uploadImages
+//        self.uploadProfileImage = uploadProfileImage
+//    }
+//}
+
 struct PatchUserImages {
     let userId: Int64
     let refreshToken: String
     let deleteUserImageIds: [Int64]?
     let uploadImages: [UIImage]
-    let uploadProfileImage: UIImage
+    let uploadProfileImage: UIImage?
 
-    init(userId: Int64, refreshToken: String, deleteUserImageIds: [Int64]? = nil, uploadImages: [UIImage], uploadProfileImage: UIImage) {
+    init(userId: Int64, refreshToken: String, deleteUserImageIds: [Int64]?, uploadImages: [UIImage], uploadProfileImage: UIImage?) {
         self.userId = userId
         self.refreshToken = refreshToken
         self.deleteUserImageIds = deleteUserImageIds
