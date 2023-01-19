@@ -164,8 +164,6 @@ class SetProfileViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        print("setup viewDidLayoutSubviews")
-        
         infoTableView.frame = view.bounds
         infoTableView.tableHeaderView = profileImageContentView
         profileImageContentView.frame = CGRect(origin: .zero, size: CGSize(width: view.frame.size.width, height: 180))
@@ -196,8 +194,6 @@ class SetProfileViewController: UIViewController {
     }
     
     @objc private func buttonPressed(_ sender: Any) {
-        // 값 다 있는지 확인 하고 없으면 alert창
-        
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         userProfile.userId = userItem.userId
         print(userProfile)
@@ -441,33 +437,33 @@ extension SetProfileViewController: UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        print("End edit")
-//        if textField.tag == 0 {
-//            infoTableView.reloadData()
+//    func textFieldDidEndEditing(_ textField: UITextField) {
+//        print("End edit")
+////        if textField.tag == 0 {
+////            infoTableView.reloadData()
+//////            guard let cell = infoTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SetProfileTableViewCell else { return }
+//////            cell.borderLayer?.backgroundColor = UIColor.placeholderText.cgColor
+////        }
+////        switch textField.tag {
+////        case 1, 3:
 ////            guard let cell = infoTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SetProfileTableViewCell else { return }
-////            cell.borderLayer?.backgroundColor = UIColor.placeholderText.cgColor
-//        }
-//        switch textField.tag {
-//        case 1, 3:
-//            guard let cell = infoTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SetProfileTableViewCell else { return }
-//            cell.commonTextField.isEnabled = true
-//            print("keyboard is Enable", cell.commonTextField.isEnabled)
-//        default: break
-//        }
-        
-//        textField.inputAccessoryView?.setNeedsUpdateConstraints()
-////        textField.inputAccessoryView = nil // keyboard contraint 에러 제거를 위해 필요
-//        infoTableView.reloadData() // 다시 inputaccessoryview 대입
-//        infoTableView.isUserInteractionEnabled = true
-//        self.view.endEditing(true)
-        
-//        switch textField.tag {
-//        case 1: agePickerView.resignFirstResponder()
-//        case 3: genderPickerView.resignFirstResponder() // pendingView.isHidden = true
-//        default: break
-//        }
-    }
+////            cell.commonTextField.isEnabled = true
+////            print("keyboard is Enable", cell.commonTextField.isEnabled)
+////        default: break
+////        }
+//
+////        textField.inputAccessoryView?.setNeedsUpdateConstraints()
+//////        textField.inputAccessoryView = nil // keyboard contraint 에러 제거를 위해 필요
+////        infoTableView.reloadData() // 다시 inputaccessoryview 대입
+////        infoTableView.isUserInteractionEnabled = true
+////        self.view.endEditing(true)
+//
+////        switch textField.tag {
+////        case 1: agePickerView.resignFirstResponder()
+////        case 3: genderPickerView.resignFirstResponder() // pendingView.isHidden = true
+////        default: break
+////        }
+//    }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         guard let toolbar = textField.inputAccessoryView as? UIToolbar else { return }
