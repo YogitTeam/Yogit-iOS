@@ -9,10 +9,20 @@ import UIKit
 import SnapKit
 import Alamofire
 
-class SearchProfileImagesViewController: UIViewController {
+class GetProfileImagesViewController: UIViewController {
 
-    private var profileImages: [UIImage] = [] {
-        didSet(oldVal){
+//    private var profileImages: [UIImage] = [] {
+//        didSet {
+//            DispatchQueue.main.async {
+//                self.profileImagesPageControl.numberOfPages = self.profileImages.count
+//                self.configureScrollView()
+//            }
+//            print("Profile images update")
+//        }
+//    }
+//
+    var profileImages: [String] = [] {
+        didSet {
             DispatchQueue.main.async {
                 self.profileImagesPageControl.numberOfPages = self.profileImages.count
                 self.configureScrollView()
@@ -29,12 +39,11 @@ class SearchProfileImagesViewController: UIViewController {
         pageControl.currentPage = 0
         // 페이지 표시 색상을 밝은 회색 설정
         pageControl.pageIndicatorTintColor = .placeholderText
-        // 현재 페이지 표시 색상을 검정색으로 설정
-        pageControl.currentPageIndicatorTintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        // 현재 페이지 표시 색상
+        pageControl.currentPageIndicatorTintColor = .white// UIColor(rgb: 0x3232FF, alpha: 1.0)
         pageControl.backgroundColor = .clear
         
         pageControl.addTarget(self, action: #selector(pageControlDidChange(_:)), for: .valueChanged)
-//        profileImageView.image = u
         return pageControl
     }()
     
@@ -65,7 +74,7 @@ class SearchProfileImagesViewController: UIViewController {
         view.addSubview(profileImagesPageControl)
         view.addSubview(leftButton)
         profileImagesScrollView.delegate = self
-        getProfileImages()
+//        getProfileImages()
     }
     
     func configureViewComponent() {
@@ -107,11 +116,11 @@ class SearchProfileImagesViewController: UIViewController {
             print("configure")
             let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * view.frame.size.width, y: view.safeAreaInsets.top + leftButton.frame.size.height/2, width: view.frame.size.width, height: view.safeAreaLayoutGuide.layoutFrame.size.height - leftButton.frame.size.height))
             print(profileImages[x].size)
-            // view.safeAreaLayoutGuide.layoutFrame.size.height - leftButton.frame.size.height
-                imageView.clipsToBounds = true
-                imageView.contentMode = .scaleAspectFit
-                imageView.image = profileImages[x]
-                profileImagesScrollView.addSubview(imageView)
+            imageView.clipsToBounds = true
+            imageView.contentMode = .scaleAspectFit
+//                imageView.image = profileImages[x]
+            imageView.setImage(with: profileImages[x]) // caching 처리
+            profileImagesScrollView.addSubview(imageView)
         }
     }
     
@@ -127,49 +136,85 @@ class SearchProfileImagesViewController: UIViewController {
 //        }
 //    }
     
-    func getProfileImages() {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-        print(userItem.userId)
-        let getUserProfileImages = GetUserProfileImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AF.request(API.BASE_URL + "users/image/\(userItem.userId)",
-                   method: .post,
-                   parameters: getUserProfileImages,
-                   encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
-            .validate(statusCode: 200..<500)
-            .responseData { response in
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                guard let data = response.value else { return }
-                do {
-                    let decodedData = try JSONDecoder().decode(APIResponse<FetchedUserImages>.self, from: data)
-                    DispatchQueue.global().async {
-                        print(decodedData.data?.imageUrls)
-                        guard let imageUrls = decodedData.data?.imageUrls else {
-                            print("imageUrls null")
-                            return
-                        }
-                        var getImages: [UIImage] = []
-                        print("get imageUrls \(imageUrls)")
-                        for imageUrl in imageUrls {
-                            imageUrl.urlToImage { (image) in
-                                guard let image = image else { return }
-                                getImages.append(image)
-                            }
-                        }
-//                        getImages.append(UIImage(named: "pro1")!)
-//                        getImages.append(UIImage(named: "pro2")!)
-                        self.profileImages = getImages
-                    }
-                }
-                catch{
-                    print(error.localizedDescription)
-                }
-            case let .failure(error):
-                print(error)
-            }
-        }
-    }
+//    func getProfileImages() {
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        print(userItem.userId)
+//        let getUserProfileImages = GetUserProfileImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
+////        AlamofireManager.shared.session
+////            .request(SearchProfileRouter.searchProfileImages(parameters: getUserProfileImages))
+////            .validate(statusCode: 200..<501)
+////            .responseDecodable(of: APIResponse<SearchUserProfile>.self) { response in
+////                switch response.result {
+////                case .success:
+////                    guard let value = response.value else { return }
+////                    if value.httpCode == 200 {
+////                        guard let data = value.data else { return }
+////                        DispatchQueue.global(qos: .userInitiated).async {
+////                            let langCnt = data.languageNames.count
+////                            var langInfos: String = ""
+////                            for i in 0..<langCnt {
+////                                langInfos += "\(data.languageNames[i]) (\(data.languageLevels[i])), "
+////                            }
+////                            langInfos.removeLast()
+////                            langInfos.removeLast()
+////                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+////                                profileImages = data.
+////
+////                            })
+////                            self.essentialProfile.profileImage = data.profileImg
+////                            self.essentialProfile.userName = data.name
+////                            self.essentialProfile.nationality = data.nationality
+////                            self.essentialProfile.userAge = data.age
+////                            self.essentialProfile.gender = data.gender
+////                            self.essentialProfile.languageNames = data.languageNames
+////                            self.essentialProfile.languageLevels = data.languageLevels
+////                        }
+////                    }
+////                case let .failure(error):
+////                    print("SearchProfileVC - upload response result Not return", error)
+////                }
+////            }
+////
+////        
+//        AF.request(API.BASE_URL + "users/image/\(userItem.userId)",
+//                   method: .post,
+//                   parameters: getUserProfileImages,
+//                   encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
+//            .validate(statusCode: 200..<500)
+//            .responseData { response in
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                guard let data = response.value else { return }
+//                do {
+//                    let decodedData = try JSONDecoder().decode(APIResponse<FetchedUserImages>.self, from: data)
+//                    DispatchQueue.global().async {
+//                        print(decodedData.data?.imageUrls)
+//                        guard let imageUrls = decodedData.data?.imageUrls else {
+//                            print("imageUrls null")
+//                            return
+//                        }
+//                        var getImages: [UIImage] = []
+//                        print("get imageUrls \(imageUrls)")
+//                        for imageUrl in imageUrls {
+//                            imageUrl.urlToImage { (image) in
+//                                guard let image = image else { return }
+//                                getImages.append(image)
+//                            }
+//                        }
+////                        getImages.append(UIImage(named: "pro1")!)
+////                        getImages.append(UIImage(named: "pro2")!)
+//                        self.profileImages = getImages
+//                    }
+//                }
+//                catch{
+//                    print(error.localizedDescription)
+//                }
+//            case let .failure(error):
+//                print(error)
+//            }
+//        }
+//    }
     /*
     // MARK: - Navigation
 
@@ -182,7 +227,7 @@ class SearchProfileImagesViewController: UIViewController {
 
 }
 
-extension SearchProfileImagesViewController: UIScrollViewDelegate {
+extension GetProfileImagesViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         profileImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
         print("scrollViewDidScroll")

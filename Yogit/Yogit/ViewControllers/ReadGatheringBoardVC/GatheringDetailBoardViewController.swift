@@ -15,45 +15,89 @@ import MapKit
 // stackview
 // collection view
 
+enum ApplyButtonState {
+    case apply, cancel
+}
+
 class GatheringDetailBoardViewController: UIViewController {
 
-    var boardId: Int64? {
-        didSet {
-            print("boardId \(boardId)")
-        }
-    }
+//    var boardId: Int64? {
+//        didSet {
+//            print("boardId \(boardId)")
+//        }
+//    }
     
-    var hostId: Int64? {
-        didSet {
-            self.rightButton.isHidden = false
-        }
-    }
+//    private var hostId: Int64? {
+//        didSet {
+//            self.rightButton.isHidden = false
+//        }
+//    }
     
+//    private var coordinate: CLLocationCoordinate2D?
+    
+    // 고쳐야 함
     var isClipBoardAlarm: Bool? = false {
         didSet {
             if isClipBoardAlarm == true { moveToClipBoard() }
         }
     }
     
-    private var boardImages: [UIImage] = [] {
+//    private var boardImages: [UIImage] = [] {
+//        didSet(oldVal){
+//            DispatchQueue.main.async {
+//                if self.boardImages.count >= 2 {
+//                    self.boardImagesPageControl.numberOfPages = self.boardImages.count
+//                }
+//                self.configureScrollView()
+////                if self.BoardImagesScrollView.subviews.count == 2 {
+////                    self.configureScrollView()
+////                }
+//            }
+//        }
+//    }
+    
+    private var boardImages: [String] = [] {
         didSet(oldVal){
             DispatchQueue.main.async {
                 if self.boardImages.count >= 2 {
                     self.boardImagesPageControl.numberOfPages = self.boardImages.count
                 }
                 self.configureScrollView()
-//                if self.BoardImagesScrollView.subviews.count == 2 {
-//                    self.configureScrollView()
-//                }
             }
         }
     }
     
-    private var memberImages: [UIImage] = [] {
+//    private var memberImages: [UIImage] = [] {
+//        didSet {
+//            self.imagesCollectionView.reloadData()
+//        }
+//    }
+    
+    private var memberImages: [String] = [] {
         didSet {
             self.imagesCollectionView.reloadData()
         }
     }
+    
+    private var applyButtonState: ApplyButtonState?
+    
+//    private var _applyButton: Bool {
+//        get {
+//            return applyButton.isEnabled
+//        } set(newValue) {
+//            applyButton.isEnabled = newValue
+//            if !applyButton.isEnabled {
+//                applyButton.backgroundColor = .placeholderText
+//            } else {
+//                clipBoardButton.backgroundColor = .placeholderText
+//            }
+//        }
+//    }
+    
+    var boardWithMode = BoardWithMode()
+    
+//    var boardDetail: BoardDetail?
+    
     private let mapView = MKMapView()
     private let placeBoardInfoView = BoardInfoView()
     private let dateBoardInfoView = BoardInfoView()
@@ -329,7 +373,7 @@ class GatheringDetailBoardViewController: UIViewController {
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        button.setImage(UIImage(named: "Apply")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
         button.setTitle("Apply", for: .normal)
-        button.setTitle("Applied", for: .disabled)
+//        button.setTitle("Applied", for: .disabled)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         button.tintColor = .white
         button.setTitleColor(.white, for: .normal) // 이렇게 해야 적용된다!
@@ -341,7 +385,6 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private lazy var clipBoardButton: UIButton = {
         let button = UIButton()
-        
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemBackground
         button.layer.cornerRadius = 8
@@ -367,19 +410,29 @@ class GatheringDetailBoardViewController: UIViewController {
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
         mapView.delegate = self
-        getBoardDetail()
+        setViewWithMode(mode: boardWithMode.mode)
     }
     
-    func configureViewComponent() {
+    private func configureViewComponent() {
         self.view.backgroundColor = .systemBackground
         self.navigationItem.rightBarButtonItem = self.rightButton
     }
     
+    private func setViewWithMode(mode: Mode?) {
+        if mode == .refresh {
+            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                viewBinding(data: boardWithMode)
+            })
+        } else {
+            getBoardDetail()
+        }
+    }
+    
     func configureInteractionInfoComponent() {
-        self.placeBoardInfoView.infoLabel.text = "Afdsfds"
+        self.placeBoardInfoView.infoLabel.text = "Place infoLabel"
         self.placeBoardInfoView.leftImageView.image = UIImage(named: "BoardPlace")?.withTintColor(.label, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.rightImageView.image = UIImage(named: "push")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
-        self.dateBoardInfoView.infoLabel.text = "fdsafdasfadsf"
+        self.dateBoardInfoView.infoLabel.text = "Date infoLabel"
         self.dateBoardInfoView.leftImageView.image = UIImage(named: "BoardDate")?.withTintColor(.label, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.isUserInteractionEnabled = true
         self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
@@ -537,7 +590,7 @@ class GatheringDetailBoardViewController: UIViewController {
 //            self.present(alert, animated: true, completion: nil)
 //        }
         
-        if userItem.userId != hostId {
+        if userItem.userId != boardWithMode.hostId { // hostId
             let alert = UIAlertController(title: "Apply", message: "Would you like to apply for that meeting?", preferredStyle: .alert)
             let cancel = UIAlertAction(title: "cancel", style: .cancel)
             let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
@@ -558,11 +611,10 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-
-    
     func applyRequest() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
-        guard let boardId = boardId else { return }
+//        guard let boardId = boardId else { return }
+        guard let boardId = boardWithMode.boardId else { return }
         let getAllBoardsReq = ApplyGathering(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AF.request(API.BASE_URL + "boardusers",
                    method: .post,
@@ -589,8 +641,10 @@ class GatheringDetailBoardViewController: UIViewController {
     
     func moveToClipBoard() {
         DispatchQueue.main.async {
-            let CBVC = ClipBoardViewController2() // ClipBoardViewController()
-            CBVC.boardId = self.boardId
+//            guard let userItem = try? KeychainManager.getUserItem() else { return }
+//            guard let displayName = userItem.userName else { return }
+            let CBVC = ClipBoardViewController2() // ClipBoardViewController() currentUser: Sender(senderId: "\(userItem.userId)", displayName: displayName)
+            CBVC.boardId = self.boardWithMode.boardId //self.boardId
             self.navigationController?.pushViewController(CBVC, animated: true)
         }
     }
@@ -624,12 +678,12 @@ class GatheringDetailBoardViewController: UIViewController {
         alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         guard let userItem = try? KeychainManager.getUserItem() else { return }
-        if userItem.userId != hostId {
+        if userItem.userId != boardWithMode.hostId { // hostId
             let report = UIAlertAction(title: "Report", style: .default) { (action) in self.reportAlert() }
             alert.addAction(report)
         } else {
             let edit = UIAlertAction(title: "Edit", style: .default) { (action) in self.editBoard() }
-            let delete = UIAlertAction(title: "Delete", style: .default) { (action) in self.deleteBoard() }
+            let delete = UIAlertAction(title: "Delete", style: .default) { (action) in self.deleteAlert() }
             alert.addAction(edit)
             alert.addAction(delete)
         }
@@ -647,7 +701,20 @@ class GatheringDetailBoardViewController: UIViewController {
         let cancel = UIAlertAction(title: "cancel", style: .cancel)
         let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
             guard let content = alert.textFields?[0].text else { return }
-            self.reportRequest(content: content)
+            self.reportBoard(content: content)
+        }
+        alert.addAction(cancel)
+        alert.addAction(ok)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func deleteAlert() {
+        let alert = UIAlertController(title: "Delete", message: "Would you want to delete a board?", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "cancel", style: .cancel)
+        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+            self.deleteBoard()
         }
         alert.addAction(cancel)
         alert.addAction(ok)
@@ -657,186 +724,422 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     func editBoard() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
             let GBCVC = GatheringBoardCategoryViewController()
-//            GBCVC.mode = .edit
-            GBCVC.boardWithMode.mode = .edit
-            GBCVC.boardWithMode.boardId = self.boardId
+            boardWithMode.mode = .edit
+//            boardWithMode.hostId = hostId
+            boardWithMode.title = titleLabel.text
+            boardWithMode.address = placeBoardInfoView.infoLabel.text
+            boardWithMode.addressDetail = placeBoardInfoView.subInfoLabel.text
+//            boardWithMode.longitute = coordinate?.longitude
+//            boardWithMode.latitude = coordinate?.latitude
+            boardWithMode.introduction = introductionContentLabel.text
+            boardWithMode.kindOfPerson = kindOfPersonContentLabel.text
+//            boardWithMode.boardId = boardId
+            boardWithMode.downloadImages = boardImages
+            GBCVC.categoryId = (boardWithMode.categoryId ?? 0) - 1
+            GBCVC.boardWithMode = self.boardWithMode
             self.navigationController?.pushViewController(GBCVC, animated: true)
-        }
+        })
     }
     
     func deleteBoard() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
-        guard let boardId = boardId else { return }
-        let deleteBoardReq = DeleteBoardReq(boardId: boardId, refreshToken: userItem.refresh_token, hostId: userItem.userId)
-        AF.request(API.BASE_URL + "boards/status",
-                   method: .patch,
-                   parameters: deleteBoardReq,
-                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .response { response in // reponseData
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                if let data = response.data {
-                    DispatchQueue.main.async {
-                        self.navigationController?.popViewController(animated: true)
+//        guard let boardId = boardId else { return }
+        guard let hostId = boardWithMode.hostId else { return }
+        guard let boardId = boardWithMode.boardId else { return }
+        let deleteBoardReq = DeleteBoardReq(boardId: boardId, refreshToken: userItem.refresh_token, hostId: hostId) // hostId
+        AlamofireManager.shared.session
+            .request(BoardRouter.deleteBoard(parameters: deleteBoardReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<BoardDetail>.self) { response in // 서버 반영 필요
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+//                            NotificationCenter.default.post(name: NSNotification.Name("DeleteBoardRefresh"), object: nil) // 홈화면 전달 하지만 다른 화면일때도 전달 해야함
+                            self.navigationController?.popViewController(animated: true)
+                        })
                     }
+                case let .failure(error):
+                    print(error)
                 }
-            case .failure(let error):
-                debugPrint(response)
-                print(error)
             }
-        }
+        
+        
+        
+//        AF.request(API.BASE_URL + "boards/status",
+//                   method: .patch,
+//                   parameters: deleteBoardReq,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .response { response in // reponseData
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                if let data = response.data {
+//                    DispatchQueue.main.async {
+//                        self.navigationController?.popViewController(animated: true)
+//                    }
+//                }
+//            case .failure(let error):
+//                debugPrint(response)
+//                print(error)
+//            }
+//        }
         
     }
     
-    func reportRequest(content: String) {
+    func reportBoard(content: String) {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
-        guard let hostId = hostId else { return }
-        guard let boardId = boardId else { return }
+//        guard let hostId = hostId else { return }
+        guard let hostId = boardWithMode.hostId else { return }
+//        guard let boardId = boardId else { return }
+        guard let boardId = boardWithMode.boardId else { return }
         let boardReport = BoardReport(content: content, refreshToken: userItem.refresh_token, reportType: "PORNOGRAPHY", reportedBoardID: boardId, reportedUserID: hostId, reportingUserID: userItem.userId)
         
-        AF.request(API.BASE_URL + "boardreports",
-                   method: .post,
-                   parameters: boardReport,
-                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .response { response in // reponseData
-            switch response.result {
-            case .success:
-                debugPrint(response)
-            case .failure(let error):
-                debugPrint(response)
-                print(error)
+        AlamofireManager.shared.session
+            .request(ReportRouter.reportBoard(parameters: boardReport))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<[String:Int64]>.self) { response in // 서버 반영 필요
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        print("Success - Report Board")
+                    }
+                case let .failure(error):
+                    print(error)
+                }
             }
-        }
+        
+//        AF.request(API.BASE_URL + "boardreports",
+//                   method: .post,
+//                   parameters: boardReport,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .response { response in // reponseData
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//            case .failure(let error):
+//                debugPrint(response)
+//                print(error)
+//            }
+//        }
     }
     
     private func configureScrollView() {
 //        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
         // CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
-        DispatchQueue.main.async {
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
             self.boardImagesScrollView.isPagingEnabled = true
             for x in 0..<self.boardImages.count {
                 print("configure")
                 let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.bounds.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width*2/3))
     //            self.boardImagesScrollView.bounds.minY
                 self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(self.boardImages.count)
-                    imageView.backgroundColor = .systemRed
+                    imageView.backgroundColor = .systemGray
                 print(self.boardImages[x].size)
                 imageView.clipsToBounds = true
                 imageView.contentMode = .scaleAspectFill
-                imageView.image = self.boardImages[x]
+//                imageView.image = self.boardImages[x]
+                imageView.setImage(with: self.boardImages[x])
                 self.boardImagesScrollView.addSubview(imageView)
             }
-        }
+        })
+    }
+    
+//    func getBoardDetail() {
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        guard let boardId = boardId else { return }
+//        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+//        AF.request(API.BASE_URL + "boards/get/detail",
+//                   method: .post,
+//                   parameters: getBoardDetailReq,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .responseData { response in
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                guard let data = response.value else { return }
+//                do{
+//                    let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
+//                    guard let myData = decodedData.data else { return }
+//                    print("APIResponse<BoardDetail>", myData)
+//
+//
+//
+//
+//
+//
+//                    var boardImages: [UIImage] = []
+//                    var hostImage: UIImage?
+//                    var memberImages: [UIImage] = []
+//                    DispatchQueue.global().async {
+//                        for imageUrl in myData.imageUrls {
+//                            imageUrl.urlToImage { (image) in
+//                                guard let image = image else {
+//                                    print("imageUrls can't read")
+//                                    return
+//                                }
+//                                boardImages.append(image)
+//                            }
+//                        }
+//                        myData.profileImgUrl.urlToImage { (image) in
+//                            guard let image = image else {
+//                                print("profileImgUrl can't read")
+//                                return
+//                            }
+//                            hostImage = image
+//                        }
+//                        if let userImages = myData.userImageUrls {
+//                            for userImage in userImages {
+//                                userImage.urlToImage { (image) in
+//                                    guard let image = image else {
+//                                        print("imageUrls can't read")
+//                                        return
+//                                    }
+//                                    memberImages.append(image)
+//                                }
+//                            }
+//                        }
+////                        memberImages.append(UIImage(named: "user2")!)
+////                        memberImages.append(UIImage(named: "user1")!)
+////                        memberImages.append(UIImage(named: "user3")!)
+//                        print("print(memberImages)", memberImages)
+//                        DispatchQueue.main.async() {
+//                            self.boardImages = boardImages
+//                            self.memberImages = memberImages
+//                            self.hostImageView.image = hostImage
+//                            self.titleLabel.text = myData.title
+//                            self.placeBoardInfoView.infoLabel.text = myData.address
+//                            self.placeBoardInfoView.subInfoLabel.text = myData.addressDetail
+//                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToStringUser() //?.dateToString()
+//                            self.hostNameLabel.text = myData.hostName
+//                            self.hostId = myData.hostId
+//                            self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
+//                            self.introductionContentLabel.text = myData.introduction
+//                            self.kindOfPersonContentLabel.text = myData.kindOfPerson
+//                            self.mapAddressLabel.text = myData.address
+//                            let coordinate = CLLocationCoordinate2D(latitude: 37.5510763, longitude: 127.075836)
+//                            self.moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
+//                                .longitude, delta: 0.01)
+//                            self.setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: "", subtitle: myData.address)
+//                        }
+//                    }
+//                }
+//                catch{
+//                    print("catch can't read")
+//                    print(error.localizedDescription)
+//                }
+//            case let .failure(error):
+//                print(error)
+//            }
+//        }
+//    }
+    
+    func bindBoardDetail(data: BoardDetail) {
+        // boardDetail로 화면 뿌려줌 & boardWithMode 저장
+        boardWithMode.hostId = data.hostId // hostId로 신고 설정
+        boardWithMode.boardId = data.boardId // boardId로 BoardDetail API 요청
+        boardWithMode.currentMember = data.currentMember
+        boardWithMode.memberImages = data.userImageUrls
+        boardWithMode.hostName = data.hostName
+        boardWithMode.hostImage = data.profileImgUrl
+        boardWithMode.title = data.title
+        boardWithMode.address = data.address
+        boardWithMode.addressDetail = data.addressDetail
+        boardWithMode.introduction = data.introduction
+        boardWithMode.kindOfPerson = data.kindOfPerson
+        boardWithMode.downloadImages = data.imageUrls
+        boardWithMode.categoryId = data.categoryId
+        boardWithMode.notice = data.notice
+        boardWithMode.cityName = data.cityName
+        boardWithMode.totalMember = data.totalMember
+        boardWithMode.imageIds = data.imageIds
+        boardWithMode.date = data.date
+        boardWithMode.latitude = data.latitude
+        boardWithMode.longitute = data.longitute
+        boardWithMode.isJoinedUser = data.isJoinedUser
+    }
+    
+    func viewBinding(data: BoardWithMode) {
+        boardImages = data.downloadImages
+        memberImages = data.memberImages!
+        hostImageView.setImage(with: data.hostImage!)
+        titleLabel.text = data.title
+        placeBoardInfoView.infoLabel.text = data.address
+        placeBoardInfoView.subInfoLabel.text = data.addressDetail
+        dateBoardInfoView.infoLabel.text = data.date?.stringToDate()?.dateToStringUser() //?.dateToString()
+        hostNameLabel.text = data.hostName
+        memberLabel.text = "\(memberLabel.text ?? "") \(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
+        introductionContentLabel.text = data.introduction
+        kindOfPersonContentLabel.text = data.kindOfPerson
+        mapAddressLabel.text = data.address
+        moveLocation(latitudeValue: data.latitude!, longtudeValue: data.longitute!, delta: 0.01)
+        setAnnotation(latitudeValue: data.latitude!, longitudeValue: data.longitute!, delta: 0.01, title: "", subtitle: data.address!)
+        rightButton.isHidden = false
+        // 신청 버튼 (신청 / 취소)
+//        _applyButton = !data.isJoinedUser
     }
     
     func getBoardDetail() {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-        guard let boardId = boardId else { return }
-        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AF.request(API.BASE_URL + "boards/get/detail",
-                   method: .post,
-                   parameters: getBoardDetailReq,
-                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .responseData { response in
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                guard let data = response.value else { return }
-                do{
-                    let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
-                    guard let myData = decodedData.data else { return }
-                    print("APIResponse<BoardDetail>", myData)
-                    
-                    // 리펙토링 예장
-//                    Task(priority: .high) {
-//                        for imageUrl in myData.imageUrls {
-//                            async let boardImage = imageUrl.urlToImage()
-//                            boardImages.append(boardImage)
-//                        }
-//                    }
-                    
-//
-//                    let images = await withTaskGroup(of: UIImage) { taskGroup in
-////                        let photoNames = await listPhotos(inGallery: "Summer Vacation")
-//                        for imageUrl in myData.imageUrls {
-//                            taskGroup.addTask { await imageUrl.urlToImage()! }
-//                        }
-//                    }
-                    
-                    
-                    
-                    
-                    
-                    var boardImages: [UIImage] = []
-                    var hostImage: UIImage?
-                    var memberImages: [UIImage] = []
-                    DispatchQueue.global().async {
-                        for imageUrl in myData.imageUrls {
-                            imageUrl.urlToImage { (image) in
-                                guard let image = image else {
-                                    print("imageUrls can't read")
-                                    return
-                                }
-                                boardImages.append(image)
-                            }
-                        }
-                        myData.profileImgUrl.urlToImage { (image) in
-                            guard let image = image else {
-                                print("profileImgUrl can't read")
-                                return
-                            }
-                            hostImage = image
-                        }
-                        if let userImages = myData.userImageUrls {
-                            for userImage in userImages {
-                                userImage.urlToImage { (image) in
-                                    guard let image = image else {
-                                        print("imageUrls can't read")
-                                        return
-                                    }
-                                    memberImages.append(image)
-                                }
-                            }
-                        }
-//                        memberImages.append(UIImage(named: "user2")!)
-//                        memberImages.append(UIImage(named: "user1")!)
-//                        memberImages.append(UIImage(named: "user3")!)
-                        print("print(memberImages)", memberImages)
-                        DispatchQueue.main.async() {
-                            self.boardImages = boardImages
-                            self.memberImages = memberImages
-                            self.hostImageView.image = hostImage
-                            self.titleLabel.text = myData.title
-                            self.placeBoardInfoView.infoLabel.text = myData.address
-                            self.placeBoardInfoView.subInfoLabel.text = myData.addressDetail
-                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToStringUser() //?.dateToString()
-                            self.hostNameLabel.text = myData.hostName
-                            self.hostId = myData.hostId
-                            self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
-                            self.introductionContentLabel.text = myData.introduction
-                            self.kindOfPersonContentLabel.text = myData.kindOfPerson
-                            self.mapAddressLabel.text = myData.address
-                            let coordinate = CLLocationCoordinate2D(latitude: 37.5510763, longitude: 127.075836)
-                            self.moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
-                                .longitude, delta: 0.01)
-                            self.setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: "", subtitle: myData.address)
-                        }
-                    }
-                }
-                catch{
-                    print("catch can't read")
-                    print(error.localizedDescription)
-                }
-            case let .failure(error):
-                print(error)
-            }
+        // boardWithMode 미리 정해짐 (read/refresh)
+         guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        guard let boardId = boardId else {
+//            print("getBoardDetail - boardId is nil")
+//            return
+//        }
+        guard let boardId = boardWithMode.boardId else {
+            print("getBoardDetail - boardId is nil")
+            return
         }
+        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        AlamofireManager.shared.session
+            .request(BoardRouter.readBoardDetail(parameters: getBoardDetailReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<BoardDetail>.self) { response in
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        guard let data = value.data else { return }
+                        DispatchQueue.global().async(qos: .userInteractive, execute: {
+                            self.bindBoardDetail(data: data)
+                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                                viewBinding(data: boardWithMode)
+    //                        boardImages = data.imageUrls
+    //                        memberImages = data.userImageUrls // boardWithMode에 불필요
+    //                        hostImageView.setImage(with: data.profileImgUrl)
+    //                        titleLabel.text = data.title
+    //                        placeBoardInfoView.infoLabel.text = data.address
+    //                        placeBoardInfoView.subInfoLabel.text = boardWithMode.addressDetail
+    //                        dateBoardInfoView.infoLabel.text = data.date.stringToDate()?.dateToStringUser() //?.dateToString()
+    //                        hostNameLabel.text = data.hostName
+    ////                        hostId = data.hostId
+    //                        memberLabel.text = "\(memberLabel.text ?? "") (\(data.currentMember)/\(data.totalMember))"
+    //                        introductionContentLabel.text = data.introduction
+    //                        kindOfPersonContentLabel.text = data.kindOfPerson
+    //                        mapAddressLabel.text = data.address
+    //                        moveLocation(latitudeValue: data.latitude, longtudeValue: data.longitute, delta: 0.01)
+    //                        setAnnotation(latitudeValue: data.latitude, longitudeValue: data.longitute, delta: 0.01, title: "", subtitle: data.address)
+    //                        boardWithMode.hostId = data.hostId
+    //                        boardWithMode.boardId = data.boardId
+    //                        rightButton.isHidden = false
+    //                        boardWithMode.categoryId = data.categoryId
+    //                        boardWithMode.notice = data.notice
+    //                        boardWithMode.cityName = data.cityName
+    //                        boardWithMode.totalMember = data.totalMember
+    //                        boardWithMode.imageIds = data.imageIds
+    //                        boardWithMode.date = data.date
+    //                        boardWithMode.latitude = data.latitude
+    //                        boardWithMode.longitute = data.longitute
+                            })
+                        })
+                    }
+                case let .failure(error):
+                    print(error)
+                }
+            }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        guard let boardId = boardId else { return }
+//        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+//        AF.request(API.BASE_URL + "boards/get/detail",
+//                   method: .post,
+//                   parameters: getBoardDetailReq,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .responseData { response in
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                guard let data = response.value else { return }
+//                do{
+//                    let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
+//                    guard let myData = decodedData.data else { return }
+//                    print("APIResponse<BoardDetail>", myData)
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    
+//                    var boardImages: [UIImage] = []
+//                    var hostImage: UIImage?
+//                    var memberImages: [UIImage] = []
+//                    DispatchQueue.global().async {
+//                        for imageUrl in myData.imageUrls {
+//                            imageUrl.urlToImage { (image) in
+//                                guard let image = image else {
+//                                    print("imageUrls can't read")
+//                                    return
+//                                }
+//                                boardImages.append(image)
+//                            }
+//                        }
+//                        myData.profileImgUrl.urlToImage { (image) in
+//                            guard let image = image else {
+//                                print("profileImgUrl can't read")
+//                                return
+//                            }
+//                            hostImage = image
+//                        }
+//                        if let userImages = myData.userImageUrls {
+//                            for userImage in userImages {
+//                                userImage.urlToImage { (image) in
+//                                    guard let image = image else {
+//                                        print("imageUrls can't read")
+//                                        return
+//                                    }
+//                                    memberImages.append(image)
+//                                }
+//                            }
+//                        }
+////                        memberImages.append(UIImage(named: "user2")!)
+////                        memberImages.append(UIImage(named: "user1")!)
+////                        memberImages.append(UIImage(named: "user3")!)
+//                        print("print(memberImages)", memberImages)
+//                        DispatchQueue.main.async() {
+//                            self.boardImages = boardImages
+//                            self.memberImages = memberImages
+//                            self.hostImageView.image = hostImage
+//                            self.titleLabel.text = myData.title
+//                            self.placeBoardInfoView.infoLabel.text = myData.address
+//                            self.placeBoardInfoView.subInfoLabel.text = myData.addressDetail
+//                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToStringUser() //?.dateToString()
+//                            self.hostNameLabel.text = myData.hostName
+//                            self.hostId = myData.hostId
+//                            self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
+//                            self.introductionContentLabel.text = myData.introduction
+//                            self.kindOfPersonContentLabel.text = myData.kindOfPerson
+//                            self.mapAddressLabel.text = myData.address
+//                            let coordinate = CLLocationCoordinate2D(latitude: 37.5510763, longitude: 127.075836)
+//                            self.moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
+//                                .longitude, delta: 0.01)
+//                            self.setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: "", subtitle: myData.address)
+//                        }
+//                    }
+//                }
+//                catch{
+//                    print("catch can't read")
+//                    print(error.localizedDescription)
+//                }
+//            case let .failure(error):
+//                print(error)
+//            }
+//        }
     }
 }
 
@@ -884,7 +1187,8 @@ extension GatheringDetailBoardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MemberImagesCollectionViewCell.identifier, for: indexPath) as? MemberImagesCollectionViewCell else { return UICollectionViewCell() }
-        cell.configure(image: self.memberImages[indexPath.row])
+//        cell.configure(image: self.memberImages[indexPath.row])
+        cell.configure(imageString: memberImages[indexPath.row])
         return cell
     }
 }
@@ -922,7 +1226,7 @@ extension GatheringDetailBoardViewController: MKMapViewDelegate {
         
         let pinImage = UIImage(named: "Pin")
         
-        annotationView?.image = pinImage?.coustomPinSize()
+        annotationView?.image = pinImage?.coustomPinSize(width: 30, height: 30)
         
         return annotationView
     }
@@ -945,3 +1249,7 @@ extension GatheringDetailBoardViewController: MKMapViewDelegate {
         mapView.addAnnotation(annotation)
     }
 }
+
+//extension Notification.Name {
+//    static let deleteBoardRefresh = Notification.Name("DeleteBoardRefresh")
+//}

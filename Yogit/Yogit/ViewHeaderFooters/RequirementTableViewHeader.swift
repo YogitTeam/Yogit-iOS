@@ -26,11 +26,12 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium) // 글시체 생각해보자
         
+        label.sizeToFit()
+
         // Label frame size to fit as text of label
         label.numberOfLines = 1
-//        label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
         return label
     }()
@@ -62,8 +63,7 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
 
         contentNameLabel.snp.makeConstraints { make in
             make.leading.equalTo(requirementView.snp.trailing).offset(4)
-            make.top.equalToSuperview().inset(0)
-            make.height.equalTo(22)
+            make.top.bottom.equalToSuperview()
         }
     }
     
@@ -74,6 +74,6 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
     }
 
     public func configure(text: String?) { // needAccessory: Bool
-        contentNameLabel.text = text
+        contentNameLabel.text = text?.localized()
     }
 }

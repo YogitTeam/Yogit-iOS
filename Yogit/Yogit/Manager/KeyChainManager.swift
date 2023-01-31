@@ -36,14 +36,17 @@ final class KeychainManager {
         guard status != errSecDuplicateItem else { throw KeychainError.duplicateEntry }
         
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        
+        UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier)
     }
     
     // 조회
-    static func getUserItem() throws -> UserItem? {
+    static func getUserItem() throws -> UserItem? { // serviceType: String 인자
         // service, account, return-data, class, matchlimit
         
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
+//            kSecAttrService as String: serviceType, // 현재 서비스 타입인지 체크
             kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
             kSecReturnAttributes as String: true,
             kSecReturnData as String: true
@@ -68,8 +71,6 @@ final class KeychainManager {
         else {
             throw KeychainError.unexpectedTokenData
         }
-        
-        print(userItem)
         
         return userItem
     }
@@ -103,18 +104,27 @@ final class KeychainManager {
         
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         
+        if userItem.userStatus == SessionManager.AuthState.signOut.rawValue { // 로그아웃이면
+            UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
+            UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION)
+        } else if userItem.userStatus == SessionManager.AuthState.signInSNS.rawValue { // 로그인이면
+            UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier) // 앱 로그아웃 후 로그인
+        }
+        
         print("keychain update")
     }
     
-    static func deleteUserItem() throws {
+    static func deleteUserItem(userItem: UserItem) throws {
         let query: NSDictionary = [
                 kSecClass as String: kSecClassGenericPassword,
-//                kSecAttrService as String: userType // service name
+                kSecAttrService as String: userItem.userType, // 추가 했으니 체크해야됨
+                kSecAttrAccount as String: userItem.account.user.email, // 추가 했으니 체크해야됨
             ]
         let status = SecItemDelete(query)
         
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-        
+        UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
+        UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION)
 //        assert(status == noErr, "failed to delete the value, status code = \(status)")
     }
 }

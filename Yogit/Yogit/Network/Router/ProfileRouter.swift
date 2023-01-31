@@ -8,12 +8,11 @@
 import Foundation
 import Alamofire
 
-enum ProfileRouter: URLConvertible {
-//    case createEssentialProfile(parameter: UserProfile)
-    case readServiceProfile(parameter: GetUserProfile)
-    case uploadEssentialProfile(parameter: UserProfile)
-    case uploadImages(parameter: PatchUserImages)
-    case downLoadImages(parameter: GetUserImages)
+enum ProfileRouter: URLRequestConvertible {
+    case readProfile(parameters: GetUserProfile)
+    case uploadEssentialProfile(parameters: UserProfile)
+    case uploadImages(parameters: PatchUserImages)
+    case downLoadImages(parameters: GetUserImages)
 
     var baseURL: URL {
         return URL(string: API.BASE_URL + "users/")! // 밑에 Auth 수정해야댐
@@ -21,46 +20,59 @@ enum ProfileRouter: URLConvertible {
 
     var method: HTTPMethod {
         switch self {
-        case .readServiceProfile:
-            return .post
         case .uploadEssentialProfile, .uploadImages:
             return .patch
-        case .downLoadImages:
+        case .downLoadImages, .readProfile:
             return .post
         }
     }
 
     var endPoint: String {
         switch self {
-        case .readServiceProfile:
+        case .readProfile, .uploadEssentialProfile:
             return "profile"
-        case .uploadEssentialProfile:
-            return "essential-profile"
         case .uploadImages:
             return "image"
-        case let .downLoadImages(parameter):
-            return "image/\(parameter.userId)"
+        case let .downLoadImages(parameters):
+            return "image/\(parameters.userId)"
         }
     }
         
     var toDictionary: [String: Any]? {
         switch self {
-//        case let .uploadProfileImages(parameter):
-//            return mirroringDictionary(parameter: parameter)
-        case let .uploadEssentialProfile(parameter):
-            return mirroringDictionary(parameter: parameter)
-        case let .uploadImages(parameter):
-            return mirroringDictionary(parameter: parameter)
-        case let .downLoadImages(parameter):
-            return mirroringDictionary(parameter: parameter)
+        case let .uploadEssentialProfile(parameters):
+            return mirroringDictionary(parameter: parameters)
+        case let .uploadImages(parameters):
+            return mirroringDictionary(parameter: parameters)
+        case let .downLoadImages(parameters):
+            return mirroringDictionary(parameter: parameters)
         default: return nil
         }
     }
     
-    func asURL() throws -> URL {
+//    func asURL() throws -> URL {
+//        let url = baseURL.appendingPathComponent(endPoint)
+//        print("UpdateProfileRouter - asURL() url : \(url)")
+//        return url
+//    }
+    
+    func asURLRequest() throws -> URLRequest {
+        
         let url = baseURL.appendingPathComponent(endPoint)
-        print("ProfileRouter - asURL() url : \(url)")
-        return url
+    
+        print("ProfileRouter - asURLRequest() url : \(url)")
+        
+        var request = URLRequest(url: url)
+        
+        request.method = method
+        
+        switch self {
+        case let .readProfile(parameters):
+            request = try URLEncodedFormParameterEncoder(destination: .httpBody).encode(parameters, into: request)
+        default: break
+        }
+
+        return request
     }
 }
 

@@ -55,36 +55,6 @@ class LoginViewController: UIViewController {
     
     
     @objc func handleAuthorizationAppleIDButtonPress() {
-        
-        // face id 거치고 뷰 전환 필요함
-        // token 있는지 없는지 확인 후에
-        // 로그아웃시 세션 및 화면 처리 요구
-        // 키체인 status로 구분
-        SignInManager.checkUserAuth { (AuthState) in
-            var rootViewState = RootViewState.loginView
-            switch AuthState {
-            case .undefine, .signOut: return
-            case .signInFull: rootViewState = .homeView
-            case .signInNotFull: rootViewState = .setProfileView
-            }
-            DispatchQueue.main.async {
-                switch rootViewState {
-                case .loginView:
-                    break
-                case .homeView: // 필수 데이터 있으면
-                    // 루트뷰 전환 요규
-                    let homeVC = ServiceTapBarViewController()
-                    let rootVC = UINavigationController(rootViewController: homeVC)
-                    self.view.window?.rootViewController = rootVC
-                    self.view.window?.makeKeyAndVisible()
-                case .setProfileView:
-                    // 푸쉬로 이동
-                    let setProfileVC = SetProfileViewController()
-                    self.navigationController?.pushViewController(setProfileVC, animated: true)
-                }
-            }
-        }
-        
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
@@ -133,6 +103,50 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
     // 애플 아이디 사용 중지하면 즉각적으로 알아야함 (화면 바로 들어가면 정보 용청을 하닌깐)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         print("Run authorizationController")
+        // face id 거치고 뷰 전환 필요함
+        // token 있는지 없는지 확인 후에
+        // 로그아웃시 세션 및 화면 처리 요구
+        // 키체인 status로 구분
+        
+        
+        // 애플 계정 상태 이미 확인 후에
+        // 로그아웃 >> 로그인 api쏜다음 userStatus 값 변경후, SignInManager로 애플 권한 있는지만 확인후 서비스 화면 이동(로그아웃은 서비스화면에서만 가능함으로, hasRequirementInfo 확인할 필요 없다.)
+        // 계정삭제 및 애플 사용 중단 (이미 SignInManager에서 키체인 유저 정보 삭제 및 애플 권한 revoke처리 되어있음, 애플 권한 갱신 필요)
+        // 회원 가입 ()
+        // 애플 사용자 중단
+        
+        
+        // 로그 아웃시 처리 (이미 키체인에 저장되어있는경우)
+        if let userItem = try? KeychainManager.getUserItem() { // SignInManager.service.
+            // 로그인 api 요청후, 키체인 userstatus 업데이트 후 루트뷰 service화면으로 변경
+            let logInApple = LogInAppleReq(refreshToken: userItem.refresh_token, servicesResponse: userItem.account)
+            AlamofireManager.shared.session
+                .request(SessionRouter.logInApple(parameters: logInApple))
+                .validate(statusCode: 200..<501)
+                .responseDecodable(of: APIResponse<UserItem>.self) { response in
+                    switch response.result {
+                    case .success:
+                        guard let value = response.value else { return }
+                        if value.httpCode == 200 {
+                            guard let data = value.data else { return }
+                            do {
+                                // userStatus 정보 업데이트 (LOGIN)
+                                try KeychainManager.updateUserItem(userItem: data)
+                                let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
+                                DispatchQueue.main.async { [self] in
+                                    view.window?.rootViewController = rootVC
+                                    view.window?.makeKeyAndVisible()
+                                }
+                            } catch {
+                                print("KeychainManager.saveUserItem \(error.localizedDescription)")
+                            }
+                        }
+                    case let .failure(error):
+                        print(error)
+                    }
+                }
+        }
+        
         
         
         switch authorization.credential {
@@ -170,44 +184,71 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             let user = User(name: name, email: userEmail)
             let account = Account(state: state, code: authorizationCode, id_token: identityToken, user: user, identifier: identifier, hasRequirementInfo: false)
             
-            
-            // completion handelr, global queue
-            AF.request(API.BASE_URL + "sign-up/apple",
-                       method: .post,
-                       parameters: account,
-                       encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-            .validate(statusCode: 200..<500)
-            .responseData { response in // reponseData
-                switch response.result {
-                case .success:
-                    DispatchQueue.global().async {
-                        guard let data = response.value else { return }
-                        debugPrint(response)
-                        do{
-                            let decodedData = try JSONDecoder().decode(APIResponse<UserItem>.self, from: data)
-                            guard let userItem = decodedData.data else {
-                                print("decodedData.data nil")
-                                return
-                            }
+
+            // 회원가입
+            AlamofireManager.shared.session
+                .request(SessionRouter.signUpApple(parameters: account))
+                .validate(statusCode: 200..<501)
+                .responseDecodable(of: APIResponse<UserItem>.self) { response in
+                    switch response.result {
+                    case .success:
+                        guard let value = response.value else { return }
+                        if value.httpCode == 200 {
+                            guard let data = value.data else { return }
                             do {
                                 // 신규 가입
-                                try KeychainManager.saveUserItem(userItem: userItem)
-                                DispatchQueue.main.async {
+                                try KeychainManager.saveUserItem(userItem: data)
+                                DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                                     let SPVC = SetProfileViewController()
                                     self.navigationController?.pushViewController(SPVC, animated: true)
-                                }
+                                })
                             } catch {
                                 print("KeychainManager.saveUserItem \(error.localizedDescription)")
                             }
                         }
-                        catch{
-                            print("res try error \(error.localizedDescription)")
-                        }
+                    case let .failure(error):
+                        print(error)
                     }
-                case .failure(let error):
-                    print(error)
                 }
-            }
+            
+            
+//            // completion handelr, global queue
+//            AF.request(API.BASE_URL + "sign-up/apple",
+//                       method: .post,
+//                       parameters: account,
+//                       encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//            .validate(statusCode: 200..<500)
+//            .responseData { response in // reponseData
+//                switch response.result {
+//                case .success:
+//                    DispatchQueue.global().async {
+//                        guard let data = response.value else { return }
+//                        debugPrint(response)
+//                        do{
+//                            let decodedData = try JSONDecoder().decode(APIResponse<UserItem>.self, from: data)
+//                            guard let userItem = decodedData.data else {
+//                                print("decodedData.data nil")
+//                                return
+//                            }
+//                            do {
+//                                // 신규 가입
+//                                try KeychainManager.saveUserItem(userItem: userItem)
+//                                DispatchQueue.main.async {
+//                                    let SPVC = SetProfileViewController()
+//                                    self.navigationController?.pushViewController(SPVC, animated: true)
+//                                }
+//                            } catch {
+//                                print("KeychainManager.saveUserItem \(error.localizedDescription)")
+//                            }
+//                        }
+//                        catch{
+//                            print("res try error \(error.localizedDescription)")
+//                        }
+//                    }
+//                case .failure(let error):
+//                    print(error)
+//                }
+//            }
         case let passwordCredential as ASPasswordCredential:
             print("passwordCredential")
             // Sign in using an existing iCloud Keychain credential.

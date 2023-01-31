@@ -18,6 +18,17 @@ class ServiceTapBarViewController: UITabBarController {
         configureInstanceVC()
         setPushNotification()
         print("DEBUG : \(String(describing: self.view.window?.rootViewController))")
+        NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
+    }
+    
+    @objc private func didBoardDetailNotification(_ notification: Notification) {
+        guard let boardDetail = notification.object as? BoardDetail else { return }
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
+            let GDBVC = GatheringDetailBoardViewController()
+            GDBVC.boardWithMode.mode = .refresh
+            GDBVC.bindBoardDetail(data: boardDetail)
+            self.navigationController?.pushViewController(GDBVC, animated: true)
+        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -34,16 +45,14 @@ class ServiceTapBarViewController: UITabBarController {
     
     private func setPushNotification() {
         UNUserNotificationCenter.current().delegate = self
-        registerForPushNotifications()
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-        userItem.account.id_token
-        print("identityToken", userItem.id_token)
-//        logOut()
+        if UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION) == nil { // 로그아웃, 계정삭제시만 디바이스 토큰 서버로 보냄
+            registerForPushNotifications()
+        } 
     }
     
     private func configureInstanceVC() {
         let homeVC = SearchGatheringBoardController()
-        let profileVC = SearchProfileViewController()
+        let profileVC = GetProfileViewController()
         let myClubVC = MyClubViewController()
         let notiVC = PushNoficationViewController()
         
@@ -89,34 +98,30 @@ class ServiceTapBarViewController: UITabBarController {
 //        self.tabBarController?.tabBar.isHidden = false
     }
     
-    private func sendDeviceToken(deviceToken: String) {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        let userDefaults = UserDefaults.standard
-//        guard let deviceTokenString = userDefaults.object(forKey: "DeviceToken") as? String else { return }
-//        do {
-//            userItem.deviceToken = deviceToken
-//            try KeychainManager.updateUserItem(userItem: userItem)
-//        } catch {
-//            print("KeychainManager.update \(error.localizedDescription)")
+//    private func sendDeviceToken(deviceToken: String) {
+//        print("sendDeviceToken")
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        let sendDeviceTokenReq = SendDeviceTokenReq(deviceToken: deviceToken, refreshToken: userItem.refresh_token, userId: userItem.userId)
+//        AF.request(API.BASE_URL + "users/device-token",
+//                   method: .post,
+//                   parameters: sendDeviceTokenReq,
+//                   encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
+//        .validate(statusCode: 200..<500)
+//        .responseDecodable(of: APIResponse<SendDeviceTokenRes>.self) { response in
+//            switch response.result {
+//            case .success:
+//                guard let value = response.value else { return }
+//                if value.httpCode == 200 {
+//                    guard let data = value.data else { return }
+//                    let deviceToken = data.deviceToken
+//                    UserDefaults.standard.set(deviceToken, forKey: Preferences.PUSH_NOTIFICATION)
+//                    print("UserDefaults Preferences.PUSH_NOTIFICATION",UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION))
+//                }
+//            case let .failure(error):
+//                print("SetProfileVC - upload response result Not return", error)
+//            }
 //        }
-//        print(userItem)
-//        guard let deviceToken = userItem.deviceToken else { return }
-        let sendDeviceToken = SendDeviceToken(deviceToken: deviceToken, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AF.request(API.BASE_URL + "users/device-token",
-                   method: .post,
-                   parameters: sendDeviceToken,
-                   encoder: URLEncodedFormParameterEncoder(destination: .httpBody)) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .response { response in // reponseData
-            switch response.result {
-            case .success:
-                debugPrint(response)
-//                userDefaults.removeObject(forKey: "DeviceToken")
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
+//    }
     
     
     /*
@@ -131,23 +136,25 @@ class ServiceTapBarViewController: UITabBarController {
 
 }
 
-extension ServiceTapBarViewController: UIApplicationDelegate {
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
-        sendDeviceToken(deviceToken: deviceTokenString)
-//        let userDefaults = UserDefaults.standard
-//        userDefaults.set(deviceTokenString, forKey: "DeviceToken")
-        print("Device token", deviceTokenString)
-    }
-    
-    
-//     userNotificationCenter(_ center: UNUserNotificationCenter, didReceive와 동일 작업 메소드
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("application-didReceiveRemoteNotification")
-        // 앱 종료후에도 노티를 탭하여 실행할때
-    }
-
-}
+//extension ServiceTapBarViewController: UIApplicationDelegate {
+//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        
+//        let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
+//        print("Device token", deviceTokenString)
+//        // 디바이스 토큰 없거나, 다르면 api 요청
+//        sendDeviceToken(deviceToken: deviceTokenString)
+////        let userDefaults = UserDefaults.standard
+////        userDefaults.set(deviceTokenString, forKey: "DeviceToken")
+//    }
+//    
+//    
+////     userNotificationCenter(_ center: UNUserNotificationCenter, didReceive와 동일 작업 메소드
+//    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        print("application-didReceiveRemoteNotification")
+//        // 앱 종료후에도 노티를 탭하여 실행할때
+//    }
+//
+//}
 
 extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
     
@@ -171,8 +178,8 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
             print("Notification settings: \(settings)")
             guard settings.authorizationStatus == .authorized else { return }
             DispatchQueue.main.async {
+                print("Before registerForRemoteNotifications")
                 UIApplication.shared.registerForRemoteNotifications()
-//                UIApplication.shared.noti
             }
         }
     }

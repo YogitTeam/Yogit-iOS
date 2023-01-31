@@ -1,6 +1,7 @@
 PODS:
   - Alamofire (5.6.4)
   - BSImagePicker (3.3.1)
+  - BulletinBoard (5.0.0)
   - IQKeyboardManagerSwift (6.5.11)
   - Kingfisher (7.5.0)
   - SnapKit (5.6.0)
@@ -8,6 +9,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 5.5)
   - BSImagePicker (~> 3.1)
+  - BulletinBoard
   - IQKeyboardManagerSwift (~> 6.5.0)
   - Kingfisher (~> 7.0)
   - SnapKit (~> 5.6.0)
@@ -16,6 +18,7 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - BSImagePicker
+    - BulletinBoard
     - IQKeyboardManagerSwift
     - Kingfisher
     - SnapKit
@@ -23,10 +26,11 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
   BSImagePicker: 0fe04b574d4d6b81093785d2af6c26227efc8428
+  BulletinBoard: dba77053c2a7b64953f63073f7534165af2edd21
   IQKeyboardManagerSwift: c7955c0bdbf7b2eb29bb7daaa44e3d90f55a9a85
   Kingfisher: b9c2a4a4af2990a768445c277359b27bde287d71
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: 4e030701c31474557fee13158a4102eca74d1802
+PODFILE CHECKSUM: 7952ca5a2bbf879899a17e6283e5cd92e9aad718
 
 COCOAPODS: 1.11.3

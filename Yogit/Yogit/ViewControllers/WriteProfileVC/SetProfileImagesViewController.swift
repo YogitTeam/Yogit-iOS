@@ -7,29 +7,20 @@
 
 import UIKit
 import SnapKit
-import Alamofire
 import BSImagePicker
 import Photos
-//import Kingfisher
-
-// 첫번째 사진(프로필) >> 프레임 정사각형 크기 편집(profileimage) - 리사이즈, images 에는 원본 업로드 >> 압축해서 압럳,
-// 검색, 수정, 업로드 나눔
-// 삭제시 인덱스 전송 >> patch
-// 사진 추가시, 추가 시작 인덱스 저장 >> 추가 시작 인덱스부터 끝까지만 post
 
 protocol ImagesProtocol: AnyObject {
     func imagesSend(profileImage: String)
 }
 
 class SetProfileImagesViewController: UIViewController {
-    // 이미지 빈값 넣어줌
-    // 삭제 이미지 빈값 넣어줌
     weak var delegate: ImagesProtocol?
     
     private var userImagesData = UserImagesData()
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonPressed(_:)))
+        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
         return button
     }()
@@ -56,12 +47,10 @@ class SetProfileImagesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(noticeLabel)
-        view.addSubview(imagesCollectionView)
-        imagesCollectionView.delegate = self
-        imagesCollectionView.dataSource = self
+        configureSuperView()
+        configureNavigation()
+        configureCollectionView()
         getUserImages()
-        configureViewComponent()
     }
     
     override func viewDidLayoutSubviews() {
@@ -76,23 +65,34 @@ class SetProfileImagesViewController: UIViewController {
         }
     }
     
-    private func configureViewComponent() {
-        self.navigationItem.title = "Profile Photos"
-        self.view.backgroundColor = .systemBackground
-        self.navigationItem.rightBarButtonItem = self.rightButton
+    private func configureSuperView() {
+        view.addSubview(noticeLabel)
+        view.addSubview(imagesCollectionView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureNavigation() {
+        navigationItem.title = "Profile Photos"
+        navigationItem.rightBarButtonItem = self.rightButton
+    }
+    
+    private func configureCollectionView() {
+        imagesCollectionView.delegate = self
+        imagesCollectionView.dataSource = self
     }
 
     private func getUserImages() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         let getUserImages = GetUserImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
-        let urlConvertible = ProfileRouter.downLoadImages(parameter: getUserImages)
-        if let parameters = urlConvertible.toDictionary {
-            print("getUserImages parameters", parameters)
+        let urlRequestConvertible = ProfileRouter.downLoadImages(parameters: getUserImages)
+        if let parameters = urlRequestConvertible.toDictionary {
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
                 for (key, value) in parameters {
                     multipartFormData.append(Data("\(value)".utf8), withName: key)
                 }
-            }, to: urlConvertible, method: urlConvertible.method).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<FetchedUserImages>.self) { [self] response in
+            }, with: urlRequestConvertible)
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
                 switch response.result {
                 case .success:
                     guard let value = response.value else { return }
@@ -102,10 +102,10 @@ class SetProfileImagesViewController: UIViewController {
                             print("data error")
                             return
                         }
-                        DispatchQueue.global(qos: .userInitiated).async {
-                            self.userImagesData.imageIds = data.userImageIds
-                            self.userImagesData.downloadImages = data.imageUrls
-                            self.userImagesData.downloadProfileImage = data.profileImageUrl
+                        DispatchQueue.global(qos: .userInitiated).async { [self] in
+                            userImagesData.imageIds = data.userImageIds
+                            userImagesData.downloadImages = data.imageUrls
+                            userImagesData.downloadProfileImage = data.profileImageUrl
                             DispatchQueue.main.async(qos: .userInteractive, execute: {
                                 self.imagesCollectionView.reloadData()
                             })
@@ -158,13 +158,15 @@ class SetProfileImagesViewController: UIViewController {
                     print("SetProfileImagesVC - downLoad response result Not return", error)
                 }
             }
+        
         }
     }
     
     // 0번 인덱스 바뀌면 프로필 업로드 해야함
-    @objc private func buttonPressed(_ sender: Any) {
+    @objc private func rightButtonPressed(_ sender: Any) {
         // 다운로드 된 이미지가 없고, 업로드할 이미지가 있을때. 즉, 0번 인덱스(Main photo)가 업로드할 이미지 일떄
         var profileImage: UIImage? = nil
+        
         if userImagesData.downloadImages.count != 0 {
             guard let imageString = userImagesData.downloadImages.first else { return }
             ImageManager.shared.downloadImage(with: imageString) { (image) in
@@ -173,7 +175,7 @@ class SetProfileImagesViewController: UIViewController {
         } else if userImagesData.uploadImages.count != 0  {
             profileImage = userImagesData.uploadImages.first
         } else {
-            let alert = UIAlertController(title: "Can't save photos", message: "Please upload at least one photo", preferredStyle: UIAlertController.Style.alert)
+            let alert = UIAlertController(title: "Can't save photos", message: "Please upload at least main photo", preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
@@ -183,8 +185,8 @@ class SetProfileImagesViewController: UIViewController {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         print("userImagesData", userImagesData)
         let patchUserImages = PatchUserImages(userId: userItem.userId, refreshToken: userItem.refresh_token, deleteUserImageIds: userImagesData.deleteUserImageIds, uploadImages: userImagesData.uploadImages, uploadProfileImage: profileImage)
-        let urlConvertible = ProfileRouter.uploadImages(parameter: patchUserImages)
-        if let parameters = urlConvertible.toDictionary {
+        let urlRequestConvertible = ProfileRouter.uploadImages(parameters: patchUserImages)
+        if let parameters = urlRequestConvertible.toDictionary {
             print("Upload parameters", parameters)
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
                 for (key, value) in parameters {
@@ -206,22 +208,22 @@ class SetProfileImagesViewController: UIViewController {
                         }
                     }
                 }
-            }, to: urlConvertible, method: urlConvertible.method).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
+            }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
                 switch response.result {
                 case .success:
                     guard let value = response.value else { return }
                     if value.httpCode == 200 {
-                        guard let data = value.data else { return }
                         print("Success - Upload User Images")
-                        DispatchQueue.global(qos: .userInitiated).async {
-                            self.userImagesData.imageIds = data.userImageIds
-                            self.userImagesData.downloadImages = data.imageUrls
-                            self.userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive, execute: {
-                                self.imagesCollectionView.reloadData()
-                                guard let profileImage = self.userImagesData.downloadProfileImage else { return }
-                                self.delegate?.imagesSend(profileImage: profileImage)
-                                self.navigationController?.popViewController(animated: true)
+                        guard let data = value.data else { return }
+                        DispatchQueue.global(qos: .userInitiated).async { [self] in
+                            userImagesData.imageIds = data.userImageIds
+                            userImagesData.downloadImages = data.imageUrls
+                            userImagesData.downloadProfileImage = data.profileImageUrl
+                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                                imagesCollectionView.reloadData()
+                                guard let profileImage = userImagesData.downloadProfileImage else { return }
+                                delegate?.imagesSend(profileImage: profileImage)
+                                navigationController?.popViewController(animated: true)
                             })
                         }
                     }
@@ -292,11 +294,13 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         var images = [UIImage]()
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
+        option.deliveryMode = .highQualityFormat
+        option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
         for i in 0..<asstes.count {
             imageManager.requestImage(for: asstes[i],
-                                      targetSize: CGSize(width: view.frame.size.width, height: view.frame.size.height),
+                                      targetSize: CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2),
                                       contentMode: .aspectFit,
                                       options: option) { (result, info) in
                 if let image = result {

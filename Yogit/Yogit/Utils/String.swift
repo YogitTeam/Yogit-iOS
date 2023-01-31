@@ -9,6 +9,10 @@ import Foundation
 import UIKit
 
 extension String {
+    func localized(comment: String = "" ) -> String {
+        return NSLocalizedString(self, comment: comment)
+    }
+    
     func urlToImage2() -> UIImage? {
         guard let url = URL(string: self) else { return nil }
         guard let data = try? Data(contentsOf: url) else { return nil }
@@ -31,6 +35,69 @@ extension String {
         guard let image = UIImage(data: data) else { return nil }
         return image
     }
+    
+    func loadImage(completion: @escaping (UIImage?) -> ()) {
+        guard let url = URL(string: self) else {
+            print("Invalid URL")
+            completion(nil)
+            return
+        }
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print(error.localizedDescription)
+                completion(nil)
+                return
+            }
+
+            if let data = data, let image = UIImage(data: data) {
+                completion(image)
+            }
+        }.resume()
+    }
+    
+//    // 클로저 사용
+//    let urlString = "https://example.com/image.jpg"
+//    urlString.loadImage { (image) in
+//        guard let image = image else {
+//            print("Error loading image")
+//            return
+//        }
+//        // Use the image here
+//    }
+    
+    func loadImageAsync() -> UIImage? {
+       guard let url = URL(string: self) else {
+           print("Invalid URL")
+           return nil
+       }
+       let semaphore = DispatchSemaphore(value: 0)
+       var image: UIImage?
+       URLSession.shared.dataTask(with: url) { (data, response, error) in
+           if let error = error {
+               print(error.localizedDescription)
+               return
+           }
+
+           if let data = data {
+               image = UIImage(data: data)
+           }
+           semaphore.signal()
+       }.resume()
+       semaphore.wait()
+       return image
+   }
+// await, async 코드 사용
+//    let urlString = "https://example.com/image.jpg"
+//    if let image = urlString.loadImage() {
+//        // Use the image here
+//    } else {
+//        print("Error loading image")
+//    }
+//
+
+
+
+
     
 //    func urlToImage() -> UIImage {
 //        var returnImage: UIImage?

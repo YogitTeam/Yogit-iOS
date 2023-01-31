@@ -117,6 +117,7 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
         
         // 위경도 전달
         let place = places[indexPath.row]
+        
         guard let coordinate = place.placemark.location?.coordinate else { return }
         print("1")
         guard let placeName = place.placemark.name else { return }

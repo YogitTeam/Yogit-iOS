@@ -15,7 +15,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         let button = UIButton()
 //        button.setTitle("", for: .normal)
 //        button.imageView?.image = UIImage(named: "imageNULL")
-        button.setImage(UIImage(named: "imageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(named: "ImageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
 //        button.tintColor = .white
         button.layer.cornerRadius = 24
         button.isEnabled = true
@@ -84,14 +84,15 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         tableView.delegate = self
         tableView.dataSource = self
         configureViewComponent()
-        
-//        getBoardThumbnail()
+        getBoardThumbnail()
+//        NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(didDeleteBoardNotification(_:)), name: .deleteBoardRefresh, object: nil)
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         initNavigationBar()
-        getBoardThumbnail()
+//        getBoardThumbnail()
     }
     
     override func viewDidLayoutSubviews() {
@@ -103,14 +104,10 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         }
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        print(self.view.window?.rootViewController)
-//    }
-//
     private func configureViewComponent() {
         view.backgroundColor = .systemBackground
         tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(refreshBoards), for: .valueChanged)
 
     }
     
@@ -125,41 +122,82 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     }
     
     
-    @objc func refresh(){
-        self.boardAllData.removeAll()
-        self.tableView.reloadData() 
+    @objc func refreshBoards() {
+        self.refreshControl.endRefreshing()
+        getBoardThumbnail()
+    }
+    
+    // boardDetail 데이터 전달 및 화면 이동
+//    @objc private func didBoardDetailNotification(_ notification: Notification) {
+//        guard let boardDetail = notification.object as? BoardDetail else { return }
+//        DispatchQueue.main.async(qos: .userInteractive, execute: {
+//            let GDBVC = GatheringDetailBoardViewController()
+//            GDBVC.boardWithMode.mode = .refresh
+//            GDBVC.bindBoardDetail(data: boardDetail)
+//            self.navigationController?.pushViewController(GDBVC, animated: true)
+//            sleep(1)
+//            self.getBoardThumbnail()
+//        })
+//    }
+    
+    @objc private func didDeleteBoardNotification(_ notification: Notification) {
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
+            self.getBoardThumbnail()
+        })
     }
    
     private func getBoardThumbnail() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         let getAllBoardsReq = GetAllBoardsReq(cursor: 0, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AF.request(API.BASE_URL + "boards/get/categories",
-                   method: .post,
-                   parameters: getAllBoardsReq,
-                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .response { response in // reponseData
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                if let data = response.data {
-                    do{
-                        let decodedData = try JSONDecoder().decode(APIResponse<[[Board]]>.self, from: data)
-                        print(decodedData)
-                        guard let boardsData = decodedData.data else { return }
-                        self.boardAllData = boardsData
-                        print(self.boardAllData)
-                        self.tableView.reloadData()
+        AlamofireManager.shared.session
+            .request(BoardRouter.readAllBoards(parameters: getAllBoardsReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<[[Board]]>.self) { response in
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        guard let data = value.data else { return }
+                        DispatchQueue.global().async(qos: .userInteractive, execute: {
+                            self.boardAllData = data
+                            DispatchQueue.main.async(qos: .userInteractive, execute: {
+                                self.tableView.reloadData()
+                            })
+                        })
                     }
-                    catch{
-                        print(error.localizedDescription)
-                    }
+                case let .failure(error):
+                    print(error)
                 }
-            case .failure(let error):
-                debugPrint(response)
-                print(error)
             }
-        }
+        
+        
+//        AF.request(API.BASE_URL + "boards/get/categories",
+//                   method: .post,
+//                   parameters: getAllBoardsReq,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .response { response in // reponseData
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                if let data = response.data {
+//                    do{
+//                        let decodedData = try JSONDecoder().decode(APIResponse<[[Board]]>.self, from: data)
+//                        print(decodedData)
+//                        guard let boardsData = decodedData.data else { return }
+//                        self.boardAllData = boardsData
+//                        print(self.boardAllData)
+//                        self.tableView.reloadData()
+//                    }
+//                    catch{
+//                        print(error.localizedDescription)
+//                    }
+//                }
+//            case .failure(let error):
+//                debugPrint(response)
+//                print(error)
+//            }
+//        }
     }
     
     // Reporting the number of sections and rows in the table.
@@ -207,26 +245,26 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
             let GBCVC = GatheringBoardCategoryViewController()
 //            GBCVC.mode = .post
 //            GBCVC.hidesBottomBarWhenPushed = true
-            GBCVC.boardWithMode.mode = .post
+            GBCVC.boardWithMode.mode = .create //.post
             self.navigationController?.pushViewController(GBCVC, animated: true)
         }
     }
     
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if (refreshControl.isRefreshing) {
-            self.refreshControl.endRefreshing()
-            getBoardThumbnail()
-//            if(self.searchFlag == 0){
-//                self.currentPage = 1
-//                fetchData(page: self.currentPage)
-//            }
-//            else{
-//                self.searchCurrentPage = 1
-//                fetchSearchedData(category: self.category, condition: self.condition, page: self.searchCurrentPage)
-//            }
-            
-        }
-    }
+//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        if (refreshControl.isRefreshing) {
+//            self.refreshControl.endRefreshing()
+//            getBoardThumbnail()
+////            if(self.searchFlag == 0){
+////                self.currentPage = 1
+////                fetchData(page: self.currentPage)
+////            }
+////            else{
+////                self.searchCurrentPage = 1
+////                fetchSearchedData(category: self.category, condition: self.condition, page: self.searchCurrentPage)
+////            }
+//
+//        }
+//    }
     
     
 //    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -260,7 +298,8 @@ extension SearchGatheringBoardController: BoardMainCollectionTableViewCellDelega
     func collectionTableViewTapItem(with board: Board) {
         DispatchQueue.main.async {
             let GDBVC = GatheringDetailBoardViewController()
-            GDBVC.boardId = board.boardID
+//            GDBVC.boardId = board.boardID
+            GDBVC.boardWithMode.boardId = board.boardID // boardId로 요청을 때려야함
 //            self.present(GDBVC, animated: true)
             self.navigationController?.pushViewController(GDBVC, animated: true)
         }

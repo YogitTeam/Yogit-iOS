@@ -21,6 +21,9 @@ class ClipBoardViewController2: ChatViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         messagesCollectionView.tag = 1
+        Task(priority: .high) {
+            await loadFirstMessages()
+        }
     }
 
     override func configureMessageCollectionView() {
@@ -240,11 +243,108 @@ extension ClipBoardViewController2: MessagesLayoutDelegate {
 
 extension ClipBoardViewController2 {
     
-    func loadClipBoardUp() async {
+    // 마지막 페이지부터 로드
+    // if upPageListCount == 10 { upPageCusor += 1 } 다음에 호출할때
+    func loadFirstMessages() async {
+        if isPaging { return }
+        else { isPaging = true }
+        print("loadFirstMessages")
+        let checkLastData = await fetchClipBoardData(page: upPageCusor)
+        guard let totalPage = checkLastData?.totalPage else { return }
+        if upPageCusor < totalPage { // page 0부터 시작
+            upPageCusor = totalPage-1 // 0 부터 시작
+            downPageCursor = upPageCusor-1
+            print("loadFirstMessages downpage cusor", downPageCursor)
+            guard let userItem = try? KeychainManager.getUserItem() else { return }
+//            guard let clipBoardListBeforeLast = checkLastData?.getClipBoardResList else { return }
+            if downPageCursor >= 0 { // 페이지 개수 2개 이상일때
+                let clipBoardDataBeforeLatest: ClipBoardResInfo?
+                if upPageCusor == 1 { // 이미 그전에 응답받은 데이터 존재
+                    clipBoardDataBeforeLatest = checkLastData
+                } else { // 이미 그전에 응답받은 데이터 없다.
+                    clipBoardDataBeforeLatest = await fetchClipBoardData(page: downPageCursor)
+                }
+                guard let clipBoardBeforeLatestList = clipBoardDataBeforeLatest?.getClipBoardResList else { return }
+                let clipBoardListCountBeforeLast = clipBoardBeforeLatestList.count
+                for i in 0..<clipBoardListCountBeforeLast { // 8
+                    print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCountBeforeLast)
+                    let sender = Sender(senderId: "\(clipBoardBeforeLatestList[i].userID)", displayName: clipBoardBeforeLatestList[i].userName)
+                    if self.avatarImages[sender.senderId] == nil {
+    //                    let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+    //                    self.avatarImages[sender.senderId] = profileImage
+//                        clipBoardBeforeLatestList[i].profileImgURL.loadImage { (image) in
+//                            guard let image = image else {
+//                                print("Error loading image")
+//                                return
+//                            }
+//                            print("아바타 이미지 로드")
+//                            self.avatarImages[sender.senderId] = image
+//                        }
+                        let profileImage = clipBoardBeforeLatestList[i].profileImgURL.loadImageAsync()
+                        self.avatarImages[sender.senderId] = profileImage
+                    }
+//                    if userItem.userId == clipBoardBeforeLatestList[i].userID {
+//                        self.currentUser.senderId = "\(clipBoardBeforeLatestList[i].userID)"
+//                        self.currentUser.displayName = clipBoardBeforeLatestList[i].userName
+//                    }
+                    guard let sendDate = clipBoardBeforeLatestList[i].createdAt.stringToDate() else { return }
+                    let message = Message(sender: sender, messageId: "\(clipBoardBeforeLatestList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardBeforeLatestList[i].content))
+                    messages.append(message)
+                }
+                downPageCursor -= 1
+            }
+            
+            
+            let loadLatest = await fetchClipBoardData(page: upPageCusor) // 0
+            guard let clipBoardList = loadLatest?.getClipBoardResList else { return }
+            let clipBoardListCount = clipBoardList.count
+            
+            for i in upPageListCount..<clipBoardListCount { // 8
+                print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
+                let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
+                if self.avatarImages[sender.senderId] == nil {
+//                    let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+//                    self.avatarImages[sender.senderId] = profileImage
+//                    clipBoardList[i].profileImgURL.loadImage { (image) in
+//                        guard let image = image else {
+//                            print("Error loading image")
+//                            return
+//                        }
+//                        print("아바타 이미지 로드")
+//                        self.avatarImages[sender.senderId] = image
+//                    }
+                    let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                    self.avatarImages[sender.senderId] = profileImage
+                }
+//                if userItem.userId == clipBoardList[i].userID {
+//                    self.currentUser.senderId = "\(clipBoardList[i].userID)"
+//                    self.currentUser.displayName = clipBoardList[i].userName
+//                }
+                guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
+                let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+                messages.append(message)
+            }
+            upPageListCount = clipBoardListCount%10
+            if upPageListCount == 0 {
+                upPageCusor += 1
+            }
+        }
+        let serviceMessage = Message(sender: self.service, messageId: "\(self.upPageCusor*10+self.upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
+        messages.append(serviceMessage)
+        await MainActor.run {
+            messagesCollectionView.reloadData()
+            messagesCollectionView.scrollToLastItem()
+        }
+        isPaging = false
+    }
+    
+    func loadClipBoardBottom() async {
         if isPaging { return }
         else { isPaging = true }
         isLoading = true
-        messagesCollectionView.reloadSections([messages.count-1]) // 로딩뷰 실행
+        await MainActor.run {
+            messagesCollectionView.reloadSections([messages.count-1]) // 로딩뷰 실행
+        }
         sleep(UInt32(0.7))
         let getData = await fetchClipBoardData(page: upPageCusor)
         guard let totalPage = getData?.totalPage else { return }
@@ -259,13 +359,22 @@ extension ClipBoardViewController2 {
                 print("upPageListCount, clipBoardListCount", upPageListCount, clipBoardListCount)
                 let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
                 if avatarImages[sender.senderId] == nil {
-                    let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
-                    avatarImages[sender.senderId] = profileImage
+                    let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                    self.avatarImages[sender.senderId] = profileImage
+//                    clipBoardList[i].profileImgURL.loadImage { (image) in
+//                        guard let image = image else {
+//                            print("Error loading image")
+//                            return
+//                        }
+//                        self.avatarImages[sender.senderId] = image
+//                    }
+//                    let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+//                    avatarImages[sender.senderId] = profileImage
                 }
-                if userItem.userId == clipBoardList[i].userID {
-                    currentUser.senderId = "\(clipBoardList[i].userID)"
-                    currentUser.displayName = clipBoardList[i].userName
-                }
+//                if userItem.userId == clipBoardList[i].userID {
+//                    currentUser.senderId = "\(clipBoardList[i].userID)"
+//                    currentUser.displayName = clipBoardList[i].userName
+//                }
                 guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                 let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
                 if i == upPageListCount {
@@ -276,8 +385,10 @@ extension ClipBoardViewController2 {
             }
             if upPageListCount < clipBoardListCount {
                 let serviceMessage = Message(sender: service, messageId: "\(upPageCusor*10+upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
-                insertMessage(serviceMessage)
-                messagesCollectionView.scrollToLastItem()
+                await MainActor.run {
+                    insertMessage(serviceMessage)
+                    messagesCollectionView.scrollToLastItem()
+                }
             }
             upPageListCount = clipBoardListCount%10 // 0
             if upPageListCount == 0 {
@@ -289,11 +400,13 @@ extension ClipBoardViewController2 {
 //                    upPageCusor += 1
 //                }
         }
-        messagesCollectionView.reloadSections([messages.count-1])
+        await MainActor.run {
+            messagesCollectionView.reloadSections([messages.count-1])
+        }
         isPaging = false
     }
     
-    func loadClipBoardDown() async{
+    func loadClipBoardTop() async {
         if isPaging || downPageCursor < 0 { return }
         else { isPaging = true }
         let getData = await fetchClipBoardData(page: downPageCursor)
@@ -304,22 +417,34 @@ extension ClipBoardViewController2 {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         var insertMessages: [Message] = []
         for i in 0..<clipBoardListCount { // 8
-            print("upPageListCount, clipBoardListCount", upPageListCount, clipBoardListCount)
+            print("LoadTop upPageListCount, clipBoardListCount", upPageListCount, clipBoardListCount)
             let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
             if avatarImages[sender.senderId] == nil {
-                let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
-                avatarImages[sender.senderId] = profileImage
+//                let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+//                avatarImages[sender.senderId] = profileImage
+//                clipBoardList[i].profileImgURL.loadImage { (image) in
+//                    guard let image = image else {
+//                        print("Error loading image")
+//                        return
+//                    }
+//                    self.avatarImages[sender.senderId] = image
+//                }
+                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                self.avatarImages[sender.senderId] = profileImage
             }
-            if userItem.userId == clipBoardList[i].userID {
-                currentUser.senderId = "\(clipBoardList[i].userID)"
-                currentUser.displayName = clipBoardList[i].userName
-            }
+            
+//            if userItem.userId == clipBoardList[i].userID {
+//                currentUser.senderId = "\(clipBoardList[i].userID)"
+//                currentUser.displayName = clipBoardList[i].userName
+//            }
             guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
             let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
             insertMessages.append(message)
         }
         messages.insert(contentsOf: insertMessages, at: 0)
-        messagesCollectionView.reloadDataAndKeepOffset()
+        await MainActor.run {
+            messagesCollectionView.reloadDataAndKeepOffset()
+        }
         isPaging = false
         downPageCursor -= 1
     }
@@ -339,17 +464,18 @@ extension ClipBoardViewController2 {
 //
             print("scrollView.contentOffset.y", scrollView.contentOffset.y) // -253
             if scrollView.tag == 1 {
-                if scrollView.contentOffset.y <= 0 { // view.safeAreaInsets.top+200
-                    print("Upload for Up scroling")
-                    await loadClipBoardDown()
-                    print("위")
+                if scrollView.contentOffset.y < 0 { // view.safeAreaInsets.top+200
+                    print("Upload for  scroling")
+                    await loadClipBoardTop()
+                    print("End Top Load")
                 }
                 else if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
-                    .height)) { // +messagesCollectionView.contentInset.bottom+messageInputBar.frame.height
-                    print("Upload for down scroling", scrollView.contentSize.height-scrollView.frame.size
-                        .height+messagesCollectionView.contentInset.bottom+messageInputBar.frame.height)
-                    await loadClipBoardUp()
-                    print("밑")
+                    .height - 50)) { // +messagesCollectionView.contentInset.bottom+messageInputBar.frame.height
+                    print("Upload for up scroling")
+//                    print("Upload for down scroling", scrollView.contentSize.height-scrollView.frame.size
+//                        .height+messagesCollectionView.contentInset.bottom+messageInputBar.frame.height)
+                    await loadClipBoardBottom()
+                    print("End Bottom Load")
                 }
             }
         }

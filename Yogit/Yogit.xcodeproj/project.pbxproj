@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3B35568AB55FD6E904533E04 /* Pods_Yogit_YogitUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AF43ECE14A019C7FD06E989 /* Pods_Yogit_YogitUITests.framework */; };
-		79088AC828D89343008054F6 /* SignInManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088AC728D89343008054F6 /* SignInManager.swift */; };
+		79088AC828D89343008054F6 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088AC728D89343008054F6 /* SessionManager.swift */; };
 		79088ACE28D8CB71008054F6 /* RequirementInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */; };
 		79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */; };
 		79088B6828DE1A66008054F6 /* SetProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088B6728DE1A66008054F6 /* SetProfileTableViewCell.swift */; };
@@ -24,7 +24,7 @@
 		791C1EA1292E600B00623936 /* APIGatheringBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EA0292E600B00623936 /* APIGatheringBoard.swift */; };
 		791C1EA3292E686900623936 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EA2292E686900623936 /* APIConstants.swift */; };
 		791C1EBB293126D700623936 /* MoveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EBA293126D700623936 /* MoveVC.swift */; };
-		791C1EBF293251F600623936 /* SearchProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EBE293251F600623936 /* SearchProfileImagesViewController.swift */; };
+		791C1EBF293251F600623936 /* GetProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EBE293251F600623936 /* GetProfileImagesViewController.swift */; };
 		791C1EC329355F6A00623936 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC229355F6A00623936 /* String.swift */; };
 		791C1EC529355F7600623936 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EC429355F7600623936 /* Date.swift */; };
 		791C1EED2937C1A800623936 /* GatheringDetailBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */; };
@@ -64,7 +64,7 @@
 		7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */; };
 		7951A08D2923744800D8E6CF /* MyTextViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */; };
 		7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */; };
-		7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */; };
+		7951A0B9292A240900D8E6CF /* GetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0B8292A240900D8E6CF /* GetProfileViewController.swift */; };
 		7951A0BC292A29F800D8E6CF /* ServiceTapBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */; };
 		7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */; };
 		7953ED2A297025A2003ACB27 /* ProfileRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953ED29297025A2003ACB27 /* ProfileRouter.swift */; };
@@ -85,6 +85,7 @@
 		7962CEF629400C34007FCC10 /* ClipBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */; };
 		7962CEF829407B8E007FCC10 /* YourClipBoardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF729407B8E007FCC10 /* YourClipBoardTableViewCell.swift */; };
 		7962CEFA29408285007FCC10 /* APIClipBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF929408285007FCC10 /* APIClipBoard.swift */; };
+		797302462988FFBC006EFFB9 /* AlertTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302452988FFBC006EFFB9 /* AlertTestViewController.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -102,6 +103,18 @@
 		79C45CC8296F527200A5A59E /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */; };
 		79D28AB7297882B600F4FD64 /* ImageManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AB6297882B600F4FD64 /* ImageManger.swift */; };
 		79D28AB92978A0F600F4FD64 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */; };
+		79D28ABD297A846B00F4FD64 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ABC297A846A00F4FD64 /* EditProfileViewController.swift */; };
+		79D28ABF297A8E5700F4FD64 /* AboutMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ABE297A8E5700F4FD64 /* AboutMeViewController.swift */; };
+		79D28AC1297A8E6700F4FD64 /* InterestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC0297A8E6700F4FD64 /* InterestsViewController.swift */; };
+		79D28AC3297A8F4D00F4FD64 /* JobViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC2297A8F4D00F4FD64 /* JobViewController.swift */; };
+		79D28AC5297AF45F00F4FD64 /* NameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC4297AF45F00F4FD64 /* NameViewController.swift */; };
+		79D28AC7297E4AB200F4FD64 /* BoardRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC6297E4AB200F4FD64 /* BoardRouter.swift */; };
+		79D28ACB297F065E00F4FD64 /* ReadProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ACA297F065E00F4FD64 /* ReadProfileViewController.swift */; };
+		79D28ACF29801B2800F4FD64 /* ReportRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ACE29801B2800F4FD64 /* ReportRouter.swift */; };
+		79D28AD12981EA4D00F4FD64 /* SessionRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */; };
+		79D28AD3298227B500F4FD64 /* PushNotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */; };
+		79D28AD52985A02C00F4FD64 /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AD42985A02C00F4FD64 /* MapManager.swift */; };
+		79D28AD82987812900F4FD64 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 79D28ADA2987812900F4FD64 /* Localizable.strings */; };
 		79F0227328F7E61B007D59B8 /* SetProfileImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */; };
 		79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228B28FD0ECB007D59B8 /* Logger.swift */; };
 		79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */; };
@@ -137,7 +150,7 @@
 		0AF43ECE14A019C7FD06E989 /* Pods_Yogit_YogitUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit_YogitUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		22D73898FE29443944759461 /* Pods-YogitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YogitTests.debug.xcconfig"; path = "Target Support Files/Pods-YogitTests/Pods-YogitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5C561DDF42CE314E98E58765 /* Pods_Yogit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Yogit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		79088AC728D89343008054F6 /* SignInManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInManager.swift; sourceTree = "<group>"; };
+		79088AC728D89343008054F6 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequirementInfoManager.swift; sourceTree = "<group>"; };
 		79088B6528DD8297008054F6 /* SearchGatheringBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGatheringBoardViewController.swift; sourceTree = "<group>"; };
 		79088B6728DE1A66008054F6 /* SetProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileTableViewCell.swift; sourceTree = "<group>"; };
@@ -153,7 +166,7 @@
 		791C1EA0292E600B00623936 /* APIGatheringBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIGatheringBoard.swift; sourceTree = "<group>"; };
 		791C1EA2292E686900623936 /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		791C1EBA293126D700623936 /* MoveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveVC.swift; sourceTree = "<group>"; };
-		791C1EBE293251F600623936 /* SearchProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchProfileImagesViewController.swift; sourceTree = "<group>"; };
+		791C1EBE293251F600623936 /* GetProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetProfileImagesViewController.swift; sourceTree = "<group>"; };
 		791C1EC229355F6A00623936 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		791C1EC429355F7600623936 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		791C1EEC2937C1A800623936 /* GatheringDetailBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringDetailBoardViewController.swift; sourceTree = "<group>"; };
@@ -190,7 +203,7 @@
 		7951A0862921B61C00D8E6CF /* MKMapLocalSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapLocalSearchViewController.swift; sourceTree = "<group>"; };
 		7951A08C2923744800D8E6CF /* MyTextViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTextViewTableViewCell.swift; sourceTree = "<group>"; };
 		7951A08E29239C2100D8E6CF /* SelectLocationOptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectLocationOptionViewController.swift; sourceTree = "<group>"; };
-		7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchProfileViewController.swift; sourceTree = "<group>"; };
+		7951A0B8292A240900D8E6CF /* GetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetProfileViewController.swift; sourceTree = "<group>"; };
 		7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTapBarViewController.swift; sourceTree = "<group>"; };
 		7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMeasure.swift; sourceTree = "<group>"; };
 		7953ED29297025A2003ACB27 /* ProfileRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRouter.swift; sourceTree = "<group>"; };
@@ -212,6 +225,7 @@
 		7962CEF529400C34007FCC10 /* ClipBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipBoardViewController.swift; sourceTree = "<group>"; };
 		7962CEF729407B8E007FCC10 /* YourClipBoardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourClipBoardTableViewCell.swift; sourceTree = "<group>"; };
 		7962CEF929408285007FCC10 /* APIClipBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClipBoard.swift; sourceTree = "<group>"; };
+		797302452988FFBC006EFFB9 /* AlertTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTestViewController.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -233,6 +247,19 @@
 		79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		79D28AB6297882B600F4FD64 /* ImageManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManger.swift; sourceTree = "<group>"; };
 		79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
+		79D28ABC297A846A00F4FD64 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		79D28ABE297A8E5700F4FD64 /* AboutMeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutMeViewController.swift; sourceTree = "<group>"; };
+		79D28AC0297A8E6700F4FD64 /* InterestsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsViewController.swift; sourceTree = "<group>"; };
+		79D28AC2297A8F4D00F4FD64 /* JobViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobViewController.swift; sourceTree = "<group>"; };
+		79D28AC4297AF45F00F4FD64 /* NameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameViewController.swift; sourceTree = "<group>"; };
+		79D28AC6297E4AB200F4FD64 /* BoardRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardRouter.swift; sourceTree = "<group>"; };
+		79D28ACA297F065E00F4FD64 /* ReadProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadProfileViewController.swift; sourceTree = "<group>"; };
+		79D28ACE29801B2800F4FD64 /* ReportRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportRouter.swift; sourceTree = "<group>"; };
+		79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRouter.swift; sourceTree = "<group>"; };
+		79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationRouter.swift; sourceTree = "<group>"; };
+		79D28AD42985A02C00F4FD64 /* MapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapManager.swift; sourceTree = "<group>"; };
+		79D28AD92987812900F4FD64 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		79D28ADB2987816300F4FD64 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileImagesViewController.swift; sourceTree = "<group>"; };
 		79F0228B28FD0ECB007D59B8 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiStatusLogger.swift; sourceTree = "<group>"; };
@@ -304,13 +331,14 @@
 		79088AC528D6EED6008054F6 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				79088AC728D89343008054F6 /* SignInManager.swift */,
+				79088AC728D89343008054F6 /* SessionManager.swift */,
 				79088B8328E5683F008054F6 /* KeyChainManager.swift */,
 				791F6CF82948741C00C1D470 /* AlarmManager.swift */,
 				79088ACD28D8CB71008054F6 /* RequirementInfoManager.swift */,
 				7951A0012921063D00D8E6CF /* LocationManager.swift */,
 				7951A0472921862A00D8E6CF /* GooglePlacesManager.swift */,
 				79D28AB6297882B600F4FD64 /* ImageManger.swift */,
+				79D28AD42985A02C00F4FD64 /* MapManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -370,16 +398,6 @@
 			path = APIModel;
 			sourceTree = "<group>";
 		};
-		791C1EBD2932507200623936 /* SearchProfile */ = {
-			isa = PBXGroup;
-			children = (
-				7951A0B8292A240900D8E6CF /* SearchProfileViewController.swift */,
-				791C1EBE293251F600623936 /* SearchProfileImagesViewController.swift */,
-				792A11DE2966956D00F67094 /* SettingProfileViewController.swift */,
-			);
-			path = SearchProfile;
-			sourceTree = "<group>";
-		};
 		791F6CAF2940F77000C1D470 /* ClipBoard */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +419,10 @@
 			children = (
 				792A11DA2962D73700F67094 /* ClipBoardRouter.swift */,
 				7953ED29297025A2003ACB27 /* ProfileRouter.swift */,
+				79D28AC6297E4AB200F4FD64 /* BoardRouter.swift */,
+				79D28ACE29801B2800F4FD64 /* ReportRouter.swift */,
+				79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */,
+				79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -454,8 +476,8 @@
 		7951A0BA292A247100D8E6CF /* ServiceVC */ = {
 			isa = PBXGroup;
 			children = (
-				7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */,
-				791C1EBD2932507200623936 /* SearchProfile */,
+				79D28ACD297F07CD00F4FD64 /* ServiceTapBar */,
+				79D28ACC297F077F00F4FD64 /* Profile */,
 				791C1E96292D3C5800623936 /* SearchGatheringBoard */,
 				792A11DC2966951400F67094 /* MyClub */,
 				792A11DD2966952B00F67094 /* PushNotification */,
@@ -505,8 +527,12 @@
 			children = (
 				79A8F6AA28CDD65800FEBE90 /* SetProfileViewController.swift */,
 				79F0227228F7E61B007D59B8 /* SetProfileImagesViewController.swift */,
+				79D28AC4297AF45F00F4FD64 /* NameViewController.swift */,
 				79F022D529111100007D59B8 /* LanguagesViewController.swift */,
 				79F022D72913C0F5007D59B8 /* NationalityViewController.swift */,
+				79D28AC2297A8F4D00F4FD64 /* JobViewController.swift */,
+				79D28ABE297A8E5700F4FD64 /* AboutMeViewController.swift */,
+				79D28AC0297A8E6700F4FD64 /* InterestsViewController.swift */,
 			);
 			path = WriteProfileVC;
 			sourceTree = "<group>";
@@ -564,6 +590,7 @@
 				79A8F67428C7240500FEBE90 /* Assets.xcassets */,
 				79A8F67628C7240500FEBE90 /* LaunchScreen.storyboard */,
 				79A8F67928C7240500FEBE90 /* Info.plist */,
+				79D28ADA2987812900F4FD64 /* Localizable.strings */,
 			);
 			path = Yogit;
 			sourceTree = "<group>";
@@ -605,6 +632,7 @@
 				7962CEDC29383F8E007FCC10 /* ReadGatheringBoardVC */,
 				7962CEDF29386A8A007FCC10 /* TestPageControlViewController.swift */,
 				792A11BA29534A6300F67094 /* TableViewTest.swift */,
+				797302452988FFBC006EFFB9 /* AlertTestViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -632,6 +660,26 @@
 				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		79D28ACC297F077F00F4FD64 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				7951A0B8292A240900D8E6CF /* GetProfileViewController.swift */,
+				791C1EBE293251F600623936 /* GetProfileImagesViewController.swift */,
+				79D28ABC297A846A00F4FD64 /* EditProfileViewController.swift */,
+				792A11DE2966956D00F67094 /* SettingProfileViewController.swift */,
+				79D28ACA297F065E00F4FD64 /* ReadProfileViewController.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		79D28ACD297F07CD00F4FD64 /* ServiceTapBar */ = {
+			isa = PBXGroup;
+			children = (
+				7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */,
+			);
+			path = ServiceTapBar;
 			sourceTree = "<group>";
 		};
 		79F0230C291CDCFD007D59B8 /* Views */ = {
@@ -740,6 +788,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 79A8F65F28C7240300FEBE90;
 			packageReferences = (
@@ -762,6 +811,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79A8F67828C7240500FEBE90 /* LaunchScreen.storyboard in Resources */,
+				79D28AD82987812900F4FD64 /* Localizable.strings in Resources */,
 				79A8F67528C7240500FEBE90 /* Assets.xcassets in Resources */,
 				79A8F67328C7240300FEBE90 /* Main.storyboard in Resources */,
 			);
@@ -895,6 +945,7 @@
 				7951A08D2923744800D8E6CF /* MyTextViewTableViewCell.swift in Sources */,
 				792A11BD2953961F00F67094 /* MyClipBoardTableViewCell.swift in Sources */,
 				7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */,
+				79D28ABF297A8E5700F4FD64 /* AboutMeViewController.swift in Sources */,
 				7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */,
 				792A11C7295C74CE00F67094 /* InputBar.swift in Sources */,
 				791C1E9E292E5F8E00623936 /* APIUser.swift in Sources */,
@@ -905,6 +956,7 @@
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
 				79D28AB92978A0F600F4FD64 /* UIImageView+Extension.swift in Sources */,
 				792A11DB2962D73700F67094 /* ClipBoardRouter.swift in Sources */,
+				79D28ACB297F065E00F4FD64 /* ReadProfileViewController.swift in Sources */,
 				791F6CF92948741C00C1D470 /* AlarmManager.swift in Sources */,
 				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,
 				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
@@ -915,22 +967,28 @@
 				7962CEE829392C86007FCC10 /* MyHeaderView.swift in Sources */,
 				792A11BF295B63F200F67094 /* ChatViewController.swift in Sources */,
 				792A11C1295C23E200F67094 /* BasicAudioController.swift in Sources */,
+				79D28AD12981EA4D00F4FD64 /* SessionRouter.swift in Sources */,
 				79F0227328F7E61B007D59B8 /* SetProfileImagesViewController.swift in Sources */,
 				791C1E98292D3C9200623936 /* BoardMainCollectionTableViewCell.swift in Sources */,
 				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
-				7951A0B9292A240900D8E6CF /* SearchProfileViewController.swift in Sources */,
+				7951A0B9292A240900D8E6CF /* GetProfileViewController.swift in Sources */,
 				794FF7C828EBD504007C3C89 /* ImageViewController.swift in Sources */,
 				792A11D82961BA0D00F67094 /* ClipBoardViewController2.swift in Sources */,
 				7962CEE029386A8A007FCC10 /* TestPageControlViewController.swift in Sources */,
 				79519FF1291E95E600D8E6CF /* Image.swift in Sources */,
+				79D28AC1297A8E6700F4FD64 /* InterestsViewController.swift in Sources */,
 				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
 				79088B8428E5683F008054F6 /* KeyChainManager.swift in Sources */,
 				791F6CF7294680E400C1D470 /* MyClubViewController.swift in Sources */,
 				79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */,
+				79D28AC5297AF45F00F4FD64 /* NameViewController.swift in Sources */,
 				791C1EC329355F6A00623936 /* String.swift in Sources */,
 				79088B6828DE1A66008054F6 /* SetProfileTableViewCell.swift in Sources */,
+				79D28AD3298227B500F4FD64 /* PushNotificationRouter.swift in Sources */,
 				79D28AB7297882B600F4FD64 /* ImageManger.swift in Sources */,
+				79D28AD52985A02C00F4FD64 /* MapManager.swift in Sources */,
+				79D28ACF29801B2800F4FD64 /* ReportRouter.swift in Sources */,
 				7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */,
 				79F0228E28FD0FBA007D59B8 /* ApiStatusLogger.swift in Sources */,
 				791C1EC529355F7600623936 /* Date.swift in Sources */,
@@ -941,7 +999,7 @@
 				791F6CF1294395A800C1D470 /* TestViewController.swift in Sources */,
 				7951A0022921063D00D8E6CF /* LocationManager.swift in Sources */,
 				7951A0482921862A00D8E6CF /* GooglePlacesManager.swift in Sources */,
-				79088AC828D89343008054F6 /* SignInManager.swift in Sources */,
+				79088AC828D89343008054F6 /* SessionManager.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
 				7962CEF0293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift in Sources */,
 				79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */,
@@ -964,22 +1022,26 @@
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				7953ED31297435C8003ACB27 /* URLConvertible+Extension.swift in Sources */,
 				79519FF3291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift in Sources */,
+				79D28AC7297E4AB200F4FD64 /* BoardRouter.swift in Sources */,
 				791F6CFE294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift in Sources */,
 				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
 				7953ED2D2970C35B003ACB27 /* PopUpViewController.swift in Sources */,
 				7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */,
 				7953ED2A297025A2003ACB27 /* ProfileRouter.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
+				79D28ABD297A846B00F4FD64 /* EditProfileViewController.swift in Sources */,
+				79D28AC3297A8F4D00F4FD64 /* JobViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetProfileViewController.swift in Sources */,
 				79C45CC8296F527200A5A59E /* UIViewController+Extensions.swift in Sources */,
 				79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */,
+				797302462988FFBC006EFFB9 /* AlertTestViewController.swift in Sources */,
 				791C1EA1292E600B00623936 /* APIGatheringBoard.swift in Sources */,
 				7962CEEA293BA5F9007FCC10 /* BoardInfoView.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* MyImagesCollectionViewCell.swift in Sources */,
 				7951A0082921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift in Sources */,
 				792A11C5295C70DB00F67094 /* ChatTestViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
-				791C1EBF293251F600623936 /* SearchProfileImagesViewController.swift in Sources */,
+				791C1EBF293251F600623936 /* GetProfileImagesViewController.swift in Sources */,
 				791C1E9A292D3CB000623936 /* ThumbnailCollectionViewCell.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
 				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
@@ -1039,6 +1101,15 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
+		79D28ADA2987812900F4FD64 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				79D28AD92987812900F4FD64 /* en */,
+				79D28ADB2987816300F4FD64 /* ko */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1046,6 +1117,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -1106,6 +1178,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";

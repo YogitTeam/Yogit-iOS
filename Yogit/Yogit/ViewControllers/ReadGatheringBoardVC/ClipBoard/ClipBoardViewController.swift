@@ -537,7 +537,7 @@ class ClipBoardViewController: UIViewController {
 //                   parameters: chatData,
 //                                  encoder: JSONParameterEncoder.default).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
         
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameter: chatData)).validate(statusCode: 200..<401).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
+        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: chatData)).validate(statusCode: 200..<401).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
         let response = await dataTask.response
         let result = await dataTask.result
         let value = response.value
@@ -577,7 +577,7 @@ class ClipBoardViewController: UIViewController {
 //                                  parameters: getAllClipBoardsReq,
 //                                            encoder: JSONParameterEncoder.default).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
 //
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameter: getAllClipBoardsReq)).validate(statusCode: 200..<401).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
+        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<401).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
         
         let response = await dataTask.response
         let result = await dataTask.result

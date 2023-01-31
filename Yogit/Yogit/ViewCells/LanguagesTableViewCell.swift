@@ -91,6 +91,7 @@ class LanguagesTableViewCell: UITableViewCell {
             cellLabel.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.leading.equalToSuperview().offset(20)
+                make.trailing.equalTo(cellRightImageView.snp.leading)
             }
             if isSelected {
                 cellLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -107,6 +108,7 @@ class LanguagesTableViewCell: UITableViewCell {
             cellLabel.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.leading.equalTo(cellLeftImageView.snp.trailing).offset(8)
+                make.trailing.equalTo(cellRightImageView.snp.leading)
             }
             cellLeftImageView.image = UIImage(named: "languageLevel")?.withTintColor(.label, renderingMode: .alwaysOriginal)
         }

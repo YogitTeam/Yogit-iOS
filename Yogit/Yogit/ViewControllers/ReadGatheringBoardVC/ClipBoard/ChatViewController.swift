@@ -29,7 +29,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     var currentUser = Sender(senderId: "me", displayName: "MyName")
 //    var otherUser = Sender(senderId: "other", displayName: "OtherUserName")
     let service = Sender(senderId: "SERVICE", displayName: "Yogit")
-    
+//    let currentUser: Sender
     var boardId: Int64?
     var downPageCursor = -1
     var upPageCusor = 0
@@ -64,9 +64,10 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         configureViewComponent()
         configureMessageCollectionView()
         configureMessageInputBar()
-        Task(priority: .high) {
-            await loadFirstMessages()
-        }
+        configureCurrentUser()
+//        Task(priority: .high) {
+//            await loadFirstMessages()
+//        }
         // Do any additional setup after loading the view.
     }
 
@@ -87,6 +88,12 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         navigationItem.title = "Chat"
     }
     
+    func configureCurrentUser() {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let displayName = userItem.userName else { return }
+        currentUser = Sender(senderId: "\(userItem.userId)", displayName: displayName)
+    }
+    
     func configureMessageCollectionView() {
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messageCellDelegate = self
@@ -97,52 +104,58 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 
     func configureMessageInputBar() {
         messageInputBar.delegate = self
-        messageInputBar.inputTextView.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        messageInputBar.sendButton.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-        messageInputBar.sendButton.setTitleColor(
-            UIColor(rgb: 0x3232FF, alpha: 1.0).withAlphaComponent(0.3),
-          for: .highlighted)
-//        messageInputBar.inputTextView.tintColor = .label
-//        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
-//        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
+//        messageInputBar.inputTextView.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        messageInputBar.sendButton.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
+//        messageInputBar.sendButton.setTitleColor(
+//            UIColor(rgb: 0x3232FF, alpha: 1.0).withAlphaComponent(0.3),
+//          for: .highlighted)
+        
+        messageInputBar.inputTextView.tintColor = .label
+        messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
+        messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
 //        if #available(iOS 13, *) {
 //            messageInputBar.inputTextView.layer.borderColor = UIColor.systemGray2.cgColor
 //        } else {
 //            messageInputBar.inputTextView.layer.borderColor = UIColor.lightGray.cgColor
 //        }
-//        messageInputBar.inputTextView.layer.borderWidth = 1.0
-//        messageInputBar.inputTextView.layer.cornerRadius = 16.0
-//        messageInputBar.inputTextView.layer.masksToBounds = true
-//        messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-//        messageInputBar.setRightStackViewWidthConstant(to: 38, animated: false)
-//        messageInputBar.setStackViewItems([ messageInputBar.sendButton, InputBarButtonItem.fixedSpace(2)], forStack: .right, animated: false)
-//        messageInputBar.sendButton.imageView?.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        messageInputBar.sendButton.configuration?.contentInsets =  NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
-//        messageInputBar.sendButton.setSize(CGSize(width: 36, height: 36), animated: false)
-//        messageInputBar.sendButton.image = UIImage(named: "chat_up")!
-//        messageInputBar.sendButton.title = nil
-//        messageInputBar.sendButton.imageView?.layer.cornerRadius = 16
-//        messageInputBar.sendButton.backgroundColor = .clear
-//        messageInputBar.sendButton.setTitleColor(
-//        UIColor.systemBlue.withAlphaComponent(0.3),
-//        for: .highlighted)
+        messageInputBar.inputTextView.backgroundColor = .systemGray6
+//        UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        messageInputBar.inputTextView.placeholder = ""
+        messageInputBar.inputTextView.layer.borderWidth = 0.5
+        messageInputBar.inputTextView.layer.borderColor = UIColor.systemGray5.cgColor
+        messageInputBar.inputTextView.layer.cornerRadius = 16.0
+        messageInputBar.inputTextView.layer.masksToBounds = true
+        messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        messageInputBar.setRightStackViewWidthConstant(to: 38, animated: false)
+        messageInputBar.setStackViewItems([ messageInputBar.sendButton, InputBarButtonItem.fixedSpace(2)], forStack: .right, animated: false)
+        messageInputBar.sendButton.imageView?.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        messageInputBar.sendButton.configuration?.contentInsets =  NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
+        messageInputBar.sendButton.setSize(CGSize(width: 36, height: 36), animated: false)
+        messageInputBar.sendButton.image = UIImage(named: "chat_up")!
+        messageInputBar.sendButton.title = nil
+        messageInputBar.sendButton.imageView?.layer.cornerRadius = 16
+//        messageInputBar.backgroundView.backgroundColor 
+        messageInputBar.sendButton.backgroundColor = .clear
+        messageInputBar.sendButton.setTitleColor(
+        UIColor.systemBlue.withAlphaComponent(0.3),
+        for: .highlighted)
     }
     
     func fetchClipBoardData(page: Int) async -> ClipBoardResInfo? {
         guard let userItem = try? KeychainManager.getUserItem() else { return nil }
         guard let boardId = self.boardId else { return nil }
         let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameter: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
+        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
         let response = await dataTask.response
-        let result = await dataTask.result
+//        let result = await dataTask.result
         let value = response.value
         return value?.data
     }
     
     func createClipBoardData(boardData: CreateClipBoardReq) async -> GetAllClipBoardsRes? {
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameter: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
+        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
         let response = await dataTask.response
-        let result = await dataTask.result
+//        let result = await dataTask.result
         let value = response.value
         return value?.data
     }
@@ -153,48 +166,8 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     // 상
     // 하
     
-    // 마지막 페이지부터 로드
-    // if upPageListCount == 10 { upPageCusor += 1 } 다음에 호출할때
-    func loadFirstMessages() async {
-        if isPaging { return }
-        else { isPaging = true }
-        print("loadFirstMessages")
-        let checkLastData = await fetchClipBoardData(page: upPageCusor)
-        guard let totalPage = checkLastData?.totalPage else { return }
-        if upPageCusor < totalPage { // page 0부터 시작
-            upPageCusor = totalPage-1 // 0 부터 시작
-            downPageCursor = upPageCusor-1
-            let loadFirst = await fetchClipBoardData(page: upPageCusor) // 0
-            guard let clipBoardList = loadFirst?.getClipBoardResList else { return }
-            let clipBoardListCount = clipBoardList.count
-            guard let userItem = try? KeychainManager.getUserItem() else { return }
-            for i in upPageListCount..<clipBoardListCount { // 8
-                print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
-                let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
-                if self.avatarImages[sender.senderId] == nil {
-                    let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
-                    self.avatarImages[sender.senderId] = profileImage
-                }
-                if userItem.userId == clipBoardList[i].userID {
-                    self.currentUser.senderId = "\(clipBoardList[i].userID)"
-                    self.currentUser.displayName = clipBoardList[i].userName
-                }
-                guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
-                let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
-                messages.append(message)
-            }
-            upPageListCount = clipBoardListCount%10
-            if upPageListCount == 0 {
-                upPageCusor += 1
-            }
-        }
-        let serviceMessage = Message(sender: self.service, messageId: "\(self.upPageCusor*10+self.upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
-        messages.append(serviceMessage)
-        messagesCollectionView.reloadData()
-        messagesCollectionView.scrollToLastItem()
-        isPaging = false
-    }
-    
+//    // 마지막 페이지부터 로드
+//    // if upPageListCount == 10 { upPageCusor += 1 } 다음에 호출할때
 //    func loadFirstMessages() async {
 //        if isPaging { return }
 //        else { isPaging = true }
@@ -202,37 +175,39 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //        let checkLastData = await fetchClipBoardData(page: upPageCusor)
 //        guard let totalPage = checkLastData?.totalPage else { return }
 //        if upPageCusor < totalPage { // page 0부터 시작
-//            if upPageCusor > 2 {
-//                upPageCusor = totalPage-2
-//            } else {
-//                upPageCusor = totalPage-1 // 0 부터 시작
-//            }
+//            upPageCusor = totalPage-1 // 0 부터 시작
 //            downPageCursor = upPageCusor-1
-//            repeat {
-//                let loadFirst = await fetchClipBoardData(page: upPageCusor) // 0
-//                guard let clipBoardList = loadFirst?.getClipBoardResList else { return }
-//                let clipBoardListCount = clipBoardList.count
-//                guard let userItem = try? KeychainManager.getUserItem() else { return }
-//                for i in upPageListCount..<clipBoardListCount { // 8
-//                    print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
-//                    let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
-//                    if self.avatarImages[sender.senderId] == nil {
-//                        let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
-//                        self.avatarImages[sender.senderId] = profileImage
+//            let loadFirst = await fetchClipBoardData(page: upPageCusor) // 0
+//            guard let clipBoardList = loadFirst?.getClipBoardResList else { return }
+//            let clipBoardListCount = clipBoardList.count
+//            guard let userItem = try? KeychainManager.getUserItem() else { return }
+//            for i in upPageListCount..<clipBoardListCount { // 8
+//                print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
+//                let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
+//                if self.avatarImages[sender.senderId] == nil {
+////                    let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+////                    self.avatarImages[sender.senderId] = profileImage
+//                    clipBoardList[i].profileImgURL.loadImage { (image) in
+//                        guard let image = image else {
+//                            print("Error loading image")
+//                            return
+//                        }
+//                        print("아바타 이미지 로드")
+//                        self.avatarImages[sender.senderId] = image
 //                    }
-//                    if userItem.userId == clipBoardList[i].userID {
-//                        self.currentUser.senderId = "\(clipBoardList[i].userID)"
-//                        self.currentUser.displayName = clipBoardList[i].userName
-//                    }
-//                    guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
-//                    let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
-//                    messages.append(message)
 //                }
-//                upPageListCount = clipBoardListCount%10
-//                if upPageListCount == 0 {
-//                    upPageCusor += 1
+//                if userItem.userId == clipBoardList[i].userID {
+//                    self.currentUser.senderId = "\(clipBoardList[i].userID)"
+//                    self.currentUser.displayName = clipBoardList[i].userName
 //                }
-//            } while
+//                guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
+//                let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+//                messages.append(message)
+//            }
+//            upPageListCount = clipBoardListCount%10
+//            if upPageListCount == 0 {
+//                upPageCusor += 1
+//            }
 //        }
 //        let serviceMessage = Message(sender: self.service, messageId: "\(self.upPageCusor*10+self.upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
 //        messages.append(serviceMessage)
@@ -240,27 +215,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //        messagesCollectionView.scrollToLastItem()
 //        isPaging = false
 //    }
-
-    @objc
-    func loadMoreMessages() {
-        
-//        DispatchQueue.main.async {
-//            self.messages.insert(contentsOf: self.messages, at: 0)
-//            self.messagesCollectionView.reloadDataAndKeepOffset()
-////          self.refreshControl.endRefreshing()
-//        }
-        
-        
-//      DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
-////        SampleData.shared.getMessages(count: 20) { messages in
-////          DispatchQueue.main.async {
-////            self.messageList.insert(contentsOf: messages, at: 0)
-////            self.messagesCollectionView.reloadDataAndKeepOffset()
-////            self.refreshControl.endRefreshing()
-////          }
-////        }
-//      }
-    }
     
     func textCell(for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> UICollectionViewCell? {
       nil
@@ -448,17 +402,21 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         inputBar.inputTextView.text = String()
         inputBar.invalidatePlugins()
         Task(priority: .high)  {
-            inputBar.inputTextView.placeholder = "Sending..."
-            inputBar.sendButton.startAnimating()
+            await MainActor.run {
+                inputBar.inputTextView.placeholder = "Sending..."
+                inputBar.sendButton.startAnimating()
+            }
 //            inputBar.inputTextView.isEditable = false
             await insertMessages(components)
-            inputBar.sendButton.stopAnimating()
-            inputBar.inputTextView.placeholder = "Aa"
+            await MainActor.run {
+                inputBar.sendButton.stopAnimating()
+                inputBar.inputTextView.placeholder = ""
+            }
 //            inputBar.inputTextView.isEditable = true
         }
 //        task.cancel()
     }
-
+    
     // 유저 로그인 정보에
     // 유저 닉네임도 저장 필요
     
@@ -481,9 +439,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                 let createClipBoardReq = CreateClipBoardReq(boardID: boardId, content: str, refreshToken: userItem.refresh_token, title: "", userID: userItem.userId)
                 let createClipBoardRes = await createClipBoardData(boardData: createClipBoardReq) // 등록
                 var totalPage = 0
-//                if messagesCollectionView.tag == 1 {
-//                    messagesCollectionView.isScrollEnabled = false
-//                }
                 repeat {
                     let getData = await fetchClipBoardData(page: upPageCusor)
                     if (getData?.totalPage) != nil {
@@ -498,21 +453,31 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                             print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
                             let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
                             if avatarImages[sender.senderId] == nil {
-                                let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
-                                avatarImages[sender.senderId] = profileImage
+//                                let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+//                                self.avatarImages[sender.senderId] = profileImage
+                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                                self.avatarImages[sender.senderId] = profileImage
+//                                clipBoardList[i].profileImgURL.loadImage { (image) in
+//                                    guard let image = image else {
+//                                        print("Error loading image")
+//                                        return
+//                                    }
+//                                    self.avatarImages[sender.senderId] = image
+//                                }
                             }
-                            if userItem.userId == clipBoardList[i].userID {
-                                currentUser.senderId = "\(clipBoardList[i].userID)"
-                                currentUser.displayName = clipBoardList[i].userName
-                            }
+//                            if userItem.userId == clipBoardList[i].userID {
+//                                currentUser.senderId = "\(clipBoardList[i].userID)"
+//                                currentUser.displayName = clipBoardList[i].userName
+//                            }
                             guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                             let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
-                            if i == upPageListCount {
-                                insertFirst(message)
-                            } else {
-                                insertMessage(message)
+                            await MainActor.run {
+                                if i == upPageListCount {
+                                    insertFirst(message)
+                                } else {
+                                    insertMessage(message)
+                                }
                             }
-                            messagesCollectionView.scrollToLastItem()
                             // 보낸 메시지와 동일하면
                             if createClipBoardRes?.clipBoardID == clipBoardList[i].clipBoardID {
                                 print("clipBoardListCount, i", clipBoardListCount, i) // 10 9
@@ -527,8 +492,10 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                     }
                 } while upPageCusor < totalPage && upPageListCount == 0
                 let serviceMessage = Message(sender: service, messageId: "\(upPageCusor*10+upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
-                insertMessage(serviceMessage)
-                messagesCollectionView.scrollToLastItem()
+                await MainActor.run {
+                    insertMessage(serviceMessage)
+                    messagesCollectionView.scrollToLastItem()
+                }
                 isPaging = false
                 print("페이징 끝")
             } else if let img = component as? UIImage {

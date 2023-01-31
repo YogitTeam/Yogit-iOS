@@ -28,4 +28,12 @@ final class ApiStatusLogger : EventMonitor {
         
 //        debugPrint(response)
     }
+    
+    func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
+        guard let statusCode = request.response?.statusCode else {
+            return
+        }
+        
+        print("MyApiStatusLogger - request.didCreateUploadable() / statusCode : \(statusCode)")
+    }
 }

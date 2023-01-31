@@ -63,12 +63,10 @@ extension UIImage {
         return newImage!
     }
     
-    func coustomPinSize() -> UIImage? {
-        let newWidth = 40
-        let newHeight = 40
-        let newImageRect = CGRect(x: 0, y: 0, width: newWidth, height: newHeight)
+    func coustomPinSize(width: CGFloat, height: CGFloat) -> UIImage? {
+        let newImageRect = CGRect(x: 0, y: 0, width: width, height: height)
         
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: newWidth, height: newHeight), false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, 0.0)
         
         self.draw(in: newImageRect)
         

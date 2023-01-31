@@ -196,10 +196,11 @@ class BoardDetail: Decodable {
     let notice: String?
     let totalMember: Int
     let updatedAt: String
-    let userImageUrls: [String]?
+    let userImageUrls: [String]
     let userIds: [Int64]?
+    let isJoinedUser: Bool
 
-    init(address: String, boardId: Int64, addressDetail: String?, categoryId: Int, categoryName: String, cityId: Int, createdAt: String, currentMember: Int, date: String, hostId: Int64, hostName: String, cityName: String, imageIds: [Int64], imageUrls: [String], introduction: String, kindOfPerson: String, latitude: Double, longitute: Double, profileImgUrl: String, status: String, title: String, notice: String?, totalMember: Int, updatedAt: String, userImageUrls: [String]?, userIds: [Int64]?) {
+    init(address: String, boardId: Int64, addressDetail: String?, categoryId: Int, categoryName: String, cityId: Int, createdAt: String, currentMember: Int, date: String, hostId: Int64, hostName: String, cityName: String, imageIds: [Int64], imageUrls: [String], introduction: String, kindOfPerson: String, latitude: Double, longitute: Double, profileImgUrl: String, status: String, title: String, notice: String?, totalMember: Int, updatedAt: String, userImageUrls: [String], userIds: [Int64]?, isJoinedUser: Bool) {
         self.address = address
         self.boardId = boardId
         self.addressDetail = addressDetail
@@ -226,5 +227,6 @@ class BoardDetail: Decodable {
         self.updatedAt = updatedAt
         self.userImageUrls = userImageUrls
         self.userIds = userIds
+        self.isJoinedUser = isJoinedUser
     }
 }

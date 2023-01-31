@@ -166,7 +166,8 @@ extension PushNoficationViewController: UITableViewDelegate {
         print("Tap alarmData", alarmData[indexPath.row].id)
         DispatchQueue.main.async {
             let GDBVC = GatheringDetailBoardViewController()
-            GDBVC.boardId = self.alarmData[indexPath.row].id
+//            GDBVC.boardId = self.alarmData[indexPath.row].id
+            GDBVC.boardWithMode.boardId = self.alarmData[indexPath.row].id
             if self.segmentedControl.selectedSegmentIndex == 0 { GDBVC.isClipBoardAlarm = true }
             self.navigationController?.pushViewController(GDBVC, animated: true)
         }

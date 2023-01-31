@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SendDeviceToken: Encodable {
+struct SendDeviceTokenReq: Encodable {
     let deviceToken: String
     let refreshToken: String
     let userId: Int64
@@ -19,13 +19,54 @@ struct SendDeviceToken: Encodable {
     }
 }
 
-struct LogOut: Encodable {
+struct SendDeviceTokenRes: Decodable {
+    let deviceToken: String
+    let userId: Int64
+
+    init(deviceToken: String, userId: Int64) {
+        self.deviceToken = deviceToken
+        self.userId = userId
+    }
+}
+
+
+struct LogInAppleReq: Encodable {
+    let refreshToken: String
+    let servicesResponse: Account
+    
+    init(refreshToken: String, servicesResponse: Account) {
+        self.refreshToken = refreshToken
+        self.servicesResponse = servicesResponse
+    }
+}
+
+struct LogOutAppleReq: Encodable {
     let refreshToken: String
     let userId: Int64
 
     init(refreshToken: String, userId: Int64) {
         self.refreshToken = refreshToken
         self.userId = userId
+    }
+}
+
+class DeleteAppleAccountReq: Encodable {
+    let identityToken: String
+    let refreshToken: String
+    let userId: Int64
+    
+    init(identityToken: String, refreshToken: String, userId: Int64) {
+        self.identityToken = identityToken
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
+}
+
+class LogOutAppleRes: Decodable {
+    let userStatus: String
+    
+    init(userStatus: String) {
+        self.userStatus = userStatus
     }
 }
 
@@ -48,8 +89,14 @@ struct UserProfile: Decodable {
     var userAge: Int?
     var userId: Int64?
     var userName: String?
+    var job: String?
+    var aboutMe: String?
+    var cityName: String?
+    var interests: [String]?
+    var latitude: Double?
+    var longitude: Double?
     
-    init(gender: String? = nil, languageNames: [String]? = nil, languageLevels: [String]? = nil, nationality: String? = nil, refreshToken: String? = nil, userAge: Int? = nil, userId: Int64? = nil, userName: String? = nil) {
+    init(gender: String? = nil, languageNames: [String]? = nil, languageLevels: [String]? = nil, nationality: String? = nil, refreshToken: String? = nil, userAge: Int? = nil, userId: Int64? = nil, userName: String? = nil, job: String? = nil, aboutMe: String? = nil, cityName: String? = nil, interests: [String]? = nil, latitude: Double? = nil, longitude: Double? = nil) {
         self.gender = gender
         self.languageNames = languageNames
         self.languageLevels = languageLevels
@@ -58,6 +105,12 @@ struct UserProfile: Decodable {
         self.userAge = userAge
         self.userId = userId
         self.userName = userName
+        self.job = job
+        self.aboutMe = aboutMe
+        self.cityName = cityName
+        self.interests = interests
+        self.latitude = latitude
+        self.longitude = longitude
     }
 }
 
@@ -110,8 +163,10 @@ class UserItem: Codable {
     let token_type: String
     let userType: String
     let userId: Int64
+    var userName: String?
+    var userStatus: String?
     
-    init(account: Account, access_token: String, expires_in: Int64, id_token: String, refresh_token: String, token_type: String, userType: String, userId: Int64) {
+    init(account: Account, access_token: String, expires_in: Int64, id_token: String, refresh_token: String, token_type: String, userType: String, userId: Int64, userName: String?, userStatus: String?) {
         self.account = account
         self.access_token = access_token
         self.expires_in = expires_in
@@ -120,6 +175,8 @@ class UserItem: Codable {
         self.token_type = token_type
         self.userType = userType
         self.userId = userId
+        self.userName = userName
+        self.userStatus = userStatus
     }
 }
 
@@ -135,10 +192,32 @@ class FetchedUserImages: Decodable {
     }
 }
 
-class ServiceUserProfile: Codable {
+struct FetchUserProfile: Decodable {
+    let aboutMe, job, phone: String?
+    let age: Int
+    let city, countryEngNm, downloadURL, gender: String
+    let imageUrls: [String]
+    let interests: [String]?
+    let languageLevels, languageNames: [String]
+    let latitude, longtitude, memberTemp: Double?
+    let name, nationality, profileImg: String
+    let userId: Int
+    let userStatus: String?
+
+    enum CodingKeys: String, CodingKey {
+        case aboutMe, age, city
+        case countryEngNm = "country_eng_nm"
+        case downloadURL = "download_url"
+        case gender, imageUrls, interests, job, languageLevels, languageNames, latitude, longtitude, memberTemp, name, nationality, phone, profileImg
+        case userId
+        case userStatus
+    }
+}
+
+class SearchUserProfile: Codable {
     let age: Int
     let gender: String
-    let city, phone, aboutMe, administrativeArea: String?
+    let city, phone, aboutMe, job: String?
     let interests: [String]?
     let languageLevels, languageNames: [String]
     let latitude: Double?
@@ -147,16 +226,15 @@ class ServiceUserProfile: Codable {
     let name, nationality, profileImg: String
     let userId: Int64
     let userStatus: String?
-    let login_id: String?
     let countryEngNm, downloadURL: String?
+    let imageUrls: [String]
 
-    init(age: Int, gender: String, city: String?, phone: String?, aboutMe: String?, administrativeArea: String?, interests: [String]?, languageLevels: [String], languageNames: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, userId: Int64, userStatus: String?, login_id: String?, countryEngNm: String?, downloadURL: String?) {
+    init(age: Int, gender: String, city: String?, phone: String?, aboutMe: String?, interests: [String]?, languageLevels: [String], languageNames: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, userId: Int64, userStatus: String?, countryEngNm: String?, downloadURL: String?, imageUrls: [String], job: String?) {
         self.age = age
         self.gender = gender
         self.city = city
         self.phone = phone
         self.aboutMe = aboutMe
-        self.administrativeArea = administrativeArea
         self.interests = interests
         self.languageLevels = languageLevels
         self.languageNames = languageNames
@@ -168,9 +246,10 @@ class ServiceUserProfile: Codable {
         self.profileImg = profileImg
         self.userId = userId
         self.userStatus = userStatus
-        self.login_id = login_id
         self.countryEngNm = countryEngNm
         self.downloadURL = downloadURL
+        self.imageUrls = imageUrls
+        self.job = job
     }
 }
 

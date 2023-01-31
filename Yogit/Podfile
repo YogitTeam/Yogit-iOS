@@ -21,4 +21,5 @@ target 'Yogit' do
   pod 'IQKeyboardManagerSwift', '~> 6.5.0'
   pod "BSImagePicker", "~> 3.1" 
   pod 'Kingfisher', '~> 7.0'
+  pod 'BulletinBoard'
 end

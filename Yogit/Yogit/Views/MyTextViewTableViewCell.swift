@@ -18,6 +18,7 @@ class MyTextView: UIView {
         textView.layer.borderWidth = 1
         textView.layer.borderColor = UIColor.placeholderText.cgColor
         textView.layer.cornerRadius = 8
+//        textView.tintColor = .label
         textView.textColor = .placeholderText
         textView.textContainerInset = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         return textView
@@ -25,6 +26,7 @@ class MyTextView: UIView {
     
     let textCountLabel: UILabel = {
         let label = UILabel()
+        label.textColor = .placeholderText
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: UIFont.Weight.regular)
         label.sizeToFit()
@@ -41,14 +43,6 @@ class MyTextView: UIView {
         configureViewComponent()
     }
     
-//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        print("MyTextViewTableViewCell init")
-//        contentView.addSubview(myTextView)
-//        contentView.addSubview(textCountLabel)
-//        configureViewComponent()
-//    }
-//
     private func configureViewComponent() {
         backgroundColor = .systemBackground
     }
@@ -62,24 +56,15 @@ class MyTextView: UIView {
         super.layoutSubviews()
         
         myTextView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview()
             make.top.bottom.equalToSuperview().inset(10)
         }
         
         textCountLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview() 
             make.top.equalTo(myTextView.snp.bottom).offset(4)
         }
 
-//        subLabel.snp.makeConstraints { make in
-//            make.leading.equalToSuperview().inset(20)
-//            make.bottom.equalToSuperview().inset(0)
-//        }
-//        rightButton.snp.makeConstraints { make in
-//            make.top.bottom.equalToSuperview()
-//            make.width.equalTo(44)
-//            make.trailing.equalToSuperview().inset(20)
-//        }
     }
     
 //    override func prepareForReuse() {

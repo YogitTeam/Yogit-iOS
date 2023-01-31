@@ -13,8 +13,8 @@ import Alamofire
 enum ClipBoardRouter: URLRequestConvertible {
 //    typealias ClipBoard = CreateClipBoardReq & CreateClipBoardReq
     
-    case createBoard(parameter: CreateClipBoardReq)
-    case readBoard(parameter: GetAllClipBoardsReq) // another
+    case createBoard(parameters: CreateClipBoardReq)
+    case readBoard(parameters: GetAllClipBoardsReq) // another
     
     var baseURL: URL {
         return URL(string: API.BASE_URL + "clipboards/")! // 밑에 Auth 수정해야댐
@@ -33,8 +33,8 @@ enum ClipBoardRouter: URLRequestConvertible {
         switch self {
         case .createBoard:
             return ""
-        case let .readBoard(parameter):
-            return "all/board/\(parameter.boardId)/user/\(parameter.userId)"
+        case let .readBoard(parameters):
+            return "all/board/\(parameters.boardId)/user/\(parameters.userId)"
         }
     }
     
@@ -49,10 +49,10 @@ enum ClipBoardRouter: URLRequestConvertible {
         request.method = method
         
         switch self {
-        case let .createBoard(parameter):
-            request = try JSONParameterEncoder().encode(parameter, into: request)
-        case let .readBoard(parameter):
-            request = try JSONParameterEncoder().encode(parameter, into: request)
+        case let .createBoard(parameters):
+            request = try JSONParameterEncoder().encode(parameters, into: request)
+        case let .readBoard(parameters):
+            request = try JSONParameterEncoder().encode(parameters, into: request)
         } 
         return request
     }

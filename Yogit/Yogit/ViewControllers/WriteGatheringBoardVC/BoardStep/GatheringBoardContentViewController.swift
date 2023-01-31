@@ -8,6 +8,8 @@
 import UIKit
 import Alamofire
 import SnapKit
+import BSImagePicker
+import Photos
 
 // 글자수 n 글자 이상 m 이하
 class GatheringBoardContentViewController: UIViewController {
@@ -24,24 +26,31 @@ class GatheringBoardContentViewController: UIViewController {
 //    }
 //    var mode: Mode?
     
-    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
+//    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
+//        didSet {
+//            print("boardWithMode 3 \(boardWithMode)")
+//        }
+//    }
+    
+    var boardWithMode = BoardWithMode() {
         didSet {
-            print("boardWithMode 3 \(boardWithMode)")
+            print("boardWithMdoe", boardWithMode)
         }
     }
+    
     private var deletedImageIds: [Int64] = []
     private var newImagesIdx: Int = 0 // 기존 이미지 개수 저장, 삭제한 이미지 개수저장 >> 기존이미지(3개) - 삭제한 이미지(2개) >> post(patch) req: 1번 인덱스 부터 끝지점
     
     private var imagePicker: UIImagePickerController?
 
-    let stepHeaderView = StepHeaderView()
-    let step = 3.0
-    var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView(), MyHeaderView()]
-    var textViews = [MyTextView(), MyTextView(), MyTextView()]
-    let placeholderData = ["Ex) Hangout", "Ex) Hangout", "Ex) Hangout"]
-    var textViewCount = [0, 0, 0]
-    let minChar = [10, 30, 30]
-    let maxChar = [30, 2000, 2000]
+    private let stepHeaderView = StepHeaderView()
+    private let step = 3.0
+    private var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView(), MyHeaderView()]
+    private var textViews = [MyTextView(), MyTextView(), MyTextView()]
+    private let placeholderData = ["Ex) Hangout", "Ex) Hangout", "Ex) Hangout"]
+    private var textViewCount = [0, 0, 0]
+    private let minChar = [10, 30, 30]
+    private let maxChar = [30, 2000, 2000]
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -156,7 +165,7 @@ class GatheringBoardContentViewController: UIViewController {
         configureViewComponent()
         configureTextView()
         configureHeader()
-        configureDeleteCount()
+//        configureDeleteCount()
         // Do any additional setup after loading the view.
     }
     
@@ -202,7 +211,7 @@ class GatheringBoardContentViewController: UIViewController {
         }
         textViews[0].snp.makeConstraints { make in
             make.top.equalTo(headerView[1].snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(54)
         }
         headerView[2].snp.makeConstraints {
@@ -212,7 +221,7 @@ class GatheringBoardContentViewController: UIViewController {
         }
         textViews[1].snp.makeConstraints { make in
             make.top.equalTo(headerView[2].snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
         }
         headerView[3].snp.makeConstraints {
@@ -222,7 +231,7 @@ class GatheringBoardContentViewController: UIViewController {
         }
         textViews[2].snp.makeConstraints { make in
             make.top.equalTo(headerView[3].snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
             make.bottom.equalToSuperview().inset(30)
         }
@@ -248,7 +257,7 @@ class GatheringBoardContentViewController: UIViewController {
     }
     
     private func configureViewComponent() {
-        self.hideKeyboardWhenTappedAround()
+//        self.hideKeyboardWhenTappedAround()
         self.navigationItem.rightBarButtonItem = self.rightButton
         self.stepHeaderView.step = step
         self.stepHeaderView.titleLabel.text = "Content"
@@ -263,9 +272,12 @@ class GatheringBoardContentViewController: UIViewController {
     }
     
     private func configureTextView() {
-        self.textViews[0].myTextView.text = boardWithMode.boardReq?.title ?? placeholderData[0]
-        self.textViews[1].myTextView.text = boardWithMode.boardReq?.introduction ?? placeholderData[1]
-        self.textViews[2].myTextView.text = boardWithMode.boardReq?.kindOfPerson ?? placeholderData[2]
+//        self.textViews[0].myTextView.text = boardWithMode.boardReq?.title ?? placeholderData[0]
+//        self.textViews[1].myTextView.text = boardWithMode.boardReq?.introduction ?? placeholderData[1]
+//        self.textViews[2].myTextView.text = boardWithMode.boardReq?.kindOfPerson ?? placeholderData[2]
+        self.textViews[0].myTextView.text = boardWithMode.title ?? placeholderData[0]
+        self.textViews[1].myTextView.text = boardWithMode.introduction ?? placeholderData[1]
+        self.textViews[2].myTextView.text = boardWithMode.kindOfPerson ?? placeholderData[2]
         for i in 0..<3 {
             self.textViews[i].myTextView.delegate = self
             self.textViews[i].myTextView.tag = i
@@ -285,19 +297,34 @@ class GatheringBoardContentViewController: UIViewController {
         self.headerView[3].contentNameLabel.text = "Please apply this kind of person"
     }
     
-    private func configureDeleteCount() {
-        self.newImagesIdx = self.boardWithMode.images?.count ?? 0 // 기존 이미지 개수
-    }
+//    private func configureDeleteCount() {
+//        self.newImagesIdx = self.boardWithMode.images?.count ?? 0 // 기존 이미지 개수
+//    }
     
-    private func textVaildation() -> Bool {
-        guard let imagesCnt = self.boardWithMode.images?.count else { return false }
+//    private func textVaildation() -> Bool {
+//        guard let imagesCnt = self.boardWithMode.images?.count else { return false }
+//        for i in 0..<3 {
+//            print("textVaildation")
+//            if imagesCnt > 0 && textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i] {
+//                print(imagesCnt, textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "true")
+//            } else {
+//                print(imagesCnt, textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "false")
+//                return false
+//            }
+//        }
+//        return true
+//    }
+    
+    private func hasAllData() -> Bool {
+        if boardWithMode.downloadImages.count + boardWithMode.uploadImages.count == 0 {
+            return false
+        }
         for i in 0..<3 {
-            print("textVaildation")
-            if imagesCnt > 0 && textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i] {
-                print(imagesCnt, textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "true")
-            } else {
-                print(imagesCnt, textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "false")
+            if !(textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i]) {
+                print(textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "false")
                 return false
+            } else {
+                print(textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "true")
             }
         }
         return true
@@ -313,101 +340,196 @@ class GatheringBoardContentViewController: UIViewController {
 //        }
 //    }
 
+//    @objc func buttonPressed(_ sender: UIButton) {
+//
+//        if textVaildation() {
+//            // 통신완료 후 pop root까지
+//            guard let userItem = try? KeychainManager.getUserItem() else { return }
+//            boardWithMode.boardReq?.hostId = userItem.userId  // 아이디 받으면 아이디로
+//            boardWithMode.boardReq?.refreshToken = userItem.refresh_token
+//
+////            let parameters: [String: Any] = [
+////                "cityName": createBoardReq.cityName!,
+////                "hostId": createBoardReq.hostId!,
+////                "title": createBoardReq.title!,
+////                "address": createBoardReq.address!,
+////                "addressDetail": createBoardReq.addressDetail ?? "",
+////                "longitute": createBoardReq.longitute!,
+////                "latitude": createBoardReq.latitude!,
+////                "date": createBoardReq.date!,
+////                "notice": "",
+////                "introduction": createBoardReq.introduction!,
+////                "kindOfPerson": createBoardReq.kindOfPerson!,
+////                "totalMember": createBoardReq.totalMember!,
+////                "categoryId": createBoardReq.categoryId!,
+////                "refreshToken": userItem.refresh_token
+////            ]
+//            guard let parameters = boardWithMode.boardReq?.toDictionary else { return }
+//            guard let images = boardWithMode.images else { return }
+//            if boardWithMode.mode == .edit {
+//                print("edit", parameters)
+//                // 삭제한 받아온 imageIds, 추가한 이미지 imageIds = -1
+//                guard let boardId = boardWithMode.boardId else { return }
+////                guard let imageIds = boardWithMode.imageIds else { return }
+//                AF.upload(multipartFormData: { multipartFormData in
+//                    multipartFormData.append(Data("\(boardId)".utf8), withName: "boardId")
+//                    for (key, value) in parameters {
+//                        multipartFormData.append(Data("\(value)".utf8), withName: key)
+//                    }
+//                    for i in self.newImagesIdx..<images.count {
+//                        multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+//                    }
+////                    multipartFormData.append(Data("\(deletedIdsParam.values)".utf8), withName: deletedIdsParam.keys)
+//                    if self.deletedImageIds != [] {  // -1이 있을 가능성 존재
+//                        let deletedIdsParam: [String: [Any]] = ["deleteImageIds": self.deletedImageIds]
+//                        print(deletedIdsParam)
+//                        for (key, value) in deletedIdsParam {
+//                            multipartFormData.append(Data("\(value)".utf8), withName: key)
+//                        }
+//                    }
+//                }, to: API.BASE_URL + "boards", method: .patch) // post
+//                .validate(statusCode: 200..<500)
+//                .responseData { response in
+//                    switch response.result {
+//                    case .success:
+//                        debugPrint(response)
+//                        DispatchQueue.main.async {
+//                            self.navigationController?.popToRootViewController(animated: true)
+//                            // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
+//                        }
+//                    case let .failure(error):
+//                        print(error)
+//                    }
+//                }
+//            }
+//            else {
+//                print("post Board", parameters)
+//                print("post image", images)
+//                AF.upload(multipartFormData: { multipartFormData in
+//                    for (key, value) in parameters {
+//                        multipartFormData.append(Data("\(value)".utf8), withName: key)
+//                    }
+//                    for i in self.newImagesIdx..<images.count {
+//                        multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
+//                    }
+//                    print(multipartFormData)
+//                }, to: API.BASE_URL + "boards", method: .post) // post
+//                .validate(statusCode: 200..<500)
+//                .responseData { response in
+//                    switch response.result {
+//                    case .success:
+//                        debugPrint(response)
+//                        DispatchQueue.main.async {
+//                            self.navigationController?.popToRootViewController(animated: true)
+//                            // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
+//                        }
+//                    case let .failure(error):
+//                        print(error)
+//                    }
+//                }
+//            }
+//
+//        } else {
+//            print("Not has all value")
+//            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the condition", preferredStyle: UIAlertController.Style.alert)
+//            let okAction = UIAlertAction(title: "OK", style: .default)
+//            alert.addAction(okAction)
+//            present(alert, animated: false, completion: nil)
+//        }
+//
+//    }
     @objc func buttonPressed(_ sender: UIButton) {
         
-        if textVaildation() {
-            // 통신완료 후 pop root까지
-            guard let userItem = try? KeychainManager.getUserItem() else { return }
-            boardWithMode.boardReq?.hostId = userItem.userId  // 아이디 받으면 아이디로
-            boardWithMode.boardReq?.refreshToken = userItem.refresh_token
-        
-//            let parameters: [String: Any] = [
-//                "cityName": createBoardReq.cityName!,
-//                "hostId": createBoardReq.hostId!,
-//                "title": createBoardReq.title!,
-//                "address": createBoardReq.address!,
-//                "addressDetail": createBoardReq.addressDetail ?? "",
-//                "longitute": createBoardReq.longitute!,
-//                "latitude": createBoardReq.latitude!,
-//                "date": createBoardReq.date!,
-//                "notice": "",
-//                "introduction": createBoardReq.introduction!,
-//                "kindOfPerson": createBoardReq.kindOfPerson!,
-//                "totalMember": createBoardReq.totalMember!,
-//                "categoryId": createBoardReq.categoryId!,
-//                "refreshToken": userItem.refresh_token
-//            ]
-            guard let parameters = boardWithMode.boardReq?.toDictionary else { return }
-            guard let images = boardWithMode.images else { return }
-            if boardWithMode.mode == .edit {
-                print("edit", parameters)
-                // 삭제한 받아온 imageIds, 추가한 이미지 imageIds = -1
-                guard let boardId = boardWithMode.boardId else { return }
-//                guard let imageIds = boardWithMode.imageIds else { return }
-                AF.upload(multipartFormData: { multipartFormData in
-                    multipartFormData.append(Data("\(boardId)".utf8), withName: "boardId")
-                    for (key, value) in parameters {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-                    }
-                    for i in self.newImagesIdx..<images.count {
-                        multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-                    }
-//                    multipartFormData.append(Data("\(deletedIdsParam.values)".utf8), withName: deletedIdsParam.keys)
-                    if self.deletedImageIds != [] {  // -1이 있을 가능성 존재
-                        let deletedIdsParam: [String: [Any]] = ["deleteImageIds": self.deletedImageIds]
-                        print(deletedIdsParam)
-                        for (key, value) in deletedIdsParam {
-                            multipartFormData.append(Data("\(value)".utf8), withName: key)
-                        }
-                    }
-                }, to: API.BASE_URL + "boards", method: .patch) // post
-                .validate(statusCode: 200..<500)
-                .responseData { response in
-                    switch response.result {
-                    case .success:
-                        debugPrint(response)
-                        DispatchQueue.main.async {
-                            self.navigationController?.popToRootViewController(animated: true)
-                            // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
-                        }
-                    case let .failure(error):
-                        print(error)
-                    }
-                }
-            }
-            else {
-                print("post Board", parameters)
-                print("post image", images)
-                AF.upload(multipartFormData: { multipartFormData in
-                    for (key, value) in parameters {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-                    }
-                    for i in self.newImagesIdx..<images.count {
-                        multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-                    }
-                    print(multipartFormData)
-                }, to: API.BASE_URL + "boards", method: .post) // post
-                .validate(statusCode: 200..<500)
-                .responseData { response in
-                    switch response.result {
-                    case .success:
-                        debugPrint(response)
-                        DispatchQueue.main.async {
-                            self.navigationController?.popToRootViewController(animated: true)
-                            // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
-                        }
-                    case let .failure(error):
-                        print(error)
-                    }
-                }
-            }
-            
-        } else {
+        if !hasAllData() {
             print("Not has all value")
             let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the condition", preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
+            return
+        }
+        // 통신완료 후 pop root까지
+        // hostId 등록시 필요? >> userId와 hostId 같기때문 (나중에 한 클럽 모임당 host가 많을수도 있다.)
+        // hostId 받아올때만 필요하다.
+        print("buttonPressed buttonPressed", boardWithMode)
+        guard let userItem = try? KeychainManager.getUserItem(),
+              let title = boardWithMode.title,
+              let address = boardWithMode.address,
+              let longitute = boardWithMode.longitute,
+              let latitude = boardWithMode.latitude,
+              let date = boardWithMode.date,
+              let cityName = boardWithMode.cityName,
+              let introduction = boardWithMode.introduction,
+              let kindOfPerson = boardWithMode.kindOfPerson,
+              let totoalMember = boardWithMode.totalMember,
+              let categoryId = boardWithMode.categoryId
+        else {
+            print("edit gurad 실패")
+            return
+        }
+        
+        
+        let updateBoard = UpdateBoard(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardWithMode.boardId, hostId: userItem.userId, title: title, address: address, addressDetail: boardWithMode.addressDetail, longitute: longitute, latitude: latitude, date: date, notice: boardWithMode.notice, cityName: cityName, introduction: introduction, kindOfPerson: kindOfPerson, totalMember: totoalMember, categoryId: categoryId, deleteImageIds: boardWithMode.deleteImageIds, images: boardWithMode.uploadImages)
+
+        let urlRequestConvertible: BoardRouter
+        if boardWithMode.mode == .edit {
+            urlRequestConvertible = BoardRouter.updateBoard(parameters: updateBoard)
+        } else {
+            urlRequestConvertible = BoardRouter.createBoard(parameters: updateBoard)
+        }
+            
+        if let parameters = urlRequestConvertible.toDictionary {
+            print("Upload parameters", parameters)
+            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
+                for (key, value) in parameters {
+                    if let arrayValue = value as? [Any]  {
+                        if let images = arrayValue as? [UIImage] {
+                            for image in images {
+                                multipartFormData.append(image.toFile(format: .jpeg(0.7))!, withName: key, fileName: key + ".jpeg", mimeType: key + "/jpeg")
+                            }
+                        } else {
+                            for element in arrayValue {
+                                multipartFormData.append(Data("\(element)".utf8), withName: key)
+                            }
+                        }
+                    } else {
+                        if let image = value as? UIImage {
+                            multipartFormData.append(image.toFile(format: .jpeg(0.7))!, withName: key, fileName: key + ".jpeg", mimeType: key + "/jpeg")
+                        } else {
+                            multipartFormData.append(Data("\(value)".utf8), withName: key)
+                        }
+                    }
+                }
+            }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<BoardDetail>.self) { response in
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 201 || value.httpCode == 200 {
+                        print("Success - Upload User Images")
+                        guard let data = value.data else { return }
+                        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                            navigationController?.popToRootViewController(animated: true)
+                            NotificationCenter.default.post(name: NSNotification.Name("BoardDetailRefresh"), object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
+                        })
+//                        DispatchQueue.global(qos: .userInitiated).async { [self] in
+////                            userImagesData.imageIds = data.userImageIds
+////                            userImagesData.downloadImages = data.imageUrls
+////                            userImagesData.downloadProfileImage = data.profileImageUrl
+//                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+////                                imagesCollectionView.reloadData()
+////                                guard let profileImage = userImagesData.downloadProfileImage else { return }
+////                                delegate?.imagesSend(profileImage: profileImage)
+////                                navigationController?.popViewController(animated: true)
+//                                print("Update board반환된 값", data)
+//                                NotificationCenter.default.post(name: NSNotification.Name("BoardDetailRefresh"), object: data)
+//                                navigationController?.popToRootViewController(animated: true)
+//                            })
+//                        }
+                    }
+                case let .failure(error):
+                    print("SetProfileImagesVC - upload response result Not return", error)
+                }
+            }
         }
 
     }
@@ -476,54 +598,92 @@ class GatheringBoardContentViewController: UIViewController {
 //}
 
 extension GatheringBoardContentViewController: UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        collectionView.deselectItem(at: indexPath, animated: true)
+//        print("Tapped gatherging board collectionview image")
+//        guard let images = boardWithMode.images else { return }
+//        guard let mode = self.boardWithMode.mode else { return }
+//        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+//        if indexPath.row < images.count {
+//            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row, mode: mode)}
+//            alert.addAction(delete)
+//        } else {
+//            guard let imagePicker = self.imagePicker else { return }
+//            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in
+//                self.openLibrary(imagePicker) }
+//            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera(imagePicker) }
+//            alert.addAction(library)
+//            alert.addAction(camera)
+//        }
+//        alert.view.tintColor = UIColor.label
+//        alert.addAction(cancel)
+//        self.present(alert, animated: true, completion: nil)
+//    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.deselectItem(at: indexPath, animated: true)
-        print("Tapped gatherging board collectionview image")
-        guard let images = boardWithMode.images else { return }
-        guard let mode = self.boardWithMode.mode else { return }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-        if indexPath.row < images.count {
-            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row, mode: mode)}
+        if indexPath.row < boardWithMode.downloadImages.count + boardWithMode.uploadImages.count {
+            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
             alert.addAction(delete)
+            alert.addAction(cancel)
         } else {
-            guard let imagePicker = self.imagePicker else { return }
-            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in
-                self.openLibrary(imagePicker) }
-            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera(imagePicker) }
+            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary() }
+            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera() }
             alert.addAction(library)
             alert.addAction(camera)
+            alert.addAction(cancel)
         }
-        alert.view.tintColor = UIColor.label
-        alert.addAction(cancel)
-        self.present(alert, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 
 extension GatheringBoardContentViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 10
-        let imagesCnt = boardWithMode.images?.count ?? 0
+//        let imagesCnt = boardWithMode.images?.count ?? 0
+//        return imagesCnt < 5 ? (imagesCnt + 1) : 5
+        
+        let imagesCnt = boardWithMode.downloadImages.count + boardWithMode.uploadImages.count
         return imagesCnt < 5 ? (imagesCnt + 1) : 5
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
         print("ProfileImages indexpath update \(indexPath)")
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
-        
-        //
-        if indexPath.row < self.boardWithMode.images?.count ?? 0 {
-//            print("🏞Id", self.boardWithMode.imageIds?[indexPath.row])
-            print("boardWithMode", boardWithMode)
-            print("indexPath.row", indexPath.row)
-//            print("🏞Id", self.boardWithMode.images?[indexPath.row]) // 1
-            cell.configure(image: self.boardWithMode.images?[indexPath.row], imageId: self.boardWithMode.imageIds?[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
+        if indexPath.row < boardWithMode.downloadImages.count {
+            cell.configureDownload(imageString: boardWithMode.downloadImages[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+        } else if indexPath.row < boardWithMode.downloadImages.count + boardWithMode.uploadImages.count {
+            cell.configureUpload(image: boardWithMode.uploadImages[indexPath.row - boardWithMode.downloadImages.count], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
         } else {
-            cell.configure(image: UIImage(named: "imageNULL")?.withRenderingMode(.alwaysTemplate), imageId: nil, sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+            cell.configureNull(image: UIImage(named: "ImageNULL")?.withRenderingMode(.alwaysTemplate), sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
         }
         return cell
     }
+    
+    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+////        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath)
+//        print("ProfileImages indexpath update \(indexPath)")
+//        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
+//        
+//        //
+//        if indexPath.row < self.boardWithMode.images?.count ?? 0 {
+////            print("🏞Id", self.boardWithMode.imageIds?[indexPath.row])
+//            print("boardWithMode", boardWithMode)
+//            print("indexPath.row", indexPath.row)
+////            print("🏞Id", self.boardWithMode.images?[indexPath.row]) // 1
+//            
+//            // imageId 삭제함
+//            cell.configure(image: self.boardWithMode.images?[indexPath.row], imageId: self.boardWithMode.imageIds?[indexPath.row], sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+//        } else {
+//            cell.configure(image: UIImage(named: "imageNULL")?.withRenderingMode(.alwaysTemplate), imageId: nil, sequence: indexPath.row + 1, kind: Kind.boardSelectDetail)
+//        }
+//        return cell
+//    }
 }
 
 extension GatheringBoardContentViewController: UICollectionViewDelegateFlowLayout {
@@ -539,133 +699,228 @@ extension GatheringBoardContentViewController: UICollectionViewDelegateFlowLayou
 }
 
 extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func openLibrary(_ picker: UIImagePickerController) {
-        picker.sourceType = .photoLibrary
-        picker.allowsEditing = true
-//        if boardWithMode.images?.count ?? 0 == 0 {
-//            picker.allowsEditing = true
-//        } else {
-//            picker.allowsEditing = false
-//        }
-        DispatchQueue.main.async {
-            self.present(picker, animated: true, completion: nil)
+    
+    private func convertAssetsToImages(asstes: [PHAsset]) -> [UIImage] {
+        var images = [UIImage]()
+        let imageManager = PHImageManager.default()
+        let option = PHImageRequestOptions()
+        option.deliveryMode = .highQualityFormat
+        option.resizeMode = .exact
+        option.isSynchronous = true
+        option.isNetworkAccessAllowed = true
+        // CGSize(width: view.frame.size.width, height: view.frame.size.height)
+        for i in 0..<asstes.count {
+            imageManager.requestImage(for: asstes[i],
+                                      targetSize: CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2),
+                                      contentMode: .aspectFit,
+                                      options: option) { (result, info) in
+                if let image = result {
+                    images.append(image)
+//                    print("image and image size", image, image.size)
+//                    print("이미지 크기", image.toFile(format: .jpeg(1.0))!)
+//                    let resized = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height))
+//                    print("resized and resized size", resized, resized.size)
+//                    print("이미지 크기", resized.toFile(format: .jpeg(1.0))!)
+                }
+            }
+        }
+        return images
+    }
+    
+    private func openLibrary() {
+        let imagePicker = ImagePickerController()
+        imagePicker.settings.selection.max = 5 - boardWithMode.downloadImages.count - boardWithMode.uploadImages.count
+        imagePicker.settings.theme.selectionStyle = .numbered
+        imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
+        ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
+            print("Auth", Auth)
+            if Auth {
+                self.presentImagePicker(imagePicker, select: { (asset) in
+                    print("Selected: \(asset)")
+                }, deselect: { (asset) in
+                    print("Deselected: \(asset)")
+                }, cancel: { (assets) in
+                    print("Canceled with selections: \(assets)")
+                }, finish: { (assets) in
+                    print("Finished with selections: \(assets)")
+                    let appendImages = self.convertAssetsToImages(asstes: assets)
+                    self.boardWithMode.uploadImages.append(contentsOf: appendImages)
+                    self.imagesCollectionView.reloadData()
+                }, completion: {
+                    
+                })
+            } else {
+                DispatchQueue.main.async {
+                    self.setAuthAlertAction("Photo")
+                }
+            }
         }
     }
 
-    func openCamera(_ picker: UIImagePickerController) {
-        picker.sourceType = .camera
-        picker.allowsEditing = true
-//        if boardWithMode.images?.count ?? 0 == 0 {
-//            picker.allowsEditing = true
-//        } else {
-//            picker.allowsEditing = false
-//        }
+    private func openCamera() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .camera
         DispatchQueue.main.async {
-            self.present(picker, animated: true, completion: nil)
+            self.present(imagePicker, animated: true, completion: nil)
         }
     }
 
-    func deleteImage(_ index: Int, mode: Mode) {
-        if mode != .edit {
-            self.boardWithMode.images?.remove(at: index)
+    private func deleteImage(_ index: Int) {
+        if boardWithMode.imageIds.count - 1 >= index { // download된 이미지만 삭제
+            boardWithMode.deleteImageIds =  boardWithMode.deleteImageIds ?? []
+            let deletedImageId =  boardWithMode.imageIds.remove(at: index)
+            boardWithMode.deleteImageIds?.append(deletedImageId)
+            boardWithMode.downloadImages.remove(at: index)
+        } else {
+            boardWithMode.uploadImages.remove(at: index - boardWithMode.downloadImages.count)
+        }
+        DispatchQueue.main.async {
             self.imagesCollectionView.reloadData()
-            return
         }
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-        guard let boardId = boardWithMode.boardId else { return }
-        guard let cell = imagesCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MyImagesCollectionViewCell else {
-            print("Casting Failed imagesCollectionView.cellForItem ")
-            return
-        }
-        guard let imageId = cell.getImageID() else {
-            print("Get failed imageID of imagesCollectionView cell")
-            return
-        }
-        print("Deleted imageID", imageId)
-        self.deletedImageIds.append(imageId)
-        self.boardWithMode.imageIds?.remove(at: index)
-        self.boardWithMode.images?.remove(at: index)
-        self.newImagesIdx -= 1 // 기존 이미지에 삭제한 개수 카운트
-        self.imagesCollectionView.reloadData()
-//        let deleteBoardImageReq = DeleteBoardImageReq(boardId: boardId, boardImageId: imageId, refreshToken: userItem.refresh_token, userId: userItem.userId)
-//        AF.request(API.BASE_URL + "boards/boardimage",
-//                   method: .patch,
-//                   parameters: deleteBoardImageReq,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .response { response in // reponseData
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                if let data = response.data {
-//                    do{
-//                        self.boardWithMode.images?.remove(at: index)
-//                        self.boardWithMode.imageIds?.remove(at: index)
-//                        self.newImagesIdx -= 1 // 기존 이미지에 삭제한 개수 카운트
-//                        self.imagesCollectionView.reloadData()
-//                    }
-//                    catch{
-//                        print(error.localizedDescription)
-//                    }
-//                }
-//            case .failure(let error):
-//                debugPrint(response)
-//                print(error)
-//            }
-//        }
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        // action 각기 다르게
-//        if let img = info[UIImagePickerController.InfoKey.originalImage] {
-//            print("image pick")
-//            if let image = img as? UIImage {
-//                images.append(image)
-//            }
-//        }
-        
-        DispatchQueue.global(qos: .userInteractive).async {
-            var newImage: UIImage? = nil // update 할 이미지
-
-            if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-                newImage = img // 수정된 이미지
-                print("수정된 이미지", newImage)
-            }
-//            else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-//                newImage = img // 원본 이미지
-//                print("원본 이미지", newImage)
-//            }
-            guard let image = newImage else { return }
-            DispatchQueue.main.async(qos: .userInteractive) {
-                let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.width))
-                print("resize size", resizeImage.size)
-                self.boardWithMode.images?.append(resizeImage)
-                self.boardWithMode.imageIds?.append(-1)
-                self.dismiss(animated: true, completion: nil)
-                self.imagesCollectionView.reloadData()
-            }
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.width))
+            boardWithMode.uploadImages.append(resizeImage)
         }
-//        var newImage: UIImage? = nil // update 할 이미지
-//
-//        if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-//            newImage = img // 수정된 이미지
-//            print(newImage)
-//        } else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-//            newImage = img // 원본 이미지
-//            print(newImage)
-//        }
-//        guard let image = newImage else { return }
-//        let resizeImage = image.resize(targetSize: CGSize(width: view.frame.size.width, height: view.frame.size.width))
-//        boardWithMode.images?.append(resizeImage)
-//        boardWithMode.imageIds?.append(-1)
-//        print("Add 🌅", boardWithMode.images)
-//        print("boardWithMode.images?.append", boardWithMode.images)
-//        // tabbar notification get 요청
-//        DispatchQueue.main.async {
-//            self.imagesCollectionView.reloadData()
-//            self.dismiss(animated: true, completion: nil)
-//        }
+        DispatchQueue.main.async {
+            self.imagesCollectionView.reloadData()
+            self.dismiss(animated: true, completion: nil)
+        }
     }
+    
+//    func openLibrary(_ picker: UIImagePickerController) {
+//        picker.sourceType = .photoLibrary
+//        picker.allowsEditing = true
+////        if boardWithMode.images?.count ?? 0 == 0 {
+////            picker.allowsEditing = true
+////        } else {
+////            picker.allowsEditing = false
+////        }
+//        DispatchQueue.main.async {
+//            self.present(picker, animated: true, completion: nil)
+//        }
+//    }
+//
+//    func openCamera(_ picker: UIImagePickerController) {
+//        picker.sourceType = .camera
+//        picker.allowsEditing = true
+////        if boardWithMode.images?.count ?? 0 == 0 {
+////            picker.allowsEditing = true
+////        } else {
+////            picker.allowsEditing = false
+////        }
+//        DispatchQueue.main.async {
+//            self.present(picker, animated: true, completion: nil)
+//        }
+//    }
+
+//    func deleteImage(_ index: Int, mode: Mode) {
+////        if mode != .edit {
+////            self.boardWithMode.images?.remove(at: index)
+////            self.imagesCollectionView.reloadData()
+////            return
+////        }
+////        guard let userItem = try? KeychainManager.getUserItem() else { return }
+////        guard let boardId = boardWithMode.boardId else { return }
+////        guard let cell = imagesCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MyImagesCollectionViewCell else {
+////            print("Casting Failed imagesCollectionView.cellForItem ")
+////            return
+////        }
+////        guard let imageId = cell.getImageID() else {
+////            print("Get failed imageID of imagesCollectionView cell")
+////            return
+////        }
+////        print("Deleted imageID", imageId)
+////        self.deletedImageIds.append(imageId)
+////        self.boardWithMode.imageIds?.remove(at: index)
+////        self.boardWithMode.images?.remove(at: index)
+////        self.newImagesIdx -= 1 // 기존 이미지에 삭제한 개수 카운트
+////        self.imagesCollectionView.reloadData()
+//
+//
+//
+////        let deleteBoardImageReq = DeleteBoardImageReq(boardId: boardId, boardImageId: imageId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+////        AF.request(API.BASE_URL + "boards/boardimage",
+////                   method: .patch,
+////                   parameters: deleteBoardImageReq,
+////                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+////        .validate(statusCode: 200..<500)
+////        .response { response in // reponseData
+////            switch response.result {
+////            case .success:
+////                debugPrint(response)
+////                if let data = response.data {
+////                    do{
+////                        self.boardWithMode.images?.remove(at: index)
+////                        self.boardWithMode.imageIds?.remove(at: index)
+////                        self.newImagesIdx -= 1 // 기존 이미지에 삭제한 개수 카운트
+////                        self.imagesCollectionView.reloadData()
+////                    }
+////                    catch{
+////                        print(error.localizedDescription)
+////                    }
+////                }
+////            case .failure(let error):
+////                debugPrint(response)
+////                print(error)
+////            }
+////        }
+//    }
+
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//        // action 각기 다르게
+////        if let img = info[UIImagePickerController.InfoKey.originalImage] {
+////            print("image pick")
+////            if let image = img as? UIImage {
+////                images.append(image)
+////            }
+////        }
+//
+//        DispatchQueue.global(qos: .userInteractive).async {
+//            var newImage: UIImage? = nil // update 할 이미지
+//
+//            if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+//                newImage = img // 수정된 이미지
+//                print("수정된 이미지", newImage)
+//            }
+////            else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+////                newImage = img // 원본 이미지
+////                print("원본 이미지", newImage)
+////            }
+//            guard let image = newImage else { return }
+//            DispatchQueue.main.async(qos: .userInteractive) {
+//                let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.width))
+//                print("resize size", resizeImage.size)
+//                self.boardWithMode.images?.append(resizeImage)
+//                self.boardWithMode.imageIds?.append(-1)
+//                self.dismiss(animated: true, completion: nil)
+//                self.imagesCollectionView.reloadData()
+//            }
+//        }
+////        var newImage: UIImage? = nil // update 할 이미지
+////
+////        if let img = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+////            newImage = img // 수정된 이미지
+////            print(newImage)
+////        } else if let img = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+////            newImage = img // 원본 이미지
+////            print(newImage)
+////        }
+////        guard let image = newImage else { return }
+////        let resizeImage = image.resize(targetSize: CGSize(width: view.frame.size.width, height: view.frame.size.width))
+////        boardWithMode.images?.append(resizeImage)
+////        boardWithMode.imageIds?.append(-1)
+////        print("Add 🌅", boardWithMode.images)
+////        print("boardWithMode.images?.append", boardWithMode.images)
+////        // tabbar notification get 요청
+////        DispatchQueue.main.async {
+////            self.imagesCollectionView.reloadData()
+////            self.dismiss(animated: true, completion: nil)
+////        }
+//    }
 }
 
 
@@ -721,26 +976,37 @@ extension GatheringBoardContentViewController: UITextViewDelegate {
         }
         textViews[textView.tag].textCountLabel.text = "\(textView.text.count) / \(maxChar[textView.tag])"
         textViewCount[textView.tag] = textView.text.count
+//        switch textView.tag {
+//        case 0: boardWithMode.boardReq?.title = textView.text
+//        case 1: boardWithMode.boardReq?.introduction = textView.text
+//        case 2: boardWithMode.boardReq?.kindOfPerson = textView.text
+//        default: fatalError("Gathering board textview error")
+//        }
         switch textView.tag {
-        case 0: boardWithMode.boardReq?.title = textView.text
-        case 1: boardWithMode.boardReq?.introduction = textView.text
-        case 2: boardWithMode.boardReq?.kindOfPerson = textView.text
+        case 0: boardWithMode.title = textView.text
+        case 1: boardWithMode.introduction = textView.text
+        case 2: boardWithMode.kindOfPerson = textView.text
         default: fatalError("Gathering board textview error")
         }
     }
 }
 
-extension GatheringBoardContentViewController {
-    func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false // 해당 뷰컨의 뷰안에는 터치 못하게
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
+extension Notification.Name {
+    static let baordDetailRefresh = Notification.Name("BoardDetailRefresh")
 }
+
+
+//extension GatheringBoardContentViewController {
+//    func hideKeyboardWhenTappedAround() {
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        tap.cancelsTouchesInView = false // 해당 뷰컨의 뷰안에는 터치 못하게
+//        view.addGestureRecognizer(tap)
+//    }
+//
+//    @objc private func dismissKeyboard() {
+//        view.endEditing(true)
+//    }
+//}
 
 
 //extension UIViewController {

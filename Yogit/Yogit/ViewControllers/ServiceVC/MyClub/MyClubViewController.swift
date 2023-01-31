@@ -192,7 +192,8 @@ extension MyClubViewController: UICollectionViewDelegate {
     
         DispatchQueue.main.async {
             let GDBVC = GatheringDetailBoardViewController()
-            GDBVC.boardId = boardId
+            GDBVC.boardWithMode.boardId = boardId
+//            GDBVC.boardId = boardId
             self.navigationController?.pushViewController(GDBVC, animated: true)
         }
         

@@ -41,7 +41,11 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
     }
 
-    func configure(image: UIImage?) {
-        imageView.image = image
+    func configure(imageString: String) {
+        imageView.setImage(with: imageString)
     }
+    
+//    func configure(image: UIImage?) {
+//        imageView.image = image
+//    }
 }

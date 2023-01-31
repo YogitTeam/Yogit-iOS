@@ -217,51 +217,12 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with board: Board) {
-        Task(priority: .high) {
-            async let boardImage = board.imageURL.urlToImage()
-            async let hostImage = board.profileImgURL.urlToImage()
-            boardImageView.image = await boardImage
-            hostImageView.image = await hostImage
-            titleLabel.text = board.title
-            if let changeDate = board.date.stringToDate()?.dateToStringUser() {
-                dateLabel.text = changeDate
-            }
-            cityLabel.text = board.cityName// "Seoul"
-            memberNumberLabel.text = ""
-        }
-//        DispatchQueue.main.async(qos: .userInteractive) {
-//            self.titleLabel.text = board.title
-//            if let changeDate = board.date.stringToDate()?.dateToStringUser() {
-//                self.dateLabel.text = changeDate
-//            }
-//            self.cityLabel.text = board.cityName// "Seoul"
-//            self.memberNumberLabel.text = ""
-//        }
-        
-//        DispatchQueue.global().async {
-//            var boardImage: UIImage?
-//            var hostImage: UIImage?
-//            print(board.imageURL)
-//            board.imageURL.urlToImage { (image) in
-//                guard let image = image else { return }
-//                boardImage = image
-//            }
-//            board.profileImgURL.urlToImage { (image) in
-//                guard let image = image else {
-//                    return
-//                }
-//                hostImage = image
-//            }
-//            DispatchQueue.main.async() {
-//                self.boardImageView.image = boardImage
-//                self.hostImageView.image = hostImage
-//                guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString()
-//                self.titleLabel.text = board.title
-//                self.dateLabel.text = changeDate
-//                self.cityLabel.text = board.cityName// "Seoul"
-//                self.memberNumberLabel.text = "" // "\(board.currentMember) / \(board.totalMember)"
-//            }
-//        }
+        boardImageView.setImage(with: board.imageURL)
+        hostImageView.setImage(with: board.profileImgURL)
+        titleLabel.text = board.title
+        dateLabel.text = board.date.stringToDate()?.dateToStringUser()
+        cityLabel.text = board.cityName
+        memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
     }
 }
 

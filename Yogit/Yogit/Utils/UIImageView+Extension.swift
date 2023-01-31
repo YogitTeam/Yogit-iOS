@@ -19,6 +19,7 @@ extension UIImageView {
                         guard let url = URL(string: urlString) else { return }
                         let resource = ImageResource(downloadURL: url, cacheKey: urlString)
         //                  self.kf.setImage(with: resource)
+//                        self.kf.indicatorType = .activity
                         self.kf.setImage(
                             with: resource,
                             placeholder: nil,

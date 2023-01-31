@@ -30,10 +30,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        
+        let deviceTokenString = deviceToken.map { String(format: "%02x", $0) }.joined()
+        print("Device token", deviceTokenString)
+        // 디바이스 토큰 없으면 api 요청
+        sendDeviceToken(deviceToken: deviceTokenString)
+    }
+    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("application-didReceiveRemoteNotification")
         // 앱 종료후에도 노티를 탭하여 실행할때
     }
+    
+    private func sendDeviceToken(deviceToken: String) {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        let sendDeviceTokenReq = SendDeviceTokenReq(deviceToken: deviceToken, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        AlamofireManager.shared.session
+            .request(PushNotificationRouter.sendDeviceToken(parameters: sendDeviceTokenReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<SendDeviceTokenRes>.self) { response in
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        guard let data = value.data else { return }
+                        let deviceToken = data.deviceToken
+                        UserDefaults.standard.set(deviceToken, forKey: Preferences.PUSH_NOTIFICATION)
+                        print("UserDefaults Preferences.PUSH_NOTIFICATION",UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION))
+                    }
+                case let .failure(error):
+                    print(error)
+                }
+            }
+    }
+    
+//    private func saveUserLanguage() {
+//        guard let languageIdentifier = Locale.preferredLanguages.first else { return } // ko-KR
+//        UserDefaults.standard.set(languageIdentifier, forKey: LocalizedLanguage.LANGUAGE)
+//    }
+    
+//    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        print("application-didReceiveRemoteNotification")
+//        // 앱 종료후에도 노티를 탭하여 실행할때
+//    }
     
     // MARK: UISceneSession Lifecycle
 

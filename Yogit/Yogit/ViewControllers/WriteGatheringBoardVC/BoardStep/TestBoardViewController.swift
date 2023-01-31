@@ -9,9 +9,9 @@ import UIKit
 
 class TestBoardViewController: UIViewController {
 
-    let step = 2.0
-    let stepHeaderView = StepHeaderView()
-    var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
+    private let step = 2.0
+    private let stepHeaderView = StepHeaderView()
+    private var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
     private let placeholderData = ["Number of member including host", "2022.08.31 14:00", "MeetUp place", "Ex) Gangnam station 3 exit (option)"]
 //    var mode: Mode? {
 //        didSet {
@@ -29,13 +29,22 @@ class TestBoardViewController: UIViewController {
 //
 //    var images: [UIImage] = []
     
-    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
+    
+    
+//    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
+//        didSet {
+//            print("boardWitMode2", boardWithMode)
+//            DispatchQueue.main.async {
+//                self.hasAllData()
+//                print(self.boardWithMode)
+//            }
+//        }
+//    }
+    
+    var boardWithMode = BoardWithMode() {
         didSet {
-            print("boardWitMode2", boardWithMode)
-            DispatchQueue.main.async { 
-                self.hasAllData()
-                print(self.boardWithMode)
-            }
+            print("boardWithMode", boardWithMode.date)
+            self.hasAllData()
         }
     }
     
@@ -47,6 +56,7 @@ class TestBoardViewController: UIViewController {
     
     private let numberPickerView: UIPickerView = {
         let pickerView = UIPickerView()
+        pickerView.translatesAutoresizingMaskIntoConstraints = false
         return pickerView
     }()
     
@@ -55,16 +65,20 @@ class TestBoardViewController: UIViewController {
       let datePicker = UIDatePicker(frame: .zero)
 //      datePicker.timeZone = TimeZone.current
         datePicker.datePickerMode = .dateAndTime
+        datePicker.timeZone = TimeZone(identifier: "UTC")
         datePicker.locale = Locale(identifier: "en") // Need localized
 //        datePicker.addTarget(self, action: #selector(dateChanged(datePikcer:)), for: .valueChanged)
         datePicker.frame.size = CGSize(width: 0, height: 300)
         datePicker.preferredDatePickerStyle = .wheels
+        datePicker.backgroundColor = .systemBackground
       return datePicker
     }()
     
     private lazy var pickerViewToolBar: UIToolbar = {
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
+        toolBar.backgroundColor = .systemBackground
+        toolBar.translatesAutoresizingMaskIntoConstraints = false
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPressed))
@@ -77,6 +91,8 @@ class TestBoardViewController: UIViewController {
     private lazy var datePickerToolBar: UIToolbar = {
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
+        toolBar.backgroundColor = .systemBackground
+        toolBar.translatesAutoresizingMaskIntoConstraints = false
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone))
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPressed))
@@ -232,6 +248,7 @@ class TestBoardViewController: UIViewController {
         stepHeaderView.titleLabel.text = "Setting"
     }
     
+    
     private func configureTextField() {
         memberTextField.delegate = self
         dateTextField.delegate = self
@@ -261,6 +278,10 @@ class TestBoardViewController: UIViewController {
         headerView[2].contentNameLabel.text = "Location"
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
     @objc func searchPlaceTapped(_ sender: UITapGestureRecognizer) {
         print("searchPlaceTapped")
         DispatchQueue.main.async {
@@ -287,35 +308,65 @@ class TestBoardViewController: UIViewController {
 //        return formatter.string(from: date) // 보여줄 데이터
 //    }
     
+//    private func hasAllData() {
+//        if self.boardWithMode.boardReq?.totalMember != nil && self.boardWithMode.boardReq?.date != nil && self.boardWithMode.boardReq?.latitude != nil && self.boardWithMode.boardReq?.longitute != nil && self.boardWithMode.boardReq?.cityName != nil && self.boardWithMode.boardReq?.address != nil {
+//            self.nextButton.isEnabled = true
+//            self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//            print("Has all data")
+//        } else {
+//            print("Not has all data")
+//            self.nextButton.isEnabled = false
+//            self.nextButton.backgroundColor = .placeholderText
+//        }
+//    }
+    
     private func hasAllData() {
-        if self.boardWithMode.boardReq?.totalMember != nil && self.boardWithMode.boardReq?.date != nil && self.boardWithMode.boardReq?.latitude != nil && self.boardWithMode.boardReq?.longitute != nil && self.boardWithMode.boardReq?.cityName != nil && self.boardWithMode.boardReq?.address != nil {
-            self.nextButton.isEnabled = true
-            self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        if boardWithMode.totalMember != nil && boardWithMode.date != nil && boardWithMode.latitude != nil && boardWithMode.longitute != nil && boardWithMode.cityName != nil && boardWithMode.address != nil {
+            nextButton.isEnabled = true
+            nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
             print("Has all data")
         } else {
             print("Not has all data")
-            self.nextButton.isEnabled = false
-            self.nextButton.backgroundColor = .placeholderText
+            nextButton.isEnabled = false
+            nextButton.backgroundColor = .placeholderText
         }
     }
+    
+//    private func viewGetValues(mode: Mode?) {
+//        if mode != .edit { return }
+//        guard let memberNumber = boardWithMode.boardReq?.totalMember else { return }
+//        self.memberTextField.text = String(memberNumber)
+//        self.dateTextField.text = boardWithMode.boardReq?.date?.stringToDate()?.dateToStringUser()
+//        self.placeTextField.text = boardWithMode.boardReq?.address
+//        if boardWithMode.boardReq?.address != nil {
+//            self.placeDetailTextField.text = boardWithMode.boardReq?.addressDetail
+//            self.placeDetailTextField.isHidden = false
+//        }
+//    }
     
     private func viewGetValues(mode: Mode?) {
         if mode != .edit { return }
-        guard let memberNumber = boardWithMode.boardReq?.totalMember else { return }
-        self.memberTextField.text = String(memberNumber)
-        self.dateTextField.text = boardWithMode.boardReq?.date?.stringToDate()?.dateToStringUser()
-        self.placeTextField.text = boardWithMode.boardReq?.address
-        if boardWithMode.boardReq?.address != nil {
-            self.placeDetailTextField.text = boardWithMode.boardReq?.addressDetail
-            self.placeDetailTextField.isHidden = false
+        guard let memberNumber = boardWithMode.totalMember else { return }
+        memberTextField.text = String(memberNumber)
+        dateTextField.text = boardWithMode.date?.stringToDate()?.dateToStringUser()
+        placeTextField.text = boardWithMode.address
+        if boardWithMode.address != nil {
+            placeDetailTextField.text = boardWithMode.addressDetail
+            placeDetailTextField.isHidden = false
         }
     }
     
+//    @objc func dateDone(_ sender: UIButton) {
+////        self.meetDate = formatDate(date: self.datePicker.date)
+//        self.boardWithMode.boardReq?.date = self.datePicker.date.dateToStringAPI()
+//        self.dateTextField.text = self.datePicker.date.dateToStringUser() //self.meetDate
+//        self.view.endEditing(true)
+//    }
+    
     @objc func dateDone(_ sender: UIButton) {
-//        self.meetDate = formatDate(date: self.datePicker.date)
-        self.boardWithMode.boardReq?.date = self.datePicker.date.dateToStringAPI()
-        self.dateTextField.text = self.datePicker.date.dateToStringUser() //self.meetDate
-        self.view.endEditing(true)
+        boardWithMode.date = datePicker.date.dateToStringAPI()
+        dateTextField.text = datePicker.date.dateToStringUser() //self.meetDate
+        view.endEditing(true)
     }
     
     @objc func nextButtonTapped(_ sender: UIButton) {
@@ -329,11 +380,20 @@ class TestBoardViewController: UIViewController {
         }
     }
     
+//    @objc func donePressed(_ sender: UIButton) {
+//        boardWithMode.boardReq?.totalMember = self.totalNumber
+//        guard let boardReq = boardWithMode.boardReq else { return }
+//        guard let memberNumber = boardReq.totalMember else { return }
+//        self.memberTextField.text = String(memberNumber)
+//        self.view.endEditing(true)
+//    }
+    
     @objc func donePressed(_ sender: UIButton) {
-        boardWithMode.boardReq?.totalMember = self.totalNumber
-        guard let boardReq = boardWithMode.boardReq else { return }
-        guard let memberNumber = boardReq.totalMember else { return }
-        self.memberTextField.text = String(memberNumber)
+        boardWithMode.totalMember = totalNumber
+//        guard let boardReq = boardWithMode.boardReq else { return }
+//        guard let memberNumber = boardReq.totalMember else { return }
+//        guard let memberNumber = boardWithMode.totalMember else { return }
+        self.memberTextField.text = String(totalNumber)
         self.view.endEditing(true)
     }
     
@@ -369,8 +429,14 @@ extension TestBoardViewController: UIPickerViewDelegate {
 }
 
 extension TestBoardViewController: UITextFieldDelegate {
+//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        boardWithMode.boardReq?.addressDetail = textField.text
+//        textField.resignFirstResponder()
+//        return true
+//    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        boardWithMode.boardReq?.addressDetail = textField.text
+        boardWithMode.addressDetail = textField.text
         textField.resignFirstResponder()
         return true
     }
@@ -384,12 +450,21 @@ extension TestBoardViewController: UITextFieldDelegate {
 }
 
 extension TestBoardViewController: MeetUpPlaceProtocol {
+//    func locationSend(meetUpPlace: MeetUpPlace?) {
+//        self.boardWithMode.boardReq?.address = meetUpPlace?.address
+//        self.boardWithMode.boardReq?.latitude = meetUpPlace?.latitude
+//        self.boardWithMode.boardReq?.longitute = meetUpPlace?.longitude
+//        self.boardWithMode.boardReq?.cityName = meetUpPlace?.city
+//        placeTextField.text = self.boardWithMode.boardReq?.address
+//        placeDetailTextField.isHidden = false
+//    }
+    
     func locationSend(meetUpPlace: MeetUpPlace?) {
-        self.boardWithMode.boardReq?.address = meetUpPlace?.address
-        self.boardWithMode.boardReq?.latitude = meetUpPlace?.latitude
-        self.boardWithMode.boardReq?.longitute = meetUpPlace?.longitude
-        self.boardWithMode.boardReq?.cityName = meetUpPlace?.city
-        placeTextField.text = self.boardWithMode.boardReq?.address
+        boardWithMode.address = meetUpPlace?.address
+        boardWithMode.latitude = meetUpPlace?.latitude
+        boardWithMode.longitute = meetUpPlace?.longitude
+        boardWithMode.cityName = meetUpPlace?.city
+        placeTextField.text = meetUpPlace?.address
         placeDetailTextField.isHidden = false
     }
 }

@@ -43,7 +43,7 @@ class SetProfileTableViewCell: UITableViewCell {
     let subLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.light)
+        label.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.medium)
         label.isHidden = true
         label.sizeToFit()
         label.numberOfLines = 1
@@ -104,7 +104,8 @@ class SetProfileTableViewCell: UITableViewCell {
         
         
         textStackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.leading.equalToSuperview().inset(20)
+            $0.trailing.equalTo(rightButton.snp.leading)
             $0.top.bottom.equalToSuperview().inset(4)
         }
         
@@ -113,10 +114,11 @@ class SetProfileTableViewCell: UITableViewCell {
             make.leading.equalToSuperview() // .inset(20)
             make.trailing.equalToSuperview() // .inset(20)
         }
+        
         rightButton.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.width.equalTo(44)
-            make.trailing.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(10)
         }
     }
     
@@ -150,12 +152,12 @@ class SetProfileTableViewCell: UITableViewCell {
     }
     
     // cell content update
-    func configure(text: String?, image: UIImage?, section: Int) {
+    func configure(text: String?, section: Int) {
         commonTextField.text = text
+        commonTextField.placeholder = ProfileSectionData(rawValue: section)?.placeHolder()
         switch section {
-        case ProfileSectionData.name.rawValue:
-            commonTextField.isEnabled = true
-            commonTextField.tintColor = UIColor(rgb: 0x3246FF, alpha: 1.0)
+        case ProfileSectionData.name.rawValue: 
+            rightButton.isHidden = false
         case ProfileSectionData.age.rawValue:
             commonTextField.isEnabled = true
         case ProfileSectionData.languages.rawValue:
@@ -163,10 +165,9 @@ class SetProfileTableViewCell: UITableViewCell {
             subLabel.isHidden = false
             subLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.light)
             if text != nil { rightButton.isEnabled = true }
-        case ProfileSectionData.gender.rawValue: commonTextField.isEnabled = true
-        case ProfileSectionData.nationality.rawValue:
+        case ProfileSectionData.nationality.rawValue, ProfileSectionData.job.rawValue, ProfileSectionData.aboutMe.rawValue:
             rightButton.isHidden = false
-            commonTextField.addLeftImage(image: image)
+        case ProfileSectionData.gender.rawValue: commonTextField.isEnabled = true
         default: fatalError("Out of section index SetUpProfileTableVeiwCell")
         }
     }
@@ -180,6 +181,7 @@ class SetProfileTableViewCell: UITableViewCell {
 //                              width: bounds.width,
 //                              height: width)
         border.frame = CGRect(x: 20, y: self.frame.size.height - width, width: self.frame.size.width - 40, height:width)
+//        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width - 0, height:width)
         self.layer.addSublayer(border)
         self.borderLayer = border
     }

@@ -7,21 +7,22 @@
 
 import UIKit
 import SnapKit
-import Alamofire
 
-class SearchProfileViewController: UIViewController {
+class GetProfileViewController: UIViewController {
     // profile
     // profile image >> pagecontrol
     
-    var otherUserId: Int64?
+    var getUserId: Int64?
     
-    private var essentialProfile = UserProfile()
+    private var setUserProfile = UserProfile()
+    
+    private var profileImages = [String]()
     
     private var languagesInfo: String = ""
     
     private let lanuageLabel: UILabel = {
         let label = UILabel()
-        label.text = "Language Label"
+        label.text = "Languages"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.semibold)
@@ -69,12 +70,14 @@ class SearchProfileViewController: UIViewController {
     
     private let footerView1: UIView = {
         let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
         return view
     }()
 
     private let footerView2: UIView = {
         let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
         return view
     }()
@@ -95,7 +98,7 @@ class SearchProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.medium)
-        label.text = "Select photos"
+//        label.text = "Select photos"
         label.numberOfLines = 1
         return label
     }()
@@ -107,7 +110,7 @@ class SearchProfileViewController: UIViewController {
         stackView.axis = .vertical
         stackView.spacing = 10
         stackView.backgroundColor = .systemBackground
-        [self.profileImageView, self.profileImageLabel].forEach { stackView.addArrangedSubview($0) }
+        [profileImageView, profileImageLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
     
@@ -120,16 +123,15 @@ class SearchProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(profileContentView)
-        view.addSubview(footerView1)
-        view.addSubview(lanuageLabel)
-        view.addSubview(profileLanguagesLabel)
-        view.addSubview(footerView2)
-        view.addSubview(aboutMeLabel)
-        view.addSubview(aboutMe)
-        getProfile()
+        [profileContentView,
+         footerView1,
+         lanuageLabel,
+         profileLanguagesLabel,
+         footerView2,
+         aboutMeLabel,
+         aboutMe].forEach { view.addSubview($0) }
         configureViewComponent()
-        // Do any additional setup after loading the view.
+        getUserProfile()
     }
     
     override func viewDidLayoutSubviews() {
@@ -180,7 +182,6 @@ class SearchProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         initNavigationBar()
-//        getProfile()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -194,25 +195,27 @@ class SearchProfileViewController: UIViewController {
     
     private func initNavigationBar() {
         self.tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue)
-        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
-        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
-        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        spacer.width = 15
-        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
+        if getUserId == nil { // 상대방 조회 없을때
+            let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
+            let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
+            let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+            spacer.width = 15
+            self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
+        }
     }
     
-    @objc func editButtonTapped(_ sender: UIButton) {
-
+    @objc private func editButtonTapped(_ sender: UIButton) {
         print("editButtonTapped")
-//        DispatchQueue.main.async {
-//            let SPVC = SetProfileViewController()
-//            SPVC.userProfile = self.essentialProfile
-//            SPVC.profileImage = self.profileImageView.image
-//            self.navigationController?.pushViewController(SPVC, animated: true)
-//        }
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
+            let SPVC = SetProfileViewController()
+            SPVC.mode = .edit
+            SPVC.userProfile = self.setUserProfile
+            SPVC.userProfileImage = self.profileImages.first
+            self.navigationController?.pushViewController(SPVC, animated: true)
+        })
     }
     
-    @objc func settingButtonTapped(_ sender: UIButton) {
+    @objc private func settingButtonTapped(_ sender: UIButton) {
         print("settingButtonTapped")
         DispatchQueue.main.async {
             let SPVC = SettingProfileViewController()
@@ -220,66 +223,105 @@ class SearchProfileViewController: UIViewController {
         }
     }
     
-    func getProfile() {
+    private func getUserProfile() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
-        if self.otherUserId == nil {
-            self.otherUserId = userItem.userId
+        let userId: Int64
+        if let getUserId = getUserId {
+            userId = getUserId
+        } else {
+            userId = userItem.userId
         }
-        guard let userId = self.otherUserId else { return }
         let getUserProfile = GetUserProfile(refreshToken: userItem.refresh_token, refreshTokenUserId: userItem.userId, userId: userId)
-        print("refeshID userId", userItem.userId, userId)
-//        URLEncodedFormParameterEncoder(destination: .httpBody)
-//         JSONParameterEncoder.default
-        AF.request(API.BASE_URL + "users/profile",
-                   method: .post,
-                   parameters: getUserProfile,
-                   encoder:  URLEncodedFormParameterEncoder(destination: .httpBody)) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .response { response in // reponseData
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                guard let data = response.data else { return }
-                do{
-                    let decodedData = try JSONDecoder().decode(APIResponse<ServiceUserProfile>.self, from: data)
-                    print(decodedData.data)
-                    if let data = decodedData.data {
-
-                        var getImage: UIImage?
-                        DispatchQueue.global().async {
-                            guard let imageUrl = decodedData.data?.profileImg else { return }
-                            imageUrl.urlToImage { (image) in
-                                guard let image = image else { return }
-                                getImage = image
-                            }
-                            let langCnt = decodedData.data?.languageNames.count ?? 0
-                            
-                            // 변경 필요 계속 추가됨
+        print("refeshUserId, searchUserId", userItem.userId, userId)
+        AlamofireManager.shared.session
+            .request(ProfileRouter.readProfile(parameters: getUserProfile))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        guard let data = value.data else { return }
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            let langCnt = data.languageNames.count
+                            var langInfos: String = ""
                             for i in 0..<langCnt {
-                                self.languagesInfo += "\(decodedData.data?.languageNames[i] ?? "") (\(decodedData.data?.languageLevels[i] ?? ""))\n"
+                                langInfos += "\(data.languageNames[i]) (\(data.languageLevels[i])), "
                             }
-                            DispatchQueue.main.async {
-                                self.profileImageView.image = getImage // 따로 넣어줌
-                                self.profileImageLabel.text = data.name
-                                self.profileLanguagesLabel.text = self.languagesInfo
-                                self.essentialProfile.userName = data.name
-                                self.essentialProfile.nationality = data.nationality
-                                self.essentialProfile.userAge = data.age
-                                self.essentialProfile.gender = data.gender
-                                self.essentialProfile.languageNames = data.languageNames
-                                self.essentialProfile.languageLevels = data.languageLevels
-                            }
+                            
+                            langInfos.removeLast()
+                            langInfos.removeLast()
+                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                                profileImageView.setImage(with: data.profileImg)
+                                profileImageLabel.text = data.name
+                                profileLanguagesLabel.text = langInfos
+                                profileImages = data.imageUrls
+                            })
+                            self.setUserProfile.userName = data.name
+                            self.setUserProfile.nationality = data.nationality
+                            self.setUserProfile.userAge = data.age
+                            self.setUserProfile.gender = data.gender
+                            self.setUserProfile.languageNames = data.languageNames
+                            self.setUserProfile.languageLevels = data.languageLevels
+                            self.setUserProfile.job = data.job
+                            self.setUserProfile.aboutMe = data.aboutMe
                         }
                     }
+                case let .failure(error):
+                    print("SearchProfileVC - upload response result Not return", error)
                 }
-                catch{
-                    print(error.localizedDescription)
-                }
-            case .failure(let error):
-                debugPrint(response)
-                print(error)
             }
-        }
+        
+//        AF.request(API.BASE_URL + "users/profile",
+//                   method: .post,
+//                   parameters: getUserProfile,
+//                   encoder:  URLEncodedFormParameterEncoder(destination: .httpBody)) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .response { response in // reponseData
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                guard let data = response.data else { return }
+//                do{
+//                    let decodedData = try JSONDecoder().decode(APIResponse<ServiceUserProfile>.self, from: data)
+//                    print(decodedData.data)
+//                    if let data = decodedData.data {
+//
+//                        var getImage: UIImage?
+//                        DispatchQueue.global().async {
+//                            guard let imageUrl = decodedData.data?.profileImg else { return }
+//                            imageUrl.urlToImage { (image) in
+//                                guard let image = image else { return }
+//                                getImage = image
+//                            }
+//                            let langCnt = decodedData.data?.languageNames.count ?? 0
+//
+//                            // 변경 필요 계속 추가됨
+//                            for i in 0..<langCnt {
+//                                self.languagesInfo += "\(decodedData.data?.languageNames[i] ?? "") (\(decodedData.data?.languageLevels[i] ?? ""))\n"
+//                            }
+//                            DispatchQueue.main.async {
+//                                self.profileImageView.image = getImage // 따로 넣어줌
+//                                self.profileImageLabel.text = data.name
+//                                self.profileLanguagesLabel.text = self.languagesInfo
+//                                self.essentialProfile.userName = data.name
+//                                self.essentialProfile.nationality = data.nationality
+//                                self.essentialProfile.userAge = data.age
+//                                self.essentialProfile.gender = data.gender
+//                                self.essentialProfile.languageNames = data.languageNames
+//                                self.essentialProfile.languageLevels = data.languageLevels
+//                            }
+//                        }
+//                    }
+//                }
+//                catch{
+//                    print(error.localizedDescription)
+//                }
+//            case .failure(let error):
+//                debugPrint(response)
+//                print(error)
+//            }
+//        }
 //        AF.request(API.BASE_URL + "users/profile",
 //                   method: .get,
 //                   parameters: nil,
@@ -337,10 +379,10 @@ class SearchProfileViewController: UIViewController {
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async(execute: {
-            let SPIVC = SearchProfileImagesViewController()
-            SPIVC.modalPresentationStyle = .fullScreen
-            self.present(SPIVC, animated: true)
-//            self.navigationController?.pushViewController(SPIVC, animated: true)
+            let GPIVC = GetProfileImagesViewController()
+            GPIVC.profileImages = self.profileImages
+            GPIVC.modalPresentationStyle = .fullScreen
+            self.present(GPIVC, animated: true)
         })
     }
     
