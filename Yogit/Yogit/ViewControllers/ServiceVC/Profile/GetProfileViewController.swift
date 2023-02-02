@@ -245,12 +245,28 @@ class GetProfileViewController: UIViewController {
                         DispatchQueue.global(qos: .userInitiated).async {
                             let langCnt = data.languageNames.count
                             var langInfos: String = ""
+                            guard let localeIdentifier = Locale.preferredLanguages.first else { return }
                             for i in 0..<langCnt {
-                                langInfos += "\(data.languageNames[i]) (\(data.languageLevels[i])), "
+                                let code = data.languageNames[i]
+                                let localizedLocale = Locale(identifier: localeIdentifier)
+                                let originLocale = Locale(identifier: code)
+                                if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
+                                    if localizedLanguage == originLanguage {
+                                        langInfos += "\(localizedLanguage), "
+                                    } else {
+                                        langInfos += "\(localizedLanguage) (\(originLanguage)), "
+                                    }
+                                }
                             }
+                            langInfos.removeLast(2)
                             
-                            langInfos.removeLast()
-                            langInfos.removeLast()
+                                // 국가
+//                            let code = data.nationality
+//                            let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
+//                            let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
+//                            let flag = code.emojiFlag
+                            // 노출될 값 flag + " " + countryName
+                           
                             DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                                 profileImageView.setImage(with: data.profileImg)
                                 profileImageLabel.text = data.name

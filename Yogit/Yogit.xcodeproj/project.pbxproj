@@ -86,6 +86,7 @@
 		7962CEF829407B8E007FCC10 /* YourClipBoardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF729407B8E007FCC10 /* YourClipBoardTableViewCell.swift */; };
 		7962CEFA29408285007FCC10 /* APIClipBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF929408285007FCC10 /* APIClipBoard.swift */; };
 		797302462988FFBC006EFFB9 /* AlertTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302452988FFBC006EFFB9 /* AlertTestViewController.swift */; };
+		79730248298953DB006EFFB9 /* BoardUserRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79730247298953DB006EFFB9 /* BoardUserRouter.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -226,6 +227,7 @@
 		7962CEF729407B8E007FCC10 /* YourClipBoardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourClipBoardTableViewCell.swift; sourceTree = "<group>"; };
 		7962CEF929408285007FCC10 /* APIClipBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClipBoard.swift; sourceTree = "<group>"; };
 		797302452988FFBC006EFFB9 /* AlertTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTestViewController.swift; sourceTree = "<group>"; };
+		79730247298953DB006EFFB9 /* BoardUserRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardUserRouter.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -420,6 +422,7 @@
 				792A11DA2962D73700F67094 /* ClipBoardRouter.swift */,
 				7953ED29297025A2003ACB27 /* ProfileRouter.swift */,
 				79D28AC6297E4AB200F4FD64 /* BoardRouter.swift */,
+				79730247298953DB006EFFB9 /* BoardUserRouter.swift */,
 				79D28ACE29801B2800F4FD64 /* ReportRouter.swift */,
 				79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */,
 				79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */,
@@ -969,6 +972,7 @@
 				792A11C1295C23E200F67094 /* BasicAudioController.swift in Sources */,
 				79D28AD12981EA4D00F4FD64 /* SessionRouter.swift in Sources */,
 				79F0227328F7E61B007D59B8 /* SetProfileImagesViewController.swift in Sources */,
+				79730248298953DB006EFFB9 /* BoardUserRouter.swift in Sources */,
 				791C1E98292D3C9200623936 /* BoardMainCollectionTableViewCell.swift in Sources */,
 				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,

@@ -197,7 +197,8 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
         guard let type = notification.request.content.userInfo["pushType"] as? String else { return }
         let alarmData = Alarm(type: type, title: title, body: body, id: id)
         receivePushNotificationData(alarm: alarmData)
-        completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
+        // foreground 앱 알리는 형태
+//        completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
     }
     
     // 앱 원격 상태일때
@@ -215,7 +216,6 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
             self.navigationController?.popToRootViewController(animated: true)
             self.selectedIndex = 3
         }
-        completionHandler()
     }
     
     func receivePushNotificationData(alarm: Alarm) {

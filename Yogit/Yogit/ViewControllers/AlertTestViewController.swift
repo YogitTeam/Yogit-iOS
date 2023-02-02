@@ -31,22 +31,24 @@ class AlertTestViewController: UIViewController {
         return button
     }()
 
-    lazy var bulletinManager: BLTNItemManager = {
-        
-        let item = BLTNPageItem(title: "Apply group")
+    private lazy var bulletinManager: BLTNItemManager = {
+        let bltncCV = BLTNContainerView()
+        let item = BLTNPageItem(title: "Join the gathering")
         item.image = "👋".stringToImage(width: 100, height: 100)//UIImage(named: "pro1")
+        
 //        item.imageAccessibilityLabel = "👋"
-        item.actionButtonTitle = "Apply"
-        item.alternativeButtonTitle = "Cancel"
-        item.descriptionText = "Would you want to join this group?"
-        item.appearance.actionButtonColor = .blue
-        item.appearance.alternativeButtonTitleColor = .gray
+//        item.descriptionLabel?.text = "Join the gathering"
+        item.actionButtonTitle = "Join"
+//        item.alternativeButtonTitle = "Cancel"
+        item.descriptionText = "Would you want to join the gathering?"
+        item.appearance.actionButtonColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        item.appearance.alternativeButtonTitleColor = .gray
         item.actionHandler = { _ in
-            self.didTapped()
+            print("Tap join")
         }
-        item.alternativeHandler = { _ in
-            print("Tap alter ")
-        }
+//        item.alternativeHandler = { _ in
+//            print("Tap alter ")
+//        }
         return BLTNItemManager(rootItem: item)
     }()
     

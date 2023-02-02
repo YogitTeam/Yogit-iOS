@@ -43,7 +43,7 @@ struct DeleteBoardReq: Encodable {
     }
 }
 
-struct ApplyGathering: Encodable {
+struct BoardUserReq: Encodable {
     let boardId: Int64
     let refreshToken: String
     let userId: Int64
@@ -52,6 +52,20 @@ struct ApplyGathering: Encodable {
         self.boardId = boardId
         self.refreshToken = refreshToken
         self.userId = userId
+    }
+}
+
+struct BoardUserRes: Decodable {
+    let boardID, boardUserID, userID: Int
+    let userIDS: [Int]
+    let userImageUrls: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case boardID = "boardId"
+        case boardUserID = "boardUserId"
+        case userID = "userId"
+        case userIDS = "userIds"
+        case userImageUrls
     }
 }
 

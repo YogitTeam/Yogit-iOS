@@ -193,14 +193,13 @@ class FetchedUserImages: Decodable {
 }
 
 struct FetchUserProfile: Decodable {
-    let aboutMe, job, phone: String?
+    let city, aboutMe, job, phone, countryEngNm, downloadURL: String?
     let age: Int
-    let city, countryEngNm, downloadURL, gender: String
     let imageUrls: [String]
     let interests: [String]?
     let languageLevels, languageNames: [String]
     let latitude, longtitude, memberTemp: Double?
-    let name, nationality, profileImg: String
+    let name, nationality, profileImg, gender: String
     let userId: Int
     let userStatus: String?
 
@@ -211,6 +210,29 @@ struct FetchUserProfile: Decodable {
         case gender, imageUrls, interests, job, languageLevels, languageNames, latitude, longtitude, memberTemp, name, nationality, phone, profileImg
         case userId
         case userStatus
+    }
+    
+    init(city: String?, aboutMe: String?, job: String?, phone: String?, countryEngNm: String?, downloadURL: String?, age: Int, imageUrls: [String], interests: [String]?, languageLevels: [String], languageNames: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, gender: String, userId: Int, userStatus: String?) {
+        self.city = city
+        self.aboutMe = aboutMe
+        self.job = job
+        self.phone = phone
+        self.countryEngNm = countryEngNm
+        self.downloadURL = downloadURL
+        self.age = age
+        self.imageUrls = imageUrls
+        self.interests = interests
+        self.languageLevels = languageLevels
+        self.languageNames = languageNames
+        self.latitude = latitude
+        self.longtitude = longtitude
+        self.memberTemp = memberTemp
+        self.name = name
+        self.nationality = nationality
+        self.profileImg = profileImg
+        self.gender = gender
+        self.userId = userId
+        self.userStatus = userStatus
     }
 }
 

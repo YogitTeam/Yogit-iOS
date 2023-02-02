@@ -60,11 +60,12 @@ class LanguagesViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
 //        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "💬 Let global friends know what I can speak"
+        label.text = "💬 Let global friends know\nwhat I can speak"
         label.numberOfLines = 0
+        label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
-        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.font = .systemFont(ofSize: 22, weight: .semibold)
         return label
     }()
     
@@ -99,7 +100,7 @@ class LanguagesViewController: UIViewController {
         super.viewDidLayoutSubviews()
         languagesTableView.frame = view.bounds
         languagesTableView.tableHeaderView = titleView
-        languagesTableView.tableHeaderView?.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 16, marginRight: 0, color: .systemGray3, width: 0.7)
+        languagesTableView.tableHeaderView?.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 16, marginRight: 0, color: .systemGray3, width: 0.7, marginTop: 0)
         titleLabel.snp.makeConstraints { (make) in
             make.leading.trailing.equalToSuperview().inset(20)
             make.top.equalToSuperview().inset(0)

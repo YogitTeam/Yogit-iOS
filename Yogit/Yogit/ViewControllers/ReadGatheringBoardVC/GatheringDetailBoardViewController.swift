@@ -6,18 +6,13 @@
 
 import UIKit
 import SnapKit
-import Alamofire
+//import Alamofire
 import MapKit
-// total scrollview
-// contentview
+import BLTNBoard
 
-// scrollview
-// stackview
-// collection view
-
-enum ApplyButtonState {
-    case apply, cancel
-}
+//enum bottomButtonState {
+//    case join, withdrawl
+//}
 
 class GatheringDetailBoardViewController: UIViewController {
 
@@ -35,13 +30,6 @@ class GatheringDetailBoardViewController: UIViewController {
     
 //    private var coordinate: CLLocationCoordinate2D?
     
-    // 고쳐야 함
-    var isClipBoardAlarm: Bool? = false {
-        didSet {
-            if isClipBoardAlarm == true { moveToClipBoard() }
-        }
-    }
-    
 //    private var boardImages: [UIImage] = [] {
 //        didSet(oldVal){
 //            DispatchQueue.main.async {
@@ -55,6 +43,14 @@ class GatheringDetailBoardViewController: UIViewController {
 //            }
 //        }
 //    }
+    
+    // 고쳐야 함
+    var isClipBoardAlarm: Bool? = false {
+        didSet {
+            if isClipBoardAlarm == true { moveToClipBoard() }
+        }
+    }
+    
     
     private var boardImages: [String] = [] {
         didSet(oldVal){
@@ -79,7 +75,7 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    private var applyButtonState: ApplyButtonState?
+//    private var applyButtonState: ApplyButtonState?
     
 //    private var _applyButton: Bool {
 //        get {
@@ -101,6 +97,27 @@ class GatheringDetailBoardViewController: UIViewController {
     private let mapView = MKMapView()
     private let placeBoardInfoView = BoardInfoView()
     private let dateBoardInfoView = BoardInfoView()
+    
+    
+    private lazy var bulletinManager: BLTNItemManager = {
+        
+        let item = BLTNPageItem(title: "Join the gathering")
+        item.image = "👋".stringToImage(width: 100, height: 100)//UIImage(named: "pro1")
+//        item.imageAccessibilityLabel = "👋"
+//        item.descriptionLabel?.text = "Join the gathering"
+        item.actionButtonTitle = "Join"
+//        item.alternativeButtonTitle = "Cancel"
+        item.descriptionText = "Would you want to join the gathering?"
+        item.appearance.actionButtonColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        item.appearance.alternativeButtonTitleColor = .gray
+        item.actionHandler = { _ in
+            self.joinBoardRequest() // 분기처리 요구됨
+        }
+//        item.alternativeHandler = { _ in
+//            print("Tap alter ")
+//        }
+        return BLTNItemManager(rootItem: item)
+    }()
     
     private lazy var boardImagesPageControl: UIPageControl = {
         let pageControl = UIPageControl()
@@ -219,8 +236,8 @@ class GatheringDetailBoardViewController: UIViewController {
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.regular)
         label.numberOfLines = 1
-        label.sizeToFit()
-        label.adjustsFontSizeToFitWidth = true
+//        label.sizeToFit()
+//        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -264,12 +281,12 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private let introductionContentLabel: UILabel = {
         let label = UILabel()
-        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
+//        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         label.numberOfLines = 0
-        label.sizeToFit()
+//        label.sizeToFit()
         return label
     }()
     
@@ -280,14 +297,14 @@ class GatheringDetailBoardViewController: UIViewController {
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
         label.numberOfLines = 1
-        label.sizeToFit()
-        label.adjustsFontSizeToFitWidth = true
+//        label.sizeToFit()
+//        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
     private let kindOfPersonContentLabel: UILabel = {
         let label = UILabel()
-        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
+//        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
@@ -339,6 +356,7 @@ class GatheringDetailBoardViewController: UIViewController {
          self.footerView2,
          self.introductionLabel,
          self.introductionContentLabel,
+//         self.lineView,
          self.kindOfPersonLabel,
          self.kindOfPersonContentLabel,
          self.footerView3,
@@ -360,42 +378,88 @@ class GatheringDetailBoardViewController: UIViewController {
         return label
     }()
     
-    private lazy var applyGuideView: UIView = {
+    private lazy var boardBottomView: UIView = {
         let view = UIView()
         view.backgroundColor = .systemBackground
-        view.addSubview(applyButton)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(joinBoardButton)
         view.addSubview(clipBoardButton)
+        view.addSubview(withdrawalButton)
+        view.addSubview(joinListJoinListButton)
         return view
     }()
     
-    private lazy var applyButton: UIButton = {
+//    private let lineView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
+    
+    private lazy var joinBoardButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        button.setImage(UIImage(named: "Apply")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
-        button.setTitle("Apply", for: .normal)
+        button.setTitle("Join", for: .normal)
 //        button.setTitle("Applied", for: .disabled)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         button.tintColor = .white
         button.setTitleColor(.white, for: .normal) // 이렇게 해야 적용된다!
         button.layer.cornerRadius = 8
         button.isEnabled = true
-        button.addTarget(self, action: #selector(self.applyButtonTapped(_:)), for: .touchUpInside)
+        button.isHidden = true
+        button.addTarget(self, action: #selector(self.joinBoardButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var withdrawalButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .systemBackground
+//        button.setImage(UIImage(named: "Apply")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
+        button.setTitle("Cancel join", for: .normal)
+//        button.setTitle("Applied", for: .disabled)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
+        button.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal) // 이렇게 해야 적용된다!
+        button.layer.cornerRadius = 8
+        button.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
+        button.layer.borderWidth = 2
+        button.isEnabled = true
+        button.isHidden = true
+        button.addTarget(self, action: #selector(self.withdrawalButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var joinListJoinListButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .systemBackground
+//        button.setImage(UIImage(named: "Apply")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
+        button.setTitle("Join list", for: .normal)
+//        button.setTitle("Applied", for: .disabled)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
+        button.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal) // 이렇게 해야 적용된다!
+        button.layer.cornerRadius = 8
+        button.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
+        button.layer.borderWidth = 2
+        button.isEnabled = true
+        button.isHidden = true
+        button.addTarget(self, action: #selector(self.joinListJoinButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
     
     private lazy var clipBoardButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .systemBackground
+        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
         button.layer.cornerRadius = 8
-        button.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor = .white
         button.setImage(UIImage(named: "BoardClipBoard")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
         button.setTitle("Clip board", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
-        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-        button.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
-        button.layer.borderWidth = 2
+        button.setTitleColor(.white, for: .normal)
         button.isEnabled = true
+        button.isHidden = true
         button.addTarget(self, action: #selector(self.clipBoardTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -403,7 +467,7 @@ class GatheringDetailBoardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(boardContentScrollView)
-        view.addSubview(applyGuideView)
+        view.addSubview(boardBottomView)
         configureViewComponent()
         configureInteractionInfoComponent()
         boardImagesScrollView.delegate = self
@@ -411,6 +475,12 @@ class GatheringDetailBoardViewController: UIViewController {
         imagesCollectionView.dataSource = self
         mapView.delegate = self
         setViewWithMode(mode: boardWithMode.mode)
+        
+        // navigation back button change
+//        let backButton = UIBarButtonItem(title: "Custom", style: .Plain, target: self, action: nil    )
+//        //backButton.image = UIImage(named: "imageName") //Replaces title
+//        backButton.setBackgroundImage(UIImage(named: "imageName"), forState: .Normal, barMetrics: .Default) // Stretches image
+//        navigationItem.setLeftBarButtonItem(backButton, animated: false)
     }
     
     private func configureViewComponent() {
@@ -430,10 +500,10 @@ class GatheringDetailBoardViewController: UIViewController {
     
     func configureInteractionInfoComponent() {
         self.placeBoardInfoView.infoLabel.text = "Place infoLabel"
-        self.placeBoardInfoView.leftImageView.image = UIImage(named: "BoardPlace")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        self.placeBoardInfoView.leftImageView.image = UIImage(named: "BoardPlace")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.rightImageView.image = UIImage(named: "push")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.dateBoardInfoView.infoLabel.text = "Date infoLabel"
-        self.dateBoardInfoView.leftImageView.image = UIImage(named: "BoardDate")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        self.dateBoardInfoView.leftImageView.image = UIImage(named: "BoardDate")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.isUserInteractionEnabled = true
         self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
     }
@@ -489,6 +559,7 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.width.height.equalTo(48)
         }
         hostImageView.layer.cornerRadius = 22
+        
         hostNameLabel.snp.makeConstraints {
 //            $0.top.equalTo(hostLabel.snp.bottom).offset(10)
             $0.centerY.equalTo(hostImageView)
@@ -496,7 +567,7 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(20)
         }
         memberLabel.snp.makeConstraints {
-            $0.top.equalTo(hostImageView.snp.bottom).offset(20)
+            $0.top.equalTo(hostImageView.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         imagesCollectionView.snp.makeConstraints {
@@ -517,8 +588,14 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.top.equalTo(introductionLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
+//        lineView.snp.makeConstraints {
+//            $0.top.equalTo(introductionContentLabel.snp.bottom).offset(15)
+//            $0.height.equalTo(1)
+//            $0.leading.trailing.equalToSuperview().inset(20)
+//        }
+//        introductionContentLabel.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 20, marginRight: 20, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 10)
         kindOfPersonLabel.snp.makeConstraints {
-            $0.top.equalTo(introductionContentLabel.snp.bottom).offset(20)
+            $0.top.equalTo(introductionContentLabel.snp.bottom).offset(21)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         kindOfPersonContentLabel.snp.makeConstraints {
@@ -545,93 +622,156 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.bottom.equalToSuperview().inset(80)
         }
         mapView.layer.cornerRadius = 6
-        applyGuideView.snp.makeConstraints {
+        boardBottomView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(100)
             $0.bottom.equalToSuperview()
         }
-        applyButton.snp.makeConstraints {
+        joinBoardButton.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(30)
+            $0.height.equalTo(50)
+        }
+        withdrawalButton.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(20)
             $0.width.equalTo((view.frame.width-60)/2)
             $0.bottom.equalToSuperview().inset(30)
             $0.height.equalTo(50)
         }
-        clipBoardButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(20)
+        joinListJoinListButton.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo((view.frame.width-60)/2)
             $0.bottom.equalToSuperview().inset(30)
             $0.height.equalTo(50)
-            $0.width.equalTo((view.frame.width-60)/2)
         }
-        self.placeBoardInfoView.addToViewBottomBorderWithColor(color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1)
+//        clipBoardButton.snp.makeConstraints {
+//            $0.trailing.equalToSuperview().inset(20)
+//            $0.bottom.equalToSuperview().inset(30)
+//            $0.height.equalTo(50)
+//            $0.width.equalTo((view.frame.width-60)/2)
+//        }
+//        placeBoardInfoView.addToViewBottomBorderWithColor(color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1)
+        placeBoardInfoView.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 0)
+        memberLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 10)
+//        introductionContentLabel.layoutIfNeeded()
+        kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 10)
     }
     
-    @objc func applyButtonTapped(_ sender: UIButton) {
-        
-//        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//        alert.view.tintColor = UIColor.label
-//        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        if userItem.userId != hostId {
-//            let apply = UIAlertAction(title: "Apply", style: .default) { (action) in self.applyAlert() }
-//            alert.addAction(apply)
+    @objc func joinBoardButtonTapped(_ sender: UIButton) {
+        bulletinManager.showBulletin(above: self)
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//
+//
+//        if userItem.userId != boardWithMode.hostId { // hostId
+//            let alert = UIAlertController(title: "Join", message: "Would you like to join the gathering?", preferredStyle: .alert)
+//            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+//            let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+//                self.joinBoardRequest()
+//            }
+//            alert.addAction(cancel)
+//            alert.addAction(ok)
+//            DispatchQueue.main.async {
+//                self.present(alert, animated: true, completion: nil)
+//            }
 //        }
-//        alert.addAction(cancel)
-//        DispatchQueue.main.async {
-//            self.present(alert, animated: true, completion: nil)
-//        }
-//        let alert = UIAlertController(title: "Apply", message: "Would you like to apply for that meeting?", preferredStyle: .alert)
-//        let cancel = UIAlertAction(title: "cancel", style: .cancel)
-//        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
-//            self.applyRequest()
-//        }
-//        alert.addAction(cancel)
-//        alert.addAction(ok)
-//        DispatchQueue.main.async {
-//            self.present(alert, animated: true, completion: nil)
-//        }
-        
-        if userItem.userId != boardWithMode.hostId { // hostId
-            let alert = UIAlertController(title: "Apply", message: "Would you like to apply for that meeting?", preferredStyle: .alert)
-            let cancel = UIAlertAction(title: "cancel", style: .cancel)
-            let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
-                self.applyRequest()
-            }
-            alert.addAction(cancel)
-            alert.addAction(ok)
-            DispatchQueue.main.async {
-                self.present(alert, animated: true, completion: nil)
-            }
-        } else {
-            let alert = UIAlertController(title: "Applied", message: "Host is already applied", preferredStyle: .alert)
-            let ok = UIAlertAction(title: "OK", style: .default) { (ok) in }
-            alert.addAction(ok)
-            DispatchQueue.main.async {
-                self.present(alert, animated: true, completion: nil)
-            }
-        }
     }
     
-    func applyRequest() {
+    @objc func withdrawalButtonTapped(_ sender: UIButton) {
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        if userItem.userId != boardWithMode.hostId { // hostId
+//            let alert = UIAlertController(title: "Withdrawal", message: "Are you sure you want to withdraw the gathering?", preferredStyle: .alert)
+//            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+//            let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
+//                self.withdrawalBoardRequest()
+//            }
+//            alert.addAction(cancel)
+//            alert.addAction(ok)
+//            DispatchQueue.main.async {
+//                self.present(alert, animated: true, completion: nil)
+//            }
+//        }
+    }
+    
+    @objc func joinListJoinButtonTapped(_ sender: UIButton) {
+        // 대기 리스트
+    }
+    
+    func joinBoardRequest() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
 //        guard let boardId = boardId else { return }
         guard let boardId = boardWithMode.boardId else { return }
-        let getAllBoardsReq = ApplyGathering(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AF.request(API.BASE_URL + "boardusers",
-                   method: .post,
-                   parameters: getAllBoardsReq,
-                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-        .validate(statusCode: 200..<500)
-        .response { response in // reponseData
-            switch response.result {
-            case .success:
-                debugPrint(response)
-                self.applyButton.isEnabled = false
-                self.applyButton.backgroundColor = .placeholderText
-            case .failure(let error):
-                debugPrint(response)
-                print(error)
+        let boardUserReq = BoardUserReq(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        AlamofireManager.shared.session
+            .request(BoardUserRouter.joinGatheringBoard(parameters: boardUserReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<BoardUserRes>.self) { response in // 서버 반영 필요
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                        self.bulletinManager.dismissBulletin(animated: true)
+                    }
+                case let .failure(error):
+                    print(error)
+                }
             }
-        }
+        
+        
+//        AF.request(API.BASE_URL + "boardusers",
+//                   method: .post,
+//                   parameters: getAllBoardsReq,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .response { response in // reponseData
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                self.applyButton.isEnabled = false
+//                self.applyButton.backgroundColor = .placeholderText
+//            case .failure(let error):
+//                debugPrint(response)
+//                print(error)
+//            }
+//        }
+    }
+    
+    func withdrawalBoardRequest() {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        guard let boardId = boardId else { return }
+        guard let boardId = boardWithMode.boardId else { return }
+        let boardUserReq = BoardUserReq(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        AlamofireManager.shared.session
+            .request(BoardUserRouter.withdrawalGatheringBoard(parameters: boardUserReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<BoardUserRes>.self) { response in // 서버 반영 필요
+                switch response.result {
+                case .success:
+                    guard let value = response.value else { return }
+                    if value.httpCode == 200 {
+                       
+                    }
+                case let .failure(error):
+                    print(error)
+                }
+            }
+        
+        
+//        AF.request(API.BASE_URL + "boardusers",
+//                   method: .post,
+//                   parameters: getAllBoardsReq,
+//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
+//        .validate(statusCode: 200..<500)
+//        .response { response in // reponseData
+//            switch response.result {
+//            case .success:
+//                debugPrint(response)
+//                self.applyButton.isEnabled = false
+//                self.applyButton.backgroundColor = .placeholderText
+//            case .failure(let error):
+//                debugPrint(response)
+//                print(error)
+//            }
+//        }
     }
     
     @objc func clipBoardTapped(_ sender: UITapGestureRecognizer) {
@@ -648,18 +788,54 @@ class GatheringDetailBoardViewController: UIViewController {
             self.navigationController?.pushViewController(CBVC, animated: true)
         }
     }
-    
+    // https://www.google.com/maps/place/서울특별시+광진구+능동로+209+세종대학교/@37.5518018,127.0736345,17z/data=!4m6!3m5!1s0x357ca4d0720eecc1:0x1a7ad975c6b5e4eb!8m2!3d37.5518018!4d127.0736345!16s%2Fm%2F0ddhhlj?hl=ko
     @objc func copyAddressTapped(_ sender: UITapGestureRecognizer) {
         print("searchPlaceTapped")
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor.label
+//        alert.view.tintColor = UIColor.label
+        guard let latitude = self.boardWithMode.latitude else { return }
+        guard let longitude = self.boardWithMode.longitute else { return }
+        let zoom = 15
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let copy = UIAlertAction(title: "Copy address", style: .default) { (action) in
-            guard let boardInfoView = sender.view as? BoardInfoView else { return }
-            UIPasteboard.general.string = boardInfoView.infoLabel.text // copy text
+        let copy = UIAlertAction(title: "Copy", style: .default) { (action) in
+            guard let address = self.boardWithMode.address else { return }
+            UIPasteboard.general.string = address
+        }
+        // 애플맵은 앱에서만 작동
+        let appleMap = UIAlertAction(title: "Apple Map", style: .default) { (action) in
+            guard let appUrl = URL(string:"maps://?q=\(latitude),\(longitude)") else { return }
+            UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
+        }
+        let googleMap = UIAlertAction(title: "Google Map", style: .default) { (action) in
+//            guard let url = URL(string: "comgooglemaps://?q=세종대학교&center=\(latitude),\(longitude)") else { return }
+//            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            guard let address = self.boardWithMode.address else { return }
+            let allowedCharacterSet = CharacterSet.urlQueryAllowed
+            let encodedString = address.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
+            if UIApplication.shared.canOpenURL(URL(string:"comgooglemaps://")!) {
+                guard let appUrl = URL(string: "comgooglemaps://?q=\(encodedString ?? "")&center=\(latitude),\(longitude)&zoom=\(zoom)") else { return } // 좌표에 핀찍기
+                UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
+            } else {
+                guard let webUrl = URL(string: "https://www.google.com/maps/search/?api=1&query=\(encodedString ?? "")&center=\(latitude),\(longitude)&z=\(zoom)") else { return }
+                UIApplication.shared.open(webUrl, options: [:], completionHandler: nil)
+            }
+        }
+        // 카카오맵은 앱에서만 작동
+        let kakaoMap = UIAlertAction(title: "Kakao Map", style: .default) { (action) in
+            if UIApplication.shared.canOpenURL(URL(string:"kakaomap://")!){
+                guard let appUrl = URL(string:"kakaomap://look?p=\(latitude),\(longitude)") else { return }
+                UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
+            } else {
+                guard let webUrl =  URL(string:"https://map.kakao.com/?q=\(latitude),\(longitude)") else { return }
+                UIApplication.shared.open(webUrl, options: [:], completionHandler: nil)
+                print("can't use kakao map")
+            }
         }
         alert.addAction(cancel)
         alert.addAction(copy)
+        alert.addAction(kakaoMap)
+        alert.addAction(googleMap)
+        alert.addAction(appleMap)
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
         }
@@ -975,13 +1151,34 @@ class GatheringDetailBoardViewController: UIViewController {
         placeBoardInfoView.subInfoLabel.text = data.addressDetail
         dateBoardInfoView.infoLabel.text = data.date?.stringToDate()?.dateToStringUser() //?.dateToString()
         hostNameLabel.text = data.hostName
-        memberLabel.text = "\(memberLabel.text ?? "") \(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
+        memberLabel.text = "\(memberLabel.text ?? "") (\(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
         introductionContentLabel.text = data.introduction
         kindOfPersonContentLabel.text = data.kindOfPerson
         mapAddressLabel.text = data.address
         moveLocation(latitudeValue: data.latitude!, longtudeValue: data.longitute!, delta: 0.01)
         setAnnotation(latitudeValue: data.latitude!, longitudeValue: data.longitute!, delta: 0.01, title: "", subtitle: data.address!)
+        mapView.isUserInteractionEnabled = false
         rightButton.isHidden = false
+        joinBoardButton.isHidden = data.isJoinedUser
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        if boardWithMode.hostId == userItem.userId {
+            clipBoardButton.snp.makeConstraints {
+                $0.trailing.equalToSuperview().inset(20)
+                $0.bottom.equalToSuperview().inset(30)
+                $0.height.equalTo(50)
+                $0.width.equalTo((view.frame.width-60)/2)
+            }
+            joinListJoinListButton.isHidden = !joinBoardButton.isHidden
+        } else {
+            clipBoardButton.snp.makeConstraints {
+                $0.trailing.equalToSuperview().inset(20)
+                $0.bottom.equalToSuperview().inset(30)
+                $0.height.equalTo(50)
+                $0.width.equalTo((view.frame.width-60)/2)
+            }
+            withdrawalButton.isHidden = !joinBoardButton.isHidden
+        }
+        clipBoardButton.isHidden = !joinBoardButton.isHidden
         // 신청 버튼 (신청 / 취소)
 //        _applyButton = !data.isJoinedUser
     }

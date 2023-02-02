@@ -9,12 +9,12 @@ import Foundation
 import UIKit
 
 extension CALayer {
-    func addBorderWithMargin(arr_edge: [UIRectEdge], marginLeft: CGFloat, marginRight: CGFloat,color: UIColor?, width: CGFloat) {
+    func addBorderWithMargin(arr_edge: [UIRectEdge], marginLeft: CGFloat, marginRight: CGFloat,color: UIColor?, width: CGFloat, marginTop: CGFloat) {
         for edge in arr_edge {
             let border = CALayer()
             switch edge {
-                case UIRectEdge.top: border.frame = CGRect.init(x: marginLeft, y: 0, width: frame.width + marginRight, height: width)
-                case UIRectEdge.bottom: border.frame = CGRect.init(x: marginLeft, y: frame.height - width, width: self.frame.width + marginRight, height: width)
+                case UIRectEdge.top: border.frame = CGRect.init(x: marginLeft, y: 0 - marginTop, width: frame.width - marginRight, height: width)
+                case UIRectEdge.bottom: border.frame = CGRect.init(x: marginLeft, y: frame.height - width + marginTop, width: self.frame.width - marginRight, height: width)
                 case UIRectEdge.left: border.frame = CGRect.init(x: 0, y: 0, width: width, height: frame.height)
                 case UIRectEdge.right: border.frame = CGRect.init(x: frame.width - width, y: 0, width: width, height: frame.height)
                 default: break

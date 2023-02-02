@@ -16,7 +16,7 @@ import SnapKit
 //    let sub: String
 //}
 protocol MKResultsLocalSearchTableViewControllerDelegate: AnyObject {
-    func didTapPlace(coordinate: CLLocationCoordinate2D, placeName: String, placeTitle: String, placeAdministrativeArea: String)
+    func didTapPlace(coordinate: CLLocationCoordinate2D, placeName: String, placeTitle: String)
 }
 
 class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -117,27 +117,29 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
         
         // 위경도 전달
         let place = places[indexPath.row]
-        
         guard let coordinate = place.placemark.location?.coordinate else { return }
-        print("1")
+        print("coordinate", coordinate)
         guard let placeName = place.placemark.name else { return }
-        print("2")
-        guard let placeTitle = place.placemark.title else { return }
-        print("3")
+        print("placeName", placeName)
+        guard let placeTitle = place.placemark.title else { return } // 주소, 우편번호
+        print("placeTitle", placeTitle)
         guard let placeAdministrativeArea = place.placemark.administrativeArea else { return }
-        print("4")
+        print("placeAdministrativeArea", placeAdministrativeArea)
 //        guard let placeLocaclity = place.placemark.locality else { return }
-        print("5")
-        var resultLocal: String = placeAdministrativeArea
+//        print("coordinate", coordinate)
         
-        if let placeLocaclity = place.placemark.locality {
-            if resultLocal != placeLocaclity {
-                resultLocal = resultLocal + " " + placeLocaclity
-            }
-        }
+//        var resultLocal: String = placeAdministrativeArea
+//
+//        if let placeLocaclity = place.placemark.locality {
+//            if resultLocal != placeLocaclity {
+//                resultLocal = resultLocal + " " + placeLocaclity
+//            }
+//        }
+        
+//        print("resultLocal", resultLocal)
         // 필드 변경 (administerativeArea >> locality)
         // 로컬라이즈
-        self.delegate?.didTapPlace(coordinate: coordinate, placeName: placeName, placeTitle: placeTitle, placeAdministrativeArea: resultLocal)
+        self.delegate?.didTapPlace(coordinate: coordinate, placeName: placeName, placeTitle: placeTitle)
         self.dismiss(animated: true)
     }
     /*

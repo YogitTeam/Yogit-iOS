@@ -184,7 +184,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             let user = User(name: name, email: userEmail)
             let account = Account(state: state, code: authorizationCode, id_token: identityToken, user: user, identifier: identifier, hasRequirementInfo: false)
             
-
             // 회원가입
             AlamofireManager.shared.session
                 .request(SessionRouter.signUpApple(parameters: account))
@@ -197,6 +196,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                             guard let data = value.data else { return }
                             do {
                                 // 신규 가입
+                                // hasRequirementInfo false로 반환되는지 확인
                                 try KeychainManager.saveUserItem(userItem: data)
                                 DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                                     let SPVC = SetProfileViewController()

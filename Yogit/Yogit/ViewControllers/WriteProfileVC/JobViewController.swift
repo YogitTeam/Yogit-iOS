@@ -35,7 +35,6 @@ class JobViewController: UIViewController {
 //        button.setTitle("Done", for: .normal)
         button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.tintColor = .white
-        button.layer.cornerRadius = 25
         button.isHidden = false
         button.isEnabled = true
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -55,8 +54,8 @@ class JobViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "📎 Let global friends know what I do"
-        label.textAlignment = .left
+        label.text = "📎 Let global friends know\nwhat I do"
+        label.textAlignment = .center
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
         label.sizeToFit()
@@ -117,8 +116,9 @@ class JobViewController: UIViewController {
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(0)
-            $0.width.height.equalTo(50)
+            $0.width.height.equalTo(60)
         }
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

@@ -63,7 +63,6 @@ class SetProfileViewController: UIViewController {
 //        button.setTitle("Done", for: .normal)
         button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.tintColor = .white
-        button.layer.cornerRadius = 25
         button.isHidden = false
         button.isEnabled = false
         button.backgroundColor = .placeholderText
@@ -227,8 +226,9 @@ class SetProfileViewController: UIViewController {
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(0)
-            $0.width.height.equalTo(50)
+            $0.width.height.equalTo(60)
         }
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
 
     private func configureSuperView() {
@@ -392,7 +392,11 @@ extension SetProfileViewController: UITableViewDataSource {
                     let localizedLocale = Locale(identifier: identifier)
                     let originLocale = Locale(identifier: code)
                     if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
-                        cell.configure(text: "\(localizedLanguage) (\(originLanguage))", section: indexPath.section) // "Add conversational
+                        if localizedLanguage == originLanguage {
+                            cell.configure(text: "\(localizedLanguage)", section: indexPath.section) // "Add
+                        } else {
+                            cell.configure(text: "\(localizedLanguage) (\(originLanguage))", section: indexPath.section) // "Add
+                        }
                         cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
                     }
                 }

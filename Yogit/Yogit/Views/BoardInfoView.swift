@@ -43,7 +43,7 @@ class BoardInfoView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.regular)
+        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.medium)
         label.numberOfLines = 1
         label.sizeToFit()
         return label
@@ -107,12 +107,12 @@ class BoardInfoView: UIView {
 
 }
 
-extension BoardInfoView {
-    func addToViewBottomBorderWithColor(color: UIColor, width: CGFloat) {
-        self.layoutIfNeeded()
-        let border = CALayer()
-        border.backgroundColor = color.cgColor
-        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
-        self.layer.addSublayer(border)
-    }
-}
+//extension BoardInfoView {
+//    func addToViewBottomBorderWithColor(color: UIColor, width: CGFloat) {
+//        self.layoutIfNeeded()
+//        let border = CALayer()
+//        border.backgroundColor = color.cgColor
+//        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
+//        self.layer.addSublayer(border)
+//    }
+//}

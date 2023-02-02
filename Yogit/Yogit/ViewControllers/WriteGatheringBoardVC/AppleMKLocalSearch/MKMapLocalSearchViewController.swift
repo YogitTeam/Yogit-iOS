@@ -612,21 +612,41 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             return }
             
             for item in response.mapItems {
-                if let name = item.name,
-                   let countryCode = item.placemark.countryCode,
-                   let location = item.placemark.location,
-                   let placeMarkName = item.placemark.name,
-                   let placeMarkTitle = item.placemark.title,
-                   let placeMarkPhoneNumber = item.phoneNumber
-                {
-                    print("\(name)")
-                    print("countryCode\(countryCode)")
-                    print("\(location.coordinate.latitude),\(location.coordinate.longitude)")
-                    print("\(placeMarkName)")
-                    print("\(placeMarkTitle)")
-//                    print("\(placeMarkSubtitle)")
-                    print("\(placeMarkPhoneNumber)")
+                
+                if let name = item.name {
+                    print("name", name)
                 }
+                if let countryCode = item.placemark.countryCode {
+                    print("countryCode", countryCode)
+                }
+                if let location = item.placemark.location {
+                    print("location", location)
+                }
+                if let placeMarkName = item.placemark.name {
+                    print("placeMarkName", placeMarkName)
+                }
+                if let placeMarkTitle = item.placemark.title {
+                    print("placeMarkTitle", placeMarkTitle)
+                }
+                if let placeMarkPhoneNumber = item.phoneNumber {
+                    print("placeMarkPhoneNumber", placeMarkPhoneNumber)
+                }
+                
+//                if let name = item.name,
+//                   let countryCode = item.placemark.countryCode,
+//                   let location = item.placemark.location,
+//                   let placeMarkName = item.placemark.name,
+//                   let placeMarkTitle = item.placemark.title,
+//                   let placeMarkPhoneNumber = item.phoneNumber
+//                {
+//                    print("\(name)") // 영어 장소 이름
+//                    print("countryCode\(countryCode)")
+//                    print("\(location.coordinate.latitude),\(location.coordinate.longitude)")
+//                    print("\(placeMarkName)")
+//                    print("\(placeMarkTitle)")
+////                    print("\(placeMarkSubtitle)")
+//                    print("\(placeMarkPhoneNumber)")
+//                }
             }
             DispatchQueue.main.async {
                 resultsVC.updateMK(with: response.mapItems)
@@ -648,7 +668,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         let geocoder = CLGeocoder()
 //        let locale = Locale(identifier: "en_US")
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
-        let region = Locale.current.region?.identifier
+        let region = Locale.current.region?.identifier // KR
         print("region", region)
         let locale = Locale(identifier: identifier)
 //        print("locale",locale)
@@ -918,7 +938,7 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
 }
 
 extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControllerDelegate {
-    func didTapPlace(coordinate: CLLocationCoordinate2D, placeName: String, placeTitle: String, placeAdministrativeArea: String) {
+    func didTapPlace(coordinate: CLLocationCoordinate2D, placeName: String, placeTitle: String) {
 //        self.saveButton.isHidden = true
         searchVC.searchBar.resignFirstResponder()
         searchVC.dismiss(animated: true, completion: nil)
@@ -942,8 +962,9 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
             print("find address \(centerAddress)")
             self.meetUpPlace.city = centerAddress?.city
         }
-        self.meetUpPlace.address = "\(placeTitle) (\(placeName))"
-//        self.meetUpPlace.city = placeAdministrativeArea
+        self.meetUpPlace.address = placeTitle
+//        self.meetUpPlace.address = "\(placeTitle) (\(placeName))"
+
         print("meetUpPlace = \(self.meetUpPlace)")
         
 //        self.saveButton.isHidden = false

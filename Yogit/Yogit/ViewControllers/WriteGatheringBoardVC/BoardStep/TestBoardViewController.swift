@@ -434,9 +434,11 @@ extension TestBoardViewController: UITextFieldDelegate {
 //        textField.resignFirstResponder()
 //        return true
 //    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        boardWithMode.addressDetail = textField.text
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        boardWithMode.addressDetail = textField.text
         textField.resignFirstResponder()
         return true
     }

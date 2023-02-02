@@ -7,6 +7,18 @@
 
 import Foundation
 
+// Activity Notification >> 신청 알림, 수락 알림
+// 신청 알림에는 신청자 userId, boardId 요구
+// 신청, 수락 api 리스트 요구 >> acitity notification 탭하면 리스트 불러온다.
+// 호스트 멤버 수락 >> 멤버 신청 후 >> acitity notificatio 조회 >> 신청 알림 탭 >> 데이터 읽음(보드제목, 유저 이미지, 이름) >> 유저 프로필 조회 >> 수락 버튼 >> 수락 api 요청
+// 같은 모임 신청 총 3번으로 제한
+// 참가자 신청 후 취소 >> 호스트가 수락 >> 신청자 취소하였다고 응답 와야함 (해당 사용자가 취소하였습니다.)
+// 호스트 신청 수락후 취소 >> 취소 처리 >> 호스트한테 취소 알림
+
+
+// 참가 신청 >> 대기 (참가 신청후 버튼 disable and 참가 신청 중) 상태 0,1,2
+// 참가 취소는, 호스트 수락 완료후 가능
+// 참가 신청 최대 1번 가능
 final class AlarmManager {
     enum AlarmKey: String {
         case type = "type"
