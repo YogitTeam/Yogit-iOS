@@ -10,6 +10,7 @@ import Alamofire
 import SnapKit
 import BSImagePicker
 import Photos
+import ProgressHUD
 
 // 글자수 n 글자 이상 m 이하
 class GatheringBoardContentViewController: UIViewController {
@@ -256,12 +257,17 @@ class GatheringBoardContentViewController: UIViewController {
 //        }
     }
     
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        self.view.endEditing(true)
+//    }
+    
     private func configureViewComponent() {
-//        self.hideKeyboardWhenTappedAround()
+        self.hideKeyboardWhenTappedAround()
         self.navigationItem.rightBarButtonItem = self.rightButton
         self.stepHeaderView.step = step
         self.stepHeaderView.titleLabel.text = "Content"
         self.view.backgroundColor = .systemBackground
+        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
     }
     
     private func loadImagePicker() {
@@ -349,7 +355,7 @@ class GatheringBoardContentViewController: UIViewController {
 //            boardWithMode.boardReq?.refreshToken = userItem.refresh_token
 //
 ////            let parameters: [String: Any] = [
-////                "cityName": createBoardReq.cityName!,
+////                "localityName": createBoardReq.localityName!,
 ////                "hostId": createBoardReq.hostId!,
 ////                "title": createBoardReq.title!,
 ////                "address": createBoardReq.address!,
@@ -439,7 +445,6 @@ class GatheringBoardContentViewController: UIViewController {
 //
 //    }
     @objc func buttonPressed(_ sender: UIButton) {
-        
         if !hasAllData() {
             print("Not has all value")
             let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the condition", preferredStyle: UIAlertController.Style.alert)
@@ -452,13 +457,14 @@ class GatheringBoardContentViewController: UIViewController {
         // hostId 등록시 필요? >> userId와 hostId 같기때문 (나중에 한 클럽 모임당 host가 많을수도 있다.)
         // hostId 받아올때만 필요하다.
         print("buttonPressed buttonPressed", boardWithMode)
+        
         guard let userItem = try? KeychainManager.getUserItem(),
               let title = boardWithMode.title,
               let address = boardWithMode.address,
               let longitute = boardWithMode.longitute,
               let latitude = boardWithMode.latitude,
               let date = boardWithMode.date,
-              let cityName = boardWithMode.cityName,
+              let cityName = boardWithMode.city,
               let introduction = boardWithMode.introduction,
               let kindOfPerson = boardWithMode.kindOfPerson,
               let totoalMember = boardWithMode.totalMember,
@@ -468,6 +474,11 @@ class GatheringBoardContentViewController: UIViewController {
             return
         }
         
+        DispatchQueue.main.async {
+            ProgressHUD.colorAnimation = ServiceColor.primaryColor
+            ProgressHUD.animationType = .circleStrokeSpin
+            ProgressHUD.show(interaction: false)
+        }
         
         let updateBoard = UpdateBoard(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardWithMode.boardId, hostId: userItem.userId, title: title, address: address, addressDetail: boardWithMode.addressDetail, longitute: longitute, latitude: latitude, date: date, notice: boardWithMode.notice, cityName: cityName, introduction: introduction, kindOfPerson: kindOfPerson, totalMember: totoalMember, categoryId: categoryId, deleteImageIds: boardWithMode.deleteImageIds, images: boardWithMode.uploadImages)
 
@@ -510,6 +521,7 @@ class GatheringBoardContentViewController: UIViewController {
                         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                             navigationController?.popToRootViewController(animated: true)
                             NotificationCenter.default.post(name: NSNotification.Name("BoardDetailRefresh"), object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
+                            ProgressHUD.dismiss()
                         })
 //                        DispatchQueue.global(qos: .userInitiated).async { [self] in
 ////                            userImagesData.imageIds = data.userImageIds
@@ -528,6 +540,9 @@ class GatheringBoardContentViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
         }
@@ -623,7 +638,6 @@ extension GatheringBoardContentViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
         if indexPath.row < boardWithMode.downloadImages.count + boardWithMode.uploadImages.count {
             let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
@@ -704,12 +718,13 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         var images = [UIImage]()
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
-        option.deliveryMode = .highQualityFormat
-        option.resizeMode = .exact
+//        option.deliveryMode = .//.highQualityFormat
+//        option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
         // CGSize(width: view.frame.size.width, height: view.frame.size.height)
         for i in 0..<asstes.count {
+
             imageManager.requestImage(for: asstes[i],
                                       targetSize: CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2),
                                       contentMode: .aspectFit,
@@ -996,28 +1011,27 @@ extension Notification.Name {
 }
 
 
-//extension GatheringBoardContentViewController {
-//    func hideKeyboardWhenTappedAround() {
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        tap.cancelsTouchesInView = false // 해당 뷰컨의 뷰안에는 터치 못하게
-//        view.addGestureRecognizer(tap)
-//    }
-//
-//    @objc private func dismissKeyboard() {
-//        view.endEditing(true)
-//    }
-//}
+extension GatheringBoardContentViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false // 해당 뷰컨의 뷰안에는 터치 못하게
+        view.addGestureRecognizer(tap)
+    }
 
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
 
 //extension UIViewController {
-//    func hideKeyboardWhenTappedAround() {
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+//    func hideKeyboardWhenTappedAround(tableView: UITableView) {
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard(tableView: tableView)))
 //        tap.cancelsTouchesInView = false
-//        view.addGestureRecognizer(tap)
+//        tableView.addGestureRecognizer(tap)
 //    }
-//    
-//    @objc private func dismissKeyboard() {
-//        view.endEditing(true)
+//
+//    @objc private func dismissKeyboard(tableView: UITableView) {
+//        tableView.endEditing(true)
 //    }
 //}
 

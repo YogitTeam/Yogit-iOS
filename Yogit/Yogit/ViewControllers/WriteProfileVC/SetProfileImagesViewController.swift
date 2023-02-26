@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import BSImagePicker
 import Photos
+import ProgressHUD
 
 protocol ImagesProtocol: AnyObject {
     func imagesSend(profileImage: String)
@@ -49,6 +50,7 @@ class SetProfileImagesViewController: UIViewController {
         super.viewDidLoad()
         configureSuperView()
         configureNavigation()
+        initProgressHUD()
         configureCollectionView()
         getUserImages()
     }
@@ -74,17 +76,24 @@ class SetProfileImagesViewController: UIViewController {
     private func configureNavigation() {
         navigationItem.title = "Profile Photos"
         navigationItem.rightBarButtonItem = self.rightButton
+        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
     }
     
     private func configureCollectionView() {
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
     }
+    
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
+    }
 
     private func getUserImages() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         let getUserImages = GetUserImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
         let urlRequestConvertible = ProfileRouter.downLoadImages(parameters: getUserImages)
+        ProgressHUD.show(interaction: false)
         if let parameters = urlRequestConvertible.toDictionary {
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
                 for (key, value) in parameters {
@@ -108,6 +117,7 @@ class SetProfileImagesViewController: UIViewController {
                             userImagesData.downloadProfileImage = data.profileImageUrl
                             DispatchQueue.main.async(qos: .userInteractive, execute: {
                                 self.imagesCollectionView.reloadData()
+                                ProgressHUD.dismiss()
                             })
                         }
 //                        print(progressTime {
@@ -156,6 +166,9 @@ class SetProfileImagesViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - downLoad response result Not return", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
         
@@ -182,10 +195,13 @@ class SetProfileImagesViewController: UIViewController {
             return
         }
         
+        ProgressHUD.show(interaction: false)
+        
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         print("userImagesData", userImagesData)
         let patchUserImages = PatchUserImages(userId: userItem.userId, refreshToken: userItem.refresh_token, deleteUserImageIds: userImagesData.deleteUserImageIds, uploadImages: userImagesData.uploadImages, uploadProfileImage: profileImage)
         let urlRequestConvertible = ProfileRouter.uploadImages(parameters: patchUserImages)
+        
         if let parameters = urlRequestConvertible.toDictionary {
             print("Upload parameters", parameters)
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
@@ -230,6 +246,9 @@ class SetProfileImagesViewController: UIViewController {
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
                 }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
+                }
             }
         }
     }
@@ -249,18 +268,17 @@ class SetProfileImagesViewController: UIViewController {
 extension SetProfileImagesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor.label
+//        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        alert.addAction(cancel)
         if indexPath.row < userImagesData.downloadImages.count + userImagesData.uploadImages.count {
             let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
             alert.addAction(delete)
-            alert.addAction(cancel)
         } else {
             let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary() }
             let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera() }
             alert.addAction(library)
             alert.addAction(camera)
-            alert.addAction(cancel)
         }
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)

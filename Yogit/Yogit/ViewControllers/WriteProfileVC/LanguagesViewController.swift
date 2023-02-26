@@ -6,10 +6,10 @@ import SnapKit
 struct SectionLanguage: Hashable {
     let code: String
     let title: String
-    let options: [String]
+    let options: [Int]
     var opened: Bool
     
-    init(code: String, title: String, options: [String], opened: Bool = false) {
+    init(code: String, title: String, options: [Int], opened: Bool = false) {
         self.code = code
         self.title = title
         self.options = options
@@ -18,7 +18,7 @@ struct SectionLanguage: Hashable {
 }
 
 protocol LanguageProtocol {
-    func languageSend(languageCode: String, language: String, level: String)
+    func languageSend(languageCode: String, language: String, level: Int)
 }
 
 class LanguagesViewController: UIViewController {
@@ -139,7 +139,7 @@ class LanguagesViewController: UIViewController {
             // 로컬라이즈 언어, 원문
             if let language = locale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
                 if language != originLanguage || code == localLangCode { // 해당 원어로 변환 안되는 언어는 제외 (고대 언어나 극히 적게 쓰이는 언어임)
-                    languages.append(SectionLanguage(code: code, title: "\(language) (\(originLanguage))", options: ["Beginner", "Intermediate", "Fluent", "Native"]))
+                    languages.append(SectionLanguage(code: code, title: "\(language) (\(originLanguage))", options: [0, 1, 2, 3]))
                 }
             }
         }
@@ -270,9 +270,9 @@ extension LanguagesViewController: UITableViewDataSource {
         } else {
             if isFiltering {
                 // "      "
-                cell.configure(text: filteredSections[indexPath.section].options[indexPath.row - 1], isSelected: nil)
+                cell.configure(text: LanguageLevels(rawValue: filteredSections[indexPath.section].options[indexPath.row - 1])?.toString() ?? "", isSelected: nil)
             } else {
-                cell.configure(text: sections[indexPath.section].options[indexPath.row - 1], isSelected: nil)
+                cell.configure(text: LanguageLevels(rawValue: sections[indexPath.section].options[indexPath.row - 1])?.toString() ?? "", isSelected: nil)
             }
             if indexPath.row != 4 {
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 40, bottom: 0, right: 0)

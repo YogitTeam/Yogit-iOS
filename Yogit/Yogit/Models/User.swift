@@ -51,3 +51,46 @@ struct GetUserImages: Encodable {
     }
 }
 
+
+struct FetchUserProfile: Decodable {
+    let city, aboutMe, job, phone, countryCode: String?
+    let age: Int
+    let imageUrls: [String]
+    let interests: [String]?
+    let languageCodes: [String]
+    let languageLevels: [Int]
+    let latitude, longtitude, memberTemp: Double?
+    let name, nationality, profileImg, gender: String
+    let userId: Int
+    let userStatus: String?
+
+    enum CodingKeys: String, CodingKey {
+        case aboutMe, age, city
+        case countryCode
+        case gender, imageUrls, interests, job, languageLevels, languageCodes, latitude, longtitude, memberTemp, name, nationality, phone, profileImg
+        case userId
+        case userStatus
+    }
+    
+    init(city: String?, aboutMe: String?, job: String?, phone: String?, countryCode: String?, age: Int, imageUrls: [String], interests: [String]?, languageLevels: [Int], languageCodes: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, gender: String, userId: Int, userStatus: String?) {
+        self.city = city
+        self.aboutMe = aboutMe
+        self.job = job
+        self.phone = phone
+        self.countryCode = countryCode
+        self.age = age
+        self.imageUrls = imageUrls
+        self.interests = interests
+        self.languageLevels = languageLevels
+        self.languageCodes = languageCodes
+        self.latitude = latitude
+        self.longtitude = longtitude
+        self.memberTemp = memberTemp
+        self.name = name
+        self.nationality = nationality
+        self.profileImg = profileImg
+        self.gender = gender
+        self.userId = userId
+        self.userStatus = userStatus
+    }
+}

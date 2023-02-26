@@ -9,6 +9,7 @@ import SnapKit
 //import Alamofire
 import MapKit
 import BLTNBoard
+import ProgressHUD
 
 //enum bottomButtonState {
 //    case join, withdrawl
@@ -58,7 +59,7 @@ class GatheringDetailBoardViewController: UIViewController {
                 if self.boardImages.count >= 2 {
                     self.boardImagesPageControl.numberOfPages = self.boardImages.count
                 }
-                self.configureScrollView()
+                self.configureImagesScrollView()
             }
         }
     }
@@ -74,6 +75,8 @@ class GatheringDetailBoardViewController: UIViewController {
             self.imagesCollectionView.reloadData()
         }
     }
+    
+    private var userIds = [Int64]()
     
 //    private var applyButtonState: ApplyButtonState?
     
@@ -103,6 +106,7 @@ class GatheringDetailBoardViewController: UIViewController {
         
         let item = BLTNPageItem(title: "Join the gathering")
         item.image = "👋".stringToImage(width: 100, height: 100)//UIImage(named: "pro1")
+        
 //        item.imageAccessibilityLabel = "👋"
 //        item.descriptionLabel?.text = "Join the gathering"
         item.actionButtonTitle = "Join"
@@ -125,6 +129,7 @@ class GatheringDetailBoardViewController: UIViewController {
         pageControl.numberOfPages = 0 // self.BoardImages.count
         // 페이지 컨트롤의 현재 페이지를 0으로 설정
         pageControl.currentPage = 0
+    
         // 페이지 표시 색상을 밝은 회색 설정
         pageControl.pageIndicatorTintColor = .placeholderText
         // 현재 페이지 표시 색상을 검정색으로 설정
@@ -159,7 +164,8 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private lazy var boardContentScrollView: UIScrollView = {
        let scrollView = UIScrollView()
-        scrollView.backgroundColor = .systemBackground
+//        scrollView.backgroundColor = .systemRed
+//        scrollView.backgroundColor = .systemBackground
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isScrollEnabled = true
         scrollView.addSubview(contentView)
@@ -184,25 +190,25 @@ class GatheringDetailBoardViewController: UIViewController {
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(rightButtonPressed(_:))) //
         button.isHidden = true
-        button.tintColor = UIColor.label
+        button.tintColor = UIColor.white
         return button
     }()
     
     private let footerView1: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        view.backgroundColor = .systemGray6//.systemGray6
         return view
     }()
 
     private let footerView2: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        view.backgroundColor = .systemGray6
         return view
     }()
     
     private let footerView3: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+        view.backgroundColor = .systemGray6
         return view
     }()
     
@@ -213,7 +219,8 @@ class GatheringDetailBoardViewController: UIViewController {
 //        imageView.layer.cornerRadius = 55
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
-//        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
+        imageView.contentMode = .scaleAspectFill
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hostImageViewTapped(_:))))
         return imageView
     }()
     
@@ -279,16 +286,30 @@ class GatheringDetailBoardViewController: UIViewController {
         return label
     }()
     
-    private let introductionContentLabel: UILabel = {
-        let label = UILabel()
-//        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .left
-        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
-        label.numberOfLines = 0
-//        label.sizeToFit()
-        return label
+    private let introductionContentTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.backgroundColor = .systemBackground
+        textView.isScrollEnabled = false
+//        textView.isUserInteractionEnabled = false
+        textView.sizeToFit()
+        textView.isEditable = false
+        textView.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        textView.textColor = .label
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        return textView
     }()
+    
+//    private let introductionContentLabel: UILabel = {
+//        let label = UILabel()
+////        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.textAlignment = .left
+//        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+//        label.numberOfLines = 0
+////        label.sizeToFit()
+//        return label
+//    }()
     
     private let kindOfPersonLabel: UILabel = {
         let label = UILabel()
@@ -302,15 +323,18 @@ class GatheringDetailBoardViewController: UIViewController {
         return label
     }()
     
-    private let kindOfPersonContentLabel: UILabel = {
-        let label = UILabel()
-//        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .left
-        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
-        label.numberOfLines = 0
-        label.sizeToFit()
-        return label
+    private let kindOfPersonContentTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.backgroundColor = .systemBackground
+        textView.isScrollEnabled = false
+//        textView.isUserInteractionEnabled = false
+        textView.sizeToFit()
+        textView.isEditable = false
+        textView.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        textView.textColor = .label
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        return textView
     }()
     
     private let mapLabel: UILabel = {
@@ -341,7 +365,6 @@ class GatheringDetailBoardViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = .systemBackground
         view.translatesAutoresizingMaskIntoConstraints = false
-        
         [self.boardImagesScrollView,
          self.boardImagesPageControl,
          self.titleLabel,
@@ -350,15 +373,13 @@ class GatheringDetailBoardViewController: UIViewController {
          self.footerView1,
          self.hostLabel,
          self.hostImageView,
-         self.hostNameLabel,
          self.memberLabel,
          self.imagesCollectionView,
          self.footerView2,
          self.introductionLabel,
-         self.introductionContentLabel,
-//         self.lineView,
+         self.introductionContentTextView,
          self.kindOfPersonLabel,
-         self.kindOfPersonContentLabel,
+         self.kindOfPersonContentTextView,
          self.footerView3,
          self.mapLabel,
          self.mapAddressLabel,
@@ -391,7 +412,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
 //    private let lineView: UIView = {
 //        let view = UIView()
-//        view.backgroundColor = UIColor(rgb: 0xF5F5F5, alpha: 1.0)
+//        view.backgroundColor = .systemGray6
 //        view.translatesAutoresizingMaskIntoConstraints = false
 //        return view
 //    }()
@@ -470,18 +491,51 @@ class GatheringDetailBoardViewController: UIViewController {
         view.addSubview(boardBottomView)
         configureViewComponent()
         configureInteractionInfoComponent()
+        configureScrollView()
+        mapView.delegate = self
+        initProgressHUD()
+        setViewWithMode(mode: boardWithMode.mode)
+        bulletinManager.backgroundViewStyle = .blurred(style: .systemUltraThinMaterialLight, isDark: true)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.tintColor = .white
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.tintColor = .label 
+    }
+    
+    private func configureScrollView() {
+        boardContentScrollView.delegate = self
         boardImagesScrollView.delegate = self
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
-        mapView.delegate = self
-        setViewWithMode(mode: boardWithMode.mode)
-        
-        // navigation back button change
-//        let backButton = UIBarButtonItem(title: "Custom", style: .Plain, target: self, action: nil    )
-//        //backButton.image = UIImage(named: "imageName") //Replaces title
-//        backButton.setBackgroundImage(UIImage(named: "imageName"), forState: .Normal, barMetrics: .Default) // Stretches image
-//        navigationItem.setLeftBarButtonItem(backButton, animated: false)
     }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        self.navigationController?.navigationBar.isTranslucent = true
+//        self.navigationController?.navigationBar.barTintColor = UIColor.clear
+//        self.navigationController?.navigationBar.backgroundColor = UIColor.clear
+//        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+//        self.navigationController?.navigationBar.shadowImage = UIImage()
+//
+//        let backImage = UIImage(named: "BackButton")
+//        self.navigationController?.navigationBar.backIndicatorImage = backImage
+//        self.navigationController?.navigationBar.tintColor = UIColor.white
+//        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+//    }
+//
+//    override func viewDidDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        self.navigationController?.navigationBar.backIndicatorImage = nil
+//        self.navigationController?.navigationBar.tintColor = .label
+//        navigationItem.leftItemsSupplementBackButton = false
+//        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = nil
+//    }
     
     private func configureViewComponent() {
         self.view.backgroundColor = .systemBackground
@@ -498,14 +552,20 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+    }
+    
     func configureInteractionInfoComponent() {
         self.placeBoardInfoView.infoLabel.text = "Place infoLabel"
-        self.placeBoardInfoView.leftImageView.image = UIImage(named: "BoardPlace")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
+        self.placeBoardInfoView.leftImageView.image = UIImage(named: "Place")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.rightImageView.image = UIImage(named: "push")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.dateBoardInfoView.infoLabel.text = "Date infoLabel"
-        self.dateBoardInfoView.leftImageView.image = UIImage(named: "BoardDate")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
+        self.dateBoardInfoView.leftImageView.image = UIImage(named: "Date")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.isUserInteractionEnabled = true
         self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
+//        self.placeBoardInfoView.leftImageLabel.text = "Meet up"
+//        self.dateBoardInfoView.leftImageLabel.text = "Date   "
     }
     
     override func viewDidLayoutSubviews() {
@@ -517,14 +577,20 @@ class GatheringDetailBoardViewController: UIViewController {
         contentView.snp.makeConstraints {
             $0.width.equalToSuperview()
             $0.centerX.bottom.equalToSuperview()
-//            $0.top.equalTo(boardContentScrollView.bounds.minY)
-            $0.top.equalToSuperview()
+            $0.top.equalTo(boardContentScrollView.bounds.minY)
+//            $0.top.equalToSuperview()
         }
+//        boardImagesScrollView.snp.makeConstraints {
+//            $0.top.leading.trailing.equalToSuperview()
+//            $0.height.equalTo(view.frame.size.width * 2/3)
+////            $0.bottom.equalToSuperview()
+//        }
+        
         boardImagesScrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.height.equalTo(view.frame.size.width * 2/3)
-//            $0.bottom.equalToSuperview()
+            $0.height.equalTo(view.frame.size.width)
         }
+        
         boardImagesPageControl.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(boardImagesScrollView.snp.bottom).inset(10)
@@ -547,7 +613,7 @@ class GatheringDetailBoardViewController: UIViewController {
         footerView1.snp.makeConstraints {
             $0.top.equalTo(dateBoardInfoView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(6)
+            $0.height.equalTo(5)
         }
         hostLabel.snp.makeConstraints {
             $0.top.equalTo(footerView1.snp.bottom).offset(20)
@@ -560,12 +626,12 @@ class GatheringDetailBoardViewController: UIViewController {
         }
         hostImageView.layer.cornerRadius = 22
         
-        hostNameLabel.snp.makeConstraints {
-//            $0.top.equalTo(hostLabel.snp.bottom).offset(10)
-            $0.centerY.equalTo(hostImageView)
-            $0.leading.equalTo(hostImageView.snp.trailing).offset(10)
-            $0.trailing.equalToSuperview().inset(20)
-        }
+//        hostNameLabel.snp.makeConstraints {
+////            $0.top.equalTo(hostLabel.snp.bottom).offset(10)
+//            $0.centerY.equalTo(hostImageView)
+//            $0.leading.equalTo(hostImageView.snp.trailing).offset(10)
+//            $0.trailing.equalToSuperview().inset(20)
+//        }
         memberLabel.snp.makeConstraints {
             $0.top.equalTo(hostImageView.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -584,26 +650,27 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.top.equalTo(footerView2.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-        introductionContentLabel.snp.makeConstraints {
+        introductionContentTextView.snp.makeConstraints {
             $0.top.equalTo(introductionLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
+//            $0.height.equalTo(100)
         }
 //        lineView.snp.makeConstraints {
 //            $0.top.equalTo(introductionContentLabel.snp.bottom).offset(15)
 //            $0.height.equalTo(1)
 //            $0.leading.trailing.equalToSuperview().inset(20)
 //        }
-//        introductionContentLabel.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 20, marginRight: 20, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 10)
+//        introductionContentLabel.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 20, marginRight: 20, color: .systemGray6, width: 1, marginTop: 10)
         kindOfPersonLabel.snp.makeConstraints {
-            $0.top.equalTo(introductionContentLabel.snp.bottom).offset(21)
+            $0.top.equalTo(introductionContentTextView.snp.bottom).offset(21)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-        kindOfPersonContentLabel.snp.makeConstraints {
+        kindOfPersonContentTextView.snp.makeConstraints {
             $0.top.equalTo(kindOfPersonLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         footerView3.snp.makeConstraints {
-            $0.top.equalTo(kindOfPersonContentLabel.snp.bottom).offset(20)
+            $0.top.equalTo(kindOfPersonContentTextView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(6)
         }
@@ -650,11 +717,11 @@ class GatheringDetailBoardViewController: UIViewController {
 //            $0.height.equalTo(50)
 //            $0.width.equalTo((view.frame.width-60)/2)
 //        }
-//        placeBoardInfoView.addToViewBottomBorderWithColor(color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1)
-        placeBoardInfoView.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 0)
-        memberLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 10)
+//        placeBoardInfoView.addToViewBottomBorderWithColor(color: .systemGray6, width: 1)
+        placeBoardInfoView.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 0)
+        memberLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
 //        introductionContentLabel.layoutIfNeeded()
-        kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: UIColor(rgb: 0xF5F5F5, alpha: 1.0), width: 1, marginTop: 10)
+        kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
     }
     
     @objc func joinBoardButtonTapped(_ sender: UIButton) {
@@ -709,7 +776,10 @@ class GatheringDetailBoardViewController: UIViewController {
                 case .success:
                     guard let value = response.value else { return }
                     if value.httpCode == 200 {
-                        self.bulletinManager.dismissBulletin(animated: true)
+                        DispatchQueue.main.async {
+                            self.bulletinManager.dismissBulletin(animated: true)
+                            ProgressHUD.showSucceed(interaction: true)
+                        }
                     }
                 case let .failure(error):
                     print(error)
@@ -777,6 +847,11 @@ class GatheringDetailBoardViewController: UIViewController {
     @objc func clipBoardTapped(_ sender: UITapGestureRecognizer) {
         print("clipBoardTapped")
         moveToClipBoard()
+    }
+    
+    @objc func hostImageViewTapped(_ sender: UITapGestureRecognizer) {
+        guard let userIdToRead = userIds.first else { return }
+        readProfile(userIdToRead: userIdToRead)
     }
     
     func moveToClipBoard() {
@@ -851,11 +926,15 @@ class GatheringDetailBoardViewController: UIViewController {
     @objc private func rightButtonPressed(_ sender: Any) {
         // bottom view
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = UIColor.label
+//        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         guard let userItem = try? KeychainManager.getUserItem() else { return }
         if userItem.userId != boardWithMode.hostId { // hostId
-            let report = UIAlertAction(title: "Report", style: .default) { (action) in self.reportAlert() }
+            let report = UIAlertAction(title: "Report", style: .destructive) { (action) in
+                guard let reportBoardId = self.boardWithMode.boardId else { return }
+                guard let reportedUserId = self.boardWithMode.hostId else { return }
+                self.reportAlert(reportBoardId: reportBoardId, reportedUserId: reportedUserId)
+            }
             alert.addAction(report)
         } else {
             let edit = UIAlertAction(title: "Edit", style: .default) { (action) in self.editBoard() }
@@ -869,21 +948,17 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    func reportAlert() {
-        let alert = UIAlertController(title: "Report", message: "Please enter the reason for reporting", preferredStyle: .alert)
-        alert.addTextField { (textField) in
-            textField.placeholder = "Reason for report"
-        }
-        let cancel = UIAlertAction(title: "cancel", style: .cancel)
-        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
-            guard let content = alert.textFields?[0].text else { return }
-            self.reportBoard(content: content)
-        }
-        alert.addAction(cancel)
-        alert.addAction(ok)
-        DispatchQueue.main.async {
-            self.present(alert, animated: true, completion: nil)
-        }
+    func reportAlert(reportBoardId: Int64, reportedUserId: Int64) {
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
+            let RVC = ReportViewController()
+            RVC.reportedBoardId = reportBoardId
+            RVC.reportedUserId = reportedUserId
+            RVC.reportKind = .boardReport
+            RVC.modalPresentationStyle = .fullScreen
+            let NC = UINavigationController(rootViewController: RVC)
+            NC.modalPresentationStyle = .fullScreen
+            self.present(NC, animated: true, completion: nil)
+        })
     }
     
     func deleteAlert() {
@@ -903,18 +978,19 @@ class GatheringDetailBoardViewController: UIViewController {
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
             let GBCVC = GatheringBoardCategoryViewController()
             boardWithMode.mode = .edit
-//            boardWithMode.hostId = hostId
-            boardWithMode.title = titleLabel.text
-            boardWithMode.address = placeBoardInfoView.infoLabel.text
-            boardWithMode.addressDetail = placeBoardInfoView.subInfoLabel.text
-//            boardWithMode.longitute = coordinate?.longitude
-//            boardWithMode.latitude = coordinate?.latitude
-            boardWithMode.introduction = introductionContentLabel.text
-            boardWithMode.kindOfPerson = kindOfPersonContentLabel.text
-//            boardWithMode.boardId = boardId
-            boardWithMode.downloadImages = boardImages
+////            boardWithMode.hostId = hostId
+//            boardWithMode.title = titleLabel.text
+//            boardWithMode.address = placeBoardInfoView.infoLabel.text
+//            boardWithMode.addressDetail = placeBoardInfoView.subInfoLabel.text
+////            boardWithMode.longitute = coordinate?.longitude
+////            boardWithMode.latitude = coordinate?.latitude
+//            boardWithMode.introduction = introductionContentLabel.text
+//            boardWithMode.kindOfPerson = kindOfPersonContentTextView.text
+////            boardWithMode.boardId = boardId
+//            boardWithMode.downloadImages = boardImages
             GBCVC.categoryId = (boardWithMode.categoryId ?? 0) - 1
             GBCVC.boardWithMode = self.boardWithMode
+            print("editBoard boardwithmode", boardWithMode)
             self.navigationController?.pushViewController(GBCVC, animated: true)
         })
     }
@@ -928,92 +1004,65 @@ class GatheringDetailBoardViewController: UIViewController {
         AlamofireManager.shared.session
             .request(BoardRouter.deleteBoard(parameters: deleteBoardReq))
             .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<BoardDetail>.self) { response in // 서버 반영 필요
+            .responseDecodable(of: APIResponse<DeleteBoardRes>.self) { response in // 서버 반영 필요
                 switch response.result {
                 case .success:
                     guard let value = response.value else { return }
                     if value.httpCode == 200 {
                         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
 //                            NotificationCenter.default.post(name: NSNotification.Name("DeleteBoardRefresh"), object: nil) // 홈화면 전달 하지만 다른 화면일때도 전달 해야함
-                            self.navigationController?.popViewController(animated: true)
+                            navigationController?.popViewController(animated: true)
                         })
                     }
                 case let .failure(error):
                     print(error)
                 }
             }
-        
-        
-        
-//        AF.request(API.BASE_URL + "boards/status",
-//                   method: .patch,
-//                   parameters: deleteBoardReq,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .response { response in // reponseData
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                if let data = response.data {
-//                    DispatchQueue.main.async {
-//                        self.navigationController?.popViewController(animated: true)
-//                    }
-//                }
-//            case .failure(let error):
-//                debugPrint(response)
-//                print(error)
-//            }
-//        }
-        
     }
     
-    func reportBoard(content: String) {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        guard let hostId = hostId else { return }
-        guard let hostId = boardWithMode.hostId else { return }
-//        guard let boardId = boardId else { return }
-        guard let boardId = boardWithMode.boardId else { return }
-        let boardReport = BoardReport(content: content, refreshToken: userItem.refresh_token, reportType: "PORNOGRAPHY", reportedBoardID: boardId, reportedUserID: hostId, reportingUserID: userItem.userId)
-        
-        AlamofireManager.shared.session
-            .request(ReportRouter.reportBoard(parameters: boardReport))
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<[String:Int64]>.self) { response in // 서버 반영 필요
-                switch response.result {
-                case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 {
-                        print("Success - Report Board")
-                    }
-                case let .failure(error):
-                    print(error)
-                }
+    
+    func isDeletedAlert() {
+        let alert = UIAlertController(title: "Board is deleted", message: "The gathering board is deleted", preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+            DispatchQueue.main.async {
+                self.navigationController?.popViewController(animated: true)
             }
-        
-//        AF.request(API.BASE_URL + "boardreports",
-//                   method: .post,
-//                   parameters: boardReport,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .response { response in // reponseData
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//            case .failure(let error):
-//                debugPrint(response)
-//                print(error)
-//            }
-//        }
+        }
+        alert.addAction(ok)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
-    private func configureScrollView() {
+//    private func configureScrollView() {
+////        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
+//        // CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
+//        DispatchQueue.main.async(qos: .userInteractive, execute: {
+//            self.boardImagesScrollView.isPagingEnabled = true
+//            for x in 0..<self.boardImages.count {
+//                print("configure")
+//                let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.bounds.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width*2/3))
+//    //            self.boardImagesScrollView.bounds.minY
+//                self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(self.boardImages.count)
+//                    imageView.backgroundColor = .systemGray
+//                print(self.boardImages[x].size)
+//                imageView.clipsToBounds = true
+//                imageView.contentMode = .scaleAspectFill
+////                imageView.image = self.boardImages[x]
+//                imageView.setImage(with: self.boardImages[x])
+//                self.boardImagesScrollView.addSubview(imageView)
+//            }
+//        })
+//    }
+    
+    private func configureImagesScrollView() {
 //        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
         // CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
         DispatchQueue.main.async(qos: .userInteractive, execute: {
             self.boardImagesScrollView.isPagingEnabled = true
             for x in 0..<self.boardImages.count {
                 print("configure")
-                let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.bounds.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width*2/3))
+                let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.frame.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width))
     //            self.boardImagesScrollView.bounds.minY
                 self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(self.boardImages.count)
                     imageView.backgroundColor = .systemGray
@@ -1026,6 +1075,9 @@ class GatheringDetailBoardViewController: UIViewController {
             }
         })
     }
+    
+    
+    
     
 //    func getBoardDetail() {
 //        guard let userItem = try? KeychainManager.getUserItem() else { return }
@@ -1098,7 +1150,7 @@ class GatheringDetailBoardViewController: UIViewController {
 //                            self.hostId = myData.hostId
 //                            self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
 //                            self.introductionContentLabel.text = myData.introduction
-//                            self.kindOfPersonContentLabel.text = myData.kindOfPerson
+//                            self.kindOfPersonContentTextView.text = myData.kindOfPerson
 //                            self.mapAddressLabel.text = myData.address
 //                            let coordinate = CLLocationCoordinate2D(latitude: 37.5510763, longitude: 127.075836)
 //                            self.moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
@@ -1119,11 +1171,12 @@ class GatheringDetailBoardViewController: UIViewController {
     
     func bindBoardDetail(data: BoardDetail) {
         // boardDetail로 화면 뿌려줌 & boardWithMode 저장
+        boardWithMode.userIds = data.userIds
         boardWithMode.hostId = data.hostId // hostId로 신고 설정
         boardWithMode.boardId = data.boardId // boardId로 BoardDetail API 요청
         boardWithMode.currentMember = data.currentMember
         boardWithMode.memberImages = data.userImageUrls
-        boardWithMode.hostName = data.hostName
+//        boardWithMode.hostName = data.hostName
         boardWithMode.hostImage = data.profileImgUrl
         boardWithMode.title = data.title
         boardWithMode.address = data.address
@@ -1133,7 +1186,7 @@ class GatheringDetailBoardViewController: UIViewController {
         boardWithMode.downloadImages = data.imageUrls
         boardWithMode.categoryId = data.categoryId
         boardWithMode.notice = data.notice
-        boardWithMode.cityName = data.cityName
+        boardWithMode.city = data.cityName
         boardWithMode.totalMember = data.totalMember
         boardWithMode.imageIds = data.imageIds
         boardWithMode.date = data.date
@@ -1143,17 +1196,27 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     func viewBinding(data: BoardWithMode) {
+        guard let userIds = data.userIds else { return }
+        self.userIds = userIds
+        print("BoardWithMode", boardWithMode)
         boardImages = data.downloadImages
-        memberImages = data.memberImages!
+        guard let memberImages = data.memberImages else { return }
+        self.memberImages = memberImages
         hostImageView.setImage(with: data.hostImage!)
         titleLabel.text = data.title
         placeBoardInfoView.infoLabel.text = data.address
         placeBoardInfoView.subInfoLabel.text = data.addressDetail
         dateBoardInfoView.infoLabel.text = data.date?.stringToDate()?.dateToStringUser() //?.dateToString()
-        hostNameLabel.text = data.hostName
+//        hostNameLabel.text = data.hostName
         memberLabel.text = "\(memberLabel.text ?? "") (\(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
-        introductionContentLabel.text = data.introduction
-        kindOfPersonContentLabel.text = data.kindOfPerson
+        introductionContentTextView.text = data.introduction
+//        let contentSize = introductionContentTextView.sizeThatFits(introductionContentTextView.bounds.size)
+//        introductionContentTextView.frame.size = contentSize
+//        let size = CGSize(width: introductionContentTextView.frame.size.width, height: .infinity)
+//        introductionContentTextView.sizeThatFits(size)
+//        introductionContentTextView.sizeToFit()
+//        introductionContentTextView.frame.size.height = introductionContentTextView.contentSize.height
+        kindOfPersonContentTextView.text = data.kindOfPerson
         mapAddressLabel.text = data.address
         moveLocation(latitudeValue: data.latitude!, longtudeValue: data.longitute!, delta: 0.01)
         setAnnotation(latitudeValue: data.latitude!, longitudeValue: data.longitute!, delta: 0.01, title: "", subtitle: data.address!)
@@ -1199,180 +1262,90 @@ class GatheringDetailBoardViewController: UIViewController {
             .request(BoardRouter.readBoardDetail(parameters: getBoardDetailReq))
             .validate(statusCode: 200..<501)
             .responseDecodable(of: APIResponse<BoardDetail>.self) { response in
-                switch response.result {
-                case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 {
-                        guard let data = value.data else { return }
+            switch response.result {
+            case .success:
+                guard let value = response.value else { return }
+                if value.httpCode == 200 {  // 멤버수 증가에 따른 에러 처리 (httpCode:400, message: 보드 인원이 다 찼습니다.)
+                    guard let data = value.data else { return }
+                    if data.status == Status.active.rawValue {
                         DispatchQueue.global().async(qos: .userInteractive, execute: {
                             self.bindBoardDetail(data: data)
                             DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                                 viewBinding(data: boardWithMode)
-    //                        boardImages = data.imageUrls
-    //                        memberImages = data.userImageUrls // boardWithMode에 불필요
-    //                        hostImageView.setImage(with: data.profileImgUrl)
-    //                        titleLabel.text = data.title
-    //                        placeBoardInfoView.infoLabel.text = data.address
-    //                        placeBoardInfoView.subInfoLabel.text = boardWithMode.addressDetail
-    //                        dateBoardInfoView.infoLabel.text = data.date.stringToDate()?.dateToStringUser() //?.dateToString()
-    //                        hostNameLabel.text = data.hostName
-    ////                        hostId = data.hostId
-    //                        memberLabel.text = "\(memberLabel.text ?? "") (\(data.currentMember)/\(data.totalMember))"
-    //                        introductionContentLabel.text = data.introduction
-    //                        kindOfPersonContentLabel.text = data.kindOfPerson
-    //                        mapAddressLabel.text = data.address
-    //                        moveLocation(latitudeValue: data.latitude, longtudeValue: data.longitute, delta: 0.01)
-    //                        setAnnotation(latitudeValue: data.latitude, longitudeValue: data.longitute, delta: 0.01, title: "", subtitle: data.address)
-    //                        boardWithMode.hostId = data.hostId
-    //                        boardWithMode.boardId = data.boardId
-    //                        rightButton.isHidden = false
-    //                        boardWithMode.categoryId = data.categoryId
-    //                        boardWithMode.notice = data.notice
-    //                        boardWithMode.cityName = data.cityName
-    //                        boardWithMode.totalMember = data.totalMember
-    //                        boardWithMode.imageIds = data.imageIds
-    //                        boardWithMode.date = data.date
-    //                        boardWithMode.latitude = data.latitude
-    //                        boardWithMode.longitute = data.longitute
+                                //                        boardImages = data.imageUrls
+                                //                        memberImages = data.userImageUrls // boardWithMode에 불필요
+                                //                        hostImageView.setImage(with: data.profileImgUrl)
+                                //                        titleLabel.text = data.title
+                                //                        placeBoardInfoView.infoLabel.text = data.address
+                                //                        placeBoardInfoView.subInfoLabel.text = boardWithMode.addressDetail
+                                //                        dateBoardInfoView.infoLabel.text = data.date.stringToDate()?.dateToStringUser() //?.dateToString()
+                                //                        hostNameLabel.text = data.hostName
+                                ////                        hostId = data.hostId
+                                //                        memberLabel.text = "\(memberLabel.text ?? "") (\(data.currentMember)/\(data.totalMember))"
+                                //                        introductionContentLabel.text = data.introduction
+                                //                        kindOfPersonContentTextView.text = data.kindOfPerson
+                                //                        mapAddressLabel.text = data.address
+                                //                        moveLocation(latitudeValue: data.latitude, longtudeValue: data.longitute, delta: 0.01)
+                                //                        setAnnotation(latitudeValue: data.latitude, longitudeValue: data.longitute, delta: 0.01, title: "", subtitle: data.address)
+                                //                        boardWithMode.hostId = data.hostId
+                                //                        boardWithMode.boardId = data.boardId
+                                //                        rightButton.isHidden = false
+                                //                        boardWithMode.categoryId = data.categoryId
+                                //                        boardWithMode.notice = data.notice
+                                //                        boardWithMode.localityName = data.localityName
+                                //                        boardWithMode.totalMember = data.totalMember
+                                //                        boardWithMode.imageIds = data.imageIds
+                                //                        boardWithMode.date = data.date
+                                //                        boardWithMode.latitude = data.latitude
+                                //                        boardWithMode.longitute = data.longitute
                             })
                         })
                     }
-                case let .failure(error):
-                    print(error)
+                } else if value.httpCode == 404 { // 삭제되 데이터 조회시
+                    if value.errorCode == "B0001" {
+                        self.isDeletedAlert()
+                    }
                 }
+            case let .failure(error):
+                print(error)
             }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-//        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        guard let boardId = boardId else { return }
-//        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
-//        AF.request(API.BASE_URL + "boards/get/detail",
-//                   method: .post,
-//                   parameters: getBoardDetailReq,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                guard let data = response.value else { return }
-//                do{
-//                    let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
-//                    guard let myData = decodedData.data else { return }
-//                    print("APIResponse<BoardDetail>", myData)
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    
-//                    var boardImages: [UIImage] = []
-//                    var hostImage: UIImage?
-//                    var memberImages: [UIImage] = []
-//                    DispatchQueue.global().async {
-//                        for imageUrl in myData.imageUrls {
-//                            imageUrl.urlToImage { (image) in
-//                                guard let image = image else {
-//                                    print("imageUrls can't read")
-//                                    return
-//                                }
-//                                boardImages.append(image)
-//                            }
-//                        }
-//                        myData.profileImgUrl.urlToImage { (image) in
-//                            guard let image = image else {
-//                                print("profileImgUrl can't read")
-//                                return
-//                            }
-//                            hostImage = image
-//                        }
-//                        if let userImages = myData.userImageUrls {
-//                            for userImage in userImages {
-//                                userImage.urlToImage { (image) in
-//                                    guard let image = image else {
-//                                        print("imageUrls can't read")
-//                                        return
-//                                    }
-//                                    memberImages.append(image)
-//                                }
-//                            }
-//                        }
-////                        memberImages.append(UIImage(named: "user2")!)
-////                        memberImages.append(UIImage(named: "user1")!)
-////                        memberImages.append(UIImage(named: "user3")!)
-//                        print("print(memberImages)", memberImages)
-//                        DispatchQueue.main.async() {
-//                            self.boardImages = boardImages
-//                            self.memberImages = memberImages
-//                            self.hostImageView.image = hostImage
-//                            self.titleLabel.text = myData.title
-//                            self.placeBoardInfoView.infoLabel.text = myData.address
-//                            self.placeBoardInfoView.subInfoLabel.text = myData.addressDetail
-//                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToStringUser() //?.dateToString()
-//                            self.hostNameLabel.text = myData.hostName
-//                            self.hostId = myData.hostId
-//                            self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
-//                            self.introductionContentLabel.text = myData.introduction
-//                            self.kindOfPersonContentLabel.text = myData.kindOfPerson
-//                            self.mapAddressLabel.text = myData.address
-//                            let coordinate = CLLocationCoordinate2D(latitude: 37.5510763, longitude: 127.075836)
-//                            self.moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
-//                                .longitude, delta: 0.01)
-//                            self.setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: "", subtitle: myData.address)
-//                        }
-//                    }
-//                }
-//                catch{
-//                    print("catch can't read")
-//                    print(error.localizedDescription)
-//                }
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
+        }
+    }
+    
+    func readProfile(userIdToRead: Int64) {
+        DispatchQueue.main.async(execute: {
+            let GPVC = GetProfileViewController()
+            GPVC.getUserId = userIdToRead
+            GPVC.modalPresentationStyle = .fullScreen
+            let NC = UINavigationController(rootViewController: GPVC)
+            NC.modalPresentationStyle = .fullScreen
+            self.present(NC, animated: true, completion: nil)
+        })
     }
 }
 
 extension GatheringDetailBoardViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-         boardImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
         print("scrollViewDidScroll")
+        if scrollView == boardContentScrollView {
+            if scrollView.contentOffset.y <= 0 {
+                self.navigationController?.navigationBar.tintColor = .white // scroll down: change back button color to red
+                self.rightButton.tintColor = .white
+            } else {
+                self.navigationController?.navigationBar.tintColor = UIColor.label // scroll up: change back button color to blue
+                self.rightButton.tintColor = .label
+            }
+        } else if scrollView == boardImagesScrollView {
+            boardImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
+        }
     }
 }
 
 extension GatheringDetailBoardViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        print("Tapped gatherging board collectionview image")
-        
-        
-//        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//        alert.view.tintColor = UIColor.label
-//        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
-//
-//        if indexPath.row < memberImages.count {
-//            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
-//            alert.addAction(delete)
-//            alert.addAction(cancel)
-//        } else {
-//            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary()}
-//            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera()}
-//            alert.addAction(library)
-//            alert.addAction(camera)
-//            alert.addAction(cancel)
-//        }
-//        DispatchQueue.main.async {
-//            self.present(alert, animated: true, completion: nil)
-//        }
+        readProfile(userIdToRead: userIds[indexPath.row])
     }
-    
 }
 
 extension GatheringDetailBoardViewController: UICollectionViewDataSource {
@@ -1383,7 +1356,7 @@ extension GatheringDetailBoardViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         print("ProfileImages indexpath update \(indexPath)")
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MemberImagesCollectionViewCell.identifier, for: indexPath) as? MemberImagesCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MemberImagesCollectionViewCell.identifier, for: indexPath) as? MemberImagesCollectionViewCell else { return UICollectionViewCell() }
 //        cell.configure(image: self.memberImages[indexPath.row])
         cell.configure(imageString: memberImages[indexPath.row])
         return cell
@@ -1446,6 +1419,7 @@ extension GatheringDetailBoardViewController: MKMapViewDelegate {
         mapView.addAnnotation(annotation)
     }
 }
+
 
 //extension Notification.Name {
 //    static let deleteBoardRefresh = Notification.Name("DeleteBoardRefresh")

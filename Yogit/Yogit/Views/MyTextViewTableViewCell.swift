@@ -13,6 +13,7 @@ class MyTextView: UIView {
 
     let myTextView: UITextView = {
         let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
         textView.backgroundColor = .systemBackground
         textView.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textView.layer.borderWidth = 1
@@ -26,6 +27,7 @@ class MyTextView: UIView {
     
     let textCountLabel: UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .placeholderText
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: UIFont.Weight.regular)
@@ -38,6 +40,7 @@ class MyTextView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         print("MyTextViewTableViewCell init")
+        self.translatesAutoresizingMaskIntoConstraints = false
         addSubview(myTextView)
         addSubview(textCountLabel)
         configureViewComponent()

@@ -71,6 +71,7 @@ enum Mode {
 
 struct BoardWithMode {
     var mode: Mode?
+    var userIds: [Int64]?
     var boardId: Int64?
     var hostId: Int64?
     var title: String?
@@ -80,7 +81,7 @@ struct BoardWithMode {
     var latitude: Double?
     var date: String?
     var notice: String?
-    var cityName: String?
+    var city: String?
     var introduction: String?
     var kindOfPerson: String?
     var totalMember: Int?
@@ -95,8 +96,9 @@ struct BoardWithMode {
     var hostImage: String?
     var isJoinedUser: Bool
   
-    init(mode: Mode? = nil, boardId: Int64? = nil,hostId: Int64? = nil, title: String? = nil, address: String? = nil, addressDetail: String? = nil, longitute: Double? = nil, latitude: Double? = nil, date: String? = nil, notice: String? = nil, cityName: String? = nil, introduction: String? = nil, kindOfPerson: String? = nil, totalMember: Int? = nil, categoryId: Int? = nil, deleteImageIds: [Int64]? = nil, downloadImages: [String] = [], uploadImages: [UIImage] = [], imageIds: [Int64] = [], memberImages: [String]? = nil, currentMember: Int? = nil, hostName: String? = nil, hostImage: String? = nil, isJoinedUser: Bool = false) {
+    init(mode: Mode? = nil, userIds: [Int64]? = nil, boardId: Int64? = nil,hostId: Int64? = nil, title: String? = nil, address: String? = nil, addressDetail: String? = nil, longitute: Double? = nil, latitude: Double? = nil, date: String? = nil, notice: String? = nil, city: String? = nil, introduction: String? = nil, kindOfPerson: String? = nil, totalMember: Int? = nil, categoryId: Int? = nil, deleteImageIds: [Int64]? = nil, downloadImages: [String] = [], uploadImages: [UIImage] = [], imageIds: [Int64] = [], memberImages: [String]? = nil, currentMember: Int? = nil, hostName: String? = nil, hostImage: String? = nil, isJoinedUser: Bool = false) {
         self.mode = mode
+        self.userIds = userIds
         self.hostId = hostId
         self.title = title
         self.address = address
@@ -105,7 +107,7 @@ struct BoardWithMode {
         self.latitude = latitude
         self.date = date
         self.notice = notice
-        self.cityName = cityName
+        self.city = city
         self.introduction = introduction
         self.kindOfPerson = kindOfPerson
         self.totalMember = totalMember

@@ -21,8 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         IQKeyboardManager.shared.enable = true
         IQKeyboardManager.shared.enableAutoToolbar = false
-        
-        
+//        UIApplication.shared.statusBarView?.backgroundColor = UIColor.red
+
+        UITabBar.appearance().tintColor = ServiceColor.primaryColor
+        UITabBar.appearance().backgroundColor = .systemBackground
+//        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -1000, vertical: 0), for: .default)
 //        UNUserNotificationCenter.current().delegate = self
 //        
 //        registerForPushNotifications()

@@ -50,7 +50,7 @@
 		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
 		79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */; };
 		79519FF1291E95E600D8E6CF /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF0291E95E600D8E6CF /* Image.swift */; };
-		79519FF3291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF2291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift */; };
+		79519FF3291EA84A00D8E6CF /* GatheringBoardOptionTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF2291EA84A00D8E6CF /* GatheringBoardOptionTestViewController.swift */; };
 		79519FF5291EA87B00D8E6CF /* GatheringBoardContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF4291EA87B00D8E6CF /* GatheringBoardContentViewController.swift */; };
 		79519FF7291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */; };
 		79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FFB291FB6B800D8E6CF /* TextField.swift */; };
@@ -77,7 +77,7 @@
 		795D9BC728F1F72900228E34 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BC628F1F72900228E34 /* Layer.swift */; };
 		7962CEE029386A8A007FCC10 /* TestPageControlViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEDF29386A8A007FCC10 /* TestPageControlViewController.swift */; };
 		7962CEE22938EF35007FCC10 /* BoardOptionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE12938EF35007FCC10 /* BoardOptionsTableViewCell.swift */; };
-		7962CEE42939174C007FCC10 /* TestBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE32939174C007FCC10 /* TestBoardViewController.swift */; };
+		7962CEE42939174C007FCC10 /* GatheringBoardOptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE32939174C007FCC10 /* GatheringBoardOptionViewController.swift */; };
 		7962CEE829392C86007FCC10 /* MyHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE729392C86007FCC10 /* MyHeaderView.swift */; };
 		7962CEEA293BA5F9007FCC10 /* BoardInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEE9293BA5F9007FCC10 /* BoardInfoView.swift */; };
 		7962CEEE293C4302007FCC10 /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEED293C4302007FCC10 /* Encodable.swift */; };
@@ -87,6 +87,21 @@
 		7962CEFA29408285007FCC10 /* APIClipBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962CEF929408285007FCC10 /* APIClipBoard.swift */; };
 		797302462988FFBC006EFFB9 /* AlertTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302452988FFBC006EFFB9 /* AlertTestViewController.swift */; };
 		79730248298953DB006EFFB9 /* BoardUserRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79730247298953DB006EFFB9 /* BoardUserRouter.swift */; };
+		7973024B298B99EF006EFFB9 /* JoinListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973024A298B99EF006EFFB9 /* JoinListViewController.swift */; };
+		7973024D298B9C6F006EFFB9 /* JoinListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973024C298B9C6F006EFFB9 /* JoinListTableViewCell.swift */; };
+		7973024F298C8981006EFFB9 /* SwipeTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973024E298C8981006EFFB9 /* SwipeTestViewController.swift */; };
+		79730251298C8B30006EFFB9 /* SwipeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79730250298C8B30006EFFB9 /* SwipeCollectionViewCell.swift */; };
+		79730253298E9547006EFFB9 /* NeworkMoniter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79730252298E9547006EFFB9 /* NeworkMoniter.swift */; };
+		79730255298FFC68006EFFB9 /* GetGatheringBoardCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79730254298FFC68006EFFB9 /* GetGatheringBoardCollectionReusableView.swift */; };
+		797302572990A8D8006EFFB9 /* ViewAllGatheringBoardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302562990A8D8006EFFB9 /* ViewAllGatheringBoardsViewController.swift */; };
+		797302592990F168006EFFB9 /* SmallGatheringBoardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302582990F168006EFFB9 /* SmallGatheringBoardTableViewCell.swift */; };
+		7973025B299102EC006EFFB9 /* CategoryImageViewCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973025A299102EC006EFFB9 /* CategoryImageViewCollectionViewCell.swift */; };
+		7973025F299392E2006EFFB9 /* LocationSetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973025E299392E2006EFFB9 /* LocationSetViewController.swift */; };
+		797302612997A540006EFFB9 /* APIReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302602997A540006EFFB9 /* APIReport.swift */; };
+		797302632997A6EE006EFFB9 /* BlockRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302622997A6EE006EFFB9 /* BlockRouter.swift */; };
+		797302652997A71D006EFFB9 /* APIBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302642997A71D006EFFB9 /* APIBlock.swift */; };
+		797302682997EDB0006EFFB9 /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797302672997EDB0006EFFB9 /* ReportViewController.swift */; };
+		7973026B299B896A006EFFB9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973026A299B896A006EFFB9 /* MainViewController.swift */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -104,13 +119,11 @@
 		79C45CC8296F527200A5A59E /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */; };
 		79D28AB7297882B600F4FD64 /* ImageManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AB6297882B600F4FD64 /* ImageManger.swift */; };
 		79D28AB92978A0F600F4FD64 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */; };
-		79D28ABD297A846B00F4FD64 /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ABC297A846A00F4FD64 /* EditProfileViewController.swift */; };
 		79D28ABF297A8E5700F4FD64 /* AboutMeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ABE297A8E5700F4FD64 /* AboutMeViewController.swift */; };
 		79D28AC1297A8E6700F4FD64 /* InterestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC0297A8E6700F4FD64 /* InterestsViewController.swift */; };
 		79D28AC3297A8F4D00F4FD64 /* JobViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC2297A8F4D00F4FD64 /* JobViewController.swift */; };
 		79D28AC5297AF45F00F4FD64 /* NameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC4297AF45F00F4FD64 /* NameViewController.swift */; };
 		79D28AC7297E4AB200F4FD64 /* BoardRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AC6297E4AB200F4FD64 /* BoardRouter.swift */; };
-		79D28ACB297F065E00F4FD64 /* ReadProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ACA297F065E00F4FD64 /* ReadProfileViewController.swift */; };
 		79D28ACF29801B2800F4FD64 /* ReportRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28ACE29801B2800F4FD64 /* ReportRouter.swift */; };
 		79D28AD12981EA4D00F4FD64 /* SessionRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */; };
 		79D28AD3298227B500F4FD64 /* PushNotificationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */; };
@@ -192,7 +205,7 @@
 		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
 		79519FEE291E8DA300D8E6CF /* GatheringBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoard.swift; sourceTree = "<group>"; };
 		79519FF0291E95E600D8E6CF /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
-		79519FF2291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardOptionViewController.swift; sourceTree = "<group>"; };
+		79519FF2291EA84A00D8E6CF /* GatheringBoardOptionTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardOptionTestViewController.swift; sourceTree = "<group>"; };
 		79519FF4291EA87B00D8E6CF /* GatheringBoardContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardContentViewController.swift; sourceTree = "<group>"; };
 		79519FF6291EA8E900D8E6CF /* GatheringBoardSelectImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardSelectImagesViewController.swift; sourceTree = "<group>"; };
 		79519FFB291FB6B800D8E6CF /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
@@ -218,7 +231,7 @@
 		795D9BC628F1F72900228E34 /* Layer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
 		7962CEDF29386A8A007FCC10 /* TestPageControlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPageControlViewController.swift; sourceTree = "<group>"; };
 		7962CEE12938EF35007FCC10 /* BoardOptionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardOptionsTableViewCell.swift; sourceTree = "<group>"; };
-		7962CEE32939174C007FCC10 /* TestBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBoardViewController.swift; sourceTree = "<group>"; };
+		7962CEE32939174C007FCC10 /* GatheringBoardOptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardOptionViewController.swift; sourceTree = "<group>"; };
 		7962CEE729392C86007FCC10 /* MyHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyHeaderView.swift; sourceTree = "<group>"; };
 		7962CEE9293BA5F9007FCC10 /* BoardInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardInfoView.swift; sourceTree = "<group>"; };
 		7962CEED293C4302007FCC10 /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
@@ -228,6 +241,21 @@
 		7962CEF929408285007FCC10 /* APIClipBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClipBoard.swift; sourceTree = "<group>"; };
 		797302452988FFBC006EFFB9 /* AlertTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertTestViewController.swift; sourceTree = "<group>"; };
 		79730247298953DB006EFFB9 /* BoardUserRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardUserRouter.swift; sourceTree = "<group>"; };
+		7973024A298B99EF006EFFB9 /* JoinListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinListViewController.swift; sourceTree = "<group>"; };
+		7973024C298B9C6F006EFFB9 /* JoinListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinListTableViewCell.swift; sourceTree = "<group>"; };
+		7973024E298C8981006EFFB9 /* SwipeTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTestViewController.swift; sourceTree = "<group>"; };
+		79730250298C8B30006EFFB9 /* SwipeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCollectionViewCell.swift; sourceTree = "<group>"; };
+		79730252298E9547006EFFB9 /* NeworkMoniter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeworkMoniter.swift; sourceTree = "<group>"; };
+		79730254298FFC68006EFFB9 /* GetGatheringBoardCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGatheringBoardCollectionReusableView.swift; sourceTree = "<group>"; };
+		797302562990A8D8006EFFB9 /* ViewAllGatheringBoardsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAllGatheringBoardsViewController.swift; sourceTree = "<group>"; };
+		797302582990F168006EFFB9 /* SmallGatheringBoardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallGatheringBoardTableViewCell.swift; sourceTree = "<group>"; };
+		7973025A299102EC006EFFB9 /* CategoryImageViewCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryImageViewCollectionViewCell.swift; sourceTree = "<group>"; };
+		7973025E299392E2006EFFB9 /* LocationSetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSetViewController.swift; sourceTree = "<group>"; };
+		797302602997A540006EFFB9 /* APIReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIReport.swift; sourceTree = "<group>"; };
+		797302622997A6EE006EFFB9 /* BlockRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockRouter.swift; sourceTree = "<group>"; };
+		797302642997A71D006EFFB9 /* APIBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIBlock.swift; sourceTree = "<group>"; };
+		797302672997EDB0006EFFB9 /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
+		7973026A299B896A006EFFB9 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -249,13 +277,11 @@
 		79C45CC7296F527200A5A59E /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		79D28AB6297882B600F4FD64 /* ImageManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManger.swift; sourceTree = "<group>"; };
 		79D28AB82978A0F600F4FD64 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
-		79D28ABC297A846A00F4FD64 /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		79D28ABE297A8E5700F4FD64 /* AboutMeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutMeViewController.swift; sourceTree = "<group>"; };
 		79D28AC0297A8E6700F4FD64 /* InterestsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterestsViewController.swift; sourceTree = "<group>"; };
 		79D28AC2297A8F4D00F4FD64 /* JobViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobViewController.swift; sourceTree = "<group>"; };
 		79D28AC4297AF45F00F4FD64 /* NameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameViewController.swift; sourceTree = "<group>"; };
 		79D28AC6297E4AB200F4FD64 /* BoardRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardRouter.swift; sourceTree = "<group>"; };
-		79D28ACA297F065E00F4FD64 /* ReadProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadProfileViewController.swift; sourceTree = "<group>"; };
 		79D28ACE29801B2800F4FD64 /* ReportRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportRouter.swift; sourceTree = "<group>"; };
 		79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRouter.swift; sourceTree = "<group>"; };
 		79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationRouter.swift; sourceTree = "<group>"; };
@@ -375,6 +401,10 @@
 				79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */,
 				7962CEEF293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift */,
 				791F6CFD294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift */,
+				7973024C298B9C6F006EFFB9 /* JoinListTableViewCell.swift */,
+				79730254298FFC68006EFFB9 /* GetGatheringBoardCollectionReusableView.swift */,
+				797302582990F168006EFFB9 /* SmallGatheringBoardTableViewCell.swift */,
+				7973025A299102EC006EFFB9 /* CategoryImageViewCollectionViewCell.swift */,
 			);
 			path = ViewCells;
 			sourceTree = "<group>";
@@ -396,6 +426,8 @@
 				791C1E9D292E5F8E00623936 /* APIUser.swift */,
 				791C1EA0292E600B00623936 /* APIGatheringBoard.swift */,
 				7962CEF929408285007FCC10 /* APIClipBoard.swift */,
+				797302602997A540006EFFB9 /* APIReport.swift */,
+				797302642997A71D006EFFB9 /* APIBlock.swift */,
 			);
 			path = APIModel;
 			sourceTree = "<group>";
@@ -426,6 +458,7 @@
 				79D28ACE29801B2800F4FD64 /* ReportRouter.swift */,
 				79D28AD02981EA4D00F4FD64 /* SessionRouter.swift */,
 				79D28AD2298227B500F4FD64 /* PushNotificationRouter.swift */,
+				797302622997A6EE006EFFB9 /* BlockRouter.swift */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -480,10 +513,13 @@
 			isa = PBXGroup;
 			children = (
 				79D28ACD297F07CD00F4FD64 /* ServiceTapBar */,
+				79730269299B8927006EFFB9 /* Home */,
 				79D28ACC297F077F00F4FD64 /* Profile */,
 				791C1E96292D3C5800623936 /* SearchGatheringBoard */,
 				792A11DC2966951400F67094 /* MyClub */,
 				792A11DD2966952B00F67094 /* PushNotification */,
+				797302562990A8D8006EFFB9 /* ViewAllGatheringBoardsViewController.swift */,
+				7973025E299392E2006EFFB9 /* LocationSetViewController.swift */,
 			);
 			path = ServiceVC;
 			sourceTree = "<group>";
@@ -509,9 +545,9 @@
 			isa = PBXGroup;
 			children = (
 				79F0230A291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift */,
-				7962CEE32939174C007FCC10 /* TestBoardViewController.swift */,
+				7962CEE32939174C007FCC10 /* GatheringBoardOptionViewController.swift */,
 				79519FF4291EA87B00D8E6CF /* GatheringBoardContentViewController.swift */,
-				79519FF2291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift */,
+				79519FF2291EA84A00D8E6CF /* GatheringBoardOptionTestViewController.swift */,
 			);
 			path = BoardStep;
 			sourceTree = "<group>";
@@ -546,6 +582,30 @@
 				7954854928D5D006005ED367 /* LoginViewController.swift */,
 			);
 			path = LogInVC;
+			sourceTree = "<group>";
+		};
+		79730249298B99CF006EFFB9 /* GatheringBoardUser */ = {
+			isa = PBXGroup;
+			children = (
+				7973024A298B99EF006EFFB9 /* JoinListViewController.swift */,
+			);
+			path = GatheringBoardUser;
+			sourceTree = "<group>";
+		};
+		797302662997ED9B006EFFB9 /* ReportVC */ = {
+			isa = PBXGroup;
+			children = (
+				797302672997EDB0006EFFB9 /* ReportViewController.swift */,
+			);
+			path = ReportVC;
+			sourceTree = "<group>";
+		};
+		79730269299B8927006EFFB9 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				7973026A299B896A006EFFB9 /* MainViewController.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 		79A8F65F28C7240300FEBE90 = {
@@ -627,6 +687,8 @@
 		79A8F69C28C75F3900FEBE90 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				797302662997ED9B006EFFB9 /* ReportVC */,
+				79730249298B99CF006EFFB9 /* GatheringBoardUser */,
 				7953ED2B2970C2FD003ACB27 /* PopUpVC */,
 				7962CEDE29384055007FCC10 /* LogInVC */,
 				7962CEDD29383FDD007FCC10 /* WriteProfileVC */,
@@ -636,6 +698,8 @@
 				7962CEDF29386A8A007FCC10 /* TestPageControlViewController.swift */,
 				792A11BA29534A6300F67094 /* TableViewTest.swift */,
 				797302452988FFBC006EFFB9 /* AlertTestViewController.swift */,
+				7973024E298C8981006EFFB9 /* SwipeTestViewController.swift */,
+				79730250298C8B30006EFFB9 /* SwipeCollectionViewCell.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -660,6 +724,7 @@
 				79088B7428E48D24008054F6 /* AlamofireManager.swift */,
 				79F0228B28FD0ECB007D59B8 /* Logger.swift */,
 				79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */,
+				79730252298E9547006EFFB9 /* NeworkMoniter.swift */,
 				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
 			);
 			path = Network;
@@ -670,9 +735,7 @@
 			children = (
 				7951A0B8292A240900D8E6CF /* GetProfileViewController.swift */,
 				791C1EBE293251F600623936 /* GetProfileImagesViewController.swift */,
-				79D28ABC297A846A00F4FD64 /* EditProfileViewController.swift */,
 				792A11DE2966956D00F67094 /* SettingProfileViewController.swift */,
-				79D28ACA297F065E00F4FD64 /* ReadProfileViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -950,6 +1013,7 @@
 				7951A00629211DF000D8E6CF /* MyMapViewController.swift in Sources */,
 				79D28ABF297A8E5700F4FD64 /* AboutMeViewController.swift in Sources */,
 				7951A0872921B61C00D8E6CF /* MKMapLocalSearchViewController.swift in Sources */,
+				7973024B298B99EF006EFFB9 /* JoinListViewController.swift in Sources */,
 				792A11C7295C74CE00F67094 /* InputBar.swift in Sources */,
 				791C1E9E292E5F8E00623936 /* APIUser.swift in Sources */,
 				791C1EA3292E686900623936 /* APIConstants.swift in Sources */,
@@ -959,13 +1023,16 @@
 				7951A04629217ABA00D8E6CF /* ResultsViewController.swift in Sources */,
 				79D28AB92978A0F600F4FD64 /* UIImageView+Extension.swift in Sources */,
 				792A11DB2962D73700F67094 /* ClipBoardRouter.swift in Sources */,
-				79D28ACB297F065E00F4FD64 /* ReadProfileViewController.swift in Sources */,
 				791F6CF92948741C00C1D470 /* AlarmManager.swift in Sources */,
 				7951A08F29239C2100D8E6CF /* SelectLocationOptionViewController.swift in Sources */,
+				797302592990F168006EFFB9 /* SmallGatheringBoardTableViewCell.swift in Sources */,
 				79F022D82913C0F5007D59B8 /* NationalityViewController.swift in Sources */,
 				79088B7928E4A58F008054F6 /* Auth.swift in Sources */,
 				79A8F6A028C7611000FEBE90 /* PhoneNumberVerificationViewController.swift in Sources */,
+				7973026B299B896A006EFFB9 /* MainViewController.swift in Sources */,
+				7973025B299102EC006EFFB9 /* CategoryImageViewCollectionViewCell.swift in Sources */,
 				79F0228C28FD0ECB007D59B8 /* Logger.swift in Sources */,
+				7973025F299392E2006EFFB9 /* LocationSetViewController.swift in Sources */,
 				792A11BB29534A6300F67094 /* TableViewTest.swift in Sources */,
 				7962CEE829392C86007FCC10 /* MyHeaderView.swift in Sources */,
 				792A11BF295B63F200F67094 /* ChatViewController.swift in Sources */,
@@ -1005,10 +1072,13 @@
 				7951A0482921862A00D8E6CF /* GooglePlacesManager.swift in Sources */,
 				79088AC828D89343008054F6 /* SessionManager.swift in Sources */,
 				79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */,
+				7973024D298B9C6F006EFFB9 /* JoinListTableViewCell.swift in Sources */,
+				797302612997A540006EFFB9 /* APIReport.swift in Sources */,
 				7962CEF0293CBA24007FCC10 /* MemberImagesCollectionViewCell.swift in Sources */,
 				79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */,
 				79088B7528E48D24008054F6 /* AlamofireManager.swift in Sources */,
-				7962CEE42939174C007FCC10 /* TestBoardViewController.swift in Sources */,
+				7962CEE42939174C007FCC10 /* GatheringBoardOptionViewController.swift in Sources */,
+				79730255298FFC68006EFFB9 /* GetGatheringBoardCollectionReusableView.swift in Sources */,
 				79F0230B291CD4AA007D59B8 /* GatheringBoardCategoryViewController.swift in Sources */,
 				79C45CC6296B1FF200A5A59E /* UITabBarController+Extensions.swift in Sources */,
 				795D9BC328F1B40F00228E34 /* SetProfileTableViewFooter.swift in Sources */,
@@ -1017,6 +1087,7 @@
 				791C1EBB293126D700623936 /* MoveVC.swift in Sources */,
 				7962CEF629400C34007FCC10 /* ClipBoardViewController.swift in Sources */,
 				7962CEEE293C4302007FCC10 /* Encodable.swift in Sources */,
+				797302572990A8D8006EFFB9 /* ViewAllGatheringBoardsViewController.swift in Sources */,
 				791F6CFB294874E300C1D470 /* Alarm.swift in Sources */,
 				79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */,
 				7962CEE22938EF35007FCC10 /* BoardOptionsTableViewCell.swift in Sources */,
@@ -1025,7 +1096,7 @@
 				792A11C9295CB75400F67094 /* ContentSizedTableView.swift in Sources */,
 				79088B7728E490CA008054F6 /* BaseInterceptor.swift in Sources */,
 				7953ED31297435C8003ACB27 /* URLConvertible+Extension.swift in Sources */,
-				79519FF3291EA84A00D8E6CF /* GatheringBoardOptionViewController.swift in Sources */,
+				79519FF3291EA84A00D8E6CF /* GatheringBoardOptionTestViewController.swift in Sources */,
 				79D28AC7297E4AB200F4FD64 /* BoardRouter.swift in Sources */,
 				791F6CFE294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift in Sources */,
 				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
@@ -1033,23 +1104,28 @@
 				7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */,
 				7953ED2A297025A2003ACB27 /* ProfileRouter.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,
-				79D28ABD297A846B00F4FD64 /* EditProfileViewController.swift in Sources */,
 				79D28AC3297A8F4D00F4FD64 /* JobViewController.swift in Sources */,
 				79A8F6AB28CDD65800FEBE90 /* SetProfileViewController.swift in Sources */,
+				79730251298C8B30006EFFB9 /* SwipeCollectionViewCell.swift in Sources */,
 				79C45CC8296F527200A5A59E /* UIViewController+Extensions.swift in Sources */,
 				79088B6628DD8297008054F6 /* SearchGatheringBoardViewController.swift in Sources */,
 				797302462988FFBC006EFFB9 /* AlertTestViewController.swift in Sources */,
+				79730253298E9547006EFFB9 /* NeworkMoniter.swift in Sources */,
 				791C1EA1292E600B00623936 /* APIGatheringBoard.swift in Sources */,
 				7962CEEA293BA5F9007FCC10 /* BoardInfoView.swift in Sources */,
+				797302632997A6EE006EFFB9 /* BlockRouter.swift in Sources */,
 				79F022CC290A40F1007D59B8 /* MyImagesCollectionViewCell.swift in Sources */,
 				7951A0082921557D00D8E6CF /* MKResultsLocalSearchTableViewController.swift in Sources */,
 				792A11C5295C70DB00F67094 /* ChatTestViewController.swift in Sources */,
 				79A8F6A728CDC95000FEBE90 /* User.swift in Sources */,
+				7973024F298C8981006EFFB9 /* SwipeTestViewController.swift in Sources */,
 				791C1EBF293251F600623936 /* GetProfileImagesViewController.swift in Sources */,
+				797302682997EDB0006EFFB9 /* ReportViewController.swift in Sources */,
 				791C1E9A292D3CB000623936 /* ThumbnailCollectionViewCell.swift in Sources */,
 				79088B8228E4C2FE008054F6 /* AuthRouter.swift in Sources */,
 				795D9BC728F1F72900228E34 /* Layer.swift in Sources */,
 				79519FF5291EA87B00D8E6CF /* GatheringBoardContentViewController.swift in Sources */,
+				797302652997A71D006EFFB9 /* APIBlock.swift in Sources */,
 				795D9BC028F1993300228E34 /* RequirementTableViewHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

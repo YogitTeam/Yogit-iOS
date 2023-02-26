@@ -14,7 +14,7 @@ enum BoardUserRouter: URLRequestConvertible {
     case approveGatheringBoard(parameters: BoardUserReq)
 
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "boardusers")! // 밑에 Auth 수정해야댐
+        return URL(string: API.BASE_URL)! // 밑에 Auth 수정해야댐
     }
 
     var method: HTTPMethod {
@@ -29,9 +29,9 @@ enum BoardUserRouter: URLRequestConvertible {
     var endPoint: String {
         switch self {
         case .joinGatheringBoard, .withdrawalGatheringBoard:
-            return ""
+            return "boardusers"
         case .approveGatheringBoard:
-            return "/applystatus"
+            return "boardusers/applystatus"
         }
     }
     

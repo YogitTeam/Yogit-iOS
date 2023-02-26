@@ -7,6 +7,22 @@
 
 import Foundation
 
+struct GetBoardsByCategoryReq: Encodable {
+    let categoryId: Int
+    let cursor: Int
+    let refreshToken: String
+    let userId: Int64
+    
+    init(categoryId: Int, cursor: Int, refreshToken: String, userId: Int64) {
+        self.categoryId = categoryId
+        self.cursor = cursor
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
+}
+
+
+
 struct GetAllBoardsReq: Encodable {
     let cursor: Int
     let refreshToken: String
@@ -40,6 +56,14 @@ struct DeleteBoardReq: Encodable {
         self.boardId = boardId
         self.refreshToken = refreshToken
         self.hostId = hostId
+    }
+}
+
+struct DeleteBoardRes: Decodable {
+    let status: String
+    
+    init(status: String) {
+        self.status = status
     }
 }
 
@@ -130,26 +154,23 @@ struct DeleteBoardImageReq: Encodable {
     }
 }
 
+// MARK: - Datum
 
-struct BoardReport: Encodable {
-    let content: String
-    let refreshToken: String
-    let reportType: String
-    let reportedBoardID: Int64
-    let reportedUserID: Int64
-    let reportingUserID: Int64
+class GetBoardsByCategoryRes: Decodable {
+    let getAllBoardResList: [Board]
+    let totalPage: Int
     
-    init(content: String, refreshToken: String, reportType: String, reportedBoardID: Int64, reportedUserID: Int64, reportingUserID: Int64) {
-        self.content = content
-        self.refreshToken = refreshToken
-        self.reportType = reportType
-        self.reportedBoardID = reportedBoardID
-        self.reportedUserID = reportedUserID
-        self.reportingUserID = reportingUserID
+    enum CodingKeys: CodingKey {
+        case getAllBoardResList
+        case totalPage
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.getAllBoardResList = try container.decode([Board].self, forKey: .getAllBoardResList)
+        self.totalPage = try container.decode(Int.self, forKey: .totalPage)
     }
 }
-
-// MARK: - Datum
 
 class Board: Decodable {
     let categoryID, cityID, currentMember: Int

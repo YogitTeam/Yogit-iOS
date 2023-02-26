@@ -160,7 +160,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     @objc func nextButtonTapped(_ sender: UIButton) {
         guard let apiCategoryId = categoryId else { return }
         DispatchQueue.main.async {
-            let GBSDVC = TestBoardViewController() // GatheringBoardOptionViewController()
+            let GBSDVC = GatheringBoardOptionViewController() // GatheringBoardOptionViewController()
 //            self.touchCount = true
 //            guard let apiCategoryId = self.categoryId else { return }
 //            self.boardWithMode.boardReq?.categoryId = apiCategoryId + 1
@@ -208,7 +208,7 @@ class GatheringBoardCategoryViewController: UIViewController {
                             boardWithMode.latitude = data.latitude
                             boardWithMode.notice = data.notice
                             boardWithMode.date = data.date.stringToDate()?.dateToStringAPI() // ?.dateToString() // 보여줄 데이터
-                            boardWithMode.cityName = data.cityName
+                            boardWithMode.city = data.cityName
                             boardWithMode.introduction = data.introduction
                             boardWithMode.kindOfPerson = data.kindOfPerson
                             boardWithMode.totalMember = data.totalMember

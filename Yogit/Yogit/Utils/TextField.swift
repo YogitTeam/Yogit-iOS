@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-
+import SnapKit
 extension UITextField {
     func addLeftPadding(width: CGFloat) {
       let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: width, height: self.frame.height))
@@ -28,6 +28,58 @@ extension UITextField {
       self.leftView = leftImage
       self.leftViewMode = .always
   }
+    
+    func addLeftImageWithMargin(image: UIImage?, width: CGFloat, height: CGFloat, margin: CGFloat) {
+        guard let image = image else { return }
+        let imageContainerView = UIView(frame: CGRect(x: 0, y: 0, width: width, height: self.frame.height))
+        imageContainerView.layer.borderColor = UIColor.blue.cgColor
+        imageContainerView.layer.borderWidth = 1
+        imageContainerView.translatesAutoresizingMaskIntoConstraints = false
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: width, height: height))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFill
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+
+        imageContainerView.addSubview(imageView)
+        
+        imageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview()
+            $0.width.equalTo(width)
+            $0.height.equalTo(height)
+        }
+        imageContainerView.snp.makeConstraints {
+            $0.width.equalTo(width+margin)
+            $0.height.equalTo(self.frame.size.height)
+        }
+//        imageView.topAnchor.constraint(equalTo: imageContainerView.topAnchor).isActive = true
+//        imageView.bottomAnchor.constraint(equalTo: imageContainerView.bottomAnchor).isActive = true
+//        imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor, constant: 16).isActive = true
+        
+//        imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor).isActive = true
+//        imageView.centerYAnchor.constraint(equalTo: imageContainerView.centerYAnchor).isActive = true
+//
+//        imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor, constant: 0).isActive = true
+
+//        let textField = UITextField()
+//        textField.leftView = imageContainerView
+//        textField.leftViewMode = .always
+//        textField.borderStyle = .roundedRect
+        
+        self.leftView = imageContainerView
+  //      self.leftViewMode = .always
+        self.leftViewMode = .always
+//        self.borderStyle = .roundedRect
+        
+        
+        
+//        let leftImage = UIImageView(frame: CGRect(x: 0, y: 0, width: image.size.width + margin, height: image.size.height))
+//        leftImage.image = image
+//        self.leftView = leftImage
+//        self.leftViewMode = .always
+    }
+    
     func addRightImage(image: UIImage?) {
         guard let image = image else { return }
         let rightimage = UIImageView(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))

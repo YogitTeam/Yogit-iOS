@@ -9,7 +9,7 @@ import UIKit
 
 class MemberImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "MemberImagesCollectionViewCell"
-    
+
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
@@ -44,8 +44,4 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
     func configure(imageString: String) {
         imageView.setImage(with: imageString)
     }
-    
-//    func configure(image: UIImage?) {
-//        imageView.image = image
-//    }
 }

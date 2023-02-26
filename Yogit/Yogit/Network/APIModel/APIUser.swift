@@ -82,8 +82,8 @@ struct GetUserProfileImages: Encodable {
 
 struct UserProfile: Decodable {
     var gender: String?
-    var languageNames: [String]?
-    var languageLevels: [String]?
+    var languageCodes: [String]?
+    var languageLevels: [Int]?
     var nationality: String?
     var refreshToken: String?
     var userAge: Int?
@@ -96,9 +96,9 @@ struct UserProfile: Decodable {
     var latitude: Double?
     var longitude: Double?
     
-    init(gender: String? = nil, languageNames: [String]? = nil, languageLevels: [String]? = nil, nationality: String? = nil, refreshToken: String? = nil, userAge: Int? = nil, userId: Int64? = nil, userName: String? = nil, job: String? = nil, aboutMe: String? = nil, cityName: String? = nil, interests: [String]? = nil, latitude: Double? = nil, longitude: Double? = nil) {
+    init(gender: String? = nil, languageCodes: [String]? = nil, languageLevels: [Int]? = nil, nationality: String? = nil, refreshToken: String? = nil, userAge: Int? = nil, userId: Int64? = nil, userName: String? = nil, job: String? = nil, aboutMe: String? = nil, cityName: String? = nil, interests: [String]? = nil, latitude: Double? = nil, longitude: Double? = nil) {
         self.gender = gender
-        self.languageNames = languageNames
+        self.languageCodes = languageCodes
         self.languageLevels = languageLevels
         self.nationality = nationality
         self.refreshToken = refreshToken
@@ -192,56 +192,13 @@ class FetchedUserImages: Decodable {
     }
 }
 
-struct FetchUserProfile: Decodable {
-    let city, aboutMe, job, phone, countryEngNm, downloadURL: String?
-    let age: Int
-    let imageUrls: [String]
-    let interests: [String]?
-    let languageLevels, languageNames: [String]
-    let latitude, longtitude, memberTemp: Double?
-    let name, nationality, profileImg, gender: String
-    let userId: Int
-    let userStatus: String?
-
-    enum CodingKeys: String, CodingKey {
-        case aboutMe, age, city
-        case countryEngNm = "country_eng_nm"
-        case downloadURL = "download_url"
-        case gender, imageUrls, interests, job, languageLevels, languageNames, latitude, longtitude, memberTemp, name, nationality, phone, profileImg
-        case userId
-        case userStatus
-    }
-    
-    init(city: String?, aboutMe: String?, job: String?, phone: String?, countryEngNm: String?, downloadURL: String?, age: Int, imageUrls: [String], interests: [String]?, languageLevels: [String], languageNames: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, gender: String, userId: Int, userStatus: String?) {
-        self.city = city
-        self.aboutMe = aboutMe
-        self.job = job
-        self.phone = phone
-        self.countryEngNm = countryEngNm
-        self.downloadURL = downloadURL
-        self.age = age
-        self.imageUrls = imageUrls
-        self.interests = interests
-        self.languageLevels = languageLevels
-        self.languageNames = languageNames
-        self.latitude = latitude
-        self.longtitude = longtitude
-        self.memberTemp = memberTemp
-        self.name = name
-        self.nationality = nationality
-        self.profileImg = profileImg
-        self.gender = gender
-        self.userId = userId
-        self.userStatus = userStatus
-    }
-}
-
 class SearchUserProfile: Codable {
     let age: Int
     let gender: String
     let city, phone, aboutMe, job: String?
     let interests: [String]?
-    let languageLevels, languageNames: [String]
+    let languageCodes: [String]
+    let languageLevels: [Int]
     let latitude: Double?
     let longtitude: Double?
     let memberTemp: Double?
@@ -251,7 +208,7 @@ class SearchUserProfile: Codable {
     let countryEngNm, downloadURL: String?
     let imageUrls: [String]
 
-    init(age: Int, gender: String, city: String?, phone: String?, aboutMe: String?, interests: [String]?, languageLevels: [String], languageNames: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, userId: Int64, userStatus: String?, countryEngNm: String?, downloadURL: String?, imageUrls: [String], job: String?) {
+    init(age: Int, gender: String, city: String?, phone: String?, aboutMe: String?, interests: [String]?, languageLevels: [Int], languageCodes: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, userId: Int64, userStatus: String?, countryEngNm: String?, downloadURL: String?, imageUrls: [String], job: String?) {
         self.age = age
         self.gender = gender
         self.city = city
@@ -259,7 +216,7 @@ class SearchUserProfile: Codable {
         self.aboutMe = aboutMe
         self.interests = interests
         self.languageLevels = languageLevels
-        self.languageNames = languageNames
+        self.languageCodes = languageCodes
         self.latitude = latitude
         self.longtitude = longtitude
         self.memberTemp = memberTemp

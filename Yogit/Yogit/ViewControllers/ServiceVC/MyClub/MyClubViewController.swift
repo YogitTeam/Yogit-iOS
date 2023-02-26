@@ -51,7 +51,7 @@ class MyClubViewController: UIViewController {
     }()
     
     private lazy var segmentedControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["Applied Club", "Opened Club"])
+        let control = UISegmentedControl(items: ["Applied", "Opened"])
         control.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
         control.selectedSegmentIndex = 0
 //        control.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -232,10 +232,21 @@ extension MyClubViewController: UICollectionViewDataSource {
         print("indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
         if collectionView.tag == 0 {
-            cell.configure(with: searchBoards[indexPath.row])
+            Task(priority: .userInitiated, operation: {
+                let data = searchBoards[indexPath.row]
+                await cell.configure(with: data)
+            })
+//            DispatchQueue.main.async(qos: .userInteractive, execute: {
+//                cell.configure(with: self.searchBoards[indexPath.row])
+//            })
         } else {
-            print(indexPath.row)
-            cell.configure(with: createdBoards[indexPath.row])
+            Task(priority: .userInitiated, operation: {
+                let data = createdBoards[indexPath.row]
+                await cell.configure(with: data)
+            })
+//            DispatchQueue.main.async(qos: .userInteractive, execute: {
+//                cell.configure(with: self.createdBoards[indexPath.row])
+//            })
         }
         return cell
     }

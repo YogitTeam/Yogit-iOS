@@ -43,7 +43,7 @@ class BoardInfoView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.medium)
+        label.font = .systemFont(ofSize: 13, weight: UIFont.Weight.medium)
         label.numberOfLines = 1
         label.sizeToFit()
         return label
@@ -81,11 +81,11 @@ class BoardInfoView: UIView {
         super.layoutSubviews()
         leftImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-//            make.height.width.equalTo(40)
+            make.height.width.equalTo(22)
             make.centerY.equalToSuperview()
         }
         labelVerticalStackView.snp.makeConstraints { make in
-            make.leading.equalTo(leftImageView.snp.trailing)
+            make.leading.equalTo(leftImageView.snp.trailing).offset(4)
             make.trailing.equalTo(rightImageView.snp.leading)
             make.centerY.equalToSuperview()
         }

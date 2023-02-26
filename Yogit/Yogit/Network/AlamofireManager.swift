@@ -26,5 +26,4 @@ final class AlamofireManager {
                     eventMonitors: monitors
                 )
     }
-    
 }

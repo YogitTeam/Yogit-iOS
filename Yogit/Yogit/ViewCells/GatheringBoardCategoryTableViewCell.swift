@@ -15,26 +15,28 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     //
     var isTapped: Bool? = nil {
         didSet {
-            if isTapped == nil {
-                categoryContentView.layer.borderColor = UIColor.label.cgColor
-                categoryContentView.backgroundColor = .systemBackground
-                categoryImageView.tintColor = UIColor.label
-                categoryTitleLabel.textColor = UIColor.label
-                categoryDescriptionLabel.textColor = UIColor.label
-            }
-            else if isTapped == true {
-                categoryContentView.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
-                categoryContentView.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-                categoryImageView.tintColor = .white
-                categoryTitleLabel.textColor = .white
-                categoryDescriptionLabel.textColor = .white
-            } else {
-                categoryContentView.layer.borderColor = UIColor.placeholderText.cgColor
-                categoryContentView.backgroundColor = .systemBackground
-                categoryImageView.tintColor = .placeholderText
-                categoryTitleLabel.textColor = .placeholderText
-                categoryDescriptionLabel.textColor = .placeholderText
-            }
+            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                if isTapped == nil {
+                    categoryContentView.layer.borderColor = UIColor.label.cgColor
+                    categoryContentView.backgroundColor = .systemBackground
+                    categoryImageView.tintColor = UIColor.label
+                    categoryTitleLabel.textColor = UIColor.label
+                    categoryDescriptionLabel.textColor = UIColor.label
+                }
+                else if isTapped == true {
+                    categoryContentView.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
+                    categoryContentView.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                    categoryImageView.tintColor = .white
+                    categoryTitleLabel.textColor = .white
+                    categoryDescriptionLabel.textColor = .white
+                } else {
+                    categoryContentView.layer.borderColor = UIColor.placeholderText.cgColor
+                    categoryContentView.backgroundColor = .systemBackground
+                    categoryImageView.tintColor = .placeholderText
+                    categoryTitleLabel.textColor = .placeholderText
+                    categoryDescriptionLabel.textColor = .placeholderText
+                }
+            })
         }
     }
     

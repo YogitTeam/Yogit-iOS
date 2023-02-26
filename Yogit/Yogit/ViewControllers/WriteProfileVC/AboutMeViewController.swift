@@ -56,8 +56,8 @@ class AboutMeViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "👋 Let global friends know\nwho you are"
-        label.textAlignment = .center
+        label.text = "Let global friends know who you are 👋"
+        label.textAlignment = .left
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
         label.sizeToFit()

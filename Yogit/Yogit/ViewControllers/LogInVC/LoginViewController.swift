@@ -131,6 +131,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                             guard let data = value.data else { return }
                             do {
                                 // userStatus 정보 업데이트 (LOGIN)
+                                // status만 업데이트
                                 try KeychainManager.updateUserItem(userItem: data)
                                 let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
                                 DispatchQueue.main.async { [self] in

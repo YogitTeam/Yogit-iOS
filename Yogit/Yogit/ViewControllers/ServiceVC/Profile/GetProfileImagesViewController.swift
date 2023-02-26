@@ -62,7 +62,7 @@ class GetProfileImagesViewController: UIViewController {
     private lazy var leftButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(leftButtonPressed(_:)), for: .touchUpInside)
         button.tintColor = .white
         return button
     }()
@@ -103,7 +103,7 @@ class GetProfileImagesViewController: UIViewController {
         profileImagesScrollView.setContentOffset(CGPoint(x: CGFloat(current) * view.frame.size.width, y: 0), animated: true)
     }
     
-    @objc private func buttonPressed(_ sender: Any) {
+    @objc private func leftButtonPressed(_ sender: Any) {
         DispatchQueue.main.async {
             self.dismiss(animated: true)
         }

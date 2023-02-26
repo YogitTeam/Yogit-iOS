@@ -14,12 +14,12 @@ struct MeetUpPlace {
     var latitude: Double?
     var longitude: Double?
     var address: String?
-    var city: String?
+    var locality: String?
 }
 
 struct ReverGedoData {
     let centerAddress: String?
-    let city: String?
+    let locality: String?
 }
 
 protocol MeetUpPlaceProtocol: AnyObject {
@@ -93,16 +93,28 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     
     private let locationManager = CLLocationManager()   // 위치 객체
     
-    private var meetUpPlace = MeetUpPlace()
+    private var meetUpPlace = MeetUpPlace() {
+        didSet {
+            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                if meetUpPlace.latitude == nil {
+                    saveButton.isEnabled = false
+                    saveButton.backgroundColor = .placeholderText
+                } else {
+                    saveButton.isEnabled = true
+                    saveButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                }
+            })
+        }
+    }
     
     weak var delegate: MeetUpPlaceProtocol?
 
 //    private var latitude: Double?   // 위도
 //    private var longitude: Double? // 경도
 //    private var address: String?
-//    private var city: String? {
+//    private var locality: String? {
 //        didSet {
-//            print("City \(city ?? "")")
+//            print("locality \(locality ?? "")")
 //            self.saveButton.isHidden = false
 //        }
 //    }
@@ -197,7 +209,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         button.layer.cornerRadius = 8
 //        button.isHidden = true
         button.isEnabled = false
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.backgroundColor = .placeholderText //UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
 //        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
         button.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
@@ -348,17 +360,29 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     
     private func blinkNoticeView(noticeView: UIView) {
         var repeatCount = 0
-        Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true) { timer in
-            UIView.animate(withDuration: 0.7, animations: {
-                noticeView.alpha = noticeView.alpha == 1 ? 0 : 1
+        var m = -12
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+            UIView.animate(withDuration: 0.3, animations: {
+                noticeView.frame.origin.y += CGFloat(m)
             }, completion: { (finished) in
-                if repeatCount > 3 {
+                if repeatCount > 4 {
                     timer.invalidate()
-                    noticeView.alpha = 0
                 }
+                m *= -1
                 repeatCount += 1
             })
         }
+//        Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true) { timer in
+//            UIView.animate(withDuration: 0.7, animations: {
+//                noticeView.alpha = noticeView.alpha == 1 ? 0 : 1
+//            }, completion: { (finished) in
+//                if repeatCount > 3 {
+//                    timer.invalidate()
+//                    noticeView.alpha = 0
+//                }
+//                repeatCount += 1
+//            })
+//        }
     }
     
     private func timerRun() {
@@ -528,7 +552,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     
     @objc func saveButtonTapped(_ sender: UIButton) {
         self.delegate?.locationSend(meetUpPlace: self.meetUpPlace)
-        print("meetUpPlace City", meetUpPlace.city)
+        print("meetUpPlace locality", meetUpPlace.locality)
         self.navigationController?.popViewController(animated: true)
     }
 
@@ -606,8 +630,10 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             guard let response = response else {
                 if self.searchVC.searchBar.text != nil && self.searchVC.searchBar.text != "" {
                     resultsVC.notFound()
-                    self.activityIndicator.stopAnimating()
-                    self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
+                    DispatchQueue.main.async(qos: .userInteractive, execute: {
+                        self.activityIndicator.stopAnimating()
+                        self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
+                    })
                 }
             return }
             
@@ -631,7 +657,9 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
                 if let placeMarkPhoneNumber = item.phoneNumber {
                     print("placeMarkPhoneNumber", placeMarkPhoneNumber)
                 }
-                
+                if let placeMarkLocality = item.placemark.locality {
+                    print("placemark locality", placeMarkLocality)
+                }
 //                if let name = item.name,
 //                   let countryCode = item.placemark.countryCode,
 //                   let location = item.placemark.location,
@@ -663,8 +691,8 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         searchRunTimeInterval = nil
     }
     
-    func forwardGeocoding(address: String, completion: @escaping (String?) -> Void) {
-        print("forwardGeocoding city", address)
+    func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
+        print("forwardGeocoding locality", address)
         let geocoder = CLGeocoder()
 //        let locale = Locale(identifier: "en_US")
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
@@ -681,33 +709,11 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
                 return
             }
 
-//            if let placemarks = placemarks {
-//                for placemark in placemarks {
-//                    print("placemark locality", placemark.country)
-//                }
-//            }
-
             guard let pm = placemarks?.last else { return }
-            let locality = pm.locality
-            let country = pm.country ?? ""
-//            var location: CLLocation?
-//            var locality: String?
-//            if let placemarks = placemarks, placemarks.count > 0 {
-//                location = placemarks.first?.location
-//                locality = placemarks.last?.locality
-//            }
-            print("forwardGeocoding locality and county", locality, country)
-            completion(locality) // or country 
-
-//            if let location = location {
-//                let coordinate = location.coordinate
-//                print("\nlat: \(coordinate.latitude), long: \(coordinate.longitude)")
-//
-//            }
-//            else
-//            {
-//                print("No Matching Location Found")
-//            }
+            guard let locality = pm.locality else { return }
+            guard let countryCodeName = pm.country else { return }
+            print("forwardGeocoding locality and county", locality, countryCodeName)
+            completion(locality, countryCodeName)
         })
     }
     
@@ -730,22 +736,23 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             guard let pm = placemarks?.last else { return }
             let country = pm.country ?? ""
             let administrativeArea = "\(pm.administrativeArea ?? "")"
-            let locality = "\(pm.locality ?? "")"
-            var centerAddress: String?
-            centerAddress = locality
+//            let locality = "\(pm.locality ?? "")"
+            guard let locality = pm.locality else { return }
+            
+//            var centerAddress: String?
+//            centerAddress = locality
 //            if administrativeArea == locality {
 //                centerAddress = locality
 //            } else {
 //                centerAddress = administrativeArea + " " + locality
 //            }
-            let city: String = centerAddress ?? ""
-            centerAddress = "\(centerAddress ?? "") \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
-//            self.cityName = administrativeArea
-            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, city: city.uppercased())
-//            self.forwardGeocoding(address: city)
-            self.forwardGeocoding(address: city) { (locality) in
-                print(locality)
-                
+//            let locality: String = centerAddress ?? ""
+            let centerAddress = "\(locality) \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
+            
+            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: locality.uppercased())
+            
+            self.forwardGeocoding(address: locality) { (locality, countryCodeName) in
+                print("forwardGeocoding res", locality, countryCodeName)
             }
             completion(reverseGeoData)
 
@@ -763,7 +770,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
 //                centerAddress = administrativeArea + " " + locality
 //            }
 //            centerAddress = "\(centerAddress ?? "") \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
-//            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, city: administrativeArea)
+//            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: administrativeArea)
 //            print("administrativeArea\(administrativeArea)")
 //            completion(reverseGeoData)
 //        })
@@ -878,44 +885,52 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         // 설명 뷰 띄우고, 검색 데이터 없데이트 완료후 view hide
         print("시작 searchBar")
-        self.searchGuideView.isHidden = false // 가이드뷰 숨김
-        if !noticeView.isHidden { noticeView.isHidden = true }
-        if self.activityIndicator.isAnimating {
-            self.activityIndicator.stopAnimating()
-            searchBar.searchTextField.leftView?.isHidden = false
-        }
+        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+            self.searchGuideView.isHidden = false // 가이드뷰 숨김
+            if !noticeView.isHidden { noticeView.isHidden = true }
+            if self.activityIndicator.isAnimating {
+                self.activityIndicator.stopAnimating()
+                searchBar.searchTextField.leftView?.isHidden = false
+            }
+        })
     }
 
     // 입력하다 지웠을때나, 값 변경
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print("변경 searchBar")
-        if searchText == "" { // 값 없을때
-            searchGuideView.isHidden = false
-            if self.activityIndicator.isAnimating {
-                self.activityIndicator.stopAnimating()
-                searchBar.searchTextField.leftView?.isHidden = false
+        
+        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+            if searchText == "" { // 값 없을때
+                searchGuideView.isHidden = false
+                if self.activityIndicator.isAnimating {
+                    self.activityIndicator.stopAnimating()
+                    searchBar.searchTextField.leftView?.isHidden = false
+                }
+    //            if self.activityIndicator.isAnimating { self.activityIndicator.stopAnimating() }
             }
-//            if self.activityIndicator.isAnimating { self.activityIndicator.stopAnimating() }
-        }
-        else { // 값있을때
-//            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
-            if !self.activityIndicator.isAnimating {
-                searchBar.searchTextField.leftView?.isHidden = true
-                self.activityIndicator.startAnimating()
+            else { // 값있을때
+    //            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
+                if !self.activityIndicator.isAnimating {
+                    searchBar.searchTextField.leftView?.isHidden = true
+                    self.activityIndicator.startAnimating()
+                }
+                self.searchGuideView.isHidden = true
+    //            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
             }
-            self.searchGuideView.isHidden = true
-//            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
-        }
+        })
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         print("search bar 취소 버튼 클릭")
-        self.searchGuideView.isHidden = true
-        if self.activityIndicator.isAnimating {
-            searchBar.searchTextField.leftView?.isHidden = false
-            self.activityIndicator.stopAnimating()
-        }
-        self.searchVC.dismiss(animated: true)
+        
+        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+            self.searchGuideView.isHidden = true
+            if self.activityIndicator.isAnimating {
+                searchBar.searchTextField.leftView?.isHidden = false
+                self.activityIndicator.stopAnimating()
+            }
+            self.searchVC.dismiss(animated: true)
+        })
     }
     
     
@@ -940,9 +955,12 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
 extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControllerDelegate {
     func didTapPlace(coordinate: CLLocationCoordinate2D, placeName: String, placeTitle: String) {
 //        self.saveButton.isHidden = true
-        searchVC.searchBar.resignFirstResponder()
-        searchVC.dismiss(animated: true, completion: nil)
-        searchVC.searchBar.text = placeName
+        
+        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+            searchVC.searchBar.resignFirstResponder()
+            searchVC.dismiss(animated: true, completion: nil)
+            searchVC.searchBar.text = placeName
+        })
         // 그전 핀 삭제
 //        mapView.removeAnnotations(mapView.annotations)
 //        let annotations = mapView.annotations
@@ -960,7 +978,7 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
         self.meetUpPlace.longitude = coordinate.longitude
         findAddress(lat: coordinate.latitude, long: coordinate.longitude) { (centerAddress) in
             print("find address \(centerAddress)")
-            self.meetUpPlace.city = centerAddress?.city
+            self.meetUpPlace.locality = centerAddress?.locality
         }
         self.meetUpPlace.address = placeTitle
 //        self.meetUpPlace.address = "\(placeTitle) (\(placeName))"

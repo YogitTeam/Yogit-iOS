@@ -6,34 +6,36 @@
 //
 
 import Foundation
-
-import Foundation
 import Alamofire
+import Network
 
-final class ApiStatusLogger : EventMonitor {
+final class ApiStatusLogger: EventMonitor {
     
-    let queue = DispatchQueue(label: "MyApiStatusLogger")
+    let queue = DispatchQueue(label: "NetworkPathStatusMonitor")
+    //    let queue = DispatchQueue.global(qos: .background)
+    let monitor = NWPathMonitor()
     
-//    func requestDidResume(_ request: Request) {
-//        print("MyApiStatusLogger - requestDidResume()")
-////        debugPrint(request)
-//    }
-    
-    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
-        guard let statusCode = request.response?.statusCode else {
-            return
-        }
-        
-        print("MyApiStatusLogger - request.didParseResponse() / statusCode : \(statusCode)")
-        
-//        debugPrint(response)
+    init() {
+        print("ApiStatusLogger init")
+        monitor.start(queue: queue)
     }
     
-    func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
-        guard let statusCode = request.response?.statusCode else {
-            return
+    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) { // 1
+        print("ApiStatusLogger - request.didCreateURLRequest")
+        //        monitor.start(queue: queue)
+        print("monitor.currentPath.status", monitor.currentPath.status)
+        if monitor.currentPath.status == .unsatisfied {
+            request.cancel()
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "No Internet Connection", message: "Please connect to the internet and try again.", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(okAction)
+                
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                    windowScene.windows.first?.rootViewController?.present(alert, animated: true, completion: nil)
+                }
+            }
         }
-        
-        print("MyApiStatusLogger - request.didCreateUploadable() / statusCode : \(statusCode)")
+        //        monitor.cancel()
     }
 }

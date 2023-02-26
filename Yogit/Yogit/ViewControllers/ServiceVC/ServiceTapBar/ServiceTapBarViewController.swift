@@ -37,8 +37,9 @@ class ServiceTapBarViewController: UITabBarController {
 
     private func configureTapBarVC() {
         self.view.backgroundColor = .systemBackground
-        UITabBar.appearance().tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-
+       
+//        UITabBar.appearance().tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        UITabBar.appearance().backgroundColor = .systemBackground
 //        self.hidesBottomBarWhenPushed = true
 //        self.tabBar.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
     }
@@ -50,8 +51,9 @@ class ServiceTapBarViewController: UITabBarController {
         } 
     }
     
+    
     private func configureInstanceVC() {
-        let homeVC = SearchGatheringBoardController()
+        let homeVC = MainViewController()// SearchGatheringBoardController()
         let profileVC = GetProfileViewController()
         let myClubVC = MyClubViewController()
         let notiVC = PushNoficationViewController()

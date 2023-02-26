@@ -75,10 +75,14 @@ class NationalityViewController: UIViewController {
             let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
             let localeIdentifier = Locale.preferredLanguages.first ?? "" // en-KR
             let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
+            print(code)
             return Country(countryCode: code, countryName: countryName, countryEmoji: code.emojiFlag)
         }
         
         let region = Locale.current.region?.identifier
+//        let firstUserCountries = countries.sorted { (a, b) -> Bool in
+//            return a.countryName < b.countryName
+//        }
         let firstUserCountries = countries.sorted { (a, b) -> Bool in
             if a.countryCode == region {
                 return true

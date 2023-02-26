@@ -23,13 +23,9 @@ struct Message: MessageType {
 }
 
 class ChatViewController: MessagesViewController, MessagesDataSource {
-    let keyboardManager = KeyboardManager()
-//    let keyboardNotification = KeyboardNotification(from: <#NSNotification#>)
-    var keyboardHieght = 0
+
     var currentUser = Sender(senderId: "me", displayName: "MyName")
-//    var otherUser = Sender(senderId: "other", displayName: "OtherUserName")
     let service = Sender(senderId: "SERVICE", displayName: "Yogit")
-//    let currentUser: Sender
     var boardId: Int64?
     var downPageCursor = -1
     var upPageCusor = 0
@@ -45,10 +41,17 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     var messages = [MessageType]()
     var avatarImages: [String:UIImage] = ["SERVICE":UIImage(named: "ServiceIcon")!]
     
-    private let formatter: DateFormatter = {
-      let formatter = DateFormatter()
-      formatter.dateStyle = .medium
-      return formatter
+    let modular = 10
+    let serviceNotice = "📢 This is not a real-time chat.\n      Please scroll to update."
+    lazy var serviceMessageId = upPageCusor*modular+upPageListCount
+    
+    private let messageCenterformatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        if let localeIdentifier = Locale.preferredLanguages.first {
+            dateFormatter.locale = Locale(identifier: localeIdentifier)
+        }
+        dateFormatter.dateFormat = "EEEE, MMM d"
+        return dateFormatter
     }()
     
 //    private(set) lazy var refreshControl: UIRefreshControl = {
@@ -57,18 +60,14 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //       control.transform = CGAffineTransformMakeScale(0.5, 0.5)
 //      return control
 //    }()
-//
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewComponent()
+        configureCurrentUser()
         configureMessageCollectionView()
         configureMessageInputBar()
-        configureCurrentUser()
-//        Task(priority: .high) {
-//            await loadFirstMessages()
-//        }
-        // Do any additional setup after loading the view.
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,9 +82,82 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         IQKeyboardManager.shared.enable = true
     }
     
+    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+        return false
+    }
+    
+    override func collectionView(_: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
+        print("shouldShowMenuForItemAt", indexPath.section)
+        let message = getTheMessageText(messageKind: messages[indexPath.section].kind)
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let copy = UIAlertAction(title: "Copy", style: .default) { (action) in
+            UIPasteboard.general.string = message
+        }
+        let report = UIAlertAction(title: "Report", style: .destructive) { (action) in
+            guard let clipBoardId = Int64(self.messages[indexPath.section].messageId) else { return }
+            guard let reportedUserId = Int64(self.messages[indexPath.section].sender.senderId) else { return }
+            self.reportClipboard(content: message, clipBoardId: clipBoardId, reportedUserId: reportedUserId)
+        }
+        alert.addAction(copy)
+        alert.addAction(report)
+        alert.addAction(cancel)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+        return true
+    }
+    
+    private func reportClipboard(content: String, clipBoardId: Int64, reportedUserId: Int64) {
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
+            let RVC = ReportViewController()
+            RVC.reportKind = .clipboardReport
+            RVC.reportedUserId = reportedUserId
+            RVC.reportedClipBoardId = clipBoardId
+            RVC.reportContentString = content
+            RVC.modalPresentationStyle = .fullScreen
+            let navigationController = UINavigationController(rootViewController: RVC)
+            navigationController.modalPresentationStyle = .fullScreen
+            self.present(navigationController, animated: true, completion: nil)
+        })
+    }
+    
+    private func getTheMessageText(messageKind: MessageKind) -> String {
+        var message: String = ""
+        if case .text(let value) = messageKind {
+            message = value
+        }
+        return message
+    }
+    
+//    private func setupLongGestureRecognizerOnCollection() {
+//
+//        let longPressedGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(gestureRecognizer:)))
+//        longPressedGesture.minimumPressDuration = 0.5
+//        longPressedGesture.delegate = self
+//        longPressedGesture.delaysTouchesBegan = true
+//        mess.addGestureRecognizer(longPressedGesture)
+//    }
+//
+//    // long press 이벤트 액션
+//    @objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+//
+//        let location = gestureRecognizer.location(in: collectionView)
+//        // let collectionView = gestureRecognizer.view as! UICollectionView
+//
+//        if gestureRecognizer.state == .began {
+//
+//            // 롱 프레스 터치가 시작될 떄
+//        } else if gestureRecognizer.state == .ended {
+//            // 롱 프레스 터치가 끝날 떄
+//        } else {
+//            return
+//        }
+//    }
+    
     func configureViewComponent() {
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.title = "Chat"
+        navigationItem.title = "ClipBoard"
     }
     
     func configureCurrentUser() {
@@ -110,7 +182,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //            UIColor(rgb: 0x3232FF, alpha: 1.0).withAlphaComponent(0.3),
 //          for: .highlighted)
         
-        messageInputBar.inputTextView.tintColor = .label
         messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
         messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
 //        if #available(iOS 13, *) {
@@ -141,23 +212,60 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         for: .highlighted)
     }
     
+    
     func fetchClipBoardData(page: Int) async -> ClipBoardResInfo? {
         guard let userItem = try? KeychainManager.getUserItem() else { return nil }
         guard let boardId = self.boardId else { return nil }
         let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
         let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
         let response = await dataTask.response
-//        let result = await dataTask.result
         let value = response.value
         return value?.data
     }
     
-    func createClipBoardData(boardData: CreateClipBoardReq) async -> GetAllClipBoardsRes? {
+//    func fetchClipBoardData(getAllClipBoardsReq: GetAllClipBoardsReq) async throws -> ClipBoardResInfo {
+////        guard let userItem = try? KeychainManager.getUserItem() else { throw FetchError.notFoundKeyChain }
+////        guard let boardId = self.boardId else { throw FetchError.notFoundBoardId }
+////        let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
+//        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
+//        let response = await dataTask.response
+//        switch response.result {
+//        case .success:
+//        if let value = response.value, value.httpCode == 200, let data = value.data {
+//            return data
+//        } else {
+//            throw FetchError.badResponse
+//        }
+//        case .failure: throw FetchError.failureResponse
+//        }
+////        let value = response.value
+////        guard let data = value?.data else { throw FetchError.notFoundBoardId }
+////        return value?.data
+//    }
+//    
+//    func createClipBoardData(boardData: CreateClipBoardReq) async -> GetAllClipBoardsRes? {
+//        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
+//        let response = await dataTask.response
+////        let result = await dataTask.result
+//        let value = response.value
+//        return value?.data
+//    }
+    
+    func createClipBoardData2(boardData: CreateClipBoardReq) async throws -> GetAllClipBoardsRes {
         let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
         let response = await dataTask.response
-//        let result = await dataTask.result
-        let value = response.value
-        return value?.data
+        switch response.result {
+        case .success:
+            print("createClipBoardData2 success")
+        if let value = response.value, (value.httpCode == 200 || value.httpCode == 201), let data = value.data {
+            return data
+        } else {
+            throw CreateError.badResponse
+        }
+        case let .failure(error):
+            print("createClipBoardData2 error", error)
+            throw CreateError.failureResponse
+        }
     }
     
     // totalpage는 마지막 페이지+1
@@ -351,10 +459,13 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
     }
     
+    // message date 중에 요일 날짜가 바뀌면 표시
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-      if indexPath.section % 3 == 0 {
+        //
+      if indexPath.section % 6 == 0 {
+          let dateString = messageCenterformatter.string(from: message.sentDate)
         return NSAttributedString(
-          string: MessageKitDateFormatter.shared.string(from: message.sentDate),
+          string: dateString,
           attributes: [
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10),
             NSAttributedString.Key.foregroundColor: UIColor.darkGray,
@@ -364,9 +475,8 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     }
     
     func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
-      let dateString = formatter.string(from: message.sentDate)
       return NSAttributedString(
-        string: dateString,
+        string: MessageKitDateFormatter.shared.string(from: message.sentDate),
         attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
     }
     /*
@@ -386,134 +496,254 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
       processInputBar(messageInputBar)
     }
     
+//    func processInputBar(_ inputBar: InputBarAccessoryView) {
+//
+//        // Here we can parse for which substrings were autocompleted
+//        let attributedText = inputBar.inputTextView.attributedText!
+//        let range = NSRange(location: 0, length: attributedText.length)
+//        attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
+//
+//            let substring = attributedText.attributedSubstring(from: range)
+//            let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
+//            print("Autocompleted: `", substring, "` with context: ", context ?? [])
+//        }
+//
+//        let components = inputBar.inputTextView.components
+//        inputBar.inputTextView.text = String()
+//        inputBar.invalidatePlugins()
+//        inputBar.inputTextView.placeholder = "Sending..."
+//        inputBar.sendButton.startAnimating()
+//        Task(priority: .high)  {
+//            await MainActor.run {
+//                inputBar.inputTextView.placeholder = "Sending..."
+//                inputBar.sendButton.startAnimating()
+//            }
+//            await insertMessages(components)
+//            await MainActor.run {
+//                inputBar.sendButton.stopAnimating()
+//                inputBar.inputTextView.placeholder = ""
+//            }
+//        }
+//    }
+    
     func processInputBar(_ inputBar: InputBarAccessoryView) {
-        
-        // Here we can parse for which substrings were autocompleted
-        let attributedText = inputBar.inputTextView.attributedText!
-        let range = NSRange(location: 0, length: attributedText.length)
-        attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
+        if !isPaging {
+            isPaging = true
+            // Here we can parse for which substrings were autocompleted
+            let attributedText = inputBar.inputTextView.attributedText!
+            let range = NSRange(location: 0, length: attributedText.length)
+            attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
+                
+                let substring = attributedText.attributedSubstring(from: range)
+                let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
+                print("Autocompleted: `", substring, "` with context: ", context ?? [])
+            }
             
-            let substring = attributedText.attributedSubstring(from: range)
-            let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
-            print("Autocompleted: `", substring, "` with context: ", context ?? [])
+            let components = inputBar.inputTextView.components
+            inputBar.inputTextView.text = String()
+            inputBar.invalidatePlugins()
+            inputBar.inputTextView.placeholder = "Sending..."
+            inputBar.sendButton.startAnimating()
+            insertMessages(components)
         }
-        
-        let components = inputBar.inputTextView.components
-        inputBar.inputTextView.text = String()
-        inputBar.invalidatePlugins()
-        Task(priority: .high)  {
-            await MainActor.run {
-                inputBar.inputTextView.placeholder = "Sending..."
-                inputBar.sendButton.startAnimating()
-            }
-//            inputBar.inputTextView.isEditable = false
-            await insertMessages(components)
-            await MainActor.run {
-                inputBar.sendButton.stopAnimating()
-                inputBar.inputTextView.placeholder = ""
-            }
-//            inputBar.inputTextView.isEditable = true
-        }
-//        task.cancel()
     }
     
     // 유저 로그인 정보에
     // 유저 닉네임도 저장 필요
     
     // 해당 section 존재 없음
-    private func insertMessages(_ data: [Any]) async {
-        //        messages.removeLast()
-        //        messagesCollectionView.deleteSections([messages.count])
-        if isPaging {
-            print("페이징 중입니다.")
-            return
+//    private func insertMessages(_ data: [Any]) async {
+//        //        messages.removeLast()
+//        //        messagesCollectionView.deleteSections([messages.count])
+//        if isPaging {
+//            print("페이징 중입니다.")
+//            return
+//        }
+//        else { isPaging = true }
+//        for component in data {
+//            //        let user = SampleData.shared.currentSender
+//
+//            guard let boardId = self.boardId else { return }
+//            guard let userItem = try? KeychainManager.getUserItem() else { return }
+//            //          let user = Sender(senderId: "\(userItem.userId)", displayName: "Jun") // 첫번째로 보내면 이름값이 없다 따라서 닉네임 키체인에 저장 필요
+//            if let str = component as? String {
+//                let createClipBoardReq = CreateClipBoardReq(boardID: boardId, content: str, refreshToken: userItem.refresh_token, title: "", userID: userItem.userId)
+//                let createClipBoardRes = await createClipBoardData(boardData: createClipBoardReq) // 등록
+//                var totalPage = 0
+//                repeat {
+//                    let getData = await fetchClipBoardData(page: upPageCusor)
+//                    if (getData?.totalPage) != nil {
+//                        totalPage = getData!.totalPage
+//                    }
+//                    print("삽입 하지 않은 upPageCursor, totalPage", upPageCusor, totalPage)
+//                    if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함
+//                        print("삽입 할 upPageCursor, totalPage", upPageCusor, totalPage)
+//                        guard let clipBoardList = getData?.getClipBoardResList else { return }
+//                        var clipBoardListCount = clipBoardList.count
+//                        for i in upPageListCount..<clipBoardListCount { // 9  10
+//                            print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
+//                            let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
+//                            if avatarImages[sender.senderId] == nil {
+////                                let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
+////                                self.avatarImages[sender.senderId] = profileImage
+//                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+//                                self.avatarImages[sender.senderId] = profileImage
+////                                clipBoardList[i].profileImgURL.loadImage { (image) in
+////                                    guard let image = image else {
+////                                        print("Error loading image")
+////                                        return
+////                                    }
+////                                    self.avatarImages[sender.senderId] = image
+////                                }
+//                            }
+////                            if userItem.userId == clipBoardList[i].userID {
+////                                currentUser.senderId = "\(clipBoardList[i].userID)"
+////                                currentUser.displayName = clipBoardList[i].userName
+////                            }
+//                            guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
+//                            let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+//                            await MainActor.run {
+//                                if i == upPageListCount {
+//                                    insertFirst(message)
+//                                } else {
+//                                    insertMessage(message)
+//                                }
+//                            }
+//                            // 보낸 메시지와 동일하면
+//                            if createClipBoardRes?.clipBoardID == clipBoardList[i].clipBoardID {
+//                                print("clipBoardListCount, i", clipBoardListCount, i) // 10 9
+//                                clipBoardListCount = i + 1
+//                                break
+//                            }
+//                        }
+//                        upPageListCount = clipBoardListCount%10 // 0
+//                        if upPageListCount == 0 {
+//                            upPageCusor += 1
+//                        }
+//                    }
+//                } while upPageCusor < totalPage && upPageListCount == 0
+//                let serviceMessage = Message(sender: service, messageId: "\(upPageCusor*10+upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
+//                await MainActor.run {
+//                    insertMessage(serviceMessage)
+//                    messagesCollectionView.scrollToLastItem()
+//                }
+//                isPaging = false
+//                print("페이징 끝")
+//            } else if let img = component as? UIImage {
+//                //            let message = Message(sender: user, messageId: "1", sentDate: Date(), kind: .photo(img as! MediaItem))
+//                //          insertMessage(message)
+//            }
+//        }
+//    }
+    
+    func fetchClipBoardData2(getAllClipBoardsReq: GetAllClipBoardsReq) async throws -> ClipBoardResInfo {
+//        guard let userItem = try? KeychainManager.getUserItem() else { throw FetchError.notFoundKeyChain }
+//        guard let boardId = self.boardId else { throw FetchError.notFoundBoardId }
+//        let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
+        let response = await dataTask.response
+        switch response.result {
+        case .success:
+            print("fetchClipBoardData2 success")
+        if let value = response.value, value.httpCode == 200, let data = value.data {
+            return data
+        } else {
+            throw FetchError.badResponse
         }
-        else { isPaging = true }
-        for component in data {
-            //        let user = SampleData.shared.currentSender
+        case let .failure(error):
+            print("fetchClipBoardData2 error", error)
+            throw FetchError.failureResponse
+        }
+//        let value = response.value
+//        guard let data = value?.data else { throw FetchError.notFoundBoardId }
+//        return value?.data
+    }
 
+    private func insertMessages(_ data: [Any]) {
+        for component in data {
             guard let boardId = self.boardId else { return }
             guard let userItem = try? KeychainManager.getUserItem() else { return }
-            //          let user = Sender(senderId: "\(userItem.userId)", displayName: "Jun") // 첫번째로 보내면 이름값이 없다 따라서 닉네임 키체인에 저장 필요
-            if let str = component as? String {
-                let createClipBoardReq = CreateClipBoardReq(boardID: boardId, content: str, refreshToken: userItem.refresh_token, title: "", userID: userItem.userId)
-                let createClipBoardRes = await createClipBoardData(boardData: createClipBoardReq) // 등록
-                var totalPage = 0
-                repeat {
-                    let getData = await fetchClipBoardData(page: upPageCusor)
-                    if (getData?.totalPage) != nil {
-                        totalPage = getData!.totalPage
-                    }
-                    print("삽입 하지 않은 upPageCursor, totalPage", upPageCusor, totalPage)
-                    if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함
-                        print("삽입 할 upPageCursor, totalPage", upPageCusor, totalPage)
-                        guard let clipBoardList = getData?.getClipBoardResList else { return }
-                        var clipBoardListCount = clipBoardList.count
-                        for i in upPageListCount..<clipBoardListCount { // 9  10
-                            print("upPageListCount, clipBoardListCount", self.upPageListCount, clipBoardListCount)
-                            let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
-                            if avatarImages[sender.senderId] == nil {
-//                                let profileImage = await clipBoardList[i].profileImgURL.urlToImage()
-//                                self.avatarImages[sender.senderId] = profileImage
-                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
-                                self.avatarImages[sender.senderId] = profileImage
-//                                clipBoardList[i].profileImgURL.loadImage { (image) in
-//                                    guard let image = image else {
-//                                        print("Error loading image")
-//                                        return
-//                                    }
-//                                    self.avatarImages[sender.senderId] = image
-//                                }
-                            }
-//                            if userItem.userId == clipBoardList[i].userID {
-//                                currentUser.senderId = "\(clipBoardList[i].userID)"
-//                                currentUser.displayName = clipBoardList[i].userName
-//                            }
-                            guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
-                            let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
-                            await MainActor.run {
-                                if i == upPageListCount {
-                                    insertFirst(message)
-                                } else {
-                                    insertMessage(message)
+            Task(priority: .high) {
+                if let str = component as? String {
+                    do {
+                        let createClipBoardReq = CreateClipBoardReq(boardID: boardId, content: str, refreshToken: userItem.refresh_token, title: "", userID: userItem.userId)
+                        let createClipBoardRes = try await createClipBoardData2(boardData: createClipBoardReq) // 등록
+                        var totalPage = 0
+                        repeat {
+                            let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
+                            do {
+                                let getData = try await fetchClipBoardData2(getAllClipBoardsReq: getAllClipBoardsReq)
+                                totalPage = getData.totalPage
+                                if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함
+                                    let clipBoardList = getData.getClipBoardResList
+                                    var clipBoardListCount = clipBoardList.count
+                                    for i in upPageListCount..<clipBoardListCount { // 9  10
+                                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
+                                        if avatarImages[sender.senderId] == nil {
+                                            let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                                            self.avatarImages[sender.senderId] = profileImage
+                                        }
+                                        guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
+                                        let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+                                        await MainActor.run {
+                                            if i == upPageListCount {
+                                                insertFirst(message)
+                                            } else {
+                                                insertMessage(message)
+                                            }
+                                        }
+                                        if createClipBoardRes.clipBoardID == clipBoardList[i].clipBoardID { // 보낸 메시지와 동일하면
+                                            print("clipBoardListCount, i", clipBoardListCount, i) // 10 9
+                                            clipBoardListCount = i + 1
+                                            break
+                                        }
+                                    }
+                                    upPageListCount = clipBoardListCount%modular // 0
+                                    if upPageListCount == 0 {
+                                        upPageCusor += 1
+                                    }
+                                    let serviceMessage = Message(sender: service, messageId: "\(serviceMessageId)", sentDate: Date(), kind: .text(serviceNotice))
+                                    await MainActor.run {
+                                        insertMessage(serviceMessage)
+                                    }
                                 }
-                            }
-                            // 보낸 메시지와 동일하면
-                            if createClipBoardRes?.clipBoardID == clipBoardList[i].clipBoardID {
-                                print("clipBoardListCount, i", clipBoardListCount, i) // 10 9
-                                clipBoardListCount = i + 1
+                            } catch {
+                                print("fetchClipBoardData2 error \(error.localizedDescription)")
                                 break
                             }
-                        }
-                        upPageListCount = clipBoardListCount%10 // 0
-                        if upPageListCount == 0 {
-                            upPageCusor += 1
-                        }
+                        } while upPageCusor < totalPage && upPageListCount == 0
+                    } catch {
+                        print("createClipBoardData error \(error.localizedDescription)")
                     }
-                } while upPageCusor < totalPage && upPageListCount == 0
-                let serviceMessage = Message(sender: service, messageId: "\(upPageCusor*10+upPageListCount)", sentDate: Date(), kind: .text("📢 This is not realtime chatting\n      Please need scroll"))
+                } else if let img = component as? UIImage {
+  
+                }
                 await MainActor.run {
-                    insertMessage(serviceMessage)
+                    messageInputBar.sendButton.stopAnimating()
                     messagesCollectionView.scrollToLastItem()
                 }
                 isPaging = false
-                print("페이징 끝")
-            } else if let img = component as? UIImage {
-                //            let message = Message(sender: user, messageId: "1", sentDate: Date(), kind: .photo(img as! MediaItem))
-                //          insertMessage(message)
             }
         }
     }
-
 }
 
 extension ChatViewController: MessageCellDelegate {
+    
     func didTapAvatar(in _: MessageCollectionViewCell) {
         print("Avatar tapped")
     }
 
-    func didTapMessage(in _: MessageCollectionViewCell) {
+    func didTapMessage(in cell: MessageCollectionViewCell) {
         print("Message tapped")
+//        guard
+//          let indexPath = messagesCollectionView.indexPath(for: cell),
+//          let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView)
+//        else {
+//          print("Failed to identify message when audio cell receive tap gesture")
+//          return
+//        }
+        // message.sender.senderId
     }
 
     func didTapImage(in _: MessageCollectionViewCell) {

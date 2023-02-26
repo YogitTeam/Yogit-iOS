@@ -55,7 +55,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
 //        stackView.layer.borderColor = UIColor.red.cgColor
         [titleLabel,
          dateLabel,
-         cityLabel,
+         localityLabel,
          memberNumberLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -114,7 +114,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
-    private let cityLabel: UILabel = {
+    private let localityLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.textAlignment = .left
@@ -181,7 +181,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         
         hostImageView.layer.cornerRadius = contentView.frame.size.width / 11
         
-        cityLabel.snp.makeConstraints {
+        localityLabel.snp.makeConstraints {
             $0.trailing.equalTo(contentView)
         }
         
@@ -212,7 +212,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         boardImageView.image = nil
         titleLabel.text = nil
         dateLabel.text = nil
-        cityLabel.text = nil
+        localityLabel.text = nil
         memberNumberLabel.text = nil
     }
     
@@ -221,7 +221,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         hostImageView.setImage(with: board.profileImgURL)
         titleLabel.text = board.title
         dateLabel.text = board.date.stringToDate()?.dateToStringUser()
-        cityLabel.text = board.cityName
+        localityLabel.text = board.cityName
         memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
     }
 }

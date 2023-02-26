@@ -7,18 +7,59 @@
 
 import UIKit
 import SnapKit
+import ProgressHUD
 
 class GetProfileViewController: UIViewController {
     // profile
     // profile image >> pagecontrol
     
-    var getUserId: Int64?
+    var getUserId: Int64? {
+        didSet {
+            leftButton.isHidden = false
+            rightButton.isHidden = false
+        }
+    }
     
     private var setUserProfile = UserProfile()
     
     private var profileImages = [String]()
     
     private var languagesInfo: String = ""
+    
+//    private lazy var leftButton: UIButton = {
+//        let button = UIButton()
+//        button.setImage(UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), for: .normal)
+//        button.addTarget(self, action: #selector(leftButtonPressed(_:)), for: .touchUpInside)
+//        button.tintColor = .label
+//        button.isHidden = true
+//        return button
+//    }()
+    
+//    private lazy var rightButton: UIButton = {
+//        let button = UIButton()
+//        button.setImage(UIImage(systemName: "ellipsis")?.withRenderingMode(.alwaysTemplate), for: .normal)
+//        button.addTarget(self, action: #selector(rightButtonPressed(_:)), for: .touchUpInside)
+//        button.tintColor = .label
+//        button.isHidden = true
+//        return button
+//    }()
+    
+    private lazy var leftButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(leftButtonPressed(_:)))
+        button.tintColor = .label
+        button.isHidden = true
+        return button
+    }()
+    
+    
+    private lazy var rightButton: UIBarButtonItem = {
+        let button =  UIBarButtonItem(image: UIImage(systemName: "ellipsis")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        button.tintColor = .label
+        button.isHidden = true
+        return button
+    }()
+    
+    
     
     private let lanuageLabel: UILabel = {
         let label = UILabel()
@@ -84,6 +125,7 @@ class GetProfileViewController: UIViewController {
 
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .placeholderText
         imageView.layer.cornerRadius = 55
@@ -97,7 +139,9 @@ class GetProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.medium)
+        label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
 //        label.text = "Select photos"
         label.numberOfLines = 1
         return label
@@ -131,6 +175,8 @@ class GetProfileViewController: UIViewController {
          aboutMeLabel,
          aboutMe].forEach { view.addSubview($0) }
         configureViewComponent()
+        configureNavItem()
+        initProgressHUD()
         getUserProfile()
     }
     
@@ -139,10 +185,10 @@ class GetProfileViewController: UIViewController {
         profileImageView.snp.makeConstraints { make in
             make.width.height.equalTo(110)
         }
-        profileImageLabel.snp.makeConstraints { make in
-            make.width.equalTo(110)
-            make.height.equalTo(20)
-        }
+//        profileImageLabel.snp.makeConstraints { make in
+//            make.width.equalTo(110)
+//            make.height.equalTo(20)
+//        }
         profileImageStackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(profileContentView).inset(20)
@@ -188,9 +234,19 @@ class GetProfileViewController: UIViewController {
         self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
     }
     
+    private func configureNavItem() {
+        self.navigationItem.title = "Profile"
+        self.navigationItem.leftBarButtonItem = leftButton
+        self.navigationItem.rightBarButtonItem = rightButton
+    }
 
     private func configureViewComponent() {
         self.view.backgroundColor = .systemBackground
+    }
+    
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
     }
     
     private func initNavigationBar() {
@@ -204,6 +260,81 @@ class GetProfileViewController: UIViewController {
         }
     }
     
+    @objc private func leftButtonPressed(_ sender: Any) {
+        DispatchQueue.main.async {
+            self.dismiss(animated: true)
+        }
+    }
+    
+    @objc private func rightButtonPressed(_ sender: Any) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//        alert.view.tintColor = UIColor.label
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let block = UIAlertAction(title: "Block", style: .destructive) { (action) in self.blockAlert() }
+        let report = UIAlertAction(title: "Report", style: .destructive) {(action) in
+            guard let reportedUserId = self.getUserId else { return }
+            self.reportBoard(reportedUserId: reportedUserId)
+        }
+        alert.addAction(block)
+        alert.addAction(report)
+        alert.addAction(cancel)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    private func blockAlert() {
+        let alert = UIAlertController(title: "Block", message: "Are you sure to block this user?\n\nYou can't change it after blocking it, so please use it carefully.\n\nIf you block a user, the gathering and posts that the user has opened will not be visible.", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "cancel", style: .cancel)
+        let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
+            guard let userIdToBlock = self.getUserId else { return }
+            self.blockUser(userIdToBlock: userIdToBlock)
+        }
+        alert.addAction(cancel)
+        alert.addAction(ok)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    private func blockUser(userIdToBlock: Int64) {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        let userBlockReq  = UserBlockReq(blockedUserID: userIdToBlock, blockingUserID: userItem.userId, refreshToken: userItem.refresh_token)
+        ProgressHUD.show(interaction: false)
+        AlamofireManager.shared.session
+            .request(BlockRouter.blockUser(parameters: userBlockReq))
+            .validate(statusCode: 200..<501)
+            .responseDecodable(of: APIResponse<UserBlockRes>.self) { response in
+            switch response.result {
+            case .success:
+                guard let value = response.value else { return }
+                if value.httpCode == 200 {
+                    guard let data = value.data else { return }
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: true) // 프로필 화면
+                    }
+                }
+            case let .failure(error):
+                print(error)
+            }
+            DispatchQueue.main.async {
+                ProgressHUD.dismiss()
+            }
+        }
+    }
+    
+    private func reportBoard(reportedUserId: Int64) {
+        DispatchQueue.main.async(qos: .userInteractive, execute: {
+            let RVC = ReportViewController()
+            RVC.reportedUserId = reportedUserId
+            RVC.reportKind = .userReport
+            RVC.modalPresentationStyle = .fullScreen
+            let NC = UINavigationController(rootViewController: RVC)
+            NC.modalPresentationStyle = .fullScreen
+            self.present(NC, animated: true, completion: nil)
+        })
+    }
+    
     @objc private func editButtonTapped(_ sender: UIButton) {
         print("editButtonTapped")
         DispatchQueue.main.async(qos: .userInteractive, execute: {
@@ -211,6 +342,7 @@ class GetProfileViewController: UIViewController {
             SPVC.mode = .edit
             SPVC.userProfile = self.setUserProfile
             SPVC.userProfileImage = self.profileImages.first
+            SPVC.delegate = self
             self.navigationController?.pushViewController(SPVC, animated: true)
         })
     }
@@ -221,6 +353,43 @@ class GetProfileViewController: UIViewController {
             let SPVC = SettingProfileViewController()
             self.navigationController?.pushViewController(SPVC, animated: true)
         }
+    }
+    
+    func bindingUserProfileData(data: FetchUserProfile) {
+        self.setUserProfile.userName = data.name
+        self.setUserProfile.nationality = data.nationality
+        self.setUserProfile.userAge = data.age
+        self.setUserProfile.gender = data.gender
+        self.setUserProfile.languageCodes = data.languageCodes
+        self.setUserProfile.languageLevels = data.languageLevels
+        self.setUserProfile.job = data.job
+        self.setUserProfile.aboutMe = data.aboutMe
+    }
+    
+    func sprayViewUserProfileData(data: FetchUserProfile) {
+        bindingUserProfileData(data: data)
+        let langCnt = data.languageCodes.count
+        var langInfos: String = ""
+        guard let localeIdentifier = Locale.preferredLanguages.first else { return }
+        for i in 0..<langCnt {
+            let code = data.languageCodes[i]
+            let localizedLocale = Locale(identifier: localeIdentifier)
+            let originLocale = Locale(identifier: code)
+            if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
+                if localizedLanguage == originLanguage {
+                    langInfos += "\(localizedLanguage), "
+                } else {
+                    langInfos += "\(localizedLanguage) (\(originLanguage)), "
+                }
+            }
+        }
+        langInfos.removeLast(2)
+        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+            profileImageView.setImage(with: data.profileImg)
+            profileImageLabel.text = data.name
+            profileLanguagesLabel.text = langInfos
+            profileImages = data.imageUrls
+        })
     }
     
     private func getUserProfile() {
@@ -242,156 +411,71 @@ class GetProfileViewController: UIViewController {
                     guard let value = response.value else { return }
                     if value.httpCode == 200 {
                         guard let data = value.data else { return }
-                        DispatchQueue.global(qos: .userInitiated).async {
-                            let langCnt = data.languageNames.count
-                            var langInfos: String = ""
-                            guard let localeIdentifier = Locale.preferredLanguages.first else { return }
-                            for i in 0..<langCnt {
-                                let code = data.languageNames[i]
-                                let localizedLocale = Locale(identifier: localeIdentifier)
-                                let originLocale = Locale(identifier: code)
-                                if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
-                                    if localizedLanguage == originLanguage {
-                                        langInfos += "\(localizedLanguage), "
-                                    } else {
-                                        langInfos += "\(localizedLanguage) (\(originLanguage)), "
-                                    }
-                                }
-                            }
-                            langInfos.removeLast(2)
-                            
-                                // 국가
-//                            let code = data.nationality
-//                            let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-//                            let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
-//                            let flag = code.emojiFlag
-                            // 노출될 값 flag + " " + countryName
-                           
-                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-                                profileImageView.setImage(with: data.profileImg)
-                                profileImageLabel.text = data.name
-                                profileLanguagesLabel.text = langInfos
-                                profileImages = data.imageUrls
-                            })
-                            self.setUserProfile.userName = data.name
-                            self.setUserProfile.nationality = data.nationality
-                            self.setUserProfile.userAge = data.age
-                            self.setUserProfile.gender = data.gender
-                            self.setUserProfile.languageNames = data.languageNames
-                            self.setUserProfile.languageLevels = data.languageLevels
-                            self.setUserProfile.job = data.job
-                            self.setUserProfile.aboutMe = data.aboutMe
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            self.sprayViewUserProfileData(data: data)
+//                            let langCnt = data.languageCodes.count
+//                            var langInfos: String = ""
+//                            guard let localeIdentifier = Locale.preferredLanguages.first else { return }
+//                            for i in 0..<langCnt {
+//                                let code = data.languageCodes[i]
+//                                let localizedLocale = Locale(identifier: localeIdentifier)
+//                                let originLocale = Locale(identifier: code)
+//                                if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
+//                                    if localizedLanguage == originLanguage {
+//                                        langInfos += "\(localizedLanguage), "
+//                                    } else {
+//                                        langInfos += "\(localizedLanguage) (\(originLanguage)), "
+//                                    }
+//                                }
+//                            }
+////                            langInfos.removeLast(2)
+//
+//                                // 국가
+////                            let code = data.nationality
+////                            let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
+////                            let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
+////                            let flag = code.emojiFlag
+//                            // 노출될 값 flag + " " + countryName
+//
+//                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+//                                profileImageView.setImage(with: data.profileImg)
+//                                profileImageLabel.text = data.name
+//                                profileLanguagesLabel.text = langInfos
+//                                profileImages = data.imageUrls
+//                            })
+//
+//                            self.sendFetchedUserProfile(data: data)
+////                            self.setUserProfile.userName = data.name
+////                            self.setUserProfile.nationality = data.nationality
+////                            self.setUserProfile.userAge = data.age
+////                            self.setUserProfile.gender = data.gender
+////                            self.setUserProfile.languageCodes = data.languageCodes
+////                            self.setUserProfile.languageLevels = data.languageLevels
+////                            self.setUserProfile.job = data.job
+////                            self.setUserProfile.aboutMe = data.aboutMe
                         }
                     }
                 case let .failure(error):
-                    print("SearchProfileVC - upload response result Not return", error)
+                    print("GetProfileVC - upload response result Not return", error)
                 }
             }
-        
-//        AF.request(API.BASE_URL + "users/profile",
-//                   method: .post,
-//                   parameters: getUserProfile,
-//                   encoder:  URLEncodedFormParameterEncoder(destination: .httpBody)) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .response { response in // reponseData
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                guard let data = response.data else { return }
-//                do{
-//                    let decodedData = try JSONDecoder().decode(APIResponse<ServiceUserProfile>.self, from: data)
-//                    print(decodedData.data)
-//                    if let data = decodedData.data {
-//
-//                        var getImage: UIImage?
-//                        DispatchQueue.global().async {
-//                            guard let imageUrl = decodedData.data?.profileImg else { return }
-//                            imageUrl.urlToImage { (image) in
-//                                guard let image = image else { return }
-//                                getImage = image
-//                            }
-//                            let langCnt = decodedData.data?.languageNames.count ?? 0
-//
-//                            // 변경 필요 계속 추가됨
-//                            for i in 0..<langCnt {
-//                                self.languagesInfo += "\(decodedData.data?.languageNames[i] ?? "") (\(decodedData.data?.languageLevels[i] ?? ""))\n"
-//                            }
-//                            DispatchQueue.main.async {
-//                                self.profileImageView.image = getImage // 따로 넣어줌
-//                                self.profileImageLabel.text = data.name
-//                                self.profileLanguagesLabel.text = self.languagesInfo
-//                                self.essentialProfile.userName = data.name
-//                                self.essentialProfile.nationality = data.nationality
-//                                self.essentialProfile.userAge = data.age
-//                                self.essentialProfile.gender = data.gender
-//                                self.essentialProfile.languageNames = data.languageNames
-//                                self.essentialProfile.languageLevels = data.languageLevels
-//                            }
-//                        }
-//                    }
-//                }
-//                catch{
-//                    print(error.localizedDescription)
-//                }
-//            case .failure(let error):
-//                debugPrint(response)
-//                print(error)
-//            }
-//        }
-//        AF.request(API.BASE_URL + "users/profile",
-//                   method: .get,
-//                   parameters: nil,
-//                   encoding: JSONEncoding.default)
-//            .validate(statusCode: 200..<500)
-//            .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                guard let data = response.value else { return }
-//                do{
-//                    let decodedData = try JSONDecoder().decode(APIResponse<ServiceUserProfile>.self, from: data)
-//                    var getImage: UIImage?
-//                    DispatchQueue.global().async {
-//                        guard let imageUrl = decodedData.data?.profileImg else { return }
-//                        imageUrl.urlToImage { (image) in
-//                            guard let image = image else { return }
-//                            getImage = image
-//                        }
-//                        let langCnt = decodedData.data?.languageNames.count ?? 0
-//                        for i in 0..<langCnt {
-//                            self.languagesInfo += "\(decodedData.data?.languageNames[i] ?? "") (\(decodedData.data?.languageLevels[i] ?? ""))\n"
-//                        }
-//                        DispatchQueue.main.async {
-//                            self.profileImageView.image = getImage
-//                            self.profileImageLabel.text = decodedData.data?.name
-//                            self.profileLanguagesLabel.text = self.languagesInfo
-//                        }
-//                    }
-//                }
-//                catch{
-//                    print(error.localizedDescription)
-//                }
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
     }
     
-    @objc func rightButtonPressed(_ sender: Any) {
-//        navigationController.push
-        
-        
-//        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        userProfile.userId = userItem.userId
-//        print(userProfile)
-//        
-//        
-//        
-//        DispatchQueue.main.async {
-//            let
-//            self.navigationController?.pushViewController(<#T##viewController: UIViewController##UIViewController#>, animated: <#T##Bool#>)
-//        }
-    }
+//    @objc func rightButtonPressed(_ sender: Any) {
+////        navigationController.push
+//
+//
+////        guard let userItem = try? KeychainManager.getUserItem() else { return }
+////        userProfile.userId = userItem.userId
+////        print(userProfile)
+////
+////
+////
+////        DispatchQueue.main.async {
+////            let
+////            self.navigationController?.pushViewController(<#T##viewController: UIViewController##UIViewController#>, animated: <#T##Bool#>)
+////        }
+//    }
     
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async(execute: {
@@ -412,4 +496,13 @@ class GetProfileViewController: UIViewController {
     }
     */
 
+}
+
+extension GetProfileViewController: FetchUserProfileProtocol {
+    func sendFetchedUserProfile(data: FetchUserProfile) {
+        print("프로필 델리게이트 전달")
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.sprayViewUserProfileData(data: data)
+        }
+    }
 }

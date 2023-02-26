@@ -11,26 +11,148 @@ import Alamofire
 
 class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    private lazy var boardButton: UIButton = {
+//    private var boardAllData: [[Board]] = [[]]
+    
+    private var boardAllData = [[Board]]()
+    
+    private lazy var tableViewheaderContentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.red.cgColor
+        view.backgroundColor = .systemBackground
+        
+        [self.locationTitleLabel,
+         self.locationdSetButton,
+         self.countryStackView].forEach { view.addSubview($0) }
+//        view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 300)
+        return view
+    }()
+    
+    private let locationTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Find gathering near"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .left
+        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
+        label.numberOfLines = 1
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    private lazy var locationdSetButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Seoul, South Korea", for: .normal)
+//        button.imageView?.image = UIImage(named: "imageNULL")
+//        button.setImage(UIImage(named: "ImageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+//        button.tintColor = .white
+//        button.layer.cornerRadius = 24
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        button.isEnabled = true
+        button.setImage(UIImage(named: "BoardPlace")?.withTintColor(UIColor(rgb: 0x3232FF, alpha: 1.0), renderingMode: .alwaysOriginal), for: .normal)
+        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
+//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
+//        button.imageView?.image = UIImage(named: "BoardPlace")?.withTintColor(UIColor(rgb: 0x3232FF, alpha: 1.0), renderingMode: .alwaysOriginal)
+        button.backgroundColor = .systemBackground
+        button.addTarget(self, action: #selector(self.locationdSetButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private let countryTitle1label: UILabel = {
+        let label = UILabel()
+        label.text = "People from"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .left
+        label.textColor = .darkGray
+        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        label.numberOfLines = 1
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    private let countryTitle2label: UILabel = {
+        let label = UILabel()
+        label.text = "countries are active."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .left
+        label.textColor = .darkGray
+        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        label.numberOfLines = 1
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    // 해당 나라의 유저들의 국적 개수 >> 국적 보기
+    private lazy var usersOfCountryViewButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("🇰🇷", for: .normal)
+//        button.imageView?.image = UIImage(named: "imageNULL")
+//        button.setImage(UIImage(named: "ImageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+//        button.tintColor = .white
+//        button.layer.cornerRadius = 22
+        button.isEnabled = true
+//        button.setTitleColor(.white, for: .normal)
+//        button.frame.size = CGSize(width: 44, height: 44)
+        button.backgroundColor = .placeholderText//UIColor(rgb: 0x3232FF, alpha: 1)
+        button.addTarget(self, action: #selector(self.usersOfCountryViewButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var countryStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.alignment = .center
+        stackView.backgroundColor = .systemBackground
+//        stackView.layer.borderWidth = 1
+//        stackView.layer.borderColor = UIColor.red.cgColor
+        [self.countryTitle1label,
+         self.usersOfCountryViewButton,
+         self.countryTitle2label].forEach { stackView.addArrangedSubview($0) }
+        return stackView
+    }()
+    
+    
+    private lazy var centerBoardButton: UIButton = {
         let button = UIButton()
 //        button.setTitle("", for: .normal)
 //        button.imageView?.image = UIImage(named: "imageNULL")
-        button.setImage(UIImage(named: "ImageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+//        button.setImage(UIImage(named: "ImageNULL")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
 //        button.tintColor = .white
         button.layer.cornerRadius = 24
         button.isEnabled = true
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.addTarget(self, action: #selector(self.centerBoardButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var boardButton: UIButton = {
+        let button = UIButton()
+//        button.setTitle("", for: .normal)
+//        button.imageView?.image = UIImage(named: "imageNULL")
+        button.setImage(UIImage(named: "CreateGatheringBoard")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+//        button.tintColor = .white
+        button.layer.cornerRadius = 24
+        button.isEnabled = true
+        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0).withAlphaComponent(0.8)
         button.addTarget(self, action: #selector(self.createBoardButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
     
     private let refreshControl = UIRefreshControl()
     
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
 //        tableView.separatorStyle = .none
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .systemBackground
+        tableView.tableHeaderView = tableViewheaderContentView
         // register new cell
         // self: reference the type object
         tableView.register(BoardMainCollectionTableViewCell.self, forCellReuseIdentifier: BoardMainCollectionTableViewCell.identifier)
@@ -75,33 +197,76 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //
 //    ]
     
-    private var boardAllData: [[Board]] = [[]]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
         view.addSubview(boardButton)
+        view.addSubview(centerBoardButton)
         tableView.delegate = self
         tableView.dataSource = self
         configureViewComponent()
         getBoardThumbnail()
+        initLocation()
 //        NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(didDeleteBoardNotification(_:)), name: .deleteBoardRefresh, object: nil)
         // Do any additional setup after loading the view.
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         initNavigationBar()
-//        getBoardThumbnail()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
+        tableViewheaderContentView.snp.makeConstraints {
+            $0.width.equalTo(view.frame.width)
+        }
+        locationTitleLabel.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(20)
+        }
+        locationdSetButton.snp.makeConstraints {
+            $0.top.equalTo(locationTitleLabel.snp.bottom)
+            $0.leading.equalToSuperview().inset(20)
+            $0.height.equalTo(44)
+        }
+        usersOfCountryViewButton.snp.makeConstraints {
+            $0.width.height.equalTo(30)
+        }
+        usersOfCountryViewButton.layer.cornerRadius = usersOfCountryViewButton.frame.size.width/2
+        countryStackView.snp.makeConstraints {
+            $0.top.equalTo(locationdSetButton.snp.bottom)
+            $0.leading.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(10)
+        }
         boardButton.snp.makeConstraints { make in
             make.width.height.equalTo(48)
             make.bottom.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
+        centerBoardButton.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(50)
+        }
+        tableView.tableHeaderView?.frame.size = tableViewheaderContentView.frame.size
+//        tableViewheaderContentView.layoutIfNeeded()
+//        tableView.tableHeaderView = tableViewheaderContentView
+//        tableViewheaderContentView.frame = tableView.tableHeaderView!.bounds
+    }
+    
+    private func initLocation() { // 위치 초기값 설정 (저장 안함)
+        UserAuthorizationLocation.KR.rawValue // country
+        UserAuthorizationLocation.KR.locality() // capital (locality) of country
+    }
+    
+    
+    private func configureUserAuthorizationLocation() { // 유저 위치 인증 받았을때, 저장할 함수
+        // [String: String] = [countryCode: locality]
+        // countryCode는 초기값이 있으나 locality는 초기값이 없다.
+        // 따라서 locality를 유저한테 처음에 받던가, 내가 임의로 초기값을 설정해야한다.
+        // 좌표 소수잠 빼서 저장
+//        UserDefaults.standard.set(, forKey: UserAuthorizationLocation.LOCATION)
     }
     
     private func configureViewComponent() {
@@ -125,6 +290,14 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     @objc func refreshBoards() {
         self.refreshControl.endRefreshing()
         getBoardThumbnail()
+    }
+    
+    @objc func locationdSetButtonTapped(_ sender: UIButton) {
+        
+    }
+    
+    @objc func usersOfCountryViewButtonTapped(_ sender: UIButton) {
+        
     }
     
     // boardDetail 데이터 전달 및 화면 이동
@@ -206,6 +379,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         return boardAllData.count
     }
     
+    
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let viewModel = viewModels[indexPath.row]
@@ -247,6 +421,17 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //            GBCVC.hidesBottomBarWhenPushed = true
             GBCVC.boardWithMode.mode = .create //.post
             self.navigationController?.pushViewController(GBCVC, animated: true)
+        }
+    }
+    
+    @objc func centerBoardButtonTapped(_ sender: UIButton) {
+        
+
+        print("centerboardButtonTapped")
+
+        DispatchQueue.main.async {
+            let test = GatheringDetailBoardViewController()
+            self.navigationController?.pushViewController(test, animated: true)
         }
     }
     

@@ -6,9 +6,37 @@
 //
 
 import Foundation
+import UIKit
+
+enum FetchError: Error {
+    case badResponse // unknowed: throw OS status
+    case failureResponse
+}
+
+enum CreateError: Error {
+    case badResponse // unknowed: throw OS status
+    case failureResponse
+}
+
 
 enum RootViewState {
     case loginView, homeView, setProfileView
+}
+
+enum ServiceColor {
+    static let primaryColor: UIColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+}
+
+enum GatheringKind: Int {
+    case small = 0
+    case club
+    
+    func memberNumber() -> Int {
+        switch self {
+        case .small: return 6
+        case .club: return 50
+        }
+    }
 }
 
 //enum APIMethod {
@@ -24,6 +52,23 @@ enum Preferences {
     static let PUSH_NOTIFICATION: String = "PushNotificationAuthorization"
 }
 
+// 권한 받은 유저
+enum UserAuthorizationLocation: String {
+    static let LOCATION: String = "UserAuthorizationLocation"
+//    var locality: String? {
+//        let localityName = UserDefaults.standard.object(forKey: UserAuthorizationLocation.LOCATION) as? String
+//        return localityName
+//    }
+    case KR = "KR"
+
+
+
+    func locality() -> String {
+        switch self {
+        case .KR: return "SEOUL"
+        }
+    }
+}
 
 
 //enum LocalizedLanguage {
@@ -83,7 +128,7 @@ enum ProfileSectionData: Int {
     }
 }
 
-enum LanguageLevel: Int {
+enum LanguageLevels: Int {
     case beginner = 0
     case intermediate
     case fluent
@@ -113,32 +158,39 @@ enum BoardTextDetailData: Int {
     case kindOfPerson
 }
 
-enum CategoryId: Int {
-    case dailySpot = 1
-    case traditionalCulture
-    case nature
-    case languageExchange
+enum CategoryId: Int, CaseIterable {
+//    case total = 0
+    case socialParty = 1
+    case languageCulture
+    case natureOutdoor
+    case exerciseSports
+    case art
+    case dance
     
     func toString() -> String {
         switch self.rawValue {
-        case 1: return "Daily Spot"
-        case 2: return "Traditional Culture"
-        case 3: return "Nature"
-        case 4: return "Language exchange"
+//        case 0: return "All"
+        case 1: return "Party"
+        case 2: return "Language"
+        case 3: return "Outdoor"
+        case 4: return "Exercise"
+        case 5: return "Art"
+        case 6: return "Dance"
         default: fatalError("Not exist categoryId")
         }
     }
 }
 
-enum NOTIFICATION {
-    enum API {
-        
-    }
-}
 
 enum TabBarKind: String {
     case home = "Home"
-    case myClub = "MyClub"
+    case myClub = "My Gathering"
     case profile = "Profile"
     case notification = "Notification"
+}
+
+
+enum Status: String {
+    case active = "ACTIVE"
+    case inactive = "INACTIVE"
 }

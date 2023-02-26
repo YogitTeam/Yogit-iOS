@@ -8,6 +8,7 @@
 import UIKit
 import BLTNBoard
 import SnapKit
+import ProgressHUD
 //import CustomBulletins
 
 /**
@@ -35,6 +36,11 @@ class AlertTestViewController: UIViewController {
         let bltncCV = BLTNContainerView()
         let item = BLTNPageItem(title: "Join the gathering")
         item.image = "👋".stringToImage(width: 100, height: 100)//UIImage(named: "pro1")
+//        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 300, height: 500))
+//        let vv = UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 500))
+//        vv.backgroundColor = .systemRed
+//        imageView.addSubview(vv)
+//        item.imageView?.addSubview(imageView)
         
 //        item.imageAccessibilityLabel = "👋"
 //        item.descriptionLabel?.text = "Join the gathering"
@@ -59,6 +65,12 @@ class AlertTestViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         view.addSubview(testButton)
+//        ProgressHUD.showSucceed(interaction: false)
+//        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+//        ProgressHUD.animationType = .circleStrokeSpin
+//        ProgressHUD.show(interaction: false)
+//        bulletinManager.backgroundViewStyle = .blurred(style: .systemUltraThinMaterialDark, isDark: true)
+        
     }
 
     override func viewDidLayoutSubviews() {
@@ -68,12 +80,33 @@ class AlertTestViewController: UIViewController {
         }
     }
     
+//    override public func makeViewsUnderDescription(with interfaceBuilder: BLTNInterfaceBuilder) -> [UIView]? {
+//
+//        let flowLayout = UICollectionViewFlowLayout()
+//        flowLayout.scrollDirection = .vertical
+//        flowLayout.minimumInteritemSpacing = 1
+//
+//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+//        collectionView.backgroundColor = .white
+//        BLTNInterfaceBuilder(appearance: <#T##BLTNItemAppearance#>)
+//        let collectionWrapper = interfaceBuilder.wrapView(collectionView, width: nil, height: 256, position: .pinnedToEdges)
+//
+//        self.collectionView = collectionView
+//        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+//        collectionView.dataSource = self
+//        collectionView.delegate = self
+//
+//        return [collectionWrapper]
+//
+//    }
+    
     func didTapped() {
         print("Did tapped")
     }
 
     @objc func testButtonTapped(_ sender: UIButton) {
         print("Tap testButtonTapped")
+//        ProgressHUD.dismiss()
         bulletinManager.showBulletin(above: self)
     }
     

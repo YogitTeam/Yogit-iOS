@@ -18,13 +18,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
-//
-//        let setUpVC = JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
+//()
+//        let setUpVC = MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
 //        let rootVC = UINavigationController(rootViewController: setUpVC)
 //        rootVC.navigationBar.tintColor = UIColor.label
 //        rootVC.navigationBar.topItem?.backButtonTitle = ""
 ////        rootVC.navigationBar.isTranslucent = false
-//
+////
 //        self.window = UIWindow(windowScene: scene)
 //        self.window?.rootViewController = rootVC
 //        self.window?.makeKeyAndVisible()
@@ -55,6 +55,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 let rootVC = UINavigationController(rootViewController: currentVC)
                 rootVC.navigationBar.tintColor = UIColor.label
                 rootVC.navigationBar.topItem?.backButtonTitle = ""
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.backgroundColor = .systemBackground
+                rootVC.navigationBar.standardAppearance = navigationBarAppearance
                 self.window = UIWindow(windowScene: scene)
                 self.window?.rootViewController = rootVC
                 self.window?.makeKeyAndVisible()
