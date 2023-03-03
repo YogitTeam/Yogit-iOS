@@ -724,8 +724,8 @@
 				79088B7428E48D24008054F6 /* AlamofireManager.swift */,
 				79F0228B28FD0ECB007D59B8 /* Logger.swift */,
 				79F0228D28FD0FBA007D59B8 /* ApiStatusLogger.swift */,
-				79730252298E9547006EFFB9 /* NeworkMoniter.swift */,
 				79088B7628E490CA008054F6 /* BaseInterceptor.swift */,
+				79730252298E9547006EFFB9 /* NeworkMoniter.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";

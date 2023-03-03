@@ -400,54 +400,37 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         self.memberNumberLabel.text = nil
     }
     
-    func configure(with board: Board) async {
-        let memberImageUrls = [String](repeating: board.profileImgURL, count: 6)
-//        Task(priority: .userInitiated, operation: {
-//            await withTaskGroup(of: (Void).self) { taskGroup in
-//                for i in 0..<6{
-//                    taskGroup.addTask {
-//                        if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
-//                            if i >= memberImageUrls.count {
-//                                await imageView.setImage(with: "")
-//                                await MainActor.run {
-//                                    imageView.layer.borderColor = UIColor.clear.cgColor
-//                                }
-//                            } else {
-//                                await imageView.setImage(with: memberImageUrls[i])
-//                                await MainActor.run {
-//                                    imageView.layer.borderColor = UIColor.white.cgColor
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        })
-        await withTaskGroup(of: (Void).self) { taskGroup in
-            for i in 0..<6{
-                taskGroup.addTask {
-                    await self.boardImageView.setImage(with: board.imageURL)
-                    if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
-                        if i >= memberImageUrls.count {
-                            await imageView.setImage(with: "")
-                            await MainActor.run {
-                                imageView.layer.borderColor = UIColor.clear.cgColor
-                            }
-                        } else {
-                            await imageView.setImage(with: memberImageUrls[i])
-                            await MainActor.run {
-                                imageView.layer.borderColor = UIColor.white.cgColor
+    func configure(with board: Board) {
+        Task {
+            let memberImageUrls = [String](repeating: board.profileImgURL, count: 6)
+            await withTaskGroup(of: (Void).self) { taskGroup in
+                for i in 0..<6{
+                    taskGroup.addTask {
+                        await self.boardImageView.setImage(with: board.imageURL)
+                        if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
+                            if i >= memberImageUrls.count {
+                                await imageView.setImage(with: "")
+                                await MainActor.run {
+                                    imageView.layer.borderColor = UIColor.clear.cgColor
+                                }
+                            } else {
+                                await imageView.setImage(with: memberImageUrls[i])
+                                await MainActor.run {
+                                    imageView.layer.borderColor = UIColor.white.cgColor
+                                }
                             }
                         }
                     }
                 }
             }
+            guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString()
+            await MainActor.run {
+                self.titleLabel.text = board.title
+                self.dateLabel.text = changeDate
+                self.localityLabel.text = board.cityName// "Seoul"
+                self.memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
+            }
         }
-        guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString()
-        self.titleLabel.text = board.title
-        self.dateLabel.text = changeDate
-        self.localityLabel.text = board.cityName// "Seoul"
-        self.memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
     }
 }
               

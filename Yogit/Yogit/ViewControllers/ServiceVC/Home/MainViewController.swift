@@ -200,39 +200,61 @@ class  MainViewController: UIViewController {
 //        let selectedCoordinates = Location.coordinates(latitude: 40.7128, longitude: -74.0060)
 //        print("Selected coordinates: (\(selectedCoordinates.latitude ?? 0), \(selectedCoordinates.longitude ?? 0))")
 //    }
-//    let categories: [Int] = [0,1,2,3,4,5]
-
-    // 전체 카테고리 페이지
-    // 카테고리별 페이지
-
-    // 페이지네이션: 각 페이지마다 끝점 전체 카테고리 페이지 페이지 네이션 >> 카테고리별로 필터링
-//    private let categoryImages: [UIImage] = [UIImage(named: "Language exchange")!,UIImage(named: "Language exchange")!,UIImage(named: "Language exchange")!, UIImage(named: "Language exchange")!,UIImage(named: "Language exchange")!]
-    private var gatheringBoards = [[Board]]()
+        
 //    private var filteredGatheringBoards = [[Board]]()
-    private var pagesCursor = [Int](repeating: 0, count: CategoryId.allCases.count)
-    private var pagesListCount = [Int](repeating: 0, count: CategoryId.allCases.count)
+    private var gatheringBoards = [Board]()
+    private var pageCursor = 0
+    private var pageListCnt = 0
     private var isPaging: Bool = false
     private let modular = 10
+    private let myGroup = DispatchGroup()
+    private var tasks = [Task<(), Never>]()
+    private var categoryId: Int = 1
+    
+//    private let taskGroup: Task//TaskGroup<Int, Error>()
+//    private var task: Task<(), Error>?
+    //    private var isInit = true
 //    private var filter = Filter(fillterType: .none)
-
-    private var categoryId: Int = 1 {
-        didSet {
-            Task(priority: .high, operation: {
-                resetBoardsData(categoryId: categoryId)
-                await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-            })
-        }
-    }
+    
+//        willSet {
+//            print("변경전")
+//            DispatchQueue.main.async { [weak self] in
+//                self?.selectedCell?.imageView.tintColor = .label
+//                self?.selectedCell?.titleLabel.textColor = .label
+//                self?.selectedCell?.backView.backgroundColor = .systemGray6 //.systemBackground
+//                self?.selectedCell?.backView.layer.borderWidth = 1
+//                self?.selectedCell?.backView.layer.borderColor = UIColor.systemGray6.cgColor
+//            }
+//        } didSet {
+//            print("변경후")
+//            guard let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: categoryId-1, section: 0)) as? CategoryImageViewCollectionViewCell else { return }
+//            selectedCell = cell
+//            DispatchQueue.main.async { [weak self] in
+//                self?.selectedCell?.imageView.tintColor = ServiceColor.primaryColor//.label//UIColor(rgb: 0x3232FF, alpha: 1.0) //.white // .white
+//                self?.selectedCell?.titleLabel.textColor = ServiceColor.primaryColor //.label//UIColor(rgb: 0x3232FF, alpha: 1.0)
+//                self?.selectedCell?.backView.backgroundColor = .systemGray6//UIColor(rgb: 0xEFEFEF, alpha: 1.0) // .withAlphaComponent(0.8)
+//                self?.selectedCell?.backView.layer.borderWidth = 1
+//                self?.selectedCell?.backView.layer.borderColor = ServiceColor.primaryColor.cgColor
+//            }
+//        }
+    
     
     var cellHeights: [IndexPath: CGFloat] = [:]
     var selectedCell: CategoryImageViewCollectionViewCell? {
         didSet {
-            DispatchQueue.main.async { [self] in
-                selectedCell?.imageView.tintColor = ServiceColor.primaryColor//.label//UIColor(rgb: 0x3232FF, alpha: 1.0) //.white // .white
-                selectedCell?.titleLabel.textColor = ServiceColor.primaryColor //.label//UIColor(rgb: 0x3232FF, alpha: 1.0)
-                selectedCell?.backView.backgroundColor = .systemGray6//UIColor(rgb: 0xEFEFEF, alpha: 1.0) // .withAlphaComponent(0.8)
-                selectedCell?.backView.layer.borderWidth = 1
-                selectedCell?.backView.layer.borderColor = ServiceColor.primaryColor.cgColor
+            print("변경후")
+            DispatchQueue.main.async { [weak self] in
+                oldValue?.imageView.tintColor = .label
+                oldValue?.titleLabel.textColor = .label
+                oldValue?.backView.backgroundColor = .systemGray6 //.systemBackground
+                oldValue?.backView.layer.borderWidth = 1
+                oldValue?.backView.layer.borderColor = UIColor.systemGray6.cgColor
+                
+                self?.selectedCell?.imageView.tintColor = ServiceColor.primaryColor//.label//UIColor(rgb: 0x3232FF, alpha: 1.0) //.white // .white
+                self?.selectedCell?.titleLabel.textColor = ServiceColor.primaryColor //.label//UIColor(rgb: 0x3232FF, alpha: 1.0)
+                self?.selectedCell?.backView.backgroundColor = .systemGray6//UIColor(rgb: 0xEFEFEF, alpha: 1.0) // .withAlphaComponent(0.8)
+                self?.selectedCell?.backView.layer.borderWidth = 1
+                self?.selectedCell?.backView.layer.borderColor = ServiceColor.primaryColor.cgColor
             }
         }
     }
@@ -260,7 +282,7 @@ class  MainViewController: UIViewController {
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(refreshGatheringBoards), for: .valueChanged)
-//        control.transform = CGAffineTransformMakeScale(0.5, 0.5)
+        control.transform = CGAffineTransformMakeScale(0.5, 0.5)
         return control
     }()
     
@@ -284,14 +306,14 @@ class  MainViewController: UIViewController {
         collectionView.register(GatheringBoardThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier)
         collectionView.backgroundColor = .systemBackground
         collectionView.showsVerticalScrollIndicator = true
-        collectionView.layer.borderWidth = 1
-        collectionView.layer.borderColor = UIColor.red.cgColor
+//        collectionView.layer.borderWidth = 1
+//        collectionView.layer.borderColor = UIColor.red.cgColor
 //        collectionView.backgroundColor = .systemBackground
         return collectionView
     }()
 
     // category view
-    private lazy var categoryImageViewCollectionView: UICollectionView = {
+    private let categoryImageViewCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -304,7 +326,7 @@ class  MainViewController: UIViewController {
 //        collectionView.layer.borderWidth = 0.3
 //        collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.isHidden = true
+//        collectionView.isHidden = true
 //        collectionView.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 100)// CGRect(origin: .zero, size: CGSize(width: view.frame.size.width, height: 100))
         return collectionView
     }()
@@ -319,16 +341,58 @@ class  MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        initGahtheringBoards()
         configureViewComponent()
-        initGahtheringBoards()
         configureCollectionView()
     }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        <#code#>
+//    }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        print("viewDidAppear")
+//
+////        DispatchQueue.main.async { [weak self] in
+////            self?.gatheringBoardCollectionView.reloadData()
+////            self?.categoryImageViewCollectionView.isHidden = false
+//        if let cell = self?.categoryImageViewCollectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
+//            self?.selectedCell = cell
+//        }
+//////                print("뷰 변경 성공")
+//////            }
+//////            print("뷰 변경 실패")
+////        }
+////
+////        // 첫번째 요청 이후
+////        let indexPath = IndexPath(item: categoryId-1, section: 0)
+////        guard let cell = categoryImageViewCollectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell else {
+////            print("뷰 변경 실패")
+////            return }
+////        selectedCell = cell
+////        self?.categoryImageViewCollectionView.isHidden = false
+////        print("뷰 변경")
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         initNavigationBar()
+        print("아직")
+        if let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: categoryId-1, section: 0)) as? CategoryImageViewCollectionViewCell {
+            print("들어옴")
+            selectedCell = cell
+        }
     }
 
+    private func configureViewComponent() {
+        view.addSubview(categoryImageViewCollectionView)
+        view.addSubview(gatheringBoardCollectionView)
+        view.addSubview(lineView)
+        view.addSubview(createGatheringBoardButton)
+        view.backgroundColor = .systemBackground
+    }
+    
     private func initNavigationBar() {
         self.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue)
     }
@@ -358,32 +422,22 @@ class  MainViewController: UIViewController {
         createGatheringBoardButton.layer.cornerRadius = createGatheringBoardButton.frame.size.width/2
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        let indexPath = IndexPath(item: categoryId-1, section: 0)
-        guard let cell = categoryImageViewCollectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell else { return }
-        selectedCell = cell
-    }
 
-    private func initGahtheringBoards() {
-        for _ in 0..<CategoryId.allCases.count {
-            gatheringBoards.append([])
-        }
-        Task(priority: .high, operation: {
-            await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-        })
-    }
-
-    private func configureViewComponent() {
-        view.addSubview(categoryImageViewCollectionView)
-        view.addSubview(gatheringBoardCollectionView)
-        view.addSubview(lineView)
-        view.addSubview(createGatheringBoardButton)
-        view.backgroundColor = .systemBackground
-    }
+//    private func initGahtheringBoards() {
+//        for _ in 0..<CategoryId.allCases.count {
+//            gatheringBoards.append([])
+//        }
+////        if !isPaging {
+////            pagingBoardsByCategory(categoryId: categoryId)
+////        }
+////        Task(priority: .high, operation: {
+////            await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
+////        })
+//    }
     
     private func configureCollectionView() {
-        categoryImageViewCollectionView.tag = 0
-        gatheringBoardCollectionView.tag = 1
+//        categoryImageViewCollectionView.tag = 0
+//        gatheringBoardCollectionView.tag = 1
         categoryImageViewCollectionView.delegate = self
         categoryImageViewCollectionView.dataSource = self
         gatheringBoardCollectionView.delegate = self
@@ -391,37 +445,45 @@ class  MainViewController: UIViewController {
         gatheringBoardCollectionView.refreshControl = refreshControl
     }
 
+    // 카테고리 눌렀을때만 reloadData
     private func resetBoardsData(categoryId: Int) {
-        gatheringBoards[categoryId-1].removeAll()
-        gatheringBoardCollectionView.reloadData()
-        pagesListCount[categoryId-1] = 0
-        pagesCursor[categoryId-1] = 0
+        gatheringBoards.removeAll() //[categoryId-1].removeAll()
+        DispatchQueue.main.async { [weak self] in
+            self?.gatheringBoardCollectionView.reloadData()
+        }
+        pageCursor = 0
+        pageListCnt = 0
+//        print("삭제후 개수 gatheringBoards[categoryId-1]", gatheringBoards[categoryId-1])
+//        gatheringBoardCollectionView.reloadData() //
+//        pagesListCount[categoryId-1] = 0
+//        pagesCursor[categoryId-1] = 0
     }
     
-//    func fetchGatheringBoardsByCategory(category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
-//        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
-//        let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
-//        let response = await dataTask.response
-//        switch response.result {
-//        case .success:
-//        if let value = response.value, value.httpCode == 200, let data = value.data {
-//            return data
-//        } else {
-//            throw FetchError.badResponse
-//        }
-//        case let .failure(error):
-//            throw FetchError.failureResponse
-//        }
-//    }
-
-    func fetchGatheringBoardsByCategory(category: Int, page: Int) async -> GetBoardsByCategoryRes? {
-        guard let userItem = try? KeychainManager.getUserItem() else { return nil }
-        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
+    func fetchGatheringBoardsByCategory(category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
+        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
         let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
         let response = await dataTask.response
-        let value = response.value
-        return value?.data
+        switch response.result {
+        case .success:
+        if let value = response.value, value.httpCode == 200, let data = value.data {
+            return data
+        } else {
+            throw FetchError.badResponse
+        }
+        case let .failure(error):
+            print("fetchGatheringBoardsByCategory", error)
+            throw FetchError.failureResponse
+        }
     }
+
+//    func fetchGatheringBoardsByCategory(category: Int, page: Int) async -> GetBoardsByCategoryRes? {
+//        guard let userItem = try? KeychainManager.getUserItem() else { return nil }
+//        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
+//        let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
+//        let response = await dataTask.response
+//        let value = response.value
+//        return value?.data
+//    }
 
 //    // category 1부터 시작
 //    private func pagingBoardsByCategory(categoryId: Int, isPaging: Bool) async {
@@ -447,37 +509,103 @@ class  MainViewController: UIViewController {
 //    }
     
     // category 1부터 시작
-    private func pagingBoardsByCategory(categoryId: Int, isPaging: Bool) {
-        if isPaging { return }
-        else { self.isPaging = true }
-        let page = pagesCursor[categoryId-1]
-        Task {
-            let getData = await fetchGatheringBoardsByCategory(category: categoryId, page: page)
-            guard let totalPage = getData?.totalPage else { return }
-            if page < totalPage {
-                guard let getAllBoardResList = getData?.getAllBoardResList else { return }
-                let getBoardCnt = getAllBoardResList.count
-                let pageListCnt = pagesListCount[categoryId-1]
-                for i in pageListCnt..<getBoardCnt {
-                    gatheringBoards[categoryId-1].append(getAllBoardResList[i])
-                    gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards[categoryId-1].count-1, section: 0)])
+    
+    private func pagingBoardsByCategory(categoryId: Int) {
+        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        let task = Task {
+            do {
+                let getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                let totalPage = getData.totalPage
+                if pageCursor < totalPage {
+                    let getAllBoardResList = getData.getAllBoardResList
+                    let getBoardCnt = getAllBoardResList.count
+                    print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
+                    if Task.isCancelled {
+                       return
+                    }
+                    for i in pageListCnt..<getBoardCnt {
+                        gatheringBoards.append(getAllBoardResList[i])
+                        await MainActor.run {
+                            gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                        }
+                    }
+                    pageListCnt = getBoardCnt%modular // 0
+                    if pageListCnt == 0 {
+                        pageCursor += 1
+                    }
                 }
-                pagesListCount[categoryId-1] = getBoardCnt%modular // 0
-                if pagesListCount[categoryId-1] == 0 {
-                    pagesCursor[categoryId-1] += 1
-                }
+            } catch {
+                print("fetchGatheringBoardsByCategory error \(error.localizedDescription)")
             }
-            self.isPaging = false
+            isPaging = false
         }
+//        let taskHandle = Task { await taskPaging.value }
+        tasks.append(task)
     }
     
+//    private func pagingBoardsByCategory(categoryId: Int) {
+//        guard let userItem = try? KeychainManager.getUserItem() else { return }
+//        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: pageCursor, refreshToken: userItem.refresh_token, userId: userItem.userId)
+//        AlamofireManager.shared.session
+//            .request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq))
+//            .validate(statusCode: 200..<501)
+//            .responseDecodable(of: APIResponse<GetBoardsByCategoryRes>.self) { response in
+//                switch response.result {
+//                case .success:
+//                if let value = response.value, value.httpCode == 200, let data = value.data {
+//                    let totalPage = data.totalPage
+//
+//                    if self.pageCursor < totalPage {
+//                        let getAllBoardResList = data.getAllBoardResList
+//                        let getBoardCnt = getAllBoardResList.count
+//                        print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
+//                        for i in self.pageListCnt..<getBoardCnt {
+//                            gatheringBoards.append(getAllBoardResList[i])
+//                            gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+//                        }
+//                        self.pageListCnt = getBoardCnt%self.modular // 0
+//                        if self.pageListCnt == 0 {
+//                            self.pageCursor += 1
+//                        }
+//                    }
+//                }
+//                case let .failure(error):
+//                    print("fetchGatheringBoardsByCategory", error)
+//                }
+//            }
+//
+//
+//
+//
+//        do {
+//            let getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+//            let totalPage = getData.totalPage
+//            if pageCursor < totalPage {
+//                let getAllBoardResList = getData.getAllBoardResList
+//                let getBoardCnt = getAllBoardResList.count
+//                print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
+//                for i in pageListCnt..<getBoardCnt {
+//                    gatheringBoards.append(getAllBoardResList[i])
+//                    gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+//                }
+//                pageListCnt = getBoardCnt%modular // 0
+//                if pageListCnt == 0 {
+//                    pageCursor += 1
+//                }
+//            }
+//        } catch {
+//            print("fetchGatheringBoardsByCategory error \(error.localizedDescription)")
+//        }
+//        isPaging = false
+//    }
+    
     @objc func refreshGatheringBoards() {
-        print("refresh")
-        Task(priority: .high, operation: {
+        if !isPaging {
+            isPaging = true
             resetBoardsData(categoryId: categoryId)
-            await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-            refreshControl.endRefreshing()
-        })
+            pagingBoardsByCategory(categoryId: categoryId)
+        }
+        refreshControl.endRefreshing()
     }
     
     @objc func createBoardButtonTapped(_ sender: UIButton) {
@@ -545,95 +673,79 @@ class  MainViewController: UIViewController {
 
 extension  MainViewController: UIScrollViewDelegate {
     
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        Task(priority: .high) {
-//            if scrollView.tag == 1 {
-//                if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
-//                    .height-300)) {
-//                    print("Upload for up scroling")
-//                    await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-//                    print("End Bottom Load")
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == gatheringBoardCollectionView && !isPaging {
+            if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
+                .height)) {
+                print("😀Upload for up scroling", categoryId)
+                isPaging = true
+//                tasks.append(Task {
+//                    pagingBoardsByCategory(categoryId: categoryId)
+//                })
+                
+                pagingBoardsByCategory(categoryId: categoryId)
+//                pagingBoardsByCategory(categoryId: categoryId)
+//                workItem = DispatchWorkItem { [weak self] in
+//                    self?.pagingBoardsByCategory(categoryId: self?.categoryId ?? 1)
 //                }
-//            }
-//        }
-//    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        Task(priority: .high) {
-            if scrollView.tag == 1 {
-                if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
-                    .height-300)) {
-                    print("Upload for up scroling")
-                    await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-                    print("End Bottom Load")
-                }
+//                queue.async(execute: workItem!)
+                print("End Bottom Load")
             }
         }
-        
-//        if scrollView == gatheringBoardCollectionView {
+    }
+    
+//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+////        Task(priority: .high) {
+////            if scrollView.tag == 1 {
+////                if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
+////                    .height-300)) {
+////                    print("Upload for up scroling")
+////                    await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
+////                    print("End Bottom Load")
+////                }
+////            }
+////        }
+//
+//        if scrollView == gatheringBoardCollectionView && !isPaging {
 //            if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
 //                .height-300)) {
 //                print("Upload for up scroling")
-//                pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
+//                isPaging = true
+//                pagingBoardsByCategory(categoryId: categoryId)
 //                print("End Bottom Load")
 //            }
 //        }
-    }
+//    }
 }
 
 extension  MainViewController: UICollectionViewDelegate {
 
+    
+    // 카테고리 누른 후
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        collectionView.deselectItem(at: indexPath, animated: true)
-        if collectionView.tag == 0 {
-            guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell else { return }
-            selectedCell?.imageView.tintColor = .label
-            selectedCell?.titleLabel.textColor = .label
-            selectedCell?.backView.backgroundColor = .systemGray6 //.systemBackground
-            selectedCell?.backView.layer.borderWidth = 1
-            selectedCell?.backView.layer.borderColor = UIColor.systemGray6.cgColor
-            
-            //                backView.layer.borderColor = UIColor.label.cgColor
-            
-            //        selectedCell?.backView.layer.shadowColor = nil//UIColor.black.cgColor
-            //        selectedCell?.backView.layer.shadowOffset = CGSize(width: 0, height: 0)//CGSize(width: 1, height: 1)
-            //        selectedCell?.backView.layer.shadowRadius = 0
-            //        selectedCell?.backView.layer.shadowOpacity = 0//0.2
-            
-            selectedCell = cell
-            
-            //        selectedCell?.imageView.tintColor = .label//UIColor(rgb: 0x3232FF, alpha: 1.0) //.white // .white
-            //        selectedCell?.titleLabel.textColor = .label//UIColor(rgb: 0x3232FF, alpha: 1.0)
-            //        selectedCell?.backView.backgroundColor = .systemGray6//UIColor(rgb: 0xEFEFEF, alpha: 1.0) // .withAlphaComponent(0.8)
-            //        selectedCell?.backView.layer.borderWidth = 1
-            //        selectedCell?.backView.layer.borderColor = UIColor.systemGray4.cgColor//UIColor(rgb: 0xDDDDDD, alpha: 1.0).cgColor
-            //
-            
-            // 그라데이션
-            //        let gradientLayer = CAGradientLayer()
-            //        gradientLayer.frame = (selectedCell?.backView.bounds.integral)!
-            //        gradientLayer.colors = [UIColor(red: 177, green: 50, blue: 255, alpha: 1.0).cgColor, ServiceColor.primaryColor.cgColor]
-            ////        gradientLayer.locations = [0.7] // <- 추가
-            //        selectedCell?.backView.layer.addSublayer(gradientLayer)
-            
-//                        selectedCell?.backView.layer.shadowColor = ServiceColor.primaryColor.cgColor
-//                        selectedCell?.backView.layer.shadowOffset = CGSize(width: 3, height: 3)
-//                        selectedCell?.backView.layer.shadowRadius = 3
-//                        selectedCell?.backView.layer.shadowOpacity = 0.25
+        if collectionView == categoryImageViewCollectionView {
             if categoryId != indexPath.row + 1 {
+                for task in tasks {
+                    task.cancel()
+                }
+                isPaging = true
+                DispatchQueue.main.async { [weak self] in
+                    if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
+                        self?.selectedCell = cell
+                        
+                    }
+                }
                 categoryId = indexPath.row + 1
-                print("Tapped gatherging board collectionview", categoryId)
-                //                gatheringBoards[categoryId-1].removeAll()
-                //                pagesListCount[categoryId-1] = 0
-                //                pagesCursor[categoryId-1] = 0
-                //                await pagingBoardsByCategory(categoryId: categoryId-1, isPaging: isPaging)
+                print("🎃", categoryId)
+                resetBoardsData(categoryId: categoryId)
+                pagingBoardsByCategory(categoryId: categoryId)
             }
         } else {
-            let boardId = gatheringBoards[categoryId-1][indexPath.row].boardID
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                let boardId = self?.gatheringBoards[indexPath.row].boardID
                 let GDBVC = GatheringDetailBoardViewController()
                 GDBVC.boardWithMode.boardId = boardId
-                self.navigationController?.pushViewController(GDBVC, animated: true)
+                self?.navigationController?.pushViewController(GDBVC, animated: true)
             }
         }
     }
@@ -641,28 +753,29 @@ extension  MainViewController: UICollectionViewDelegate {
 
 extension  MainViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 10
-        if collectionView.tag == 0 {
+        if collectionView == categoryImageViewCollectionView {
             return CategoryId.allCases.count
         } else {
-            return gatheringBoards[categoryId-1].count
+            return gatheringBoards.count
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("ProfileImages indexpath update \(indexPath)")
-        if collectionView.tag == 0 {
+        if collectionView == categoryImageViewCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryImageViewCollectionViewCell.identifier, for: indexPath) as? CategoryImageViewCollectionViewCell else { return UICollectionViewCell() }
-            DispatchQueue.main.async(qos: .userInteractive, execute: { 
+            DispatchQueue.main.async {
                 cell.configure(at: indexPath.row)
-            })
+            }
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
-            Task(priority: .high, operation: {
-                let data = gatheringBoards[categoryId-1][indexPath.row]
-                await cell.configure(with: data)
-            })
+            cell.configure(with: gatheringBoards[indexPath.row])
+//            Task(priority: .high) {
+//                print("categoryId-1, indexPath.row", categoryId-1, indexPath.row)
+//                let data = gatheringBoards[categoryId-1][indexPath.row]
+//                await cell.configure(with: data)
+//            }
+            
 //
 //            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
 //                cell.configure(with: gatheringBoards[categoryId-1][indexPath.row])
@@ -699,7 +812,7 @@ extension  MainViewController: UICollectionViewDelegateFlowLayout {
 ////
 ////        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
 //        print("Sizing collectionView")
-        if collectionView.tag == 0 {
+        if collectionView == categoryImageViewCollectionView {
             return CGSize(width: 54, height: 54)
         } else {
             return CGSize(width: collectionView.frame.width/2-25, height: (collectionView.frame.width/2-25)*5/4)

@@ -146,7 +146,7 @@ class ReportViewController: UIViewController {
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
-        button.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor = .label
         return button
     }()
     

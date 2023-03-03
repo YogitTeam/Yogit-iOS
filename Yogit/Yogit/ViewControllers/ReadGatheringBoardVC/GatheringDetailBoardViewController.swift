@@ -54,12 +54,12 @@ class GatheringDetailBoardViewController: UIViewController {
     
     
     private var boardImages: [String] = [] {
-        didSet(oldVal){
-            DispatchQueue.main.async {
-                if self.boardImages.count >= 2 {
-                    self.boardImagesPageControl.numberOfPages = self.boardImages.count
-                }
-                self.configureImagesScrollView()
+        didSet {
+            if boardImages.count >= 2 {
+                boardImagesPageControl.numberOfPages = boardImages.count
+            }
+            DispatchQueue.main.async { [weak self] in
+                self?.configureImagesScrollView()
             }
         }
     }
@@ -133,7 +133,7 @@ class GatheringDetailBoardViewController: UIViewController {
         // 페이지 표시 색상을 밝은 회색 설정
         pageControl.pageIndicatorTintColor = .placeholderText
         // 현재 페이지 표시 색상을 검정색으로 설정
-        pageControl.currentPageIndicatorTintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        pageControl.currentPageIndicatorTintColor = .white//UIColor(rgb: 0x3232FF, alpha: 1.0)
         pageControl.backgroundColor = .clear
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
@@ -763,7 +763,7 @@ class GatheringDetailBoardViewController: UIViewController {
         // 대기 리스트
     }
     
-    func joinBoardRequest() {
+    private func joinBoardRequest() {
         guard let userItem = try? KeychainManager.getUserItem() else { return }
 //        guard let boardId = boardId else { return }
         guard let boardId = boardWithMode.boardId else { return }
@@ -949,16 +949,15 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     func reportAlert(reportBoardId: Int64, reportedUserId: Int64) {
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
+        DispatchQueue.main.async(qos: .userInteractive) {
             let RVC = ReportViewController()
             RVC.reportedBoardId = reportBoardId
             RVC.reportedUserId = reportedUserId
             RVC.reportKind = .boardReport
-            RVC.modalPresentationStyle = .fullScreen
             let NC = UINavigationController(rootViewController: RVC)
             NC.modalPresentationStyle = .fullScreen
             self.present(NC, animated: true, completion: nil)
-        })
+        }
     }
     
     func deleteAlert() {
@@ -1057,23 +1056,21 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private func configureImagesScrollView() {
 //        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
-        // CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
-            self.boardImagesScrollView.isPagingEnabled = true
-            for x in 0..<self.boardImages.count {
-                print("configure")
-                let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.frame.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width))
-    //            self.boardImagesScrollView.bounds.minY
-                self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(self.boardImages.count)
-                    imageView.backgroundColor = .systemGray
-                print(self.boardImages[x].size)
-                imageView.clipsToBounds = true
-                imageView.contentMode = .scaleAspectFill
+//         CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
+        
+        boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
+        boardImagesScrollView.isPagingEnabled = true
+        for x in 0..<boardImages.count {
+            print("configure")
+            let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * boardImagesScrollView.frame.width, y: boardImagesScrollView.frame.minY, width: boardImagesScrollView.frame.width, height: boardImagesScrollView.frame.width))
+            print(boardImages[x].size)
+            imageView.clipsToBounds = true
+            imageView.contentMode = .scaleAspectFill
+            imageView.backgroundColor = .systemGray
 //                imageView.image = self.boardImages[x]
-                imageView.setImage(with: self.boardImages[x])
-                self.boardImagesScrollView.addSubview(imageView)
-            }
-        })
+            imageView.setImage(with: boardImages[x])
+            boardImagesScrollView.addSubview(imageView)
+        }
     }
     
     
@@ -1316,7 +1313,6 @@ class GatheringDetailBoardViewController: UIViewController {
         DispatchQueue.main.async(execute: {
             let GPVC = GetProfileViewController()
             GPVC.getUserId = userIdToRead
-            GPVC.modalPresentationStyle = .fullScreen
             let NC = UINavigationController(rootViewController: GPVC)
             NC.modalPresentationStyle = .fullScreen
             self.present(NC, animated: true, completion: nil)
@@ -1336,6 +1332,7 @@ extension GatheringDetailBoardViewController: UIScrollViewDelegate {
                 self.rightButton.tintColor = .label
             }
         } else if scrollView == boardImagesScrollView {
+            print("scrollView.contentOffset.x, scrollView.frame.size.width", scrollView.contentOffset.x, scrollView.frame.size.width)
             boardImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
         }
     }

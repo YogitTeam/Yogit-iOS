@@ -11,7 +11,7 @@ import Network
 
 final class ApiStatusLogger: EventMonitor {
     
-    let queue = DispatchQueue(label: "NetworkPathStatusMonitor")
+    let queue = DispatchQueue(label: "ApiStatussMonitor")
     //    let queue = DispatchQueue.global(qos: .background)
     let monitor = NWPathMonitor()
     

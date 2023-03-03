@@ -655,7 +655,7 @@ extension ClipBoardViewController2 {
 //        messagesCollectionView.reloadSections([messages.count-1])
         isLoading = false
         let startTime = DispatchTime.now().uptimeNanoseconds
-        Task(priority: .low) {
+        Task {
             do {
                 let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: refreshToken, userId: userId)
                 let getData = try await fetchClipBoardData2(getAllClipBoardsReq: getAllClipBoardsReq)

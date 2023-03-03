@@ -23,9 +23,11 @@ class GetProfileImagesViewController: UIViewController {
 //
     var profileImages: [String] = [] {
         didSet {
-            DispatchQueue.main.async {
+            if self.profileImages.count >= 2 {
                 self.profileImagesPageControl.numberOfPages = self.profileImages.count
-                self.configureScrollView()
+            }
+            DispatchQueue.main.async { [weak self] in
+                self?.configureScrollView()
             }
             print("Profile images update")
         }
@@ -110,7 +112,7 @@ class GetProfileImagesViewController: UIViewController {
     }
     
     private func configureScrollView() {
-        self.profileImagesScrollView.contentSize = CGSize(width: view.frame.size.width * CGFloat(profileImages.count), height: profileImagesScrollView.frame.size.height)
+        profileImagesScrollView.contentSize = CGSize(width: view.frame.size.width * CGFloat(profileImages.count), height: profileImagesScrollView.frame.size.height)
         profileImagesScrollView.isPagingEnabled = true
         for x in 0..<profileImages.count {
             print("configure")
@@ -175,7 +177,7 @@ class GetProfileImagesViewController: UIViewController {
 ////                }
 ////            }
 ////
-////        
+////
 //        AF.request(API.BASE_URL + "users/image/\(userItem.userId)",
 //                   method: .post,
 //                   parameters: getUserProfileImages,
@@ -233,3 +235,4 @@ extension GetProfileImagesViewController: UIScrollViewDelegate {
         print("scrollViewDidScroll")
     }
 }
+
