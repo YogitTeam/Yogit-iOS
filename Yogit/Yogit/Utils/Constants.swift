@@ -102,6 +102,7 @@ enum ProfileSectionData: Int {
     case gender
     case job
     case aboutMe
+    case interests
     
     func toString() -> String {
         switch self {
@@ -112,6 +113,7 @@ enum ProfileSectionData: Int {
         case .gender: return "Gender"
         case .job: return "Job"
         case .aboutMe: return "AboutMe"
+        case .interests: return "Intersts"
         }
     }
   
@@ -124,6 +126,7 @@ enum ProfileSectionData: Int {
         case .gender: return "Select gender"
         case .job: return "What do you do?"
         case .aboutMe: return "Who are you?"
+        case .interests: return "What's your interests"
         }
     }
 }

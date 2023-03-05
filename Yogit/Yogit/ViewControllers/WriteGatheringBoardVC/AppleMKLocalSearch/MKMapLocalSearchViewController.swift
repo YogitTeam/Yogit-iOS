@@ -724,7 +724,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         
         // locale 설정 가능
 //        let locale = Locale(identifier: "ko-KR")
-        let locale = Locale(identifier: "en_US")
+        let locale = Locale(identifier: "en_US") // 서버로 넘길 데이터
         
         geocoder.reverseGeocodeLocation(findLocation, preferredLocale: locale, completionHandler: { (placemarks, error) in
             if error != nil {

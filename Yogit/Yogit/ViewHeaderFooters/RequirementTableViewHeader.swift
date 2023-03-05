@@ -76,7 +76,7 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
     public func configure(at: Int) { // needAccessory: Bool
         contentNameLabel.text = ProfileSectionData(rawValue: at)?.toString().localized()
         switch at {
-        case ProfileSectionData.job.rawValue, ProfileSectionData.aboutMe.rawValue:
+        case ProfileSectionData.job.rawValue, ProfileSectionData.aboutMe.rawValue, ProfileSectionData.interests.rawValue:
             requirementView.isHidden = true
         default: break
         }

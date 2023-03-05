@@ -165,7 +165,7 @@ class SetProfileTableViewCell: UITableViewCell {
             subLabel.isHidden = false
             subLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.light)
             if text != nil { rightButton.isEnabled = true }
-        case ProfileSectionData.nationality.rawValue, ProfileSectionData.job.rawValue, ProfileSectionData.aboutMe.rawValue:
+        case ProfileSectionData.nationality.rawValue, ProfileSectionData.job.rawValue, ProfileSectionData.aboutMe.rawValue, ProfileSectionData.interests.rawValue:
             rightButton.isHidden = false
         case ProfileSectionData.gender.rawValue: commonTextField.isEnabled = true
         default: fatalError("Out of section index SetUpProfileTableVeiwCell")

@@ -117,7 +117,7 @@ extension String {
     func stringToImage(width: CGFloat, height: CGFloat) -> UIImage? {
         let size = CGSize(width: width, height: height)
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
-        UIColor.white.set()
+        UIColor.clear.set()
         let rect = CGRect(origin: .zero, size: size)
         UIRectFill(CGRect(origin: .zero, size: size))
         (self as AnyObject).draw(in: rect, withAttributes: [.font: UIFont.systemFont(ofSize: height*0.9)])

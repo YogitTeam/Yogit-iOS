@@ -123,57 +123,13 @@ class AboutMeViewController: UIViewController {
         })
     }
     
-    // API Call
-    @objc func nextButtonTapped(_ sender: UIButton) {
-
-        
+    @objc private func nextButtonTapped(_ sender: UIButton) {
         userProfile.aboutMe = aboutMeTextView.myTextView.text
-        
-        print("nextButtonTapped userPrfile data", userProfile)
-        
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
-        userProfile.userId = userItem.userId
-        userProfile.refreshToken = userItem.refresh_token
-        
-        // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
-        // userProfile에  SearchUserProfile 모든 데이터 포함
-        let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
-        if let parameters = urlRequestConvertible.toDictionary {
-            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                for (key, value) in parameters {
-                    if let arrayValue = value as? [Any] {
-                        for arrValue in arrayValue {
-                            multipartFormData.append(Data("\(arrValue)".utf8), withName: key)
-                        }
-                    } else {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-                    }
-                }
-            }, with: urlRequestConvertible)
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
-                switch response.result {
-                case .success:
-                    do {
-                        guard let value = response.value else { return }
-                        guard let data = value.data else { return }
-                        if value.httpCode == 200 {
-                            userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
-                            userItem.userName = data.name // 유저 이름, 상태 저장
-                            try KeychainManager.updateUserItem(userItem: userItem)
-                            let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
-                            DispatchQueue.main.async { [self] in
-                                view.window?.rootViewController = rootVC
-                                view.window?.makeKeyAndVisible()
-                            }
-                        }
-                    } catch {
-                        print("Error - KeychainManager.update \(error.localizedDescription)")
-                    }
-                case let .failure(error):
-                    print("SetProfileVC - upload response result Not return", error)
-                }
-            }
+        DispatchQueue.main.async(qos: .userInteractive) {
+            let IVC = InterestsViewController()
+            IVC.mode = self.mode
+            IVC.userProfile = self.userProfile
+            self.navigationController?.pushViewController(IVC, animated: true)
         }
     }
 

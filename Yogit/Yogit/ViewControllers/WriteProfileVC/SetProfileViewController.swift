@@ -31,7 +31,7 @@ class SetProfileViewController: UIViewController {
     var mode: Mode = .create {
         didSet {
             if mode == .edit {
-                sectionNumber = 7
+                sectionNumber = 8
                 lastSectionFooterHeight = 40
                 nextButton.isHidden = true
                 rightButton.isHidden = false
@@ -420,7 +420,6 @@ extension SetProfileViewController: UITableViewDataSource {
                         } else {
                             cell.configure(text: "\(localizedLanguage) (\(originLanguage))", section: indexPath.section) // "Add
                         }
-//                        cell.subLabel.text = userProfile.languageLevels?[indexPath.row]
                         cell.subLabel.text = LanguageLevels(rawValue: (userProfile.languageLevels?[indexPath.row])!)?.toString()
                     }
                 }
@@ -450,6 +449,17 @@ extension SetProfileViewController: UITableViewDataSource {
             cell.configure(text: userProfile.job, section: indexPath.section) // "Select gender"
             case 6:
             cell.configure(text: userProfile.aboutMe, section: indexPath.section) // "Select gender"
+            case 7:
+            if let interests = userProfile.interests {
+                var text = ""
+                for interest in interests {
+                    text += "\(interest), "
+                }
+                text.removeLast(2)
+                cell.configure(text: text, section: indexPath.section)
+            } else {
+                cell.configure(text: nil, section: indexPath.section)
+            }
         default: fatalError("Out of Setup Profile table view section")
         }
         cell.layoutIfNeeded()
@@ -515,7 +525,7 @@ extension SetProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         print("Cell 선택")
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
+        DispatchQueue.main.async(qos: .userInteractive) {
             switch indexPath.section {
             case 0:
                 let NVC = NameViewController()
@@ -545,10 +555,18 @@ extension SetProfileViewController: UITableViewDelegate {
                 AMVC.mode = self.mode
                 AMVC.aboutMeTextView.myTextView.text = self.userProfile.aboutMe
                 self.navigationController?.pushViewController(AMVC, animated: true)
+            case 7:
+                let IVC = InterestsViewController()
+                IVC.delegate = self
+                IVC.mode = self.mode
+                if let interests = self.userProfile.interests {
+                    IVC.selectedTags = interests
+                }
+                self.navigationController?.pushViewController(IVC, animated: true)
             default:
                 break
             }
-        })
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -595,6 +613,13 @@ extension SetProfileViewController: LanguageProtocol {
         userProfile.languageLevels = userProfile.languageLevels ?? []
         userProfile.languageCodes?.append(languageCode)
         userProfile.languageLevels?.append(level)
+        infoTableView.reloadData()
+    }
+}
+
+extension SetProfileViewController: InterestsProtocol {
+    func interestsSend(interests: [String]) {
+        userProfile.interests = interests
         infoTableView.reloadData()
     }
 }

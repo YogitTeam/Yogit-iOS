@@ -272,7 +272,6 @@ class ReportViewController: UIViewController {
             guard let content = reportContentString else { return }
             guard let reportType = reportTypeIdx else { return }
             guard let reportedUserId = reportedUserId else { return }
-            let reportingUser = userItem.userId
             let refreshToken = userItem.refresh_token
             let reportingUserId = userItem.userId
             let reportRouter: ReportRouter

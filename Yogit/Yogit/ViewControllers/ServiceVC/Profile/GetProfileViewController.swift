@@ -102,7 +102,7 @@ class GetProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
+        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.medium)
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
 //        label.text = "Select photos"
@@ -478,6 +478,7 @@ class GetProfileViewController: UIViewController {
         self.setUserProfile.languageLevels = data.languageLevels
         self.setUserProfile.job = data.job
         self.setUserProfile.aboutMe = data.aboutMe
+        self.setUserProfile.interests = data.interests
     }
     
     func sprayViewUserProfileData(data: FetchUserProfile) {
@@ -496,7 +497,7 @@ class GetProfileViewController: UIViewController {
         langInfos.removeLast(2)
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
             profileImageView.setImage(with: data.profileImg)
-            profileImageLabel.text = data.name
+            profileImageLabel.text = "\(data.name) (\(data.age))"
             let code = data.nationality
             let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
             let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
