@@ -8,6 +8,11 @@
 import UIKit
 import UserNotifications
 import Alamofire
+import ProgressHUD
+
+// UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) 으로 키체인에서 가져옴
+// UserDefaults.standard.removeObject(forKey: ClipBoardAlarmIdentifier) // 클립보드 알람 삭제
+// UserDefaults.standard.removeObject(forKey: ApplyAlarmIdentifier) // 애플 알람 삭제
 
 // navi >> tabbar >> vc
 class ServiceTapBarViewController: UITabBarController {
@@ -17,8 +22,14 @@ class ServiceTapBarViewController: UITabBarController {
         configureTapBarVC()
         configureInstanceVC()
         setPushNotification()
-        print("DEBUG : \(String(describing: self.view.window?.rootViewController))")
+//        print("DEBUG : \(String(describing: self.view.window?.rootViewController))")
         NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("뷰디스어피어 ServiceTapBarView")
+        NotificationCenter.default.removeObserver(self, name: .baordDetailRefresh, object: nil)
     }
     
     @objc private func didBoardDetailNotification(_ notification: Notification) {
@@ -31,9 +42,9 @@ class ServiceTapBarViewController: UITabBarController {
         })
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        print(self.view.window?.rootViewController)
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        print(self.view.window?.rootViewController)
+//    }
 
     private func configureTapBarVC() {
         self.view.backgroundColor = .systemBackground
@@ -64,6 +75,7 @@ class ServiceTapBarViewController: UITabBarController {
 //        // 위에 타이틀 text를 항상 크게 보이게 설정
 //        homeVC.navigationItem.largeTitleDisplayMode = .always
 //        profileVC.navigationItem.largeTitleDisplayMode = .always
+        
         homeVC.tabBarItem.image = UIImage.init(named: TabBarKind.home.rawValue)
         homeVC.tabBarItem.title = TabBarKind.home.rawValue
 //        homeVC.tabBarController?.navigationController?.navigationItem.title = "Home"
@@ -193,10 +205,12 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
 //        NotificationCenter.default.post(name: NSNotification.Name(""), object: boardId)
 //        print(response.notification.request.content.title)
 //        print(response.notification.request.content.body)
-        let title: String = notification.request.content.title
-        let body: String = notification.request.content.body
-        guard let id = notification.request.content.userInfo["boardId"] as? Int64 else { return }
-        guard let type = notification.request.content.userInfo["pushType"] as? String else { return }
+        let content = notification.request.content
+        let title: String = content.title
+        let body: String = content.body
+       
+        guard let id = content.userInfo["boardId"] as? Int64 else { return }
+        guard let type = content.userInfo["pushType"] as? String else { return }
         let alarmData = Alarm(type: type, title: title, body: body, id: id)
         receivePushNotificationData(alarm: alarmData)
         // foreground 앱 알리는 형태
@@ -225,15 +239,11 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
         guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
         alarms.append(alarm)
         AlarmManager.saveAlarms(alarms: alarms)
-        NotificationCenter.default.post(name: NSNotification.Name("AlarmRefresh"), object: alarm.type)
+        NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
 //        self.tabBarController?.selectedIndex = 3
 //        DispatchQueue.main.async {
 //            self.navigationController?.popToRootViewController(animated: true)
 //            self.selectedIndex = 3
 //        }
     }
-}
-
-extension Notification.Name {
-    static let alarmRefresh = Notification.Name("AlarmRefresh")
 }

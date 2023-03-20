@@ -65,7 +65,7 @@ class PushNoficationViewController: UIViewController {
         super.viewDidLayoutSubviews()
 //        self.navigationItem.title = "Nationality"
         segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(44)
         }

@@ -136,6 +136,8 @@ extension String {
 //        return image
 //    }
     
+    
+    // string을 데이트로는 utc로 저장
     func stringToDate() -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss" // "YYYY-MM-dd HH:mm:ss" // yyyy-MM-dd HH:mm:ss

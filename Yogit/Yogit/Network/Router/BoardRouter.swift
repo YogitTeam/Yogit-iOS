@@ -15,6 +15,7 @@ enum BoardRouter: URLRequestConvertible {
     case readAllBoards(parameters: GetAllBoardsReq)
     case deleteBoard(parameters: DeleteBoardReq)
     case readCategoryBoards(parameters: GetBoardsByCategoryReq)
+    case readMyBoards(parameters: GetMyClub)
 
     var baseURL: URL {
         return URL(string: API.BASE_URL + "boards/")! // 밑에 Auth 수정해야댐
@@ -22,7 +23,7 @@ enum BoardRouter: URLRequestConvertible {
 
     var method: HTTPMethod {
         switch self {
-        case .createBoard, .readBoardDetail, .readAllBoards, .readCategoryBoards:
+        case .createBoard, .readBoardDetail, .readAllBoards, .readCategoryBoards, .readMyBoards:
             return .post
         case .updateBoard, .deleteBoard:
             return .patch
@@ -39,6 +40,8 @@ enum BoardRouter: URLRequestConvertible {
             return "get/categories"
         case .readCategoryBoards:
             return "get/category"
+        case .readMyBoards:
+            return "get/myclub"
         case .deleteBoard:
             return "status"
         }
@@ -70,6 +73,8 @@ enum BoardRouter: URLRequestConvertible {
         case let .readAllBoards(parameters):
             request = try JSONParameterEncoder().encode(parameters, into: request)
         case let .readCategoryBoards(parameters):
+            request = try JSONParameterEncoder().encode(parameters, into: request)
+        case let .readMyBoards(parameters):
             request = try JSONParameterEncoder().encode(parameters, into: request)
         case let .deleteBoard(parameters):
             request = try JSONParameterEncoder().encode(parameters, into: request)

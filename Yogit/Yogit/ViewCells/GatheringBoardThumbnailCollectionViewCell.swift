@@ -6,35 +6,29 @@
 //
 
 import UIKit
+import SkeletonView
+import CoreLocation
 
 class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     static let identifier = "GatheringThumbnailCollectionViewCell"
-    
-//    private lazy var thumbnailContentView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .systemBackground
-//        view.clipsToBounds = true
-//        [self.boardImageView, self.hostImageView, self.labelStackView].forEach { view.addSubview($0) }
-//        return view
-//    }()
-    
-//    private lazy var bottomContentView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .systemBackground
-//        view.addSubview(bottomStackView)
-//        return view
-//    }()
-
     
     private lazy var backView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
         view.addSubview(lineView)
-        view.addSubview(labelStackView)
-        view.addSubview(memberImagesStackView)
+        view.addSubview(bottomStackView)
         view.addSubview(memberNumberStackView)
-        view.backgroundColor = .black.withAlphaComponent(0.3)
+        view.backgroundColor = .black.withAlphaComponent(0.1)
+        view.isSkeletonable = true
+        return view
+    }()
+    
+    private let blurView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white.withAlphaComponent(0.45)
+        view.isHidden = true
         return view
     }()
     
@@ -42,108 +36,63 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .white
+        view.isHidden = true
         return view
     }()
     
-    private lazy var labelStackView: UIStackView = {
+    private lazy var bottomStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.spacing = 2
         stackView.alignment = .leading
-//        stackView.backgroundColor = .systemBackground
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.red.cgColor
+        stackView.isSkeletonable = true
         [self.dateLabel,
-         self.localityLabel].forEach { stackView.addArrangedSubview($0) }
+         self.localityLabel,
+         self.memberImagesStackView].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
 
+    private let dateformatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        if let localeIdentifier = Locale.preferredLanguages.first {
+            dateFormatter.locale = Locale(identifier: localeIdentifier)
+        }
+        dateFormatter.dateFormat = "EEEE, MMM d"
+        return dateFormatter
+    }()
     
-//    private lazy var hostStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .horizontal
-//        stackView.spacing = 2
-//        stackView.alignment = .center
-////        stackView.backgroundColor = .systemBackground
-//        [hostImageView,
-//         hostNameLabel].forEach { stackView.addArrangedSubview($0) }
-//        return stackView
-//    }()
-    
-//    private let hostNameLabel: UILabel = {
-//       let label = UILabel()
-////        label.textColor = .black
-//        label.textAlignment = .left
-//        label.font = .systemFont(ofSize: 12, weight: .semibold)
-//        label.sizeToFit()
-//        label.numberOfLines = 2
-//        label.textColor = .white
-//        label.text = "Junseo Park"
-////        label.adjustsFontSizeToFitWidth = true
-//        label.translatesAutoresizingMaskIntoConstraints = false
-////        label.layer.borderWidth = 1
-////        label.layer.borderColor = UIColor.gray.cgColor
-//        return label
-//    }()
-//
-//    private let hostImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.clipsToBounds = true
-//        imageView.backgroundColor = .placeholderText
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.contentMode = .scaleAspectFill
-////        imageView.layer.borderColor = UIColor.white.cgColor
-////        imageView.layer.borderWidth = 0.6
-//        return imageView
-//    }()
+
 
     private let titleLabel: UILabel = {
        let label = UILabel()
-//        label.textColor = .black
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.sizeToFit()
         label.numberOfLines = 2
         label.textColor = .white
-//        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.gray.cgColor
+        label.isSkeletonable = true
         return label
     }()
     
     private let boardImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .placeholderText
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.addSubview(hostImageView)
-//        imageView.addSubview(hostNameLabel)
-//        imageView.tintColor = .black.withAlphaComponent(0.7)
-//        imageView.layer.cornerRadius = 6
-//        imageView.layer.borderWidth = 1
-//        imageView.layer.borderColor = UIColor.green.cgColor
-//        imageView.isHidden = true
-//        let customSize: CGFloat = contentView.frame.size.height * 2/3
-//        imageView.frame.size = CGSize(width:  contentView.frame.size.width, height: customSize)
+        imageView.isSkeletonable = true
         return imageView
     }()
 
     private let dateLabel: UILabel = {
         let label = UILabel()
-//        label.textColor = .black
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.sizeToFit()
         label.textColor = .white//.systemBrown
         label.numberOfLines = 1
-//        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.brown.cgColor
         return label
     }()
 
@@ -154,26 +103,9 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.sizeToFit()
         label.numberOfLines = 1
-//        label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.yellow.cgColor
         return label
     }()
-    
-//    private lazy var memberStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .horizontal
-//        stackView.spacing = 4
-//        stackView.alignment = .center
-//        stackView.backgroundColor = .clear
-////        stackView.layer.borderWidth = 1
-////        stackView.layer.borderColor = UIColor.red.cgColor
-//        [memberNumberStackView,
-//         memberImagesStackView].forEach { stackView.addArrangedSubview($0) }
-//        return stackView
-//    }()
     
     private let memberImagesStackView: UIStackView = {
         let stackView = UIStackView()
@@ -182,22 +114,20 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         stackView.spacing = -4
         stackView.alignment = .center
         stackView.clipsToBounds = true
+        stackView.isSkeletonable = true
 //        stackView.distribution = .fillProportionally//.fillEqually
         for i in 0..<6 {
             let imageView = UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: 24, height: 24)))
             imageView.clipsToBounds = true
-//            imageView.backgroundColor = .placeholderText
-//            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.image = nil
+            imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.widthAnchor.constraint(equalToConstant: 24.0).isActive = true
             imageView.heightAnchor.constraint(equalToConstant: 24.0).isActive = true
             imageView.layer.cornerRadius = 12
             imageView.contentMode = .scaleAspectFill
-        
-//            imageView.layer.borderColor = UIColor.white.cgColor
+            imageView.layer.borderColor = UIColor.clear.cgColor
             imageView.layer.borderWidth = 0.1
-//            imageView.image = UIImage(named: "user\(i+1)")
             stackView.addArrangedSubview(imageView)
-            
         }
         for i in 0..<6 {
             stackView.bringSubviewToFront(stackView.arrangedSubviews[5-i])
@@ -212,8 +142,7 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         stackView.spacing = 2
         stackView.alignment = .center
         stackView.backgroundColor = .clear
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.red.cgColor
+        stackView.isSkeletonable = true
         [memberNumberImageView,
          memberNumberLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
@@ -223,16 +152,9 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.backgroundColor = .clear
-        imageView.contentMode = .scaleAspectFill
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "MemberNumber")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//        imageView.tintColor = .white
-//        imageView.layer.cornerRadius = 6
-//        imageView.layer.borderWidth = 1
-//        imageView.layer.borderColor = UIColor.green.cgColor
-//        imageView.isHidden = true
-//        let customSize: CGFloat = contentView.frame.size.height * 2/3
-//        imageView.frame.size = CGSize(width:  contentView.frame.size.width, height: customSize)
         return imageView
     }()
     
@@ -244,81 +166,31 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.sizeToFit()
         label.numberOfLines = 1
-//        label.adjustsFontSizeToFitWidth = true
-//        label.layer.borderWidth = 1
-//        label.layer.borderColor = UIColor.gray.cgColor
         return label
     }()
-    
-//    private var memberImageViews: [UIImageView] = {
-//        let imageViews = [UIImageView](repeating: UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: 24, height: 24))), count: 6)
-//        imageViews.forEach {
-//            $0.clipsToBounds = true
-//            $0.layer.borderWidth = 1
-//            $0.layer.borderColor = UIColor.clear.cgColor
-//            $0.contentMode = .scaleAspectFill
-//        }
-////        imageViews.clipsToBounds = true
-////        imageViews.backgroundColor = .placeholderText
-////        imageViews.translatesAutoresizingMaskIntoConstraints = false
-////        imageViews.contentMode = .scaleAspectFill
-////        imageView.layer.borderColor = UIColor.white.cgColor
-////        imageView.layer.borderWidth = 0.6
-//        return imageViews
-//    }()
 
     
     // MARK: - Init (custom collection view cell)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [self.boardImageView,
-         self.backView].forEach { contentView.addSubview($0) }
+        isSkeletonable = true
+        [boardImageView,
+         backView,
+         blurView].forEach { contentView.addSubview($0) }
         layer.shadowColor = UIColor.darkGray.cgColor
         layer.shadowOpacity = 0.25
         layer.shadowRadius = 6
         layer.shadowOffset = CGSize(width: 1, height: 1)
         contentView.layer.cornerRadius = 6
         contentView.layer.masksToBounds = true
-        
-//        contentView.backgroundColor = .systemBackground
-        
-//        contentView.layer.shadowColor = UIColor.black.cgColor
-//        contentView.layer.shadowOffset = CGSize(width: 3, height: 3)
-//        contentView.layer.shadowRadius = 3
-//        contentView.layer.shadowOpacity = 0.25
-//        contentView.layer.cornerRadius = 6
-//        contentView.layer.masksToBounds = true
-//        layer.cornerRadius = 6
-//        contentView.clipsToBounds = true
-//        
-//        selectedCell?.backView.layer.shadowColor = ServiceColor.primaryColor.cgColor
-//        selectedCell?.backView.layer.shadowOffset = CGSize(width: 3, height: 3)
-//        selectedCell?.backView.layer.shadowRadius = 3
-//        selectedCell?.backView.layer.shadowOpacity = 0.25
-        
-//        contentView.layer.masksToBounds = true
-        
-//        self.hostImageView.layer.shadowOffset = CGSize(width: 3, height: 3)
-//        self.hostImageView.layer.shadowRadius = 3
-//        self.hostImageView.layer.shadowOpacity = 0.25
-//
-//        contentView.layer.borderColor = UIColor.black.cgColor
-//        contentView.layer.borderWidth = 1
-//        contentView.backgroundColor = .systemBackground
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         boardImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-//            $0.top.leading.trailing.equalToSuperview()
-//            $0.height.equalTo(contentView.frame.width*3/4)
         }
-        
-//        backView.snp.makeConstraints {
-//            $0.edges.equalToSuperview()
-//        }
         titleLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(8)
             $0.bottom.equalTo(lineView.snp.top).offset(-4)
@@ -326,17 +198,13 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         lineView.snp.makeConstraints {
             $0.height.equalTo(0.6)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(labelStackView.snp.top).offset(-4)
+            $0.bottom.equalTo(bottomStackView.snp.top).offset(-4)
         }
         backView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-////            $0.top.equalTo(boardImageView.snp.bottom)
-//            $0.top.equalTo(labelStackView.snp.top).offset(-10)
-//            $0.leading.trailing.bottom.equalToSuperview()
         }
-        labelStackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(8)
-            $0.bottom.equalTo(memberImagesStackView.snp.top).offset(-2)
+        bottomStackView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview().inset(8)
         }
         memberNumberStackView.snp.makeConstraints {
             $0.top.trailing.equalToSuperview().inset(8)
@@ -344,46 +212,9 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         memberNumberImageView.snp.makeConstraints {
             $0.width.height.equalTo(12)
         }
-//        memberStackView.snp.makeConstraints {
-////            $0.height.equalTo(24)
-//            $0.leading.bottom.equalToSuperview().inset(10)
-//            $0.trailing.lessThanOrEqualToSuperview().inset(10)
-//        }
-        memberImagesStackView.snp.makeConstraints {
-//            $0.height.equalTo(24)
-            $0.leading.bottom.equalToSuperview().inset(8)
-            $0.trailing.lessThanOrEqualToSuperview().inset(8)
+        blurView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
-        
-//        hostImageView.snp.makeConstraints {
-////            $0.top.leading.equalToSuperview().inset(10)
-//            $0.width.height.equalTo(24)
-////            $0.leading.equalToSuperview().inset(10)
-////            $0.bottom.equalToSuperview().inset(10)
-////            $0.bottom.equalTo(labelStackView.snp.top).offset(-10)
-//        }
-//        hostNameLabel.snp.makeConstraints {
-//            $0.leading.equalTo(hostImageView.snp.trailing).offset(6)
-//            $0.top.equalToSuperview().inset(12)
-//        }
-//        hostImageView.layoutIfNeeded()
-//        hostImageView.layer.cornerRadius = hostImageView.frame.width/2
-        
-//        localityLabel.snp.makeConstraints {
-//            $0.leading.trailing.bottom.equalTo(contentView).inset(10)
-//        }
-//
-//        memberNumberLabel.snp.makeConstraints {
-//            $0.leading.trailing.equalTo(contentView).inset(10)
-//        }
-//
-//        dateLabel.snp.makeConstraints {
-//            $0.leading.trailing.equalTo(contentView).inset(10)
-//        }
-//
-//        titleLabel.snp.makeConstraints {
-//            $0.leading.trailing.equalTo(contentView).inset(10)
-//        }
     }
     
     required init?(coder: NSCoder) {
@@ -391,45 +222,75 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-//        self.hostImageView.image = nil
-
-        self.boardImageView.image = nil
-        self.titleLabel.text = nil
-        self.dateLabel.text = nil
-        self.localityLabel.text = nil
-        self.memberNumberLabel.text = nil
+        boardImageView.image = nil
+        titleLabel.text = nil
+        dateLabel.text = nil
+        localityLabel.text = nil
+        memberNumberLabel.text = nil
+        backView.backgroundColor = .black.withAlphaComponent(0.1)
+        lineView.isHidden = true
+        blurView.isHidden = true
     }
     
-    func configure(with board: Board) {
-        Task {
-            let memberImageUrls = [String](repeating: board.profileImgURL, count: 6)
-            await withTaskGroup(of: (Void).self) { taskGroup in
-                for i in 0..<6{
-                    taskGroup.addTask {
-                        await self.boardImageView.setImage(with: board.imageURL)
-                        if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
-                            if i >= memberImageUrls.count {
-                                await imageView.setImage(with: "")
-                                await MainActor.run {
-                                    imageView.layer.borderColor = UIColor.clear.cgColor
-                                }
-                            } else {
-                                await imageView.setImage(with: memberImageUrls[i])
-                                await MainActor.run {
-                                    imageView.layer.borderColor = UIColor.white.cgColor
-                                }
+    func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
+        print("forwardGeocoding locality", address)
+        let geocoder = CLGeocoder()
+        guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
+        let locale = Locale(identifier: identifier)
+
+        // 주소 다됨 (country, locality, "KR" >> South Korea)
+        geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: { (placemarks, error) in
+            if error != nil {
+                print("Failed to geocodeAddressString location")
+                return
+            }
+            guard let pm = placemarks?.last else { return }
+            guard let locality = pm.locality else { return }
+            guard let countryCodeName = pm.country else { return }
+            print("forwardGeocoding locality and county", locality, countryCodeName)
+            completion(locality, countryCodeName)
+        })
+    }
+    
+    func configure(with board: Board) async {
+        let memberImageUrls = board.profileImgUrls//[String](repeating: board.profileImgURL, count: 6)
+        await withTaskGroup(of: (Void).self) { taskGroup in
+            for i in 0..<6 {
+                taskGroup.addTask {
+                    await self.boardImageView.setImage(with: board.imageURL)
+                    if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
+                        if i >= memberImageUrls.count {
+                            await MainActor.run {
+                                imageView.image = nil
+                                imageView.layer.borderColor = UIColor.clear.cgColor
+                            }
+                        } else {
+                            await imageView.setImage(with: memberImageUrls[i])
+                            await MainActor.run {
+                                imageView.layer.borderColor = UIColor.white.cgColor
                             }
                         }
                     }
                 }
             }
-            guard let changeDate = board.date.stringToDate()?.dateToStringUser() else { return } // ?.dateToString()
-            await MainActor.run {
-                self.titleLabel.text = board.title
-                self.dateLabel.text = changeDate
-                self.localityLabel.text = board.cityName// "Seoul"
-                self.memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
+        }
+        guard let boardDate = board.date.stringToDate() else { return }
+        guard let currentDate = Date().dateToStringUTC().stringToDate() else { return }
+        let timeInterval = boardDate.timeIntervalSince(currentDate)
+        let showToDate = boardDate.dateAndMonthFormatter()
+        if timeInterval < 0 {
+            blurView.isHidden = false
+        }
+        print("timeInterval", timeInterval)
+        await MainActor.run {
+            backView.backgroundColor = .black.withAlphaComponent(0.25)
+            lineView.isHidden = false
+            titleLabel.text = board.title
+            dateLabel.text = showToDate
+            forwardGeocoding(address: board.cityName) { [weak self] (cityName, countryName) in
+                self?.localityLabel.text = cityName
             }
+            memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
         }
     }
 }

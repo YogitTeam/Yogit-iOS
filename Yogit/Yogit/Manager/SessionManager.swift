@@ -69,6 +69,10 @@ final class SessionManager {
     enum Service {
         static let APPLE_SIGNIN: String = "APPLE"
         static let FACEBOOK_SIGNIN: String = "FACEBOOK"
+        
+        enum User {
+            static let APPLE: String = "APPLE_USER_INFO"
+        }
     }
     
     static let shared = SessionManager()
@@ -111,12 +115,8 @@ final class SessionManager {
                 case .revoked: // 애플 계정 사용 중단 혹은 계정삭제, so show the sign-in UI. (refresh token 만료됨 & 애플 자격증명 삭제됨)
                     // 애플 키체인 삭제
                     // 현재 로그인 type 삭제 (내부 구현)
-                    do {
-                        try KeychainManager.deleteUserItem(userItem: userItem)
-                    } catch {
-                        print(error)
-                    }
                     completion(.deleteAccout)
+                    print("애플 credentialState == .revoke")
                     break
                 default:
                     break

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SkeletonView
 
 class BoardInfoView: UIView {
     let leftImageView: UIImageView = {
@@ -14,6 +15,7 @@ class BoardInfoView: UIView {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.sizeToFit()
+//        imageView.isSkeletonable = true
         return imageView
     }()
     
@@ -22,6 +24,7 @@ class BoardInfoView: UIView {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.sizeToFit()
+//        imageView.isSkeletonable = true
         return imageView
     }()
     
@@ -55,16 +58,29 @@ class BoardInfoView: UIView {
        stackView.axis = .vertical
        stackView.spacing = 2
        stackView.alignment = .leading
+//        stackView.isSkeletonable = true
        [self.infoLabel,
         self.subInfoLabel].forEach { stackView.addArrangedSubview($0) }
        return stackView
    }()
+    
+    private lazy var contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(leftImageView)
+        view.addSubview(labelVerticalStackView)
+        view.addSubview(rightImageView)
+        view.isSkeletonable = true
+        return view
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(leftImageView)
-        addSubview(labelVerticalStackView)
-        addSubview(rightImageView)
+//        isSkeletonable = true
+        addSubview(contentView)
+//        addSubview(leftImageView)
+//        addSubview(labelVerticalStackView)
+//        addSubview(rightImageView)
     }
     
     private func configureViewComponent() {
@@ -79,6 +95,10 @@ class BoardInfoView: UIView {
     // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
+        contentView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview()
+        }
         leftImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.height.width.equalTo(22)

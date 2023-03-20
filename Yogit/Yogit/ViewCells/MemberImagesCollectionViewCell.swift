@@ -13,7 +13,7 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .placeholderText
+//        imageView.backgroundColor = .placeholderText
 //        imageView.tintColor = .systemGray.withAlphaComponent(0.5) // image color
         imageView.contentMode = .scaleAspectFill
 //        imageView.layer.cornerRadius = 6

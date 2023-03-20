@@ -54,8 +54,8 @@ class JobViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "📎 Let global friends know\nwhat I do"
-        label.textAlignment = .center
+        label.text = "Let global friends know what I do 📌"
+        label.textAlignment = .left
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
         label.sizeToFit()
@@ -115,7 +115,7 @@ class JobViewController: UIViewController {
         }
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(0)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
             $0.width.height.equalTo(60)
         }
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2
@@ -126,7 +126,7 @@ class JobViewController: UIViewController {
     }
     
     private func configureViewComponent() {
-        self.navigationItem.title = "Job"
+        self.navigationItem.title = "What I do"
         self.view.backgroundColor = .systemBackground
         self.navigationItem.rightBarButtonItem = rightButton
     }

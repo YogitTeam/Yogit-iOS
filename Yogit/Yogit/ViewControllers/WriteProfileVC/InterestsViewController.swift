@@ -9,7 +9,7 @@ import UIKit
 import TTGTags
 import SnapKit
 
-private enum InterestCategoryId: Int, CaseIterable {
+private enum InterestsCategoryId: Int, CaseIterable {
     case personality = 0
     case lifestyle
     case hobby
@@ -20,10 +20,10 @@ private enum InterestCategoryId: Int, CaseIterable {
         switch self.rawValue {
         case 0: return "Personality"
         case 1: return "Lifestyle"
-        case 2: return "Hobbies & Interests"
+        case 2: return "Hobby"
         case 3: return "Sports"
         case 4: return "Food"
-        default: fatalError("Not exist InterestCategoryId")
+        default: fatalError("Not exist HashTagCategoryId")
         }
     }
 }
@@ -82,10 +82,10 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     private let noticeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 24, weight: UIFont.Weight.bold)
-        label.text = "Choose my interests"
+        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
+        label.text = "Choose my personaliy & interests"
         label.sizeToFit()
-        label.numberOfLines = 1
+        label.numberOfLines = 0
         return label
     }()
     
@@ -148,12 +148,13 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     }
     
     private func configureNav() {
+        self.navigationItem.title = "Personality & Interests"
         navigationItem.rightBarButtonItem = rightButton
     }
     
     private func configureCategoryTagView() {
         noticeLabelStackView.layoutIfNeeded()
-        let categoryCnt = InterestCategoryId.allCases.count
+        let categoryCnt = InterestsCategoryId.allCases.count
         var stackViewAccumulatedY: CGFloat = 0
         for i in 0..<categoryCnt {
             let label = UILabel()
@@ -185,7 +186,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     }
 
     private func setupLabel(label: UILabel) -> CGFloat {
-        if let title = InterestCategoryId(rawValue: label.tag)?.toTitle() {
+        if let title = InterestsCategoryId(rawValue: label.tag)?.toTitle() {
             label.text = title
         }
         label.font = .systemFont(ofSize: 20, weight: .semibold)
@@ -220,7 +221,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             normalStyle.borderWidth = 2
             normalStyle.borderColor = .systemGray6
             normalStyle.extraSpace = CGSize.init(width: 16, height: 8)
-            normalStyle.cornerRadius = 16
+            normalStyle.cornerRadius = 8
             normalStyle.shadowColor = .clear
 
             let selectedStyle = TTGTextTagStyle.init()
@@ -229,16 +230,19 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             selectedStyle.shadowColor = .clear
             selectedStyle.borderColor = ServiceColor.primaryColor
             selectedStyle.extraSpace = CGSize.init(width: 16, height: 8)
-            selectedStyle.cornerRadius = 16
+            selectedStyle.cornerRadius = 8
 
             let tag = TTGTextTag.init()
             tag.content = content
             tag.style = normalStyle
             tag.selectedContent = selectedContent
             tag.selectedStyle = selectedStyle
-
+           
             for selectedTag in selectedTags {
-                tag.selected = selectedTag == text ? true : false
+                if selectedTag == text {
+                    tag.selected = true
+                    break
+                }
             }
             
             tagView.addTag(tag)
@@ -264,15 +268,19 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     }
     
     @objc private func rightButtonPressed(_ sender: Any) {
+        print("rightbutton 진입")
         if mode == .edit {
+            print("rightbutton 편집")
             delegate?.interestsSend(interests: selectedTags)
             DispatchQueue.main.async(qos: .userInteractive, execute: {
                 self.navigationController?.popViewController(animated: true)
             })
         } else {
+            print("rightbutton 생성")
             guard let userItem = try? KeychainManager.getUserItem() else { return }
             userProfile.userId = userItem.userId
             userProfile.refreshToken = userItem.refresh_token
+            userProfile.interests = selectedTags
             
             // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
             // userProfile에  SearchUserProfile 모든 데이터 포함
@@ -296,12 +304,13 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
                         do {
                             guard let value = response.value else { return }
                             guard let data = value.data else { return }
-                            if value.httpCode == 200 {
+                            if value.httpCode == 200 || value.httpCode == 201 {
                                 userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
                                 userItem.userName = data.name // 유저 이름, 상태 저장
                                 try KeychainManager.updateUserItem(userItem: userItem)
-                                let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
                                 DispatchQueue.main.async { [self] in
+                                    let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
+                                    navigationController?.popToRootViewController(animated: false)
                                     view.window?.rootViewController = rootVC
                                     view.window?.makeKeyAndVisible()
                                 }
@@ -390,7 +399,11 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, didTap tag: TTGTextTag!, at index: UInt) {
         let tapedTag = contents[textTagCollectionView.tag][Int(index)]
         if tag.selected == true {
-            selectedTags.append(tapedTag)
+            if textTagCollectionView.tag == 0 {
+                selectedTags.insert(tapedTag, at: 0)
+            } else {
+                selectedTags.append(tapedTag)
+            }
         } else {
             print("삭제전", selectedTags)
             for i in 0..<selectedTags.count {

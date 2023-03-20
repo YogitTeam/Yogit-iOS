@@ -5,6 +5,10 @@
 //  Created by Junseo Park on 2022/12/28.
 //
 
+// 내가 스트링 줌
+// 스트링으로 준값은 바뀌지 않음
+// date utc로 저장 >> date를 string 변환시 timezone current로 변환
+
 import UIKit
 import InputBarAccessoryView
 import IQKeyboardManagerSwift
@@ -32,6 +36,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     var upPageListCount = 0
     var isPaging: Bool = false
     var isLoading: Bool = false
+    var oldMessageDate: String = ""
     var currentSender: SenderType {
         currentUser
     }
@@ -45,14 +50,60 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     let serviceNotice = "📢 This is not a real-time chat.\n      Please scroll to update."
     lazy var serviceMessageId = upPageCusor*modular+upPageListCount
     
-    private let messageCenterformatter: DateFormatter = {
+    private let messageFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         if let localeIdentifier = Locale.preferredLanguages.first {
             dateFormatter.locale = Locale(identifier: localeIdentifier)
         }
-        dateFormatter.dateFormat = "EEEE, MMM d"
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        dateFormatter.timeZone = .current//TimeZone(identifier: "UTC")
+        print("dateFormatter.timeZone", dateFormatter.timeZone)
         return dateFormatter
     }()
+    
+//    func messageCenterFormatter: DateFormatter = {
+//        let dateFormatter = DateFormatter()
+//        if let localeIdentifier = Locale.preferredLanguages.first {
+//            dateFormatter.locale = Locale(identifier: localeIdentifier)
+//        }
+//        dateFormatter.dateStyle = .none
+//        dateFormatter.timeStyle = .short
+//        dateFormatter.timeZone = .current
+//        return dateFormatter
+//    }()
+    
+//    func configureDateFormatter(for date: Date) {
+//      switch true {
+//      case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
+//        formatter.doesRelativeDateFormatting = true
+//        formatter.dateStyle = .short
+//        formatter.timeStyle = .short
+//      case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
+//        formatter.dateFormat = "EEEE h:mm a"
+//      case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year):
+//        formatter.dateFormat = "E, d MMM, h:mm a"
+//      default:
+//        formatter.dateFormat = "MMM d, yyyy, h:mm a"
+//      }
+//    }
+
+    func messageDateCenterFormatter(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        if let localeIdentifier = Locale.preferredLanguages.first {
+            dateFormatter.locale = Locale(identifier: localeIdentifier)
+        } else {
+        }
+        if Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date) {
+            dateFormatter.doesRelativeDateFormatting = true
+            dateFormatter.dateStyle = .short
+        } else {
+            dateFormatter.dateStyle = .full
+            dateFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EdMMM", options: 0, locale: dateFormatter.locale)
+        }
+        dateFormatter.timeZone = .current//TimeZone(identifier: "UTC")
+        return dateFormatter.string(from: date)
+    }
     
 //    private(set) lazy var refreshControl: UIRefreshControl = {
 //      let control = UIRefreshControl()
@@ -350,11 +401,17 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     func insertMessage(_ message: Message) {
         print("삽입전 개수", messages.count)
+        
         messages.append(message)
         messagesCollectionView.insertSections([messages.count - 1])
-//        if messages.count >= 2 {
-//          messagesCollectionView.reloadSections([messages.count - 2])
-//        }
+        
+//        messagesCollectionView.performBatchUpdates({
+//            messages.append(message)
+//            messagesCollectionView.insertSections([messages.count - 1])
+//            if messages.count >= 2 {
+//                messagesCollectionView.reloadSections([messages.count - 2])
+//            }
+//        })
         print("삽입후 개수", messages.count)
 //        if messages.count >= 2 {
 //          messagesCollectionView.reloadSections([messages.count - 2])
@@ -376,14 +433,14 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         messagesCollectionView.performBatchUpdates({
             messages.removeLast()
             messagesCollectionView.deleteSections([messages.count])
-            if messages.count >= 1 {
-              messagesCollectionView.reloadSections([messages.count - 1])
-            }
+//            if messages.count >= 1 {
+//              messagesCollectionView.reloadSections([messages.count - 1])
+//            }
             messages.append(message)
             messagesCollectionView.insertSections([messages.count - 1])
-            if messages.count >= 2 {
-              messagesCollectionView.reloadSections([messages.count - 2])
-            }
+//            if messages.count >= 2 {
+//              messagesCollectionView.reloadSections([messages.count - 2])
+//            }
         })
 //        messagesCollectionView.performBatchUpdates({
 //            // service data 삭제
@@ -461,11 +518,11 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     // message date 중에 요일 날짜가 바뀌면 표시
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        //
-      if indexPath.section % 6 == 0 {
-          let dateString = messageCenterformatter.string(from: message.sentDate)
+      let newMessageDate = messageDateCenterFormatter(date: message.sentDate)
+      if indexPath.section % 3 == 0 || oldMessageDate != newMessageDate {
+          oldMessageDate = newMessageDate
         return NSAttributedString(
-          string: dateString,
+          string: newMessageDate,
           attributes: [
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10),
             NSAttributedString.Key.foregroundColor: UIColor.darkGray,
@@ -476,7 +533,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
       return NSAttributedString(
-        string: MessageKitDateFormatter.shared.string(from: message.sentDate),
+        string: messageFormatter.string(from: message.sentDate),
         attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
     }
     /*
@@ -493,6 +550,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 extension ChatViewController: InputBarAccessoryViewDelegate {
     @objc
     func inputBar(_: InputBarAccessoryView, didPressSendButtonWith _: String) {
+        print("버튼 누름")
       processInputBar(messageInputBar)
     }
     
@@ -527,6 +585,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
 //    }
     
     func processInputBar(_ inputBar: InputBarAccessoryView) {
+        print("버튼 누름")
         if !isPaging {
             isPaging = true
             // Here we can parse for which substrings were autocompleted

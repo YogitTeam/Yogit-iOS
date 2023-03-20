@@ -41,8 +41,6 @@ final class AlarmManager {
     }
     
     static let shared = AlarmManager()
-    static let ApplyAlarmIdentifier = "ApplyAlarm"
-    static let ClipBoardAlarmIdentifier = "ClipBoardAlarm"
     
     static func saveAlarms(alarms: [Alarm]) {
         let data = alarms.map {
@@ -54,29 +52,18 @@ final class AlarmManager {
             ]
         }
         let userDefaults = UserDefaults.standard
-        if alarms[0].type == AlarmType.apply.toKey() { userDefaults.set(data, forKey: ApplyAlarmIdentifier) }
-        else { userDefaults.set(data, forKey: ClipBoardAlarmIdentifier) }
+        if alarms[0].type == AlarmType.apply.toKey() { userDefaults.set(data, forKey: PushNotificationKind.ApplyAlarmIdentifier) }
+        else { userDefaults.set(data, forKey: PushNotificationKind.ClipBoardAlarmIdentifier) }
         print("AfterSaveAlarms", data)
     }
-    
-//    static func saveAlarms(alarm: Alarm) {
-//        let data = [
-//            AlarmKey.type.toKey(): alarm.type,
-//            AlarmKey.title.toKey(): alarm.title,
-//            AlarmKey.body.toKey(): alarm.body,
-//            AlarmKey.id.toKey(): alarm.id
-//        ] as [String : Any]
-//        let userDefaults = UserDefaults.standard.array(forKey: alarmIdentifier) as? [String : Any]
-////        userDefaults.set(data, forKey: alarmIdentifier)
-//    }
     
     static func loadAlarms(type: String) -> [Alarm]? {
         let userDefaults = UserDefaults.standard
         var id = String()
         if type == AlarmType.apply.toKey() {
-            id = ApplyAlarmIdentifier
+            id = PushNotificationKind.ApplyAlarmIdentifier
         } else {
-            id = ClipBoardAlarmIdentifier
+            id = PushNotificationKind.ClipBoardAlarmIdentifier
         }
         let data = userDefaults.object(forKey: id) as? [[String: Any]] ?? [[String: Any]]()
         let alarms: [Alarm] = data.compactMap {

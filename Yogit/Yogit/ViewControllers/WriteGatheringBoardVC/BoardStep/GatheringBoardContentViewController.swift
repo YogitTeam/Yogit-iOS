@@ -520,7 +520,7 @@ class GatheringBoardContentViewController: UIViewController {
                         guard let data = value.data else { return }
                         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                             navigationController?.popToRootViewController(animated: true)
-                            NotificationCenter.default.post(name: NSNotification.Name("BoardDetailRefresh"), object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
+                            NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
                             ProgressHUD.dismiss()
                         })
 //                        DispatchQueue.global(qos: .userInitiated).async { [self] in
@@ -718,15 +718,16 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         var images = [UIImage]()
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
-//        option.deliveryMode = .//.highQualityFormat
+//        option.deliveryMode = .fastFormat//.highQualityFormat
 //        option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
         // CGSize(width: view.frame.size.width, height: view.frame.size.height)
+        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
         for i in 0..<asstes.count {
 
             imageManager.requestImage(for: asstes[i],
-                                      targetSize: CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2),
+                                      targetSize: newSize,
                                       contentMode: .aspectFit,
                                       options: option) { (result, info) in
                 if let image = result {
@@ -1005,11 +1006,6 @@ extension GatheringBoardContentViewController: UITextViewDelegate {
         }
     }
 }
-
-extension Notification.Name {
-    static let baordDetailRefresh = Notification.Name("BoardDetailRefresh")
-}
-
 
 extension GatheringBoardContentViewController {
     func hideKeyboardWhenTappedAround() {

@@ -89,7 +89,7 @@ class AboutMeViewController: UIViewController {
         }
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(0)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
             $0.width.height.equalTo(60)
         }
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2
@@ -116,7 +116,7 @@ class AboutMeViewController: UIViewController {
     
     @objc private func rightButtonPressed(_ sender: Any) {
         if aboutMeTextView.myTextView.text != placeholder {
-            delegate?.aboutMeSend(aboutMe: aboutMeTextView.myTextView.text ?? "")
+            delegate?.aboutMeSend(aboutMe: aboutMeTextView.myTextView.text)
         }
         DispatchQueue.main.async(qos: .userInteractive, execute: {
             self.navigationController?.popViewController(animated: true)
@@ -124,7 +124,9 @@ class AboutMeViewController: UIViewController {
     }
     
     @objc private func nextButtonTapped(_ sender: UIButton) {
-        userProfile.aboutMe = aboutMeTextView.myTextView.text
+        if aboutMeTextView.myTextView.text != placeholder {
+            userProfile.aboutMe = aboutMeTextView.myTextView.text
+        }
         DispatchQueue.main.async(qos: .userInteractive) {
             let IVC = InterestsViewController()
             IVC.mode = self.mode

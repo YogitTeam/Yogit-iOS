@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         IQKeyboardManager.shared.enable = true
         IQKeyboardManager.shared.enableAutoToolbar = false
+       
 //        UIApplication.shared.statusBarView?.backgroundColor = UIColor.red
 
         UITabBar.appearance().tintColor = ServiceColor.primaryColor

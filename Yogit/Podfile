@@ -24,4 +24,5 @@ target 'Yogit' do
   pod 'BulletinBoard'
   pod 'TTGTagCollectionView'
   pod 'ProgressHUD'
+  pod 'SkeletonView'
 end

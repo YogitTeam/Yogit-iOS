@@ -6,3 +6,6 @@
   
 */
 "Nationality" = "국적";
+"Gathering" = "모임";
+"gathering" = "모임";
+"GATHERING_JOIN" = "%@님이 %@' gathering에 참여하였습니다.";

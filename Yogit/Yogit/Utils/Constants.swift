@@ -47,9 +47,14 @@ enum GatheringKind: Int {
 //}
 
 enum Preferences {
-    static let LOCATION: String = "LocationAuthorization"
-    static let LiBRARY: String = "LibraryAuthorization"
-    static let PUSH_NOTIFICATION: String = "PushNotificationAuthorization"
+    static let LOCATION: String = "LocationAuthorization" // 위치 권한 유무
+    static let LiBRARY: String = "LibraryAuthorization" // 사진첩 권한 유무
+    static let PUSH_NOTIFICATION: String = "PushNotificationAuthorization" // 알람 권한 유무 (디바이스 토큰)
+}
+
+enum PushNotificationKind {
+    static let ApplyAlarmIdentifier = "ApplyAlarm"
+    static let ClipBoardAlarmIdentifier = "ClipBoardAlarm"
 }
 
 // 권한 받은 유저
@@ -113,7 +118,7 @@ enum ProfileSectionData: Int {
         case .gender: return "Gender"
         case .job: return "Job"
         case .aboutMe: return "AboutMe"
-        case .interests: return "Intersts"
+        case .interests: return "Personality & Interests"
         }
     }
   
@@ -187,8 +192,8 @@ enum CategoryId: Int, CaseIterable {
 
 enum TabBarKind: String {
     case home = "Home"
-    case myClub = "My Gathering"
-    case profile = "Profile"
+    case myClub = "My gathering"
+    case profile = "My profile"
     case notification = "Notification"
 }
 

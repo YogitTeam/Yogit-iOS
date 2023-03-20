@@ -78,6 +78,8 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     // if don't represent location >> 상세주소 직접입력으로 변경
     
 //    private var searchCompleter = MKLocalSearchCompleter()
+    
+    
     private var searchRegion: MKCoordinateRegion = MKCoordinateRegion(MKMapRect.world)
 //   private var searchResults = [MKLocalSearchCompletion]()
     weak var timer: Timer?
@@ -150,39 +152,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         label.adjustsFontSizeToFitWidth = true
         return label
     }()
-    
-//    private lazy var addressAssistantView: UIView = {
-//        let view = UIView()
-//        view.addSubview(addressStackView)
-//        view.backgroundColor = .systemBackground
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.layer.cornerRadius = 20
-//        return view
-//    }()
-//
-//    private lazy var addressStackView: UIView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.alignment = .leading
-//        stackView.axis = .vertical
-//        stackView.spacing = 20
-//        stackView.backgroundColor = .clear
-//        [self.addressLabel, self.saveButton].forEach { stackView.addArrangedSubview($0) }
-//        return stackView
-//    }()
-    
-//    private let addressLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "Checking location..."
-////        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textAlignment = .left
-//        label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
-//        label.sizeToFit()
-//        label.numberOfLines = 0
-//        label.adjustsFontSizeToFitWidth = true
-//        return label
-//    }()
-    
+
     private lazy var activityIndicator: UIActivityIndicatorView = {
         // 해당 클로저에서 나중에 indicator 를 반환해주기 위해 상수형태로 선언
         let activityIndicator = UIActivityIndicatorView()
@@ -215,20 +185,6 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         button.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
-    
-//    private var guideStackView: [UIStackView] = []
-//
-//    private let searchGuideTitleLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "이렇게 검색해보세요"
-//        return label
-//    }()
-//
-//    private let searchGuideCategoryLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "ㄹㅇㄴㅁㄹㅇㄹㅁㅇㄴㄹ"
-//        return label
-//    }()
     
     private let searchGuideLabel: UILabel = {
         let label = UILabel()
@@ -264,61 +220,24 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         return view
     }()
     
-//    private let pinImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.clipsToBounds = true
-//        imageView.isHidden = true
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.image = UIImage(named: "Pin")
-//        return imageView
-//    }()
-//
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(mapView)
         view.addSubview(saveButton)
         view.addSubview(searchGuideView)
         view.addSubview(noticeView)
-//        view.addSubview(pinImageView)
-//        view.addSubview(addressAssistantView)
-//        view.addSubview(reverseGeoControlSwitch)
-//        Timer.scheduledTimer(timeInterval: 1.00, target: self, selector: geoTimer, userInfo: nil, repeats: true)
         configureViewComponent()
         configureSearchController()
         configureMapComponent()
         configureLocationManager()
         configureGuideLabel()
-//        searchBarTextDidBeginEditing(searchVC.searchBar)
         timerRun()
         blinkNoticeView(noticeView: noticeView)
-//        self.mapView.setUserTrackingMode(.follow, animated: true)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.mapView.frame = view.bounds
-//        mapView.snp.makeConstraints { make in
-////            make.top.equalTo(view.safeAreaLayoutGuide)
-//            make.top.leading.trailing.equalToSuperview()
-//            make.bottom.equalTo(addressAssistantView.snp.top)
-//        }
-//        pinImageView.snp.makeConstraints { make in
-//            make.centerX.equalToSuperview()
-//            make.centerY.equalToSuperview().offset(-47/2)
-////            make.centerY.equalToSuperview().offset(47/2)
-////            make.centerY.equalToSuperview().offset(47/2)
-//            make.width.equalTo(35)
-//            make.height.equalTo(47)
-//        }
-//        addressLabel.snp.makeConstraints { make in
-//            make.trailing.equalTo(view).inset(20)
-//        }
-//        addressAssistantView.snp.makeConstraints { make in
-//            make.bottom.leading.trailing.equalToSuperview()
-//            make.top.equalTo(addressLabel.snp.top).inset(-20)
-////            make.height.equalTo(135)
-//        }
         saveButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view).inset(20)
             make.bottom.equalTo(view.snp.bottom).inset(30)
@@ -345,14 +264,6 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
             make.center.equalToSuperview()
         }
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        if let timer = timer {
-//            if(timer.isValid){
-//                timer.invalidate()
-//            }
-//        }
-//    }
     
     override func viewWillDisappear(_ animated: Bool) {
         timerQuit()
@@ -415,38 +326,9 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         searchVC.searchBar.delegate = self
         searchVC.searchBar.placeholder = "Search address / postcode / place"
         searchVC.searchBar.addSubview(activityIndicator)
-//        searchVC.searchBar.searchTextField.addRightPadding()
-//        searchVC.searchBar.searchTextField.leftView?.isHidden = true
     }
     
     private func configureGuideLabel() {
-        myLabelAdjustFont()
-//        if let text = searchGuideLabel.text{
-//            //여기서 속성을 변경하고 싶은 문자열 지정
-//            let range1 = (text as NSString).range(of: "Search like this.")
-//            myLabelAdjustFont(text, size: 18, range: range1)
-//
-////            let range2 = (text as NSString).range(of: "It's better to search in the language there.")
-////            myLabelAdjustFont(text, size: 16, range: range2)
-////
-////            let range3 = (text as NSString).range(of: "ex) 테헤란로10길 23")
-////            let range4 = (text as NSString).range(of: "ex) 성수동 10-23")
-////            let range5 = (text as NSString).range(of: " ex) 한양아파트 204동")
-////
-////            myLabelChangeColor(text, range: range3)
-////            myLabelChangeColor(text, range: range4)
-////            myLabelChangeColor(text, range: range5)
-//        }
-//        if let text = searchGuideLabel.text{
-//            //여기서 속성을 변경하고 싶은 문자열 지정
-//
-//
-//            let range2 = (text as NSString).range(of: "It's better to search in the language there.")
-//            myLabelAdjustFont(text, size: 16, range: range2)
-//        }
-    }
-    
-    func myLabelAdjustFont(){
 
         //label에 있는 Text를 NSMutableAttributedString으로 만들어준다.
         let attributedStr = NSMutableAttributedString(string: searchGuideLabel.text!)
@@ -527,6 +409,17 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
        return annotationView
     }
     
+//    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationView.DragState, fromOldState oldState: MKAnnotationView.DragState) {
+//        view.isSelected = true
+//    }
+    
+
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        if views.count > 0 && views[0].annotation is MKPointAnnotation && !views[0].isSelected {
+            views[0].isSelected = true
+        }
+    }
+    
     // move camera
     func moveLocation(latitudeValue: CLLocationDegrees, longtudeValue: CLLocationDegrees, delta span: Double) {
         let pLocation = CLLocationCoordinate2DMake(latitudeValue, longtudeValue)
@@ -559,6 +452,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
 }
 
 extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
+    
     // 위치 권한 변경시 실행
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         print("Check Location Authorization")
@@ -619,13 +513,15 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         
         // 37.5495209, 127.075086 (위경도로 검색 가능)
         // 좌표 검색 시켜 >> 사용자마다 주소를 로컬라이즈화(자동) 불러와서
+        
         self.searchRequest.naturalLanguageQuery = text
         self.searchRequest.resultTypes = [.address, .pointOfInterest]
         self.searchRequest.region = searchRegion
-        print("searchText",text)
-        let search = MKLocalSearch(request: searchRequest)
-        resultsVC.delegate = self
         
+        let search = MKLocalSearch(request: searchRequest)
+        
+        resultsVC.delegate = self
+       
         search.start { (response, error) in
             guard let response = response else {
                 if self.searchVC.searchBar.text != nil && self.searchVC.searchBar.text != "" {
@@ -660,21 +556,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
                 if let placeMarkLocality = item.placemark.locality {
                     print("placemark locality", placeMarkLocality)
                 }
-//                if let name = item.name,
-//                   let countryCode = item.placemark.countryCode,
-//                   let location = item.placemark.location,
-//                   let placeMarkName = item.placemark.name,
-//                   let placeMarkTitle = item.placemark.title,
-//                   let placeMarkPhoneNumber = item.phoneNumber
-//                {
-//                    print("\(name)") // 영어 장소 이름
-//                    print("countryCode\(countryCode)")
-//                    print("\(location.coordinate.latitude),\(location.coordinate.longitude)")
-//                    print("\(placeMarkName)")
-//                    print("\(placeMarkTitle)")
-////                    print("\(placeMarkSubtitle)")
-//                    print("\(placeMarkPhoneNumber)")
-//                }
             }
             DispatchQueue.main.async {
                 resultsVC.updateMK(with: response.mapItems)
@@ -736,17 +617,8 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             guard let pm = placemarks?.last else { return }
             let country = pm.country ?? ""
             let administrativeArea = "\(pm.administrativeArea ?? "")"
-//            let locality = "\(pm.locality ?? "")"
             guard let locality = pm.locality else { return }
-            
-//            var centerAddress: String?
-//            centerAddress = locality
-//            if administrativeArea == locality {
-//                centerAddress = locality
-//            } else {
-//                centerAddress = administrativeArea + " " + locality
-//            }
-//            let locality: String = centerAddress ?? ""
+        
             let centerAddress = "\(locality) \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
             
             let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: locality.uppercased())

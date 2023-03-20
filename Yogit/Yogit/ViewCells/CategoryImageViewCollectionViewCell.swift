@@ -171,14 +171,14 @@ class CategoryImageViewCollectionViewCell: UICollectionViewCell {
     func configure(at: Int) {
         guard let categoryString = CategoryId(rawValue: at + 1)?.toString() else { return }
         imageView.image = UIImage(named: categoryString)?.withRenderingMode(.alwaysTemplate)
-        var str: String = ""
-        for ch in categoryString {
-            if ch == " " {
-                str.append("\n")
-            }
-            str.append(ch)
-        }
-        titleLabel.text = str
+//        var str: String = ""
+//        for ch in categoryString {
+//            if ch == " " {
+//                str.append("\n")
+//            }
+//            str.append(ch)
+//        }
+        titleLabel.text = categoryString
 //        let str = categoryString.components(separatedBy: " ")
 //        titleLabel.text = "\(str[0])\n\(str[1])"
     }

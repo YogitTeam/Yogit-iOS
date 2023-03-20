@@ -375,9 +375,11 @@ class GatheringBoardCategoryViewController: UIViewController {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         guard let cell = tableView.dequeueReusableCell(withIdentifier: GatheringBoardCategoryTableViewCell.identifier, for: indexPath) as? GatheringBoardCategoryTableViewCell else { return UITableViewCell() }
-        cell.categoryImageView.image = UIImage(named: categoryText[indexPath.row])?.withRenderingMode(.alwaysTemplate)
-        cell.categoryTitleLabel.text = categoryText[indexPath.row]
-        cell.categoryDescriptionLabel.text = categoryDescription[indexPath.row]
+        if let categoryString = CategoryId(rawValue: indexPath.row + 1)?.toString() {
+            cell.categoryImageView.image = UIImage(named: categoryString)?.withRenderingMode(.alwaysTemplate)
+        }
+        cell.categoryTitleLabel.text = "Test"//categoryText[indexPath.row]
+        cell.categoryDescriptionLabel.text = "Test" //categoryDescription[indexPath.row]
         cell.categoryContentView.tag = indexPath.row
         cell.categoryContentView.removeGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.categoryContentViewTapped(sender:))))
         cell.categoryContentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.categoryContentViewTapped(sender:))))
@@ -432,6 +434,6 @@ extension GatheringBoardCategoryViewController: UITableViewDelegate {
 extension GatheringBoardCategoryViewController: UITableViewDataSource {
     // Reporting the number of sections and rows in the table.
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryText.count
+        return CategoryId.allCases.count
     }
 }

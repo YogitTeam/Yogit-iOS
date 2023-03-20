@@ -72,30 +72,51 @@ class GatheringBoardOptionViewController: UIViewController {
     private let numberPickerView: UIPickerView = {
         let pickerView = UIPickerView()
         pickerView.translatesAutoresizingMaskIntoConstraints = false
+        pickerView.backgroundColor = .systemGray6
         return pickerView
     }()
     
     private let datePicker: UIDatePicker = {
-        print("datePicker lazy var")
-      let datePicker = UIDatePicker(frame: .zero)
-//      datePicker.timeZone = TimeZone.current
+       let datePicker = UIDatePicker()
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.datePickerMode = .dateAndTime
-        datePicker.timeZone = TimeZone(identifier: "UTC")
         let localeIdentifier = Locale.preferredLanguages.first
-        print("localeIdentifier", localeIdentifier)
         datePicker.locale = Locale(identifier: localeIdentifier!)
 //        datePicker.locale = Locale(identifier: "en") // Need localized
 //        datePicker.addTarget(self, action: #selector(dateChanged(datePikcer:)), for: .valueChanged)
-        datePicker.frame.size = CGSize(width: 0, height: 300)
+//        datePicker.frame.size = CGSize(width: 0, height: 500)
         datePicker.preferredDatePickerStyle = .wheels
-//        datePicker.backgroundColor = .systemBackground
+        
+        var components = DateComponents()
+        components.day = 365
+        let maxDate = Calendar.autoupdatingCurrent.date(byAdding: components, to: Date())
+        components.day = 0
+        let minDate = Calendar.autoupdatingCurrent.date(byAdding: components, to: Date())
+
+        datePicker.maximumDate = maxDate
+        datePicker.minimumDate = minDate
+        datePicker.timeZone = .current//TimeZone(identifier: "UTC")
+        datePicker.sizeToFit()
       return datePicker
     }()
+    
+//    private let timePicker: UIDatePicker = {
+//       let datePicker = UIDatePicker(frame: .zero)
+//        datePicker.datePickerMode = .time
+//        let localeIdentifier = Locale.preferredLanguages.first
+//        datePicker.locale = Locale(identifier: localeIdentifier!)
+////        datePicker.locale = Locale(identifier: "en") // Need localized
+////        datePicker.addTarget(self, action: #selector(dateChanged(datePikcer:)), for: .valueChanged)
+//        datePicker.frame.size = CGSize(width: 0, height: 300)
+//        datePicker.preferredDatePickerStyle = .wheels
+//        datePicker.timeZone = TimeZone(identifier: "UTC")
+//      return datePicker
+//    }()
     
     private lazy var pickerViewToolBar: UIToolbar = {
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
-        toolBar.backgroundColor = .systemBackground
+        toolBar.backgroundColor = .systemGray4
         toolBar.translatesAutoresizingMaskIntoConstraints = false
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
@@ -106,10 +127,17 @@ class GatheringBoardOptionViewController: UIViewController {
         return toolBar
     }()
     
+//    private lazy var dateContainerView: UIView = {
+//        let view = UIView()
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        view.addSubview(datePicker)
+//        return view
+//    }()
+    
     private lazy var datePickerToolBar: UIToolbar = {
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
-        toolBar.backgroundColor = .systemBackground
+        toolBar.backgroundColor = .systemGray4
         toolBar.translatesAutoresizingMaskIntoConstraints = false
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone))
@@ -117,6 +145,7 @@ class GatheringBoardOptionViewController: UIViewController {
         cancelButton.tintColor = .systemGray
         doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
         toolBar.setItems([cancelButton, flexSpace, doneButton], animated: true)
+        toolBar.sizeToFit()
         return toolBar
     }()
     
@@ -204,6 +233,12 @@ class GatheringBoardOptionViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+//        NSLayoutConstraint.activate([
+//            dateContainerView.heightAnchor.constraint(equalTo: datePicker.heightAnchor),
+//            dateContainerView.widthAnchor.constraint(equalTo: datePicker.widthAnchor),
+//            datePicker.centerXAnchor.constraint(equalTo: dateContainerView.centerXAnchor),
+//            datePicker.centerYAnchor.constraint(equalTo: dateContainerView.centerYAnchor)
+//        ])
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.trailing.equalToSuperview()
@@ -291,6 +326,7 @@ class GatheringBoardOptionViewController: UIViewController {
         memberTextField.inputAccessoryView = pickerViewToolBar
         memberTextField.addLeftImageWithMargin(image: UIImage(named: "MemberNumber")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
         dateTextField.inputView = datePicker
+        dateTextField.inputView?.backgroundColor = .systemGray6
         dateTextField.inputAccessoryView = datePickerToolBar
 //        memberTextField.addLeftImage(image: UIImage(named: "MemberNumber"))
         dateTextField.addLeftImageWithMargin(image: UIImage(named: "Date")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)

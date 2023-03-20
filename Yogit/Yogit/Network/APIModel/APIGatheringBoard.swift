@@ -176,7 +176,8 @@ class Board: Decodable {
     let categoryID, cityID, currentMember: Int
     let date, cityName: String
     let imageID: Int
-    let imageURL, profileImgURL, status, title: String
+    let imageURL, status, title: String
+    let profileImgUrls: [String]
     let totalMember: Int
     let boardID: Int64
 
@@ -187,12 +188,12 @@ class Board: Decodable {
         case currentMember, date
         case imageID = "imageId"
         case imageURL = "imageUrl"
-        case profileImgURL = "profileImgUrl"
+        case profileImgUrls
         case status, title, totalMember
         case cityName
     }
 
-    init(categoryID: Int, cityID: Int, currentMember: Int, date: String, cityName: String, imageID: Int, imageURL: String, profileImgURL: String, status: String, title: String, totalMember: Int, boardID: Int64) {
+    init(categoryID: Int, cityID: Int, currentMember: Int, date: String, cityName: String, imageID: Int, imageURL: String, profileImgUrls: [String], status: String, title: String, totalMember: Int, boardID: Int64) {
         self.categoryID = categoryID
         self.cityID = cityID
         self.currentMember = currentMember
@@ -200,7 +201,7 @@ class Board: Decodable {
         self.cityName = cityName
         self.imageID = imageID
         self.imageURL = imageURL
-        self.profileImgURL = profileImgURL
+        self.profileImgUrls = profileImgUrls
         self.status = status
         self.title = title
         self.totalMember = totalMember

@@ -51,11 +51,11 @@ struct LogOutAppleReq: Encodable {
 }
 
 class DeleteAppleAccountReq: Encodable {
-    let identityToken: String
+    let identityToken: String?
     let refreshToken: String
     let userId: Int64
     
-    init(identityToken: String, refreshToken: String, userId: Int64) {
+    init(identityToken: String?, refreshToken: String, userId: Int64) {
         self.identityToken = identityToken
         self.refreshToken = refreshToken
         self.userId = userId
@@ -118,12 +118,12 @@ struct UserProfile: Decodable {
 class Account: Codable {
     var state: String
     let code: String
-    let id_token: String
+    let id_token: String?
     let user: User
     let identifier: String
     var hasRequirementInfo: Bool
     
-    init(state: String, code: String, id_token: String, user: User, identifier: String, hasRequirementInfo: Bool) {
+    init(state: String, code: String, id_token: String?, user: User, identifier: String, hasRequirementInfo: Bool) {
         self.state = state
         self.code = code
         self.id_token = id_token
@@ -153,20 +153,20 @@ class User: Codable {
     }
 }
 
-
 class UserItem: Codable {
     let account: Account
-    let access_token: String
-    let expires_in: Int64
-    let id_token: String
+    let access_token: String?
+    let expires_in: Int64?
+    let id_token: String?
     let refresh_token: String
-    let token_type: String
+    let token_type: String?
     let userType: String
     let userId: Int64
     var userName: String?
     var userStatus: String?
+    var networkFailFlag: Bool?
     
-    init(account: Account, access_token: String, expires_in: Int64, id_token: String, refresh_token: String, token_type: String, userType: String, userId: Int64, userName: String?, userStatus: String?) {
+    init(account: Account, access_token: String?, expires_in: Int64?, id_token: String?, refresh_token: String, token_type: String?, userType: String, userId: Int64, userName: String?, userStatus: String?, networkFailFalg: Bool?) {
         self.account = account
         self.access_token = access_token
         self.expires_in = expires_in
@@ -177,6 +177,7 @@ class UserItem: Codable {
         self.userId = userId
         self.userName = userName
         self.userStatus = userStatus
+        self.networkFailFlag = networkFailFalg
     }
 }
 

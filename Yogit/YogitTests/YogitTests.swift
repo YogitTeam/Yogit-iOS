@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import Yogit
 
 class YogitTests: XCTestCase {
 

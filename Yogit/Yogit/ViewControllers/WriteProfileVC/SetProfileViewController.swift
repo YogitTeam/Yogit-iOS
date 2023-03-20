@@ -60,7 +60,7 @@ class SetProfileViewController: UIViewController {
                 DispatchQueue.main.async(qos: .userInteractive) { [self] in
                     profileImageView.setImage(with: imageString)
                     profileImageLabel.textColor = .label
-                    profileImageLabel.text = "Chage photos"
+                    profileImageLabel.text = "Change photos"
                 }
             }
         }
@@ -108,13 +108,13 @@ class SetProfileViewController: UIViewController {
     private let agePickerView: UIPickerView = {
         let pickerView = UIPickerView()
         pickerView.translatesAutoresizingMaskIntoConstraints = false
-        pickerView.backgroundColor = .systemBackground
+        pickerView.backgroundColor = .systemGray6
         return pickerView
     }()
     
     private let genderPickerView: UIPickerView = {
         let pickerView = UIPickerView()
-        pickerView.backgroundColor = .systemBackground
+        pickerView.backgroundColor = .systemGray6
         pickerView.translatesAutoresizingMaskIntoConstraints = false
         return pickerView
     }()
@@ -128,7 +128,8 @@ class SetProfileViewController: UIViewController {
 //        let titleButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
 //        titleButton.tintColor = .label
 //        cancelButton.tintColor = .systemGray
-        toolBar.backgroundColor = .systemBackground
+        toolBar.backgroundColor = .systemGray4
+        toolBar.layer.cornerRadius = 10
         doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
         toolBar.setItems([flexSpace, doneButton], animated: true)
         return toolBar
@@ -154,6 +155,7 @@ class SetProfileViewController: UIViewController {
         label.text = "Select photos"
         label.textColor = .placeholderText
         label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -201,6 +203,7 @@ class SetProfileViewController: UIViewController {
         configureNavigation()
         configureTableView()
         configurePickerVew()
+     
 //        mode = .edit
 //        guard let identifier = Locale.preferredLanguages.first else { return } // ko-KR
 //        let language = String(identifier.dropLast(3)) // ko
@@ -220,7 +223,6 @@ class SetProfileViewController: UIViewController {
             make.width.height.equalTo(110)
         }
         profileImageLabel.snp.makeConstraints { make in
-            make.width.equalTo(110)
             make.height.equalTo(20)
         }
         profileImageStackView.snp.makeConstraints { make in
@@ -233,12 +235,12 @@ class SetProfileViewController: UIViewController {
         }
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(0)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
             $0.width.height.equalTo(60)
         }
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
-
+    
     private func configureSuperView() {
         view.addSubview(infoTableView)
         view.addSubview(pendingView)
@@ -314,31 +316,12 @@ class SetProfileViewController: UIViewController {
             .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
                 switch response.result {
                 case .success:
-                    do {
-                        guard let value = response.value else { return }
-                        if value.httpCode == 200 {
-                            guard let data = value.data else { return }
-                            userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
-                            userItem.userName = data.name // 유저 이름
-                            try KeychainManager.updateUserItem(userItem: userItem)
-                            if self.mode == .create {
-                                print("생성 모드")
-                                let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
-                                DispatchQueue.main.async { [self] in
-                                    view.window?.rootViewController = rootVC
-                                    view.window?.makeKeyAndVisible()
-                                }
-                            } else if self.mode == .edit {
-                                print("편집 모드")
-                                self.delegate?.sendFetchedUserProfile(data: data)
-                                DispatchQueue.main.async { [self] in
-                                    // 프로토콜로 전달
-                                    navigationController?.popViewController(animated: true)
-                                }
-                            }
+                    if let value = response.value, value.httpCode == 200, let data = value.data, self.mode == .edit {
+                        DispatchQueue.main.async { [weak self] in
+                            // 프로토콜로 전달
+                            self?.delegate?.sendFetchedUserProfile(data: data)
+                            self?.navigationController?.popViewController(animated: true)
                         }
-                    } catch {
-                        print("Error - KeychainManager.update \(error.localizedDescription)")
                     }
                 case let .failure(error):
                     print("SetProfileVC - upload response result Not return", error)
@@ -365,8 +348,10 @@ class SetProfileViewController: UIViewController {
         case 4: userProfile.gender = userGender
         default: break
         }
-        infoTableView.reloadData()
-        self.view.endEditing(true)
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+            self.view.endEditing(true)
+        }
     }
     /*
     // MARK: - Navigation
@@ -399,12 +384,17 @@ extension SetProfileViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SetProfileTableViewCell.identifier, for: indexPath) as? SetProfileTableViewCell else { return UITableViewCell() }
         cell.commonTextField.tag = indexPath.section
         cell.commonTextField.delegate = self
+        
 //        cell.rightButton.removeTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
-        cell.selectionStyle = .gray
         switch indexPath.section {
             case 0:
+            if mode == .edit {
+                cell.commonTextField.textColor = .placeholderText
+                cell.selectionStyle = .none
+            }
             cell.configure(text: userProfile.userName, section: indexPath.section)
             case 1:
+            cell.selectionStyle = .none
             cell.configure(text: userProfile.userAge == nil ? nil : "\(userProfile.userAge!)", section: indexPath.section) // "International age"
             cell.commonTextField.inputView = agePickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
@@ -423,13 +413,16 @@ extension SetProfileViewController: UITableViewDataSource {
                         cell.subLabel.text = LanguageLevels(rawValue: (userProfile.languageLevels?[indexPath.row])!)?.toString()
                     }
                 }
-                cell.selectionStyle = .none
             } else {
                 cell.configure(text: nil, section: indexPath.section)
             }
             cell.rightButton.addTarget(self, action: #selector(self.deleteButtonTapped(_:)), for: .touchUpInside)
             cell.rightButton.tag = indexPath.row
             case 3:
+            if mode == .edit {
+                cell.commonTextField.textColor = .placeholderText
+                cell.selectionStyle = .none
+            }
             if let code = userProfile.nationality {
                 let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
                 let localeIdentifier = Locale.preferredLanguages.first ?? ""
@@ -450,16 +443,14 @@ extension SetProfileViewController: UITableViewDataSource {
             case 6:
             cell.configure(text: userProfile.aboutMe, section: indexPath.section) // "Select gender"
             case 7:
-            if let interests = userProfile.interests {
-                var text = ""
-                for interest in interests {
-                    text += "\(interest), "
+            var text = ""
+            if let hashTags = userProfile.interests {
+                for hashTag in hashTags {
+                    text += "\(hashTag), "
                 }
                 text.removeLast(2)
-                cell.configure(text: text, section: indexPath.section)
-            } else {
-                cell.configure(text: nil, section: indexPath.section)
             }
+            cell.configure(text: text, section: indexPath.section)
         default: fatalError("Out of Setup Profile table view section")
         }
         cell.layoutIfNeeded()
@@ -473,7 +464,9 @@ extension SetProfileViewController: UITableViewDataSource {
         print("Language of profile deleteButtonTapped")
         let deletedLanguage = userProfile.languageCodes?.remove(at: button.tag)
         let deletedLevel = userProfile.languageLevels?.remove(at: button.tag)
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
         print("deletedLangInfo \(deletedLanguage!) \(deletedLevel!)")
     }
     
@@ -523,15 +516,22 @@ extension SetProfileViewController: UITableViewDataSource {
 extension SetProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        guard let cell = tableView.cellForRow(at: indexPath) as? SetProfileTableViewCell else { return }
         tableView.deselectRow(at: indexPath, animated: true)
+//        if let cell = tableView.cellForRow(at: indexPath) {
+//            cell.backgroundColor = UIColor.blue
+//        }
+        
         print("Cell 선택")
         DispatchQueue.main.async(qos: .userInteractive) {
             switch indexPath.section {
             case 0:
-                let NVC = NameViewController()
-                NVC.delegate = self
-                NVC.userName = self.userProfile.userName
-                self.navigationController?.pushViewController(NVC, animated: true)
+                if self.mode == .create {
+                    let NVC = NameViewController()
+                    NVC.delegate = self
+                    NVC.userName = self.userProfile.userName
+                    self.navigationController?.pushViewController(NVC, animated: true)
+                }
             case 2:
                 if indexPath.row >= self.userProfile.languageCodes?.count ?? 0 {
                     let LVC = LanguagesViewController()
@@ -540,9 +540,11 @@ extension SetProfileViewController: UITableViewDelegate {
                     self.navigationController?.pushViewController(LVC, animated: true)
                 }
             case 3:
-                let NVC = NationalityViewController()
-                NVC.delegate = self
-                self.navigationController?.pushViewController(NVC, animated: true)
+                if self.mode == .create {
+                    let NVC = NationalityViewController()
+                    NVC.delegate = self
+                    self.navigationController?.pushViewController(NVC, animated: true)
+                }
             case 5:
                 let JVC = JobViewController()
                 JVC.delegate = self
@@ -583,6 +585,12 @@ extension SetProfileViewController: UITextFieldDelegate {
         guard let toolbar = textField.inputAccessoryView as? UIToolbar else { return }
         toolbar.items?[1].tag = textField.tag
     }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        switch textField.tag {
+        default: return false
+        }
+    }
 }
 
 extension SetProfileViewController: ImagesProtocol {
@@ -594,14 +602,18 @@ extension SetProfileViewController: ImagesProtocol {
 extension SetProfileViewController: JobProtocol {
     func jobSend(job: String) {
         userProfile.job = job
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
     }
 }
 
 extension SetProfileViewController: AboutMeProtocol {
     func aboutMeSend(aboutMe: String) {
         userProfile.aboutMe = aboutMe
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
     }
 }
 
@@ -613,14 +625,18 @@ extension SetProfileViewController: LanguageProtocol {
         userProfile.languageLevels = userProfile.languageLevels ?? []
         userProfile.languageCodes?.append(languageCode)
         userProfile.languageLevels?.append(level)
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
     }
 }
 
 extension SetProfileViewController: InterestsProtocol {
     func interestsSend(interests: [String]) {
         userProfile.interests = interests
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
     }
 }
 
@@ -669,14 +685,18 @@ extension SetProfileViewController: UIPickerViewDelegate {
 extension SetProfileViewController: NameProtocol {
     func nameSend(name: String) {
         userProfile.userName = name
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
     }
 }
 
 extension SetProfileViewController: NationalityProtocol {
     func nationalitySend(nationality: Country) {
         userProfile.nationality = nationality.countryCode // nationality.countryEmoji + " " + nationality.countryName
-        infoTableView.reloadData()
+        DispatchQueue.main.async {
+            self.infoTableView.reloadData()
+        }
     }
 }
 
@@ -689,6 +709,9 @@ extension SetProfileViewController {
 
     @objc private func dismissKeyboard() {
         print("tableView Tap")
-        infoTableView.endEditing(true)
+        DispatchQueue.main.async {
+            self.infoTableView.endEditing(true)
+        }
+        
     }
 }

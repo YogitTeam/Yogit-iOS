@@ -11,15 +11,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
+        
 //()
-//        let setUpVC = InterestsViewController() //MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
+//        let setUpVC = ServiceTapBarViewController() //GatheringBoardOptionViewController() //AboutMeViewController() //MKMapLocalSearchViewController() //InterestsViewController() //MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
 //        let rootVC = UINavigationController(rootViewController: setUpVC)
 //        rootVC.navigationBar.tintColor = UIColor.label
 //        rootVC.navigationBar.topItem?.backButtonTitle = ""
@@ -75,6 +75,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        guard let scene = (scene as? UIWindowScene) else { return }
+        
+        SessionManager.checkUserAuth { (AuthState) in
+            if AuthState == .deleteAccout { // 앱 foreground active 상태일때, 노티 날려서 회원 탈퇴 처리
+                print("AuthState == .deleteAccout")
+                DispatchQueue.main.async { [self] in
+                    let rootVC = UINavigationController(rootViewController: LoginViewController())
+                    window = UIWindow(windowScene: scene)
+                    window?.rootViewController = rootVC
+                    window?.makeKeyAndVisible()
+                    NotificationCenter.default.post(name: .revokeTokenRefresh, object: nil)
+                }
+            }
+        }
     }
 
     func sceneWillResignActive(_ scene: UIScene) {

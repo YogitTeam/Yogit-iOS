@@ -60,9 +60,9 @@ class LanguagesViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
 //        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "💬 Let global friends know\nwhat I can speak"
+        label.text = "Let global friends know what I can speak 🗣"
         label.numberOfLines = 0
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
         label.font = .systemFont(ofSize: 22, weight: .semibold)

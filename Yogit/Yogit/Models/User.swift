@@ -63,15 +63,17 @@ struct FetchUserProfile: Decodable {
     let name, nationality, profileImg, gender: String
     let userId: Int
     let userStatus: String?
+    let isBlockingUser: Int?
 
     enum CodingKeys: String, CodingKey {
         case aboutMe, age, city
         case gender, imageUrls, interests, job, languageLevels, languageCodes, latitude, longtitude, memberTemp, name, nationality, phone, profileImg
         case userId
         case userStatus
+        case isBlockingUser
     }
     
-    init(city: String?, aboutMe: String?, job: String?, phone: String?, age: Int, imageUrls: [String], interests: [String]?, languageLevels: [Int], languageCodes: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, gender: String, userId: Int, userStatus: String?) {
+    init(city: String?, aboutMe: String?, job: String?, phone: String?, age: Int, imageUrls: [String], interests: [String]?, languageLevels: [Int], languageCodes: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, gender: String, userId: Int, userStatus: String?, isBlockingUser: Int?) {
         self.city = city
         self.aboutMe = aboutMe
         self.job = job
@@ -90,5 +92,6 @@ struct FetchUserProfile: Decodable {
         self.gender = gender
         self.userId = userId
         self.userStatus = userStatus
+        self.isBlockingUser = isBlockingUser
     }
 }

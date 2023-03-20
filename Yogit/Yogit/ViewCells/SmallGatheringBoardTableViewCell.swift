@@ -451,7 +451,7 @@ class SmallGatheringBoardTableViewCell: UITableViewCell {
     
     func configure(with board: Board) {
         boardImageView.setImage(with: board.imageURL)
-        hostImageView.setImage(with: board.profileImgURL)
+        hostImageView.setImage(with: board.profileImgUrls.first ?? "")
         if board.boardID % 2 == 0 {
             titleLabel.text = "홍대 영어 회화 모임" // board.title
             tagsLabel.text = "영어 초보자 환영"

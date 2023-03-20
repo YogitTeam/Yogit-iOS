@@ -6,3 +6,6 @@
   
 */
 "Nationality" = "Nationality";
+"Gathering" = "Gathering";
+"gathering" = "gathering";
+"GATHERING_JOIN" = "%@ has joined a %@' gathering."; // 이름, 모임명

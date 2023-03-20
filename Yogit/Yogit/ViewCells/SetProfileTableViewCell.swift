@@ -34,6 +34,7 @@ class SetProfileTableViewCell: UITableViewCell {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tintColor = .clear
         textField.leftView = nil
+        textField.backgroundColor = .clear
 //        textField.layer.borderWidth = 1
 //        textField.layer.borderColor = UIColor.black.cgColor
         return textField
@@ -139,6 +140,7 @@ class SetProfileTableViewCell: UITableViewCell {
         self.commonTextField.inputAccessoryView = nil
         self.commonTextField.leftView = nil
         self.commonTextField.tintColor = .clear
+        self.commonTextField.textColor = .label
     }
     
     func prepareForReuseButton() {

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ProgressHUD
 
 //protocol NationalityProtocol {
 //    func nationalitySend(nationality: String)
@@ -33,6 +34,8 @@ class SettingProfileViewController: UIViewController {
         view.addSubview(settingTableView)
         settingTableView.dataSource = self
         settingTableView.delegate = self
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
     }
     
     override func viewDidLayoutSubviews() {
@@ -67,6 +70,17 @@ class SettingProfileViewController: UIViewController {
         }
     }
     
+    private func moveToLoginVC() {
+        let rootVC = UINavigationController(rootViewController: LoginViewController())
+        rootVC.navigationBar.tintColor = UIColor.label
+        rootVC.navigationBar.topItem?.backButtonTitle = ""
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = .systemBackground
+        rootVC.navigationBar.standardAppearance = navigationBarAppearance
+        view.window?.rootViewController = rootVC
+        view.window?.makeKeyAndVisible()
+    }
+    
     private func deleteAccount() {
 //        guard let userServiceType = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else {
 //            print("userServiceType - NULL")
@@ -74,8 +88,10 @@ class SettingProfileViewController: UIViewController {
 //        }
         
         // keychain 정보 삭제
+        // catch 확인
         guard let userItem = try? KeychainManager.getUserItem() else { return } // 인자 userServiceType
         let deleteApple = DeleteAppleAccountReq(identityToken: userItem.id_token, refreshToken: userItem.refresh_token, userId: userItem.userId)
+        ProgressHUD.show(interaction: false)
         AlamofireManager.shared.session
             .request(SessionRouter.deleteApple(parameters: deleteApple))
             .validate(statusCode: 200..<501)
@@ -83,21 +99,23 @@ class SettingProfileViewController: UIViewController {
                 switch response.result {
                 case .success:
                     guard let value = response.value else { return }
-                    if value.httpCode == 200 {
+                    if value.httpCode == 200 || value.httpCode == 201 {
 //                        guard let data = value.data else { return }
                         do {
                             try KeychainManager.deleteUserItem(userItem: userItem)
-                            let rootVC = UINavigationController(rootViewController: LoginViewController())
+//                            try KeychainManager.deleteUserItem()
+                            UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
+                            UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
                             DispatchQueue.main.async { [self] in
-                                view.window?.rootViewController = rootVC
-                                view.window?.makeKeyAndVisible()
+                                moveToLoginVC()
+                                ProgressHUD.dismiss()
                             }
                         } catch {
                             print("KeychainManager.deleteUserItem \(error.localizedDescription)")
                         }
                     }
                 case let .failure(error):
-                    print(error)
+                    print("Delete account decoding error", error)
                 }
             }
     }
@@ -111,7 +129,7 @@ class SettingProfileViewController: UIViewController {
 //            return
 //        }
         guard let userItem = try? KeychainManager.getUserItem() else { return } // 인자 userServiceType
-        
+        ProgressHUD.show(interaction: false)
         let logOut = LogOutAppleReq(refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
             .request(SessionRouter.logOut(parameters: logOut))
@@ -120,15 +138,14 @@ class SettingProfileViewController: UIViewController {
                 switch response.result {
                 case .success:
                     guard let value = response.value else { return }
-                    if value.httpCode == 200 {
+                    if value.httpCode == 200 || value.httpCode == 201 {
                         guard let data = value.data else { return }
                         do {
                             userItem.userStatus = data.userStatus
                             try KeychainManager.updateUserItem(userItem: userItem)
-                            let rootVC = UINavigationController(rootViewController: LoginViewController())
                             DispatchQueue.main.async { [self] in
-                                view.window?.rootViewController = rootVC
-                                view.window?.makeKeyAndVisible()
+                                moveToLoginVC()
+                                ProgressHUD.dismiss()
                             }
                         } catch {
                             print("KeychainManager.deleteUserItem \(error.localizedDescription)")
@@ -179,7 +196,7 @@ extension SettingProfileViewController: UITableViewDataSource {
 
 extension SettingProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
         case 0:
             logOutButtonTapped()

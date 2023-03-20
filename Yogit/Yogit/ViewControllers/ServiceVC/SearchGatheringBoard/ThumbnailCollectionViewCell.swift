@@ -218,7 +218,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     
     func configure(with board: Board) {
         boardImageView.setImage(with: board.imageURL)
-        hostImageView.setImage(with: board.profileImgURL)
+        hostImageView.setImage(with: board.profileImgUrls.first ?? "")
         titleLabel.text = board.title
         dateLabel.text = board.date.stringToDate()?.dateToStringUser()
         localityLabel.text = board.cityName

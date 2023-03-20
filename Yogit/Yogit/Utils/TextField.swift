@@ -38,7 +38,7 @@ extension UITextField {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: width, height: height))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = image
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
 //        imageView.translatesAutoresizingMaskIntoConstraints = false
 
         imageContainerView.addSubview(imageView)
