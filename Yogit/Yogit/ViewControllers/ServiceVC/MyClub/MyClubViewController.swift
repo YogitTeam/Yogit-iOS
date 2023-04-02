@@ -39,6 +39,7 @@ class MyClubViewController: UIViewController {
 //    private var searchPage = SmallGatheringPage()
 //    private var taskArray = [DispatchWorkItem]()
     private var isPaging: Bool = false
+    private var isLoading: Bool = false
     private let modular = 10
     private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
 //    private var createdBoards: [Board] = []
@@ -57,6 +58,7 @@ class MyClubViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
         collectionView.register(GatheringBoardThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier)
+        collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
 //        collectionView.layer.borderColor = UIColor.systemGray.cgColor
 //        collectionView.layer.borderWidth = 1
         collectionView.backgroundColor = .systemBackground
@@ -205,10 +207,13 @@ class MyClubViewController: UIViewController {
     }
     
     private func pagingMyBoards(type: String, firstPage: Bool) {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if firstPage {
             myBoardsCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
+        isLoading = false
+        let startTime = DispatchTime.now().uptimeNanoseconds
         let task = Task {
             do {
                 let getData = try await fetchGatheringMyBoards(type: type, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
@@ -240,6 +245,18 @@ class MyClubViewController: UIViewController {
             if firstPage {
                 myBoardsCollectionView.stopSkeletonAnimation()
                 myBoardsCollectionView.hideSkeleton(reloadDataAfter: false)
+            } else {
+                let endTime = DispatchTime.now().uptimeNanoseconds
+                let elapsedTime = endTime - startTime
+                if elapsedTime <= 300_000_000 {
+                    do {
+                        try await Task.sleep(nanoseconds: 300_000_000 - elapsedTime)
+                    } catch {
+                        print("sleep nanoseconds error \(error.localizedDescription)")
+                    }
+                }
+                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
             }
             isPaging = false
         }
@@ -350,6 +367,16 @@ extension MyClubViewController: SkeletonCollectionViewDelegate {
 }
 
 extension MyClubViewController: SkeletonCollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter && indexPath.section == 0 {
+            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoadingFooterView.identifier, for: indexPath) as? LoadingFooterView
+            // Customize the footer view as needed
+            return footerView!
+        }
+        return UICollectionReusableView()
+    }
+    
     func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {
         return GatheringBoardThumbnailCollectionViewCell.identifier
     }
@@ -360,11 +387,6 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        if collectionView.tag == 0 {
-//            return searchPage.boards.count
-//        } else {
-//            return createPage.boards.count
-//        }
         return gatheringBoards.count
     }
     
@@ -375,36 +397,21 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
             let data = gatheringBoards[indexPath.row]
             await cell.configure(with: data)
         })
-//        if collectionView.tag == 0 {
-//            Task(priority: .userInitiated, operation: {
-//                let data = searchPage.boards[indexPath.row]//searchBoards[indexPath.row]
-//                await cell.configure(with: data)
-//            })
-////            DispatchQueue.main.async(qos: .userInteractive, execute: {
-////                cell.configure(with: self.searchBoards[indexPath.row])
-////            })
-//        } else {
-//            Task(priority: .userInitiated, operation: {
-//                let data = createPage.boards[indexPath.row] //createdBoards[indexPath.row]
-//                await cell.configure(with: data)
-//            })
-////            DispatchQueue.main.async(qos: .userInteractive, execute: {
-////                cell.configure(with: self.createdBoards[indexPath.row])
-////            })
-//        }
         return cell
     }
 }
 
 extension MyClubViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    
-//        let size: CGFloat = imagesCollectionView.frame.size.width/2
-////        CGSize(width: size, height: size)
-//
-//        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
         print("Sizing collectionView")
         return CGSize(width: collectionView.frame.width/2-25, height: (collectionView.frame.width/2-25)*5/4)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if isLoading {
+            return CGSize(width: collectionView.bounds.width, height: 50)
+        }
+        return CGSize.zero
     }
 }
 
@@ -420,6 +427,9 @@ extension  MyClubViewController: UIScrollViewDelegate {
                 .height)) { // -500
                 print("하단 스크롤링")
                 isPaging = true
+                isLoading = true
+                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
                 pagingMyBoards(type: boardType, firstPage: false)
             }
         }

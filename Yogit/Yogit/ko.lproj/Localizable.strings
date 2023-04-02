@@ -5,7 +5,32 @@
   Created by Junseo Park on 2023/01/30.
   
 */
+
+// CONST
+"DONE" = "완료";
+"OK" = "확인";
+
 "Nationality" = "국적";
 "Gathering" = "모임";
 "gathering" = "모임";
-"GATHERING_JOIN" = "%@님이 %@' gathering에 참여하였습니다.";
+"CLIPBOARD_CHATTING_TITLE" = "클립보드 알림";
+"CLIPBOARD_CHATTING_BODY" = "%@님이 %@ clipboard에 채팅을 남겼습니다.";
+"GATHERING_JOIN_TITLE" = "모임 신청 알림";
+"GATHERING_JOIN_BODY" = "%@님이 %@' gathering에 참여하였습니다."; // 이름, 모임명
+
+// ReportViewController
+"OBSCENITY" = "음란/성인";
+"FALSE_PROFILE" = "거짓 프로필";
+"RACIST_REMARKS" = "인종차별 발언";
+"ABUSIVE_LANGUAGE_AND_SLANDE" = "욕설 및 비방";
+"OTHERS" = "기타";
+
+"REPORT_CONTENT_PLACEHOLDER" = "간단하게 신고 내용을 작성해주세요.";
+"REPORT_NOTE_TITLE" = "주의사항";
+"REPORT_NOTE_SUBTITLE" = "이미지, 내용 등이 유해한 정보일 경우 신고해 주세요. 신고한 정보는 Yogit팀에 전달됩니다.";
+"REPORT_TYPE_KIND_TITLE" = "신고 사항";
+"REPORT_CONTENT_TITLE" = "신고 내용";
+
+"REPORT" = "Report";
+
+"REPORT_CONTENT_ALERT" = "간단하게 신고 내용을 작성해주세요.";

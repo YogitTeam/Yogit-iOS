@@ -50,6 +50,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        isSkeletonable = true
         contentView.addSubview(imageView)
         contentView.addSubview(imageSequenceLabel)
         contentView.addSubview(mainImageLabel)

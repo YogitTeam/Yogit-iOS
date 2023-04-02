@@ -80,7 +80,7 @@ class GatheringBoardCategoryViewController: UIViewController {
     
 //    var images: [UIImage] = []
     
-    private let step = 1.0
+    private let step: Float = 1.0
     private let categoryText = ["Daily Spot", "Traditional Culture", "Nature", "Language exchange"]
     private let categoryDescription = ["example, example, example", "example, example, example", "example, example, example", "example, example, example"]
     
@@ -97,9 +97,8 @@ class GatheringBoardCategoryViewController: UIViewController {
     private lazy var nextButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.setTitle("Next", for: .normal)
+        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.tintColor = .white
-        button.layer.cornerRadius = 8
         button.isEnabled = false
         button.backgroundColor = .placeholderText
         button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
@@ -122,17 +121,19 @@ class GatheringBoardCategoryViewController: UIViewController {
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.right.equalToSuperview()
-            make.height.equalTo(40)
+            make.height.equalTo(70)
         }
         categoryTableView.snp.makeConstraints { make in
             make.top.equalTo(stepHeaderView.snp.bottom).offset(0)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().inset(120)
         }
-        nextButton.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.snp.bottom).inset(30)
-            make.height.equalTo(50)
+        nextButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.width.height.equalTo(60)
         }
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
     
     private func configureViewComponent() {
@@ -182,7 +183,8 @@ class GatheringBoardCategoryViewController: UIViewController {
             print("board Create Mode")
             return
         }
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = boardWithMode.boardId else {
             print("getBoardDetail - boardId is nil")
             return
@@ -377,9 +379,9 @@ class GatheringBoardCategoryViewController: UIViewController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: GatheringBoardCategoryTableViewCell.identifier, for: indexPath) as? GatheringBoardCategoryTableViewCell else { return UITableViewCell() }
         if let categoryString = CategoryId(rawValue: indexPath.row + 1)?.toString() {
             cell.categoryImageView.image = UIImage(named: categoryString)?.withRenderingMode(.alwaysTemplate)
+            cell.categoryTitleLabel.text = categoryString
+            cell.categoryDescriptionLabel.text = "Test" //categoryDescription[indexPath.row]
         }
-        cell.categoryTitleLabel.text = "Test"//categoryText[indexPath.row]
-        cell.categoryDescriptionLabel.text = "Test" //categoryDescription[indexPath.row]
         cell.categoryContentView.tag = indexPath.row
         cell.categoryContentView.removeGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.categoryContentViewTapped(sender:))))
         cell.categoryContentView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.categoryContentViewTapped(sender:))))

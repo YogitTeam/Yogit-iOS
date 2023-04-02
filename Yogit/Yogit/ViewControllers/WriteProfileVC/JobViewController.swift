@@ -18,7 +18,7 @@ class JobViewController: UIViewController {
     var mode: Mode = .create  {
         didSet {
             if mode == .edit {
-                rightButton.isHidden = false
+//                rightButton.isHidden = false
                 nextButton.isHidden = true
             }
         }
@@ -45,16 +45,22 @@ class JobViewController: UIViewController {
     }()
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let buttonTitle: String
+        if mode == .create {
+            buttonTitle = "Skip"
+        } else {
+            buttonTitle = "Done"
+        }
+        let button = UIBarButtonItem(title: buttonTitle, style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.isHidden = true
+//        button.isHidden = true
         return button
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Let global friends know what I do 📌"
+        label.text = "💼 Let global friends know what I do"
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
@@ -94,8 +100,13 @@ class JobViewController: UIViewController {
          jobTextField,
          textCountLabel,
         nextButton].forEach { view.addSubview($0) }
-        configureViewComponent()
         jobTextField.delegate = self
+        view.backgroundColor = .systemBackground
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureNav()
     }
     
     override func viewDidLayoutSubviews() {
@@ -125,27 +136,44 @@ class JobViewController: UIViewController {
         self.view.endEditing(true)
     }
     
-    private func configureViewComponent() {
+    private func configureNav() {
         self.navigationItem.title = "What I do"
-        self.view.backgroundColor = .systemBackground
+        self.navigationItem.backButtonTitle = "" // remove back button title
         self.navigationItem.rightBarButtonItem = rightButton
     }
     
-    @objc private func rightButtonPressed(_ sender: Any) {
-        delegate?.jobSend(job: jobTextField.text ?? "")
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
-            self.navigationController?.popViewController(animated: true)
-        })
-    }
-    
-    @objc func nextButtonTapped(_ sender: UIButton) {
-        userProfile.job = jobTextField.text
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
+    private func moveToAMVC() {
+        DispatchQueue.main.async(qos: .userInteractive) {
             let AMVC = AboutMeViewController()
             AMVC.mode = self.mode
             AMVC.userProfile = self.userProfile
             self.navigationController?.pushViewController(AMVC, animated: true)
-        })
+        }
+    }
+    
+    @objc private func rightButtonPressed(_ sender: Any) {
+        if mode == .create {
+            moveToAMVC()
+        } else {
+            delegate?.jobSend(job: jobTextField.text ?? "")
+            DispatchQueue.main.async(qos: .userInteractive) {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+    
+    @objc func nextButtonTapped(_ sender: UIButton) {
+        if jobTextField.text == "" || jobTextField.text == nil {
+            let alert = UIAlertController(title: "", message: "Please enter what you do", preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(okAction)
+            DispatchQueue.main.async {
+                self.present(alert, animated: false, completion: nil)
+            }
+        } else {
+            userProfile.job = jobTextField.text
+            moveToAMVC()
+        }
     }
 }
 

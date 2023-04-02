@@ -155,8 +155,8 @@ class User: Codable {
 
 class UserItem: Codable {
     let account: Account
-    let access_token: String?
-    let expires_in: Int64?
+    let access_token: String
+    let expires_in: Int64
     let id_token: String?
     let refresh_token: String
     let token_type: String?
@@ -164,9 +164,8 @@ class UserItem: Codable {
     let userId: Int64
     var userName: String?
     var userStatus: String?
-    var networkFailFlag: Bool?
     
-    init(account: Account, access_token: String?, expires_in: Int64?, id_token: String?, refresh_token: String, token_type: String?, userType: String, userId: Int64, userName: String?, userStatus: String?, networkFailFalg: Bool?) {
+    init(account: Account, access_token: String, expires_in: Int64, id_token: String?, refresh_token: String, token_type: String?, userType: String, userId: Int64, userName: String?, userStatus: String?) {
         self.account = account
         self.access_token = access_token
         self.expires_in = expires_in
@@ -177,7 +176,6 @@ class UserItem: Codable {
         self.userId = userId
         self.userName = userName
         self.userStatus = userStatus
-        self.networkFailFlag = networkFailFalg
     }
 }
 

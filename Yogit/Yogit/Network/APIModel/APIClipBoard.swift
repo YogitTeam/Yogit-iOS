@@ -34,7 +34,7 @@ class GetAllClipBoardsRes: Decodable {
     let status, updatedAt: String
     let title: String?
     let userID: Int64
-    let userName: String
+    let userName: String?
 
     enum CodingKeys: String, CodingKey {
         case boardID = "boardId"
@@ -46,7 +46,7 @@ class GetAllClipBoardsRes: Decodable {
         case userName
     }
     
-    init(boardID: Int64, clipBoardID: Int64, commentCnt: Int, createdAt: String, profileImgURL: String, commentResList: [String], content: String, status: String, updatedAt: String, title: String?, userID: Int64, userName: String) {
+    init(boardID: Int64, clipBoardID: Int64, commentCnt: Int, createdAt: String, profileImgURL: String, commentResList: [String], content: String, status: String, updatedAt: String, title: String?, userID: Int64, userName: String?) {
         self.boardID = boardID
         self.clipBoardID = clipBoardID
         self.commentCnt = commentCnt

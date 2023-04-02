@@ -207,8 +207,9 @@ class  MainViewController: UIViewController {
     private var pageCursor = 0
     private var pageListCnt = 0
     private var isPaging: Bool = false
+    private var isLoading: Bool = false
     private let modular = 10
-    private var tasks = [Task<(), Never>]()
+    private var tasks = [Task<(), Error>]()
     private var categoryId: Int = 1
     private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
 //    private let taskGroup: Task//TaskGroup<Int, Error>()
@@ -281,6 +282,7 @@ class  MainViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(GatheringBoardThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier)
+        collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
         collectionView.backgroundColor = .systemBackground
         collectionView.showsVerticalScrollIndicator = true
         collectionView.isSkeletonable = true
@@ -304,7 +306,6 @@ class  MainViewController: UIViewController {
 //        collectionView.layer.borderWidth = 0.3
 //        collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.isSkeletonable = true
 //        collectionView.isHidden = true
 //        collectionView.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 100)// CGRect(origin: .zero, size: CGSize(width: view.frame.size.width, height: 100))
         return collectionView
@@ -505,10 +506,12 @@ class  MainViewController: UIViewController {
     // category 1부터 시작
     
     private func pagingBoardsByCategory(categoryId: Int, firstPage: Bool) {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if firstPage {
             gatheringBoardCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
+        isLoading = false
+        let startTime = DispatchTime.now().uptimeNanoseconds
         let task = Task {
             do {
                 let getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
@@ -540,6 +543,14 @@ class  MainViewController: UIViewController {
             if firstPage {
                 gatheringBoardCollectionView.stopSkeletonAnimation()
                 gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
+            } else {
+                let endTime = DispatchTime.now().uptimeNanoseconds
+                let elapsedTime = endTime - startTime
+                if elapsedTime <= 300_000_000 {
+                    try await Task.sleep(nanoseconds: 300_000_000 - elapsedTime)
+                }
+                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
             }
             isPaging = false
         }
@@ -688,16 +699,10 @@ extension  MainViewController: UIScrollViewDelegate {
                 print("하단 스크롤링")
                 print("😀Upload for up scroling", categoryId)
                 isPaging = true
-//                tasks.append(Task {
-//                    pagingBoardsByCategory(categoryId: categoryId)
-//                })
-                
+                isLoading = true
+                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
                 pagingBoardsByCategory(categoryId: categoryId, firstPage: false)
-//                pagingBoardsByCategory(categoryId: categoryId)
-//                workItem = DispatchWorkItem { [weak self] in
-//                    self?.pagingBoardsByCategory(categoryId: self?.categoryId ?? 1)
-//                }
-//                queue.async(execute: workItem!)
                 print("End Bottom Load")
             }
         }
@@ -759,14 +764,24 @@ extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionVie
     }
 }
 
-extension  MainViewController: SkeletonCollectionViewDataSource {
+extension MainViewController: SkeletonCollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if collectionView == gatheringBoardCollectionView && kind == UICollectionView.elementKindSectionFooter && indexPath.section == 0 {
+            let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoadingFooterView.identifier, for: indexPath) as? LoadingFooterView
+            // Customize the footer view as needed
+            return footerView!
+        }
+        return UICollectionReusableView()
+//        fatalError("Unexpected element kind or section")
+    }
+    
     func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {
         return GatheringBoardThumbnailCollectionViewCell.identifier
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       // 아래의 코드로 컬렉션뷰를 다 채울 수 있다.
-       return UICollectionView.automaticNumberOfSkeletonItems
+        return UICollectionView.automaticNumberOfSkeletonItems
     }
     
     //UICollectionViewDataSource
@@ -796,21 +811,22 @@ extension  MainViewController: SkeletonCollectionViewDataSource {
     }
 }
 
-extension  MainViewController: UICollectionViewDelegateFlowLayout {
+extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-////        let size: CGFloat = imagesCollectionView.frame.size.width/2
-//////        CGSize(width: size, height: size)
-////
-////        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
-//        print("Sizing collectionView")
         if collectionView == categoryImageViewCollectionView {
             return CGSize(width: 54, height: 54)
         } else {
             return CGSize(width: collectionView.frame.width/2-25, height: (collectionView.frame.width/2-25)*5/4)
         }
-//       let layoutAttributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
-//       let size = CategoryImageViewCollectionViewCell().preferredLayoutAttributesFitting(layoutAttributes).frame.size
-//       return size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if collectionView == gatheringBoardCollectionView {
+            if isLoading {
+                return CGSize(width: collectionView.bounds.width, height: 50)
+            }
+        }
+        return CGSize.zero
     }
 }
 

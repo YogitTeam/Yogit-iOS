@@ -7,6 +7,7 @@
 
 import UIKit
 import ProgressHUD
+import MessageUI
 
 //protocol NationalityProtocol {
 //    func nationalitySend(nationality: String)
@@ -15,16 +16,10 @@ import ProgressHUD
 class SettingProfileViewController: UIViewController {
     // MARK: - TableView
     // 이미지도 같이
-    let settings: [String] = ["LogOut", "Delete account"]
+    private let settings: [String] = ["Logout", "Delete account", "Customer service center"]
     
-//    var delegate: NationalityProtocol?
-    
-    // closure parttern
-    // () parameter
     private let settingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        // register new cell
-        // self: reference the type object
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
@@ -45,7 +40,7 @@ class SettingProfileViewController: UIViewController {
     }
 
     private func logOutButtonTapped() {
-        let alert = UIAlertController(title: "Log Out", message: "Are you sure want to log out?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Logout", message: "Are you sure want to log out?", preferredStyle: .alert)
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
             self.logOut()
@@ -82,14 +77,9 @@ class SettingProfileViewController: UIViewController {
     }
     
     private func deleteAccount() {
-//        guard let userServiceType = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else {
-//            print("userServiceType - NULL")
-//            return
-//        }
-        
         // keychain 정보 삭제
         // catch 확인
-        guard let userItem = try? KeychainManager.getUserItem() else { return } // 인자 userServiceType
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let deleteApple = DeleteAppleAccountReq(identityToken: userItem.id_token, refreshToken: userItem.refresh_token, userId: userItem.userId)
         ProgressHUD.show(interaction: false)
         AlamofireManager.shared.session
@@ -106,7 +96,8 @@ class SettingProfileViewController: UIViewController {
 //                            try KeychainManager.deleteUserItem()
                             UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
                             UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
-                            DispatchQueue.main.async { [self] in
+                            // 애플 회원탈퇴후 회원가입시 바로 안됨
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
                                 moveToLoginVC()
                                 ProgressHUD.dismiss()
                             }
@@ -124,11 +115,7 @@ class SettingProfileViewController: UIViewController {
     // userStatus로 화면 이동, 유저 디폴트 현재 servicetype 삭제
     
     private func logOut() {
-//        guard let userServiceType = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else {
-//            print("userServiceType - NULL")
-//            return
-//        }
-        guard let userItem = try? KeychainManager.getUserItem() else { return } // 인자 userServiceType
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         ProgressHUD.show(interaction: false)
         let logOut = LogOutAppleReq(refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
@@ -137,9 +124,7 @@ class SettingProfileViewController: UIViewController {
             .responseDecodable(of: APIResponse<LogOutAppleRes>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 || value.httpCode == 201 {
-                        guard let data = value.data else { return }
+                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
                         do {
                             userItem.userStatus = data.userStatus
                             try KeychainManager.updateUserItem(userItem: userItem)
@@ -157,28 +142,18 @@ class SettingProfileViewController: UIViewController {
             }
     }
     
-    
     // MARK: - Table view data source object
     
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        // Configure content
-        // Similar View - ViewModel arhitecture
         var content = cell.defaultContentConfiguration()
         content.text = settings[indexPath.row]
         switch indexPath.row {
-        case 0, 1:
-            content.textProperties.color = .systemRed
-        default:
-            content.textProperties.color = .label
+        case 0, 1: content.textProperties.color = .systemRed
+        default: content.textProperties.color = .label
         }
-//        content.image = UIImage(systemName: "bell")
-
-        // Customize appearence
         cell.contentConfiguration = content
-        
-    
         return cell
     }
 }
@@ -198,15 +173,38 @@ extension SettingProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         switch indexPath.row {
-        case 0:
-            logOutButtonTapped()
-        case 1:
-            deleteButtonTapped()
-        default:
-            break
+        case 0: logOutButtonTapped()
+        case 1: deleteButtonTapped()
+        case 2: openEmail()
+        default: break
         }
-//        delegate?.nationalitySend(nationality: settings[indexPath.row])
-//        self.navigationController?.popViewController(animated: true)
     }
 }
 
+extension SettingProfileViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        self.dismiss(animated: true, completion: nil)
+    }
+
+    private func openEmail() {
+        if MFMailComposeViewController.canSendMail() {
+            let compseVC = MFMailComposeViewController()
+            compseVC.mailComposeDelegate = self
+            
+            DispatchQueue.main.async(qos: .userInteractive) {
+                compseVC.setToRecipients(["yogit.service@gmail.com"])
+                compseVC.setSubject("Customer inquiry")
+                compseVC.setMessageBody("Customer Inquiry Content", isHTML: false)
+                self.present(compseVC, animated: true, completion: nil)
+            }
+        }
+        else {
+            let alert = UIAlertController(title: "Mail transfer failed", message: "Please check your iPhone email settings and try again.", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(ok)
+            DispatchQueue.main.async(qos: .userInteractive) {
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
+    }
+}

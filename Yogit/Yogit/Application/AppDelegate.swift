@@ -22,11 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.enable = true
         IQKeyboardManager.shared.enableAutoToolbar = false
        
-//        UIApplication.shared.statusBarView?.backgroundColor = UIColor.red
 
         UITabBar.appearance().tintColor = ServiceColor.primaryColor
         UITabBar.appearance().backgroundColor = .systemBackground
-//        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -1000, vertical: 0), for: .default)
+        
+        // 시맨틱 콘텐츠 속성을 설정하여 UIView앱 내에 표시되는 모든 콘텐츠가 사용자의 기본 설정 언어 설정에 따라 올바른 방향으로 배치
+//        UIView.appearance().semanticContentAttribute = UIApplication.shared
+//               .userInterfaceLayoutDirection == .rightToLeft ? .forceRightToLeft : .forceLeftToRight
+//
+//
 //        UNUserNotificationCenter.current().delegate = self
 //        
 //        registerForPushNotifications()
@@ -48,7 +52,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func sendDeviceToken(deviceToken: String) {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let sendDeviceTokenReq = SendDeviceTokenReq(deviceToken: deviceToken, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
             .request(PushNotificationRouter.sendDeviceToken(parameters: sendDeviceTokenReq))
@@ -56,9 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .responseDecodable(of: APIResponse<SendDeviceTokenRes>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 {
-                        guard let data = value.data else { return }
+                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
                         let deviceToken = data.deviceToken
                         UserDefaults.standard.set(deviceToken, forKey: Preferences.PUSH_NOTIFICATION)
                         print("UserDefaults Preferences.PUSH_NOTIFICATION",UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION))

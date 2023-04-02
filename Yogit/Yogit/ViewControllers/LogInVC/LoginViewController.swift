@@ -59,7 +59,8 @@ class LoginViewController: UIViewController {
     
     @objc private func revokeTokenRefreshNotification(_ notification: Notification) {
         print("LoginVC - revokeTokenRefreshNotification")
-        guard let userItem = try? KeychainManager.getUserItem() else { return } // 인자 userServiceType
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         ProgressHUD.show(interaction: false)
         let deleteApple = DeleteAppleAccountReq(identityToken: userItem.id_token, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
@@ -161,8 +162,10 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         // 애플 사용자 중단
         
         ProgressHUD.show(interaction: false)
-        // 로그 아웃시 처리 (이미 키체인에 저장되어있는경우)
-        if let userItem = try? KeychainManager.getUserItem() { // SignInManager.service.
+    
+//
+        // 로그 아웃시 처리 (이미 키체인에 저장되어있고 서비스 타입은 삭제되어있는 경우)
+        if let userItem = try? KeychainManager.getUserItem(serviceType: SessionManager.Service.APPLE_SIGNIN) { // SignInManager.service.
             // 로그인 api 요청후, 키체인 userstatus 업데이트 후 루트뷰 service화면으로 변경
             let logInApple = LogInAppleReq(refreshToken: userItem.refresh_token, servicesResponse: userItem.account)
             AlamofireManager.shared.session
@@ -171,15 +174,21 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 .responseDecodable(of: APIResponse<UserItem>.self) { response in
                     switch response.result {
                     case .success:
-                        guard let value = response.value else { return }
-                        if value.httpCode == 200 || value.httpCode == 201 {
-                            guard let data = value.data else { return }
+                        if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
                             do {
                                 // userStatus 정보 업데이트 (LOGIN)
                                 // status만 업데이트
-                                try KeychainManager.updateUserItem(userItem: data)
+                                userItem.userStatus = data.userStatus
+                                try KeychainManager.updateUserItem(userItem: userItem)
+                                
+                                let moveToVC: UIViewController
+                                if userItem.account.hasRequirementInfo {
+                                    moveToVC = ServiceTapBarViewController()
+                                } else {
+                                    moveToVC = SetProfileViewController()
+                                }
                                 DispatchQueue.main.async { [self] in
-                                    let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
+                                    let rootVC = UINavigationController(rootViewController: moveToVC)
                                     view.window?.rootViewController = rootVC
                                     view.window?.makeKeyAndVisible()
                                     ProgressHUD.dismiss()
@@ -273,13 +282,22 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                     } catch {
                                         print("KeychainManager deleteUser error \(error.localizedDescription)")
                                     }
+                                    
                                     try KeychainManager.saveUserItem(userItem: data)
                                     print("키체인에 저장한 userItem", data)
-                                    DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-                                        let SPVC = SetProfileViewController()
-                                        navigationController?.pushViewController(SPVC, animated: true)
+//                                    DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+//                                        let SPVC = SetProfileViewController()
+//                                        navigationController?.pushViewController(SPVC, animated: true)
+//                                        ProgressHUD.dismiss()
+//                                    })
+                                    
+                                    // 루트뷰 바꿔버림
+                                    DispatchQueue.main.async { [self] in
+                                        let rootVC = UINavigationController(rootViewController: SetProfileViewController())
+                                        view.window?.rootViewController = rootVC
+                                        view.window?.makeKeyAndVisible()
                                         ProgressHUD.dismiss()
-                                    })
+                                    }
                                 } catch {
                                     print("KeychainManager saveUserItem error \(error.localizedDescription)")
                                 }

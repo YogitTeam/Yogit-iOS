@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SkeletonView
 
 class MemberImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "MemberImagesCollectionViewCell"
@@ -16,12 +17,14 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
 //        imageView.backgroundColor = .placeholderText
 //        imageView.tintColor = .systemGray.withAlphaComponent(0.5) // image color
         imageView.contentMode = .scaleAspectFill
+        imageView.isSkeletonable = true
 //        imageView.layer.cornerRadius = 6
         return imageView
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        isSkeletonable = true
         contentView.addSubview(imageView)
     }
     
@@ -42,6 +45,10 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
     }
 
     func configure(imageString: String) {
-        imageView.setImage(with: imageString)
+        if imageString.contains("null") {
+            imageView.image = UIImage(named: "profileImageNULL")
+        } else {
+            imageView.setImage(with: imageString)
+        }
     }
 }

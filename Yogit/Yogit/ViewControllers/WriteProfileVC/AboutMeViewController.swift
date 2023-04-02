@@ -16,7 +16,7 @@ class AboutMeViewController: UIViewController {
     var mode: Mode = .create {
         didSet {
             if mode == .edit {
-                rightButton.isHidden = false
+//                rightButton.isHidden = false
                 nextButton.isHidden = true
             }
         }
@@ -47,16 +47,22 @@ class AboutMeViewController: UIViewController {
     }()
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let buttonTitle: String
+        if mode == .create {
+            buttonTitle = "Skip"
+        } else {
+            buttonTitle = "Done"
+        }
+        let button = UIBarButtonItem(title: buttonTitle, style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.isHidden = true
+//        button.isHidden = true
         return button
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Let global friends know who you are 👋"
+        label.text = "👋 Let global friends know who you are"
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
@@ -71,9 +77,14 @@ class AboutMeViewController: UIViewController {
          aboutMeTextView,
         nextButton].forEach { view.addSubview($0) }
         aboutMeTextView.myTextView.delegate = self
-        configureViewComponent()
+        view.backgroundColor = .systemBackground
         configureTextView()
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureNav()
     }
     
     override func viewDidLayoutSubviews() {
@@ -99,9 +110,9 @@ class AboutMeViewController: UIViewController {
         self.view.endEditing(true)
     }
     
-    private func configureViewComponent() {
+    private func configureNav() {
         self.navigationItem.title = "About Me"
-        self.view.backgroundColor = .systemBackground
+        self.navigationItem.backButtonTitle = "" // remove back button title
         self.navigationItem.rightBarButtonItem = rightButton
     }
     
@@ -114,24 +125,40 @@ class AboutMeViewController: UIViewController {
         }
     }
     
-    @objc private func rightButtonPressed(_ sender: Any) {
-        if aboutMeTextView.myTextView.text != placeholder {
-            delegate?.aboutMeSend(aboutMe: aboutMeTextView.myTextView.text)
-        }
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
-            self.navigationController?.popViewController(animated: true)
-        })
-    }
-    
-    @objc private func nextButtonTapped(_ sender: UIButton) {
-        if aboutMeTextView.myTextView.text != placeholder {
-            userProfile.aboutMe = aboutMeTextView.myTextView.text
-        }
+    private func moveToIVC() {
         DispatchQueue.main.async(qos: .userInteractive) {
             let IVC = InterestsViewController()
             IVC.mode = self.mode
             IVC.userProfile = self.userProfile
             self.navigationController?.pushViewController(IVC, animated: true)
+        }
+    }
+    
+    @objc private func rightButtonPressed(_ sender: Any) {
+        if mode == .create {
+            moveToIVC()
+        } else {
+            if aboutMeTextView.myTextView.text != placeholder {
+                delegate?.aboutMeSend(aboutMe: aboutMeTextView.myTextView.text)
+            }
+            DispatchQueue.main.async(qos: .userInteractive, execute: {
+                self.navigationController?.popViewController(animated: true)
+            })
+        }
+    }
+    
+    @objc private func nextButtonTapped(_ sender: UIButton) {
+        
+        if aboutMeTextView.myTextView.text == placeholder || aboutMeTextView.myTextView.text == nil || aboutMeTextView.myTextView.text == "" {
+            let alert = UIAlertController(title: "", message: "Please enter the AboutMe", preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(okAction)
+            DispatchQueue.main.async {
+                self.present(alert, animated: false, completion: nil)
+            }
+        } else {
+            userProfile.aboutMe = aboutMeTextView.myTextView.text
+            moveToIVC()
         }
     }
 

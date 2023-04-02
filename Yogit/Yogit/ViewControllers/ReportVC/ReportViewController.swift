@@ -18,11 +18,11 @@ enum ReportType: Int, CaseIterable {
     
     func title() -> String {
         switch self {
-        case .obscenity: return "Obscenity"
-        case .falseProfile: return "False profile"
-        case .racistRemarks: return "Racist remarks"
-        case .abusiveLanguageAndSlander: return "Abusive language and slande"
-        case .others: return "Others"
+        case .obscenity: return "OBSCENITY".localized()
+        case .falseProfile: return "FALSE_PROFILE".localized()
+        case .racistRemarks: return "RACIST_REMARKS".localized()
+        case .abusiveLanguageAndSlander: return "ABUSIVE_LANGUAGE_AND_SLANDE".localized()
+        case .others: return "OTHERS".localized()
         }
     }
 }
@@ -48,21 +48,18 @@ class ReportViewController: UIViewController {
     var reportedBoardId: Int64? // 모임 보도
     var reportKind: ReportKind? // 신고 종류
     var reportContentString: String? // text content
-    var reportTypeIdx: Int? {
-        didSet {
-            print("reportTypeIdx", reportTypeIdx)
-        }
-    }
+    var reportTypeIdx: Int?
+    
     private var selectedButton: UIButton? {
         didSet {
-            selectedButton?.backgroundColor = .red
+            selectedButton?.tintColor = .systemRed
         }
     }
     
     private let reportContentTextView = MyTextView()
     
     private let textMax = 300
-    private let placeholder = "Please fill out a brief report."
+    private let placeholder = "REPORT_CONTENT_PLACEHOLDER".localized()
     
     private let lineView1: UIView = {
        let view = UIView()
@@ -87,20 +84,20 @@ class ReportViewController: UIViewController {
         label.sizeToFit()
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
-        label.text = "Note!"
+        label.text = "REPORT_NOTE_TITLE".localized()
         return label
     }()
     
     private let precautionsContentLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .systemRed //.white
+        label.textColor = .systemRed
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 15, weight: .medium)
         label.sizeToFit()
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
-        label.text = "Please report images, contents or hashtags that are harmful to other users. The report will be sent to the yogit team for review."
+        label.text = "REPORT_NOTE_SUBTITLE".localized()
         return label
     }()
     
@@ -114,38 +111,36 @@ class ReportViewController: UIViewController {
     private let reportTypeLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textColor = .systemRed //.white
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.sizeToFit()
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
-        label.text = "Report kind"
+        label.text = "REPORT_TYPE_KIND_TITLE".localized()
         return label
     }()
     
     private let reportReasonLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textColor = .systemRed //.white
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         label.sizeToFit()
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
-        label.text = "Report reason"
+        label.text = "REPORT_CONTENT_TITLE".localized()
         return label
     }()
     
     private lazy var leftButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(leftButtonPressed(_:)))
+        let button = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(leftButtonPressed(_:)))
         button.tintColor = .label
         return button
     }()
     
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor = .label
         return button
     }()
@@ -153,9 +148,7 @@ class ReportViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewComponent()
-        DispatchQueue.main.async(qos: .userInitiated, execute: {
-            self.configureReportTypeView()
-        })
+        configureReportTypeView()
         configureNavItem()
         configureTextView()
     }
@@ -174,14 +167,14 @@ class ReportViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            lineView1.topAnchor.constraint(equalTo: precautionsContentLabel.bottomAnchor, constant: 10),
+            lineView1.topAnchor.constraint(equalTo: precautionsContentLabel.bottomAnchor, constant: 30),
             lineView1.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             lineView1.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            lineView1.heightAnchor.constraint(equalToConstant: 0.5)
+            lineView1.heightAnchor.constraint(equalToConstant: 1)
         ])
         
         NSLayoutConstraint.activate([
-            reportTypeLabel.topAnchor.constraint(equalTo: precautionsContentLabel.bottomAnchor, constant: 20),
+            reportTypeLabel.topAnchor.constraint(equalTo: lineView1.bottomAnchor, constant: 20),
             reportTypeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             reportTypeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
@@ -194,14 +187,14 @@ class ReportViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            lineView2.topAnchor.constraint(equalTo: reportTypeContentView.bottomAnchor, constant: 10),
+            lineView2.topAnchor.constraint(equalTo: reportTypeContentView.bottomAnchor, constant: 0),
             lineView2.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             lineView2.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            lineView2.heightAnchor.constraint(equalToConstant: 0.5)
+            lineView2.heightAnchor.constraint(equalToConstant: 1)
         ])
         
         NSLayoutConstraint.activate([
-            reportReasonLabel.topAnchor.constraint(equalTo: reportTypeContentView.bottomAnchor, constant: 20),
+            reportReasonLabel.topAnchor.constraint(equalTo: lineView2.bottomAnchor, constant: 20),
             reportReasonLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             reportReasonLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
@@ -232,7 +225,7 @@ class ReportViewController: UIViewController {
     }
     
     private func configureNavItem() {
-        self.navigationItem.title = "Report"
+        self.navigationItem.title = "REPORT".localized()
         self.navigationItem.leftBarButtonItem = leftButton
         self.navigationItem.rightBarButtonItem = rightButton
     }
@@ -260,15 +253,10 @@ class ReportViewController: UIViewController {
     
     @objc private func rightButtonPressed(_ sender: UIButton) {
         // 클립보드일경우 텍스트뷰 없음
-        //
-        print("reportContentString", reportContentString)
-        print("reportType", reportTypeIdx)
-        print("reportType", reportTypeIdx)
-        print("reportedUserId", reportedUserId)
-        print("reportedBoardId", reportedBoardId)
         if (reportContentTextView.myTextView.text != placeholder && reportContentTextView.myTextView.text != "") || reportKind == .clipboardReport {
             print("첫")
-            guard let userItem = try? KeychainManager.getUserItem() else { return }
+            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+            guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
             guard let content = reportContentString else { return }
             guard let reportType = reportTypeIdx else { return }
             guard let reportedUserId = reportedUserId else { return }
@@ -292,9 +280,7 @@ class ReportViewController: UIViewController {
                 .responseDecodable(of: APIResponse<[String:Int64]>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 201 || value.httpCode == 200 {
-                        guard let data = value.data else { return }
+                    if let value = response.value, value.httpCode == 201 || value.httpCode == 200 {
                         DispatchQueue.main.async {
                             self.dismiss(animated: true) // 프로필 화면
                             ProgressHUD.dismiss()
@@ -308,8 +294,8 @@ class ReportViewController: UIViewController {
                 }
             }
         } else {
-            let alert = UIAlertController(title: "", message: "Please enter a reason for reporting.", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
+            let alert = UIAlertController(title: "", message: "REPORT_CONTENT_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK".localized(), style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
         }
@@ -348,28 +334,14 @@ class ReportViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.sizeToFit()
-//        NSLayoutConstraint.activate([
-//            label.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 0),
-//            label.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 0),
-//            label.heightAnchor.constraint(equalToConstant: 44)
-//        ])
-////        label.layer.borderColor = UIColor.blue.cgColor
-////        label.layer.borderWidth = 1
-////        label.sizeToFit()
-//        label.layoutIfNeeded()
-//        label.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 0)
     }
     
     private func setupButton(stackView: UIStackView, button: UIButton) {
         stackView.addArrangedSubview(button)
-//        button.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
-//        button.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .selected)
-//        button.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
-        button.layer.borderWidth = 2
-        button.layer.borderColor = UIColor.red.cgColor
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        button.layer.cornerRadius = 10
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let imageNormal = UIImage(systemName: "checkmark", withConfiguration: imageConfig)
+        button.setImage(imageNormal, for: .normal)
+        button.tintColor = .placeholderText
         
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalToConstant: 20),
@@ -378,7 +350,6 @@ class ReportViewController: UIViewController {
     }
     
     private func setupStackView(stackView: UIStackView, label: UILabel, button: UIButton, y: CGFloat) {
-        print("setupStackView")
         reportTypeContentView.addSubview(stackView)
         stackView.axis = .horizontal
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -400,32 +371,18 @@ class ReportViewController: UIViewController {
                   let stackView = view as? UIStackView,
                   let button = stackView.arrangedSubviews[1] as? UIButton
             else {
-                print("실패 stackView.arrangedSubviews[1]")
                 return
-                
             }
             reportTypeIdx = view.tag
-            selectedButton?.backgroundColor = .systemBackground
+            selectedButton?.tintColor = .placeholderText
             selectedButton = button
         })
     }
-    
-//    @objc func buttonTapped(sender: UIButton) {
-//        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-//    //        selectedButton?.isSelected = false
-//            selectedButton?.backgroundColor = .systemBackground
-//    //        sender.isSelected = true
-//            selectedButton = sender
-//    //        selectedButton?.tag = sender.tag
-//            selectedButton?.backgroundColor = .systemRed
-//        })
-//    }
 }
 
 
 extension ReportViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        print(" shouldChangeTextIn",textView.tag)
 
         // get the current text, or use an empty string if that failed
         let currentText = textView.text ?? ""
@@ -441,7 +398,6 @@ extension ReportViewController: UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        print("textViewDidBeginEditing",textView.tag)
         if textView.text == placeholder {
             textView.text = nil
             textView.textColor = .label
@@ -449,7 +405,6 @@ extension ReportViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        print("textViewDidEndEditing",textView.tag)
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = placeholder
             textView.textColor = .placeholderText
@@ -457,13 +412,6 @@ extension ReportViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        // textfield count
-        // 개수 표시
-//        let indexPath = IndexPath(row: 0, section: textView.tag)
-//        guard let cell = textDetailTableView.cellForRow(at: indexPath) as?  MyTextViewTableViewCell else { return }
-        
-        print("textViewDidChange", textView.text.count)
-       
         reportContentTextView.textCountLabel.text = "\(textView.text.count) / \(textMax)"
         if textView.text != placeholder {
             reportContentTextView.textCountLabel.textColor = .label

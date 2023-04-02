@@ -8,56 +8,6 @@
 import Foundation
 import AuthenticationServices
 
-//enum AuthState {
-//    case undefine, signOut
-//    case signInNotFull, signInFull
-//}
-//
-//enum RootViewState {
-//    case loginView, homeView, setProfileView
-//}
-
-//struct SignInManager {
-//    static func checkUserAuth(completion: @escaping (AuthState) -> ()) {
-//
-//        // 토큰 확인
-//        guard let userItem = try? KeychainManager.getUserItem() else {
-//            print("Keychain item - NULL")
-//            completion(.undefine)
-//            return
-//        }
-//
-//        // 키체인에 상태 로그인 저장
-//        // 로그 아웃시 로그인 뷰
-//        // 로그인시 자동로그인
-//
-//        switch userItem.userType { // service name
-//        case Service.APPLE_SIGNIN: //
-//            let appleIDProvider = ASAuthorizationAppleIDProvider()
-//            appleIDProvider.getCredentialState(forUserID: userItem.account.identifier) { (credentialState, error) in
-//                switch credentialState {
-//                case .notFound: // 애플 계정 없거나 삭제, so show the sign-in UI.
-//                    completion(.undefine)
-//                    break
-//                case .authorized: // The Apple ID credential is valid.
-//                    print("Authorized userItem.account.hasRequirementInfo", userItem.account.hasRequirementInfo)
-//                    if userItem.account.hasRequirementInfo { completion(.signInFull) }
-//                    else { completion(.signInNotFull) }
-//                    break
-//                case .revoked: // 애플 계정 사용 중단, so show the sign-in UI., 애플 자격증명 삭제됨
-//                    completion(.signOut)
-//                    break
-//                default:
-//                    break
-//                }
-//            }
-//        default: fatalError("Not support service SignIn")
-//        }
-//    }
-//}
-
-
-
 final class SessionManager {
     enum AuthState: String {
         case undefine
@@ -80,25 +30,12 @@ final class SessionManager {
     
     static func checkUserAuth(completion: @escaping (AuthState) -> ()) {
         // 현재 로그인된 userType 체크, 유저 디폴트에 없으면 loginView화면으로 completion(.undefine) 반환
-//        guard let userServiceType = UserDefaults.standard.object(forKey: currentServiceType) as? String else {
-//            print("userServiceType - NULL")
-//            completion(.undefine)
-//            return
-//        }
-        
         // 토큰 확인 (계정 삭제나, 처음 회원가입시 nil)
-        guard let userItem = try? KeychainManager.getUserItem() else { // 인자 serviceType: userServiceType
-            print("Keychain item - NULL")
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else {
             completion(.undefine)
             return
         }
-        
-//        // 로그아웃시 loginView로 이동
-//        if userItem.userStatus == AuthState.signOut.rawValue {
-//            completion(.signOut)
-//        }
-//        
-        
+
         switch userItem.userType { // service name
         case Service.APPLE_SIGNIN: //
             let appleIDProvider = ASAuthorizationAppleIDProvider()

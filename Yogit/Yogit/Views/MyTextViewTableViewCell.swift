@@ -17,7 +17,7 @@ class MyTextView: UIView {
         textView.backgroundColor = .systemBackground
         textView.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textView.layer.borderWidth = 1
-        textView.layer.borderColor = UIColor.placeholderText.cgColor
+        textView.layer.borderColor = UIColor.systemGray3.cgColor
         textView.layer.cornerRadius = 8
 //        textView.tintColor = .label
         textView.textColor = .placeholderText

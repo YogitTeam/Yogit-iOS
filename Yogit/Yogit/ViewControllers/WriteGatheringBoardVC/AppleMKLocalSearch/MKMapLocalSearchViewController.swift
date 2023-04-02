@@ -186,51 +186,51 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         return button
     }()
     
-    private let searchGuideLabel: UILabel = {
-        let label = UILabel()
-        // localized 필요
-        // Place: device lanuage
-        // Postcode: number
-        label.text = """
-        It's better to find it in the language of the country for that location
-        
-        Search like this.
-        
-        - Road name + building number
-        ex) 테헤란로10길 23
-        
-        - Area name + street number
-        ex) 성수동 10-23
-        
-        - Building name + Apartment name
-        ex) 한양아파트 204동
-        """
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-        label.numberOfLines = 0
-        label.sizeToFit()
-        label.adjustsFontSizeToFitWidth = true
-        return label
-    }()
-    
-    private lazy var searchGuideView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemBackground
-        view.isHidden = true
-        view.addSubview(searchGuideLabel)
-        return view
-    }()
+//    private let searchGuideLabel: UILabel = {
+//        let label = UILabel()
+//        // localized 필요
+//        // Place: device lanuage
+//        // Postcode: number
+//        label.text = """
+//        It's better to find it in the language of the country for that location
+//
+//        Search like this.
+//
+//        - Road name + building number
+//        ex) 테헤란로10길 23
+//
+//        - Area name + street number
+//        ex) 성수동 10-23
+//
+//        - Building name + Apartment name
+//        ex) 한양아파트 204동
+//        """
+//        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+//        label.numberOfLines = 0
+//        label.sizeToFit()
+//        label.adjustsFontSizeToFitWidth = true
+//        return label
+//    }()
+//
+//    private lazy var searchGuideView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .systemBackground
+//        view.isHidden = true
+//        view.addSubview(searchGuideLabel)
+//        return view
+//    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(mapView)
         view.addSubview(saveButton)
-        view.addSubview(searchGuideView)
+//        view.addSubview(searchGuideView)
         view.addSubview(noticeView)
         configureViewComponent()
         configureSearchController()
         configureMapComponent()
         configureLocationManager()
-        configureGuideLabel()
+//        configureGuideLabel()
         timerRun()
         blinkNoticeView(noticeView: noticeView)
     }
@@ -243,13 +243,13 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
             make.bottom.equalTo(view.snp.bottom).inset(30)
             make.height.equalTo(44)
         }
-        searchGuideView.snp.makeConstraints { make in
-            make.top.leading.trailing.bottom.equalToSuperview()
-        }
-        searchGuideLabel.snp.makeConstraints { make in
-            make.top.equalTo(searchGuideView.safeAreaLayoutGuide)
-            make.leading.trailing.equalToSuperview().inset(20)
-        }
+//        searchGuideView.snp.makeConstraints { make in
+//            make.top.leading.trailing.bottom.equalToSuperview()
+//        }
+//        searchGuideLabel.snp.makeConstraints { make in
+//            make.top.equalTo(searchGuideView.safeAreaLayoutGuide)
+//            make.leading.trailing.equalToSuperview().inset(20)
+//        }
         activityIndicator.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(22)
             make.width.height.equalTo(20)
@@ -328,32 +328,32 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         searchVC.searchBar.addSubview(activityIndicator)
     }
     
-    private func configureGuideLabel() {
-
-        //label에 있는 Text를 NSMutableAttributedString으로 만들어준다.
-        let attributedStr = NSMutableAttributedString(string: searchGuideLabel.text!)
-        
-        //위에서 만든 attributedStr에 addAttribute메소드를 통해 Attribute를 적용. kCTFontAttributeName은 value로 폰트크기와 폰트를 받을 수 있음.
-        attributedStr.addAttribute(NSAttributedString.Key(rawValue: kCTFontAttributeName as String), value: UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold), range: (searchGuideLabel.text! as NSString).range(of: "It's better to find it in the language of the country for that location"))
-        attributedStr.addAttribute(NSAttributedString.Key(rawValue: kCTFontAttributeName as String), value: UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.medium), range: (searchGuideLabel.text! as NSString).range(of: "Search like this."))
-        attributedStr.addAttribute(.foregroundColor, value: UIColor.systemGray, range: (searchGuideLabel.text! as NSString).range(of: "ex) 테헤란로10길 23"))
-        attributedStr.addAttribute(.foregroundColor, value: UIColor.systemGray, range: (searchGuideLabel.text! as NSString).range(of: "ex) 성수동 10-23"))
-        attributedStr.addAttribute(.foregroundColor, value: UIColor.systemGray, range: (searchGuideLabel.text! as NSString).range(of: "ex) 한양아파트 204동"))
+//    private func configureGuideLabel() {
+//
+//        //label에 있는 Text를 NSMutableAttributedString으로 만들어준다.
+//        let attributedStr = NSMutableAttributedString(string: searchGuideLabel.text!)
+//
+//        //위에서 만든 attributedStr에 addAttribute메소드를 통해 Attribute를 적용. kCTFontAttributeName은 value로 폰트크기와 폰트를 받을 수 있음.
+//        attributedStr.addAttribute(NSAttributedString.Key(rawValue: kCTFontAttributeName as String), value: UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold), range: (searchGuideLabel.text! as NSString).range(of: "It's better to find it in the language of the country for that location"))
+//        attributedStr.addAttribute(NSAttributedString.Key(rawValue: kCTFontAttributeName as String), value: UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.medium), range: (searchGuideLabel.text! as NSString).range(of: "Search like this."))
+//        attributedStr.addAttribute(.foregroundColor, value: UIColor.systemGray, range: (searchGuideLabel.text! as NSString).range(of: "ex) 테헤란로10길 23"))
+//        attributedStr.addAttribute(.foregroundColor, value: UIColor.systemGray, range: (searchGuideLabel.text! as NSString).range(of: "ex) 성수동 10-23"))
+//        attributedStr.addAttribute(.foregroundColor, value: UIColor.systemGray, range: (searchGuideLabel.text! as NSString).range(of: "ex) 한양아파트 204동"))
+//
+//        //최종적으로 내 label에 속성을 적용
+//        searchGuideLabel.attributedText = attributedStr
+////        searchGuideLabel.sizeToFit()
+//
+//    }
     
-        //최종적으로 내 label에 속성을 적용
-        searchGuideLabel.attributedText = attributedStr
-//        searchGuideLabel.sizeToFit()
-      
-    }
-    
-    //Text색상 바꾸기
-   func myLabelChangeColor(_ text:String, range :NSRange){
-       
-       let attributedString = NSMutableAttributedString(string: text)
-       attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGray, range: range)
-       searchGuideLabel.attributedText = attributedString
-   }
-    
+//    //Text색상 바꾸기
+//   func myLabelChangeColor(_ text:String, range :NSRange){
+//
+//       let attributedString = NSMutableAttributedString(string: text)
+//       attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGray, range: range)
+//       searchGuideLabel.attributedText = attributedString
+//   }
+//    
     
 //    @objc func onClickSwitch(sender: UISwitch) {
 //        // Inactive하면 화면 중앙 핀 hide=true, active 하면 핀 hide false
@@ -523,7 +523,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         resultsVC.delegate = self
        
         search.start { (response, error) in
-            guard let response = response else {
+            guard let response = response, error == nil else {
                 if self.searchVC.searchBar.text != nil && self.searchVC.searchBar.text != "" {
                     resultsVC.notFound()
                     DispatchQueue.main.async(qos: .userInteractive, execute: {
@@ -531,36 +531,50 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
                         self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
                     })
                 }
-            return }
-            
-            for item in response.mapItems {
-                
-                if let name = item.name {
-                    print("name", name)
-                }
-                if let countryCode = item.placemark.countryCode {
-                    print("countryCode", countryCode)
-                }
-                if let location = item.placemark.location {
-                    print("location", location)
-                }
-                if let placeMarkName = item.placemark.name {
-                    print("placeMarkName", placeMarkName)
-                }
-                if let placeMarkTitle = item.placemark.title {
-                    print("placeMarkTitle", placeMarkTitle)
-                }
-                if let placeMarkPhoneNumber = item.phoneNumber {
-                    print("placeMarkPhoneNumber", placeMarkPhoneNumber)
-                }
-                if let placeMarkLocality = item.placemark.locality {
-                    print("placemark locality", placeMarkLocality)
-                }
+            return
             }
-            DispatchQueue.main.async {
-                resultsVC.updateMK(with: response.mapItems)
-                self.activityIndicator.stopAnimating()
-                self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
+            
+            var mapItems: [MKMapItem] = []
+//            var hasNotPostCode: Bool = false
+            for item in response.mapItems {
+                if let postCode = item.placemark.postalCode {
+                    print("postCode", postCode)
+                    mapItems.append(item)
+                }
+//                if let name = item.name { // 경기도 / 용인시
+//                    print("name", name)
+//                }
+//                if let countryCode = item.placemark.countryCode {
+//                    print("countryCode", countryCode)
+//                }
+//                if let location = item.placemark.location {
+//                    print("location", location)
+//                }
+//                if let placeMarkName = item.placemark.name {
+//                    print("placeMarkName", placeMarkName) // 경기도 / 용인시
+//                }
+//                if let placeMarkTitle = item.placemark.title {
+//                    print("placeMarkTitle", placeMarkTitle) // 대한민국 경기도 / 대한민국 경기도 용인시
+//                }
+//                if let placeMarkPhoneNumber = item.phoneNumber {
+//                    print("placeMarkPhoneNumber", placeMarkPhoneNumber)
+//                }
+//                if let placeMarkLocality = item.placemark.locality {
+//                    print("placemark locality", placeMarkLocality)
+//                }
+            }
+            if mapItems.count == 0 {
+                resultsVC.notFound()
+                DispatchQueue.main.async(qos: .userInteractive, execute: {
+                    self.activityIndicator.stopAnimating()
+                    self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
+                })
+            } else {
+                DispatchQueue.main.async {
+                    resultsVC.updateMK(with: mapItems)
+                    self.activityIndicator.stopAnimating()
+                    self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
+                }
             }
         }
         
@@ -577,8 +591,8 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         let geocoder = CLGeocoder()
 //        let locale = Locale(identifier: "en_US")
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
-        let region = Locale.current.region?.identifier // KR
-        print("region", region)
+//        let region = Locale.current.region?.identifier // KR
+//        print("region", region)
         let locale = Locale(identifier: identifier)
 //        print("locale",locale)
         print("identifier", identifier)
@@ -593,7 +607,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             guard let pm = placemarks?.last else { return }
             guard let locality = pm.locality else { return }
             guard let countryCodeName = pm.country else { return }
-            print("forwardGeocoding locality and county", locality, countryCodeName)
+            
             completion(locality, countryCodeName)
         })
     }
@@ -616,18 +630,16 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             // 서버에 전송할때, country 키로, locality를 값 (영어로 전송) >> 받을때 유저 preference language로 geocoding해서 변환
             guard let pm = placemarks?.last else { return }
             let country = pm.country ?? ""
-            let administrativeArea = "\(pm.administrativeArea ?? "")"
             guard let locality = pm.locality else { return }
-        
+            
             let centerAddress = "\(locality) \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
             
             let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: locality.uppercased())
             
-            self.forwardGeocoding(address: locality) { (locality, countryCodeName) in
-                print("forwardGeocoding res", locality, countryCodeName)
+            self.forwardGeocoding(address: locality) { (cityName, countryCodeName) in
+                print("forwardGeocoding res", cityName, countryCodeName)
             }
             completion(reverseGeoData)
-
         })
 //
 //        geocoder.reverseGeocodeLocation(findLocation, completionHandler: {
@@ -758,7 +770,7 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
         // 설명 뷰 띄우고, 검색 데이터 없데이트 완료후 view hide
         print("시작 searchBar")
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-            self.searchGuideView.isHidden = false // 가이드뷰 숨김
+//            self.searchGuideView.isHidden = false // 가이드뷰 숨김
             if !noticeView.isHidden { noticeView.isHidden = true }
             if self.activityIndicator.isAnimating {
                 self.activityIndicator.stopAnimating()
@@ -773,22 +785,18 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
         
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
             if searchText == "" { // 값 없을때
-                searchGuideView.isHidden = false
                 if self.activityIndicator.isAnimating {
                     self.activityIndicator.stopAnimating()
                     searchBar.searchTextField.leftView?.isHidden = false
                 }
-    //            if self.activityIndicator.isAnimating { self.activityIndicator.stopAnimating() }
             }
             else { // 값있을때
-    //            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
                 if !self.activityIndicator.isAnimating {
                     searchBar.searchTextField.leftView?.isHidden = true
                     self.activityIndicator.startAnimating()
                 }
-                self.searchGuideView.isHidden = true
-    //            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
             }
+//            self.searchGuideView.isHidden = true
         })
     }
 
@@ -796,7 +804,7 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
         print("search bar 취소 버튼 클릭")
         
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-            self.searchGuideView.isHidden = true
+//            self.searchGuideView.isHidden = true
             if self.activityIndicator.isAnimating {
                 searchBar.searchTextField.leftView?.isHidden = false
                 self.activityIndicator.stopAnimating()
@@ -848,20 +856,12 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
         setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: placeName, subtitle: placeTitle)
         self.meetUpPlace.latitude = coordinate.latitude
         self.meetUpPlace.longitude = coordinate.longitude
-        findAddress(lat: coordinate.latitude, long: coordinate.longitude) { (centerAddress) in
-            print("find address \(centerAddress)")
-            self.meetUpPlace.locality = centerAddress?.locality
-        }
         self.meetUpPlace.address = placeTitle
-//        self.meetUpPlace.address = "\(placeTitle) (\(placeName))"
-
-        print("meetUpPlace = \(self.meetUpPlace)")
-        
-//        self.saveButton.isHidden = false
-        self.saveButton.isEnabled = true
-        
-//        if self.saveButton.isHidden == true { self.saveButton.isHidden = false }
-//        self.addressLabel.text = "\(placeTitle) (\(placeName))"
+        findAddress(lat: coordinate.latitude, long: coordinate.longitude) { (centerAddress) in
+            self.meetUpPlace.locality = centerAddress?.locality
+            self.saveButton.isEnabled = true
+            print("meetUpPlace = \(self.meetUpPlace)")
+        }
     }
 }
 

@@ -28,14 +28,20 @@ private enum InterestsCategoryId: Int, CaseIterable {
     }
 }
 
-protocol InterestsProtocol {
+protocol InterestsProtocol: AnyObject {
     func interestsSend(interests: [String])
 }
 
 
 class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegate {
 
-    var mode: Mode = .create
+    var mode: Mode = .create {
+        didSet {
+            if mode == .edit {
+                nextButton.isHidden = true
+            }
+        }
+    }
     
     var selectedTags: [String] = [] {
         didSet {
@@ -45,7 +51,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     
     var userProfile = UserProfile()
     
-    var delegate: InterestsProtocol?
+    weak var delegate: InterestsProtocol?
     
     private let seletedMax = 15
     
@@ -59,6 +65,20 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
         scrollView.addSubview(categoryTagContentView)
         
         return scrollView
+    }()
+    
+    private lazy var nextButton: UIButton = {
+        let button = UIButton()
+//        button.setTitle("Done", for: .normal)
+        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.tintColor = .white
+        button.isHidden = false
+        button.isEnabled = true
+        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
+//        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
+        return button
     }()
 
     private let categoryTagContentView: UIView = {
@@ -82,8 +102,8 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     private let noticeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
-        label.text = "Choose my personaliy & interests"
+        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
+        label.text = "Choose your personaliy, interests"
         label.sizeToFit()
         label.numberOfLines = 0
         return label
@@ -92,7 +112,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     private lazy var limitLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.textColor = .systemRed
+        label.textColor = ServiceColor.primaryColor
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
         label.text = "\(selectedTags.count) / \(seletedMax)"
         label.sizeToFit()
@@ -101,7 +121,13 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     }()
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let buttonTitle: String
+        if mode == .create {
+            buttonTitle = "Skip"
+        } else {
+            buttonTitle = "Done"
+        }
+        let button = UIBarButtonItem(title: buttonTitle, style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor = ServiceColor.primaryColor
         return button
     }()
@@ -121,13 +147,17 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
         super.viewDidLoad()
         configureView()
         configureCategoryTagView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         configureNav()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         noticeLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         categoryTagContentScrollView.snp.makeConstraints {
@@ -139,16 +169,24 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             $0.top.equalToSuperview()
             $0.centerX.bottom.equalToSuperview()
         }
+        nextButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.width.height.equalTo(60)
+        }
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
     
     private func configureView() {
         view.addSubview(noticeLabelStackView)
         view.addSubview(categoryTagContentScrollView)
+        view.addSubview(nextButton)
         view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {
-        self.navigationItem.title = "Personality & Interests"
+        navigationItem.title = "Personality & Interests"
+        navigationItem.backButtonTitle = "" // remove back button title
         navigationItem.rightBarButtonItem = rightButton
     }
     
@@ -178,7 +216,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             ])
             if i == categoryCnt-1 {
                 NSLayoutConstraint.activate([
-                    stackView.bottomAnchor.constraint(equalTo: categoryTagContentView.bottomAnchor, constant: -30)
+                    stackView.bottomAnchor.constraint(equalTo: categoryTagContentView.bottomAnchor, constant: -100)
                 ])
             }
             stackViewAccumulatedY += stackViewHeight
@@ -262,67 +300,41 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.spacing = 10
         stackView.alignment = .leading
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.blue.cgColor
         stackView.backgroundColor = .systemBackground
     }
     
+    private func moveToVC() {
+        DispatchQueue.main.async(qos: .userInteractive) {
+            let TOSVC = TermsOfServiceViewController()
+            TOSVC.userProfile = self.userProfile
+            self.navigationController?.pushViewController(TOSVC, animated: true)
+        }
+    }
+    
+    @objc private func nextButtonTapped(_ sender: UIButton) {
+        if selectedTags.isEmpty {
+            let alert = UIAlertController(title: "", message: "Please select the interests", preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(okAction)
+            DispatchQueue.main.async {
+                self.present(alert, animated: false, completion: nil)
+            }
+        } else {
+            userProfile.interests = selectedTags
+            moveToVC()
+        }
+    }
+
+    
+    // next button으로 create 뺀다
     @objc private func rightButtonPressed(_ sender: Any) {
-        print("rightbutton 진입")
-        if mode == .edit {
-            print("rightbutton 편집")
+        if mode == .create {
+            moveToVC()
+        } else {
             delegate?.interestsSend(interests: selectedTags)
             DispatchQueue.main.async(qos: .userInteractive, execute: {
                 self.navigationController?.popViewController(animated: true)
             })
-        } else {
-            print("rightbutton 생성")
-            guard let userItem = try? KeychainManager.getUserItem() else { return }
-            userProfile.userId = userItem.userId
-            userProfile.refreshToken = userItem.refresh_token
-            userProfile.interests = selectedTags
-            
-            // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
-            // userProfile에  SearchUserProfile 모든 데이터 포함
-            let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
-            if let parameters = urlRequestConvertible.toDictionary {
-                AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                    for (key, value) in parameters {
-                        if let arrayValue = value as? [Any] {
-                            for arrValue in arrayValue {
-                                multipartFormData.append(Data("\(arrValue)".utf8), withName: key)
-                            }
-                        } else {
-                            multipartFormData.append(Data("\(value)".utf8), withName: key)
-                        }
-                    }
-                }, with: urlRequestConvertible)
-                .validate(statusCode: 200..<501)
-                .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
-                    switch response.result {
-                    case .success:
-                        do {
-                            guard let value = response.value else { return }
-                            guard let data = value.data else { return }
-                            if value.httpCode == 200 || value.httpCode == 201 {
-                                userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
-                                userItem.userName = data.name // 유저 이름, 상태 저장
-                                try KeychainManager.updateUserItem(userItem: userItem)
-                                DispatchQueue.main.async { [self] in
-                                    let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
-                                    navigationController?.popToRootViewController(animated: false)
-                                    view.window?.rootViewController = rootVC
-                                    view.window?.makeKeyAndVisible()
-                                }
-                            }
-                        } catch {
-                            print("Error - KeychainManager.update \(error.localizedDescription)")
-                        }
-                    case let .failure(error):
-                        print("SetProfileVC - upload response result Not return", error)
-                    }
-                }
-            }
         }
     }
     

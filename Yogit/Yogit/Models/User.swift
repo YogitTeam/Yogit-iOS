@@ -54,13 +54,14 @@ struct GetUserImages: Encodable {
 
 struct FetchUserProfile: Decodable {
     let city, aboutMe, job, phone: String?
-    let age: Int
+    let age: Int?
     let imageUrls: [String]
     let interests: [String]?
     let languageCodes: [String]
     let languageLevels: [Int]
     let latitude, longtitude, memberTemp: Double?
-    let name, nationality, profileImg, gender: String
+    let name, nationality, gender: String?
+    let profileImg: String
     let userId: Int
     let userStatus: String?
     let isBlockingUser: Int?
@@ -73,7 +74,7 @@ struct FetchUserProfile: Decodable {
         case isBlockingUser
     }
     
-    init(city: String?, aboutMe: String?, job: String?, phone: String?, age: Int, imageUrls: [String], interests: [String]?, languageLevels: [Int], languageCodes: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String, nationality: String, profileImg: String, gender: String, userId: Int, userStatus: String?, isBlockingUser: Int?) {
+    init(city: String?, aboutMe: String?, job: String?, phone: String?, age: Int?, imageUrls: [String], interests: [String]?, languageLevels: [Int], languageCodes: [String], latitude: Double?, longtitude: Double?, memberTemp: Double?, name: String?, nationality: String?, profileImg: String, gender: String?, userId: Int, userStatus: String?, isBlockingUser: Int?) {
         self.city = city
         self.aboutMe = aboutMe
         self.job = job

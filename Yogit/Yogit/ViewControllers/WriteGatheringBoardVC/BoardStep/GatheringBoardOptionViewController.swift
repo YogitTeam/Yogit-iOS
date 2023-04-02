@@ -9,7 +9,7 @@ import UIKit
 
 class GatheringBoardOptionViewController: UIViewController {
 
-    private let step = 2.0
+    private let step: Float = 2.0
     private let stepHeaderView = StepHeaderView()
     private var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
     private let placeholderData = ["Number of member including host", "Gathering date", "Address", "Ex) Gangnam station 3 exit (option)"]
@@ -152,7 +152,7 @@ class GatheringBoardOptionViewController: UIViewController {
     private lazy var nextButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.setTitle("Next", for: .normal)
+        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 8
         button.isEnabled = false
@@ -233,20 +233,14 @@ class GatheringBoardOptionViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        NSLayoutConstraint.activate([
-//            dateContainerView.heightAnchor.constraint(equalTo: datePicker.heightAnchor),
-//            dateContainerView.widthAnchor.constraint(equalTo: datePicker.widthAnchor),
-//            datePicker.centerXAnchor.constraint(equalTo: dateContainerView.centerXAnchor),
-//            datePicker.centerYAnchor.constraint(equalTo: dateContainerView.centerYAnchor)
-//        ])
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(30)
+            make.leading.right.equalToSuperview()
+            make.height.equalTo(70)
         }
         headerView[0].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
-            $0.top.equalTo(stepHeaderView.snp.bottom).offset(30)
+            $0.top.equalTo(stepHeaderView.snp.bottom)
         }
         headerView[1].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
@@ -276,11 +270,12 @@ class GatheringBoardOptionViewController: UIViewController {
             $0.height.equalTo(48)
             $0.top.equalTo(placeTextField.snp.bottom).offset(20)
         }
-        nextButton.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.snp.bottom).inset(30)
-            make.height.equalTo(50)
+        nextButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.width.height.equalTo(60)
         }
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
         
         textCountLabel.snp.makeConstraints {
             $0.top.equalTo(placeDetailTextField.snp.bottom).offset(4)

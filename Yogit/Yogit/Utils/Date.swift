@@ -20,13 +20,6 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
-//    func dateToStringUser2() -> String {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "YYYY, MMM d, h:mm a"
-//        dateFormatter.timeZone = TimeZone(identifier: "UTC")
-//        return dateFormatter.string(from: self)
-//    }
-    
     func dateAndMonthFormatter() -> String {
         let dateFormatter = DateFormatter()
         if let localeIdentifier = Locale.preferredLanguages.first {

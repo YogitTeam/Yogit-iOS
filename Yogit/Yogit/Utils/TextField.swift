@@ -53,31 +53,11 @@ extension UITextField {
             $0.width.equalTo(width+margin)
             $0.height.equalTo(self.frame.size.height)
         }
-//        imageView.topAnchor.constraint(equalTo: imageContainerView.topAnchor).isActive = true
-//        imageView.bottomAnchor.constraint(equalTo: imageContainerView.bottomAnchor).isActive = true
-//        imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor, constant: 16).isActive = true
-        
-//        imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor).isActive = true
-//        imageView.centerYAnchor.constraint(equalTo: imageContainerView.centerYAnchor).isActive = true
-//
-//        imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor, constant: 0).isActive = true
-
-//        let textField = UITextField()
-//        textField.leftView = imageContainerView
-//        textField.leftViewMode = .always
-//        textField.borderStyle = .roundedRect
         
         self.leftView = imageContainerView
   //      self.leftViewMode = .always
         self.leftViewMode = .always
 //        self.borderStyle = .roundedRect
-        
-        
-        
-//        let leftImage = UIImageView(frame: CGRect(x: 0, y: 0, width: image.size.width + margin, height: image.size.height))
-//        leftImage.image = image
-//        self.leftView = leftImage
-//        self.leftViewMode = .always
     }
     
     func addRightImage(image: UIImage?) {

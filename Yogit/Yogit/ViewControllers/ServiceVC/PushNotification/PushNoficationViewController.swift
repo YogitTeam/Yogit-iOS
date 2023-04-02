@@ -139,9 +139,18 @@ class PushNoficationViewController: UIViewController {
         // Similar View - ViewModel arhitecture
         
         var content = cell.defaultContentConfiguration()
-        content.text = alarmData[indexPath.row].title
-        content.secondaryText = alarmData[indexPath.row].body
-//        content.text = nationalityData[indexPath.row]
+        let args = alarmData[indexPath.row].args
+        let bodyLocKey = alarmData[indexPath.row].body
+        let localizedString = NSLocalizedString(bodyLocKey, comment: "")
+//        let body = String.localizedStringWithFormat(localizedString, args)
+        print("alarmData[indexPath.row].title", alarmData[indexPath.row].title)
+        print("args", args)
+        print("bodyLocKey", localizedString)
+        print("localizedString", localizedString)
+      
+        content.text = alarmData[indexPath.row].title.localized()
+        content.secondaryText = localizedString.localized()
+
         content.image = UIImage(named: "ServiceIcon")
         // Customize appearence
         cell.contentConfiguration = content

@@ -320,7 +320,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
     }
    
     private func getBoardThumbnail() {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let getAllBoardsReq = GetAllBoardsReq(cursor: 0, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
             .request(BoardRouter.readAllBoards(parameters: getAllBoardsReq))

@@ -221,7 +221,7 @@ class BoardDetail: Decodable {
     let currentMember: Int
     let date: String
     let hostId: Int64
-    let hostName: String
+    let hostName: String?
     let cityName: String
     let imageIds: [Int64]
     let imageUrls: [String]

@@ -233,24 +233,22 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
-        print("forwardGeocoding locality", address)
         let geocoder = CLGeocoder()
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
         let locale = Locale(identifier: identifier)
 
         // 주소 다됨 (country, locality, "KR" >> South Korea)
         geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: { (placemarks, error) in
-            if error != nil {
-                print("Failed to geocodeAddressString location")
-                return
-            }
+            if error != nil { return }
+
             guard let pm = placemarks?.last else { return }
             guard let locality = pm.locality else { return }
             guard let countryCodeName = pm.country else { return }
-            print("forwardGeocoding locality and county", locality, countryCodeName)
+            
             completion(locality, countryCodeName)
         })
     }
+    
     
     func configure(with board: Board) async {
         let memberImageUrls = board.profileImgUrls//[String](repeating: board.profileImgURL, count: 6)
@@ -281,7 +279,6 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         if timeInterval < 0 {
             blurView.isHidden = false
         }
-        print("timeInterval", timeInterval)
         await MainActor.run {
             backView.backgroundColor = .black.withAlphaComponent(0.25)
             lineView.isHidden = false

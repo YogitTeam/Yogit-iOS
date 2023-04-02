@@ -24,6 +24,7 @@ final class AlarmManager {
         case type = "type"
         case title = "title"
         case body = "body"
+        case args = "args"
         case id = "id"
         
         func toKey() -> String {
@@ -33,6 +34,7 @@ final class AlarmManager {
     
     enum AlarmType: String {
         case apply = "JOINAPPLY"
+        case withdrawl = "DELAPPLY"
         case clipBoard = "CLIPBOARD"
         
         func toKey() -> String {
@@ -47,12 +49,13 @@ final class AlarmManager {
             [
                 AlarmKey.type.toKey(): $0.type,
                 AlarmKey.title.toKey(): $0.title,
-                AlarmKey.body.toKey():$0.body,
+                AlarmKey.body.toKey(): $0.body,
+                AlarmKey.args.toKey():$0.args,
                 AlarmKey.id.toKey(): $0.id
             ]
         }
         let userDefaults = UserDefaults.standard
-        if alarms[0].type == AlarmType.apply.toKey() { userDefaults.set(data, forKey: PushNotificationKind.ApplyAlarmIdentifier) }
+        if alarms[0].type == AlarmType.apply.toKey() || alarms[0].type == AlarmType.withdrawl.toKey() { userDefaults.set(data, forKey: PushNotificationKind.ApplyAlarmIdentifier) }
         else { userDefaults.set(data, forKey: PushNotificationKind.ClipBoardAlarmIdentifier) }
         print("AfterSaveAlarms", data)
     }
@@ -60,14 +63,14 @@ final class AlarmManager {
     static func loadAlarms(type: String) -> [Alarm]? {
         let userDefaults = UserDefaults.standard
         var id = String()
-        if type == AlarmType.apply.toKey() {
+        if type == AlarmType.apply.toKey() || type == AlarmType.withdrawl.toKey() {
             id = PushNotificationKind.ApplyAlarmIdentifier
         } else {
             id = PushNotificationKind.ClipBoardAlarmIdentifier
         }
         let data = userDefaults.object(forKey: id) as? [[String: Any]] ?? [[String: Any]]()
         let alarms: [Alarm] = data.compactMap {
-            Alarm(type: $0[AlarmKey.type.toKey()] as! String, title: $0[AlarmKey.title.toKey()] as! String, body: $0[AlarmKey.body.toKey()] as! String, id: $0[AlarmKey.id.toKey()] as! Int64)
+            Alarm(type: $0[AlarmKey.type.toKey()] as! String, title: $0[AlarmKey.title.toKey()] as! String, body: $0[AlarmKey.body.toKey()] as! String, args: $0[AlarmKey.args.toKey()] as! [String], id: $0[AlarmKey.id.toKey()] as! Int64)
 //            guard let alarmType = $0[AlarmKey.type.toKey()] as? String else { return }
 //            guard let alarmTitle = $0[AlarmKey.title.toKey()] as? String else { return }
 //            guard let alarmId = $0[AlarmKey.id.toKey()] as? Int64 else { return }

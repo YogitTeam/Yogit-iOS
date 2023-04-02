@@ -22,24 +22,25 @@ class ServiceTapBarViewController: UITabBarController {
         configureTapBarVC()
         configureInstanceVC()
         setPushNotification()
-//        print("DEBUG : \(String(describing: self.view.window?.rootViewController))")
+        print("보드 노티 등록")
         NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        print("뷰디스어피어 ServiceTapBarView")
-        NotificationCenter.default.removeObserver(self, name: .baordDetailRefresh, object: nil)
-    }
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        print("뷰디스어피어 ServiceTapBarView")
+//        NotificationCenter.default.removeObserver(self, name: .baordDetailRefresh, object: nil)
+//    }
     
     @objc private func didBoardDetailNotification(_ notification: Notification) {
+        print("보드 알림 발생")
         guard let boardDetail = notification.object as? BoardDetail else { return }
-        DispatchQueue.main.async(qos: .userInteractive, execute: {
+        DispatchQueue.main.async(qos: .userInteractive) {
             let GDBVC = GatheringDetailBoardViewController()
             GDBVC.boardWithMode.mode = .refresh
             GDBVC.bindBoardDetail(data: boardDetail)
             self.navigationController?.pushViewController(GDBVC, animated: true)
-        })
+        }
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -208,19 +209,65 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
         let content = notification.request.content
         let title: String = content.title
         let body: String = content.body
-       
+        
+//        let data = Data(base64Encoded: encodeString)
+//
+//        if let decode = String(data: data!, encoding: .utf8) {
+//            print(decode)
+//        }
+        
+//        let localeIdentifier = Locale.preferredLanguages.first
+
+//        if let locArgs = content.userInfo["loc-args"] as? [Any] {
+//            let data = Data(base64Encoded: locArgs as? )
+//            let stringArray = locArgs.map { String(data: data!, encoding: .utf8) }
+//            print("stringArray", stringArray)
+////            let data = Data(base64Encoded: locArgs[0])
+////            if let decodeString = String(data: data!, encoding: .utf8) {
+////                print("decodeString", decodeString)
+////            }
+//        }
+        
+        var args: [String] = []
+        if let aps = content.userInfo["aps"] as? [String: Any],
+            let alert = aps["alert"] as? [String: Any],
+//            let locKey = alert["loc-key"] as? String,
+            let locArgs = alert["loc-args"] as? [String] {
+            // Do something with the loc-args array
+            for arg in locArgs {
+                args.append(arg)
+            }
+        }
+        
+        print("타이틀", title)
+        print("body", body)
+        print("args", args)
+        
+//        guard let locArgs = content.userInfo["loc-args"] as? [String] else {
+////            print("실패 locArgs", locArgs)
+//            return }
+//        guard let locArgs = content.userInfo["loc-args"] as? [UnicodeScalar] else {
+//            print("실패 locArgs", locAr)
+//            return }
+//        print("성공 locArgs", locArgs)
+        
         guard let id = content.userInfo["boardId"] as? Int64 else { return }
         guard let type = content.userInfo["pushType"] as? String else { return }
-        let alarmData = Alarm(type: type, title: title, body: body, id: id)
+        let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
+        print("alarmData", alarmData)
         receivePushNotificationData(alarm: alarmData)
+        
         // foreground 앱 알리는 형태
-//        completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
+        if type != AlarmManager.AlarmType.clipBoard.toKey() { // 신청, 취소 알림은 포어그라운드 알림
+            completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
+        }
     }
     
     // 앱 원격 상태일때
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         print("DidReceive userNotificationCenter")
         debugPrint(response.notification.request.content.userInfo)
+        
 //        let title: String = response.notification.request.content.title
 //        let body: String = response.notification.request.content.body
 //        guard let id = response.notification.request.content.userInfo["boardId"] as? Int64 else { return }

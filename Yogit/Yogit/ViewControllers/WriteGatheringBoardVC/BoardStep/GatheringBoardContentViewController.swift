@@ -45,13 +45,13 @@ class GatheringBoardContentViewController: UIViewController {
     private var imagePicker: UIImagePickerController?
 
     private let stepHeaderView = StepHeaderView()
-    private let step = 3.0
+    private let step: Float = 3.0
     private var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView(), MyHeaderView()]
     private var textViews = [MyTextView(), MyTextView(), MyTextView()]
     private let placeholderData = ["Ex) Hangout", "Ex) Hangout", "Ex) Hangout"]
     private var textViewCount = [0, 0, 0]
-    private let minChar = [10, 30, 30]
-    private let maxChar = [30, 2000, 2000]
+    private let minChar = [10, 50, 50]
+    private let maxChar = [50, 2000, 2000]
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(buttonPressed(_:)))
@@ -175,13 +175,12 @@ class GatheringBoardContentViewController: UIViewController {
         
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
-//            make.leading.trailing.equalToSuperview()
-            make.width.equalToSuperview()
-            make.height.equalTo(30)
+            make.leading.right.equalToSuperview()
+            make.height.equalTo(70)
         }
 
         contentScrollView.snp.makeConstraints { make in
-            make.top.equalTo(stepHeaderView.snp.bottom).offset(10)
+            make.top.equalTo(stepHeaderView.snp.bottom)
 //            make.width.equalToSuperview()
             make.leading.trailing.bottom.equalToSuperview()
 //            make.width.equalToSuperview()
@@ -211,9 +210,9 @@ class GatheringBoardContentViewController: UIViewController {
             $0.height.equalTo(22)
         }
         textViews[0].snp.makeConstraints { make in
-            make.top.equalTo(headerView[1].snp.bottom).offset(10)
+            make.top.equalTo(headerView[1].snp.bottom)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(54)
+            make.height.equalTo(78)
         }
         headerView[2].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
@@ -221,7 +220,7 @@ class GatheringBoardContentViewController: UIViewController {
             $0.height.equalTo(22)
         }
         textViews[1].snp.makeConstraints { make in
-            make.top.equalTo(headerView[2].snp.bottom).offset(10)
+            make.top.equalTo(headerView[2].snp.bottom)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
         }
@@ -231,7 +230,7 @@ class GatheringBoardContentViewController: UIViewController {
             $0.height.equalTo(22)
         }
         textViews[2].snp.makeConstraints { make in
-            make.top.equalTo(headerView[3].snp.bottom).offset(10)
+            make.top.equalTo(headerView[3].snp.bottom)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
             make.bottom.equalToSuperview().inset(30)
@@ -303,10 +302,6 @@ class GatheringBoardContentViewController: UIViewController {
         self.headerView[3].contentNameLabel.text = "Please apply this kind of person"
     }
     
-//    private func configureDeleteCount() {
-//        self.newImagesIdx = self.boardWithMode.images?.count ?? 0 // 기존 이미지 개수
-//    }
-    
 //    private func textVaildation() -> Bool {
 //        guard let imagesCnt = self.boardWithMode.images?.count else { return false }
 //        for i in 0..<3 {
@@ -321,144 +316,59 @@ class GatheringBoardContentViewController: UIViewController {
 //        return true
 //    }
     
-    private func hasAllData() -> Bool {
+//    private func hasAllData() -> Bool {
+//        if boardWithMode.downloadImages.count + boardWithMode.uploadImages.count == 0 {
+//            return false
+//        }
+//        for i in 0..<3 {
+//            if !(textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i]) {
+//                print(textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "false")
+//                return false
+//            } else {
+//                print(textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "true")
+//            }
+//        }
+//        return true
+//    }
+    
+    private var hasMssingData: String? {
         if boardWithMode.downloadImages.count + boardWithMode.uploadImages.count == 0 {
-            return false
+            return "photos"
         }
         for i in 0..<3 {
             if !(textViewCount[i] >= minChar[i] && textViewCount[i] <= maxChar[i]) {
-                print(textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "false")
-                return false
-            } else {
-                print(textViewCount[i], minChar[i], textViewCount[i], maxChar[i], "true")
+                return self.headerView[i+1].contentNameLabel.text?.lowercased()
             }
         }
-        return true
+        return nil
     }
     
-//    func viewGetValues() {
-//        print("viewGetValues",createBoardReq)
-//        textViews[0].myTextView.text = createBoardReq.title
-//        textViews[1].myTextView.text = createBoardReq.introduction
-//        textViews[2].myTextView.text = createBoardReq.kindOfPerson
-//        for i in 0..<3 {
-//            textViewDidChange(textViews[i].myTextView)
-//        }
-//    }
 
-//    @objc func buttonPressed(_ sender: UIButton) {
-//
-//        if textVaildation() {
-//            // 통신완료 후 pop root까지
-//            guard let userItem = try? KeychainManager.getUserItem() else { return }
-//            boardWithMode.boardReq?.hostId = userItem.userId  // 아이디 받으면 아이디로
-//            boardWithMode.boardReq?.refreshToken = userItem.refresh_token
-//
-////            let parameters: [String: Any] = [
-////                "localityName": createBoardReq.localityName!,
-////                "hostId": createBoardReq.hostId!,
-////                "title": createBoardReq.title!,
-////                "address": createBoardReq.address!,
-////                "addressDetail": createBoardReq.addressDetail ?? "",
-////                "longitute": createBoardReq.longitute!,
-////                "latitude": createBoardReq.latitude!,
-////                "date": createBoardReq.date!,
-////                "notice": "",
-////                "introduction": createBoardReq.introduction!,
-////                "kindOfPerson": createBoardReq.kindOfPerson!,
-////                "totalMember": createBoardReq.totalMember!,
-////                "categoryId": createBoardReq.categoryId!,
-////                "refreshToken": userItem.refresh_token
-////            ]
-//            guard let parameters = boardWithMode.boardReq?.toDictionary else { return }
-//            guard let images = boardWithMode.images else { return }
-//            if boardWithMode.mode == .edit {
-//                print("edit", parameters)
-//                // 삭제한 받아온 imageIds, 추가한 이미지 imageIds = -1
-//                guard let boardId = boardWithMode.boardId else { return }
-////                guard let imageIds = boardWithMode.imageIds else { return }
-//                AF.upload(multipartFormData: { multipartFormData in
-//                    multipartFormData.append(Data("\(boardId)".utf8), withName: "boardId")
-//                    for (key, value) in parameters {
-//                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-//                    }
-//                    for i in self.newImagesIdx..<images.count {
-//                        multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-//                    }
-////                    multipartFormData.append(Data("\(deletedIdsParam.values)".utf8), withName: deletedIdsParam.keys)
-//                    if self.deletedImageIds != [] {  // -1이 있을 가능성 존재
-//                        let deletedIdsParam: [String: [Any]] = ["deleteImageIds": self.deletedImageIds]
-//                        print(deletedIdsParam)
-//                        for (key, value) in deletedIdsParam {
-//                            multipartFormData.append(Data("\(value)".utf8), withName: key)
-//                        }
-//                    }
-//                }, to: API.BASE_URL + "boards", method: .patch) // post
-//                .validate(statusCode: 200..<500)
-//                .responseData { response in
-//                    switch response.result {
-//                    case .success:
-//                        debugPrint(response)
-//                        DispatchQueue.main.async {
-//                            self.navigationController?.popToRootViewController(animated: true)
-//                            // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
-//                        }
-//                    case let .failure(error):
-//                        print(error)
-//                    }
-//                }
-//            }
-//            else {
-//                print("post Board", parameters)
-//                print("post image", images)
-//                AF.upload(multipartFormData: { multipartFormData in
-//                    for (key, value) in parameters {
-//                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-//                    }
-//                    for i in self.newImagesIdx..<images.count {
-//                        multipartFormData.append(images[i].toFile(format: .jpeg(0.5))!, withName: "images", fileName: "images.jpeg", mimeType: "images/jpeg")
-//                    }
-//                    print(multipartFormData)
-//                }, to: API.BASE_URL + "boards", method: .post) // post
-//                .validate(statusCode: 200..<500)
-//                .responseData { response in
-//                    switch response.result {
-//                    case .success:
-//                        debugPrint(response)
-//                        DispatchQueue.main.async {
-//                            self.navigationController?.popToRootViewController(animated: true)
-//                            // notification 메인게시글 페이지로 쏴줌 >>  get 요청해서 업데이트
-//                        }
-//                    case let .failure(error):
-//                        print(error)
-//                    }
-//                }
-//            }
-//
-//        } else {
+    @objc func buttonPressed(_ sender: UIButton) {
+//        if !hasAllData() {
 //            print("Not has all value")
 //            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the condition", preferredStyle: UIAlertController.Style.alert)
 //            let okAction = UIAlertAction(title: "OK", style: .default)
 //            alert.addAction(okAction)
 //            present(alert, animated: false, completion: nil)
+//            return
 //        }
-//
-//    }
-    @objc func buttonPressed(_ sender: UIButton) {
-        if !hasAllData() {
+        
+        guard hasMssingData == nil else {
             print("Not has all value")
-            let alert = UIAlertController(title: "Please enter the required information correctly", message: "Please enter the required information according to the condition", preferredStyle: UIAlertController.Style.alert)
+            let alert = UIAlertController(title: "", message: "Please enter the \(hasMssingData!) according to the condition", preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK", style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
             return
         }
+        
         // 통신완료 후 pop root까지
         // hostId 등록시 필요? >> userId와 hostId 같기때문 (나중에 한 클럽 모임당 host가 많을수도 있다.)
         // hostId 받아올때만 필요하다.
         print("buttonPressed buttonPressed", boardWithMode)
         
-        guard let userItem = try? KeychainManager.getUserItem(),
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
               let title = boardWithMode.title,
               let address = boardWithMode.address,
               let longitute = boardWithMode.longitute,
@@ -488,7 +398,7 @@ class GatheringBoardContentViewController: UIViewController {
         } else {
             urlRequestConvertible = BoardRouter.createBoard(parameters: updateBoard)
         }
-            
+
         if let parameters = urlRequestConvertible.toDictionary {
             print("Upload parameters", parameters)
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
@@ -514,15 +424,13 @@ class GatheringBoardContentViewController: UIViewController {
             }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<BoardDetail>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 201 || value.httpCode == 200 {
-                        print("Success - Upload User Images")
-                        guard let data = value.data else { return }
-                        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                    if let value = response.value, value.httpCode == 201 || value.httpCode == 200, let data = value.data {
+                        print("Success - Upload Board")
+                        DispatchQueue.main.async(qos: .userInteractive) { [self] in
                             navigationController?.popToRootViewController(animated: true)
-                            NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
                             ProgressHUD.dismiss()
-                        })
+                            NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
+                        }
 //                        DispatchQueue.global(qos: .userInitiated).async { [self] in
 ////                            userImagesData.imageIds = data.userImageIds
 ////                            userImagesData.downloadImages = data.imageUrls
@@ -943,7 +851,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
 extension GatheringBoardContentViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         print(" shouldChangeTextIn",textView.tag)
-        if textView.tag == 0 && text == "\n" { textView.resignFirstResponder() }
+//        if textView.tag == 0 && text == "\n" { textView.resignFirstResponder() }
         
         // get the current text, or use an empty string if that failed
         let currentText = textView.text ?? ""
@@ -1018,6 +926,7 @@ extension GatheringBoardContentViewController {
         view.endEditing(true)
     }
 }
+
 
 //extension UIViewController {
 //    func hideKeyboardWhenTappedAround(tableView: UITableView) {

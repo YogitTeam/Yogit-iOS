@@ -1,5 +1,5 @@
 //
-//  ClipBoardViewController2.swift
+//  ClipBoardViewController.swift
 //  Yogit
 //
 //  Created by Junseo Park on 2023/01/01.
@@ -11,12 +11,13 @@ import InputBarAccessoryView
 import UIKit
 import ProgressHUD
 
-class ClipBoardViewController2: ChatViewController {
+class ClipBoardViewController: ChatViewController {
     
     private var first = true {
         didSet {
             if !first {
-                guard let userItem = try? KeychainManager.getUserItem() else { return }
+                guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+                guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
                 guard let boardId = self.boardId else { return }
                 loadMessages(isInit: true, isUp: true, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
             }
@@ -75,7 +76,7 @@ class ClipBoardViewController2: ChatViewController {
 
 }
 
-extension ClipBoardViewController2: MessagesDisplayDelegate {
+extension ClipBoardViewController: MessagesDisplayDelegate {
 
     private func createLoadingView(footerView: MessageReusableView, isPaging: Bool, isLoading: Bool, section: Int) -> MessageReusableView {
         
@@ -219,7 +220,7 @@ extension ClipBoardViewController2: MessagesDisplayDelegate {
 
 }
 
-extension ClipBoardViewController2: MessagesLayoutDelegate {
+extension ClipBoardViewController: MessagesLayoutDelegate {
     // footerview 사이즈 미리 업데이트
     func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
         print("FooterViewSize section", section)
@@ -256,7 +257,7 @@ extension ClipBoardViewController2: MessagesLayoutDelegate {
     }
 }
 
-extension ClipBoardViewController2 {
+extension ClipBoardViewController {
     
     // 마지막 페이지부터 로드
     // if upPageListCount == 10 { upPageCusor += 1 } 다음에 호출할때
@@ -473,9 +474,9 @@ extension ClipBoardViewController2 {
             }
         }
         isLoading = false
+        let startTime = DispatchTime.now().uptimeNanoseconds
         Task(priority: .high) {
             do {
-                let startTime = DispatchTime.now().uptimeNanoseconds
                 let getAllClipBoardsReq =  GetAllClipBoardsReq(boardId: boardId, cursor: cursor, refreshToken: refreshToken, userId: userId)
                 let getData = try await fetchClipBoardData2(getAllClipBoardsReq: getAllClipBoardsReq)
                 let endTime = DispatchTime.now().uptimeNanoseconds
@@ -489,10 +490,14 @@ extension ClipBoardViewController2 {
                 print("cursor, totalpage", cursor, totalPage)
                 if cursor < totalPage {
                     for i in listCount..<clipBoardListCount { // 8
-                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName)
+                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? " Unknown")
                         if avatarImages[sender.senderId] == nil {
-                            let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
-                            self.avatarImages[sender.senderId] = profileImage
+                            if clipBoardList[i].profileImgURL.contains("null") {
+                                self.avatarImages[sender.senderId] = UIImage(named: "profileImageNULL")
+                            } else {
+                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                                self.avatarImages[sender.senderId] = profileImage
+                            }
                         }
                         guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                         let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
@@ -552,7 +557,8 @@ extension ClipBoardViewController2 {
     }
     
     func loadFirstMessages() {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = self.boardId else { return }
         Task {
             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
@@ -923,7 +929,8 @@ extension ClipBoardViewController2 {
         let contentSizeHeight = scrollView.contentSize.height
         let frameSizeHeight = scrollView.frame.size.height
         if scrollView == messagesCollectionView && !isPaging {
-            guard let userItem = try? KeychainManager.getUserItem() else { return }
+            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+            guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
             guard let boardId = self.boardId else { return }
             isPaging = true
             if contentOffSetY <= -contentInsetTop { // view.safeAreaInsets.top+200

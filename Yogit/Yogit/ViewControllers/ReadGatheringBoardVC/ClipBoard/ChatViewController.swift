@@ -181,30 +181,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         return message
     }
     
-//    private func setupLongGestureRecognizerOnCollection() {
-//
-//        let longPressedGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(gestureRecognizer:)))
-//        longPressedGesture.minimumPressDuration = 0.5
-//        longPressedGesture.delegate = self
-//        longPressedGesture.delaysTouchesBegan = true
-//        mess.addGestureRecognizer(longPressedGesture)
-//    }
-//
-//    // long press 이벤트 액션
-//    @objc func handleLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
-//
-//        let location = gestureRecognizer.location(in: collectionView)
-//        // let collectionView = gestureRecognizer.view as! UICollectionView
-//
-//        if gestureRecognizer.state == .began {
-//
-//            // 롱 프레스 터치가 시작될 떄
-//        } else if gestureRecognizer.state == .ended {
-//            // 롱 프레스 터치가 끝날 떄
-//        } else {
-//            return
-//        }
-//    }
     
     func configureViewComponent() {
         navigationItem.largeTitleDisplayMode = .never
@@ -212,7 +188,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     }
     
     func configureCurrentUser() {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let displayName = userItem.userName else { return }
         currentUser = Sender(senderId: "\(userItem.userId)", displayName: displayName)
     }
@@ -227,21 +203,11 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 
     func configureMessageInputBar() {
         messageInputBar.delegate = self
-//        messageInputBar.inputTextView.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        messageInputBar.sendButton.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-//        messageInputBar.sendButton.setTitleColor(
-//            UIColor(rgb: 0x3232FF, alpha: 1.0).withAlphaComponent(0.3),
-//          for: .highlighted)
         
         messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
         messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
-//        if #available(iOS 13, *) {
-//            messageInputBar.inputTextView.layer.borderColor = UIColor.systemGray2.cgColor
-//        } else {
-//            messageInputBar.inputTextView.layer.borderColor = UIColor.lightGray.cgColor
-//        }
+
         messageInputBar.inputTextView.backgroundColor = .systemGray6
-//        UIColor(rgb: 0xF5F5F5, alpha: 1.0)
         messageInputBar.inputTextView.placeholder = ""
         messageInputBar.inputTextView.layer.borderWidth = 0.5
         messageInputBar.inputTextView.layer.borderColor = UIColor.systemGray5.cgColor
@@ -265,7 +231,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     
     func fetchClipBoardData(page: Int) async -> ClipBoardResInfo? {
-        guard let userItem = try? KeychainManager.getUserItem() else { return nil }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return nil }
         guard let boardId = self.boardId else { return nil }
         let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
         let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
@@ -721,7 +687,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     private func insertMessages(_ data: [Any]) {
         for component in data {
             guard let boardId = self.boardId else { return }
-            guard let userItem = try? KeychainManager.getUserItem() else { return }
+            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
             Task(priority: .high) {
                 if let str = component as? String {
                     do {
@@ -737,10 +703,14 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                     let clipBoardList = getData.getClipBoardResList
                                     var clipBoardListCount = clipBoardList.count
                                     for i in upPageListCount..<clipBoardListCount { // 9  10
-                                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName:  clipBoardList[i].userName)
+                                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "")
                                         if avatarImages[sender.senderId] == nil {
-                                            let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
-                                            self.avatarImages[sender.senderId] = profileImage
+                                            if clipBoardList[i].profileImgURL.contains("null") {
+                                                self.avatarImages[sender.senderId] = UIImage(named: "profileImageNULL")
+                                            } else {
+                                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                                                self.avatarImages[sender.senderId] = profileImage
+                                            }
                                         }
                                         guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                                         let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))

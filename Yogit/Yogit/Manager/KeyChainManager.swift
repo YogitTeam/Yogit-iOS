@@ -112,15 +112,16 @@ final class KeychainManager {
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         
         UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier)
+        
     }
     
     // 조회
-    static func getUserItem() throws -> UserItem? { // serviceType: String 인자
+    static func getUserItem(serviceType: String) throws -> UserItem? { // serviceType: String 인자
         // service, account, return-data, class, matchlimit
         
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-//            kSecAttrService as String: serviceType, // 현재 서비스 타입인지 체크
+            kSecAttrService as String: serviceType, // 현재 서비스 타입인지 체크
             kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
             kSecReturnAttributes as String: true,
             kSecReturnData as String: true
@@ -135,14 +136,6 @@ final class KeychainManager {
         guard status != errSecItemNotFound else { return nil }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         
-//        print("Read status \(status)")
-//        let existingItem = item as? [String : Any]
-//        print("existingItem", existingItem)
-//        let data = existingItem![kSecValueData as String] as? Data
-//        print("data", data)
-        
-//        let userItem = try? JSONDecoder().decode(UserItem.self, from: data!)
-//        print("userItem", userItem?.refresh_token)
         guard let existingItem = item as? [String : Any],
             let data = existingItem[kSecValueData as String] as? Data,
             let userItem = try? JSONDecoder().decode(UserItem.self, from: data)
@@ -158,6 +151,8 @@ final class KeychainManager {
     }
     
     // 업데이트
+    // 저장된 유저 아이템 기져온 후
+    // 해당 유저아이템 변경
     static func updateUserItem(userItem: UserItem) throws {
         guard let data = try? JSONEncoder().encode(userItem) else { return }
         print("keychain save data \(data)")
@@ -187,10 +182,10 @@ final class KeychainManager {
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         
         if userItem.userStatus == SessionManager.AuthState.signOut.rawValue { // 로그아웃이면
-            UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
-            UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION)
+            UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 로그아웃/삭제 후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
+            UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION)  // 앱 앱 로그아웃/삭제 후 디바이스 토큰 삭재
         } else if userItem.userStatus == SessionManager.AuthState.signInSNS.rawValue { // 로그인이면
-            UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier) // 앱 로그아웃 후 로그인
+            UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier) // 앱 로그아웃 후 로그인하면 서비스 키값 저장
         }
         
         print("keychain update")
@@ -221,7 +216,7 @@ final class KeychainManager {
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         print("유저 계정 삭제 통과")
         UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
-        UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION)
+        UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION) // 앱 삭제후 디바이스 토큰 삭제
 //        assert(status == noErr, "failed to delete the value, status code = \(status)")
     }
 }

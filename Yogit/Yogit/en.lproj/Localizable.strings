@@ -4,8 +4,37 @@
 
   Created by Junseo Park on 2023/01/30.
   
+ 
 */
+
+
+// CONST
+"DONE" = "Done";
+"OK" = "Okay";
+
 "Nationality" = "Nationality";
 "Gathering" = "Gathering";
 "gathering" = "gathering";
-"GATHERING_JOIN" = "%@ has joined a %@' gathering."; // 이름, 모임명
+"CLIPBOARD_CHATTING_TITLE" = "Clipboard alarm";
+"CLIPBOARD_CHATTING_BODY" = "%@ chatted on the %@ clipboard.";
+"GATHERING_JOIN_TITLE" = "Join alarm";
+"GATHERING_JOIN_BODY" = "%@ has joined a %@' gathering."; // 이름, 모임명
+
+
+// ReportViewController
+"OBSCENITY" = "Obscenity";
+"FALSE_PROFILE" = "False profile";
+"RACIST_REMARKS" = "Racist remarks";
+"ABUSIVE_LANGUAGE_AND_SLANDE" = "Abusive language and slande";
+"OTHERS" = "Others";
+
+"REPORT_CONTENT_PLACEHOLDER" = "Please fill out a brief report";
+"REPORT_NOTE_TITLE" = "Note";
+"REPORT_NOTE_SUBTITLE" = "Please report images or contentsthat are harmful to other users. The report will be sent to the yogit team for review.";
+"REPORT_TYPE_KIND_TITLE" = "Report kind";
+"REPORT_CONTENT_TITLE" = "Report content";
+
+"REPORT" = "Report";
+
+"REPORT_CONTENT_ALERT" = "Please fill out the report";
+

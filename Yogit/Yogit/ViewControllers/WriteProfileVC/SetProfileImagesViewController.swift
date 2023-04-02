@@ -30,7 +30,7 @@ class SetProfileImagesViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
-        label.text = "Please show people a picture of your face and  shows you well."
+        label.text = "🖼 Please show people a picture of your face and shows you well."
         label.sizeToFit()
         label.numberOfLines = 0
         return label
@@ -49,10 +49,14 @@ class SetProfileImagesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSuperView()
-        configureNavigation()
         initProgressHUD()
         configureCollectionView()
         getUserImages()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureNav()
     }
     
     override func viewDidLayoutSubviews() {
@@ -73,10 +77,10 @@ class SetProfileImagesViewController: UIViewController {
         view.backgroundColor = .systemBackground
     }
     
-    private func configureNavigation() {
-        navigationItem.title = "Profile Photos"
-        navigationItem.rightBarButtonItem = self.rightButton
-        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
+    private func configureNav() {
+        navigationItem.title = "Photos"
+        navigationItem.backButtonTitle = "" // remove back button title
+        navigationItem.rightBarButtonItem = rightButton
     }
     
     private func configureCollectionView() {
@@ -90,7 +94,7 @@ class SetProfileImagesViewController: UIViewController {
     }
 
     private func getUserImages() {
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let getUserImages = GetUserImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
         let urlRequestConvertible = ProfileRouter.downLoadImages(parameters: getUserImages)
         ProgressHUD.show(interaction: false)
@@ -104,21 +108,17 @@ class SetProfileImagesViewController: UIViewController {
             .responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
+                    guard let value = response.value, value.httpCode == 200, let data = value.data else { return }
                     if value.httpCode == 200 {
                         print("Success - Download User Images")
-                        guard let data = value.data else {
-                            print("data error")
-                            return
-                        }
                         DispatchQueue.global(qos: .userInitiated).async { [self] in
                             userImagesData.imageIds = data.userImageIds
                             userImagesData.downloadImages = data.imageUrls
                             userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive, execute: {
+                            DispatchQueue.main.async(qos: .userInteractive) {
                                 self.imagesCollectionView.reloadData()
                                 ProgressHUD.dismiss()
-                            })
+                            }
                         }
 //                        print(progressTime {
 ////                             0.0019310712814331055 (async let 5개) 0.0017060041427612305 0.0016030073165893555
@@ -197,7 +197,7 @@ class SetProfileImagesViewController: UIViewController {
         
         ProgressHUD.show(interaction: false)
         
-        guard let userItem = try? KeychainManager.getUserItem() else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         print("userImagesData", userImagesData)
         let patchUserImages = PatchUserImages(userId: userItem.userId, refreshToken: userItem.refresh_token, deleteUserImageIds: userImagesData.deleteUserImageIds, uploadImages: userImagesData.uploadImages, uploadProfileImage: profileImage)
         let urlRequestConvertible = ProfileRouter.uploadImages(parameters: patchUserImages)
@@ -235,12 +235,12 @@ class SetProfileImagesViewController: UIViewController {
                             userImagesData.imageIds = data.userImageIds
                             userImagesData.downloadImages = data.imageUrls
                             userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                            DispatchQueue.main.async(qos: .userInteractive) { [self] in
                                 imagesCollectionView.reloadData()
                                 guard let profileImage = userImagesData.downloadProfileImage else { return }
                                 delegate?.imagesSend(profileImage: profileImage)
                                 navigationController?.popViewController(animated: true)
-                            })
+                            }
                         }
                     }
                 case let .failure(error):
@@ -334,26 +334,30 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         imagePicker.settings.selection.max = 6 - userImagesData.downloadImages.count - userImagesData.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
-            print("Auth", Auth)
-            if Auth {
-                self.presentImagePicker(imagePicker, select: { (asset) in
-                    print("Selected: \(asset)")
-                }, deselect: { (asset) in
-                    print("Deselected: \(asset)")
-                }, cancel: { (assets) in
-                    print("Canceled with selections: \(assets)")
-                }, finish: { (assets) in
-                    print("Finished with selections: \(assets)")
-                    let appendImages = self.convertAssetsToImages(asstes: assets)
-                    self.userImagesData.uploadImages.append(contentsOf: appendImages)
-                    self.imagesCollectionView.reloadData()
-                }, completion: {
-                    
-                })
-            } else {
-                DispatchQueue.main.async {
-                    self.setAuthAlertAction("Photo")
+        DispatchQueue.global(qos: .userInitiated).async {
+            ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
+                print("Auth", Auth)
+                if Auth {
+                    DispatchQueue.main.async(qos: .userInteractive) {
+                        self.presentImagePicker(imagePicker, select: { (asset) in
+                            print("Selected: \(asset)")
+                        }, deselect: { (asset) in
+                            print("Deselected: \(asset)")
+                        }, cancel: { (assets) in
+                            print("Canceled with selections: \(assets)")
+                        }, finish: { (assets) in
+                            print("Finished with selections: \(assets)")
+                            let appendImages = self.convertAssetsToImages(asstes: assets)
+                            self.userImagesData.uploadImages.append(contentsOf: appendImages)
+                            self.imagesCollectionView.reloadData()
+                        }, completion: {
+                            
+                        })
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.setAuthAlertAction("Photo")
+                    }
                 }
             }
         }
