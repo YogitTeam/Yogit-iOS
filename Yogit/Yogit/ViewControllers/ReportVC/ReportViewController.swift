@@ -28,18 +28,9 @@ enum ReportType: Int, CaseIterable {
 }
 
 enum ReportKind: Int, CaseIterable {
-    case clipboardReport = 0 // 음란
-    case boardReport // 허위 프로필
-    case userReport // 인종 차별 발언
-//    func title() -> String {
-//        switch self {
-//        case .obscenity: return "Obscenity"
-//        case .falseProfile: return "False profile"
-//        case .racistRemarks: return "Racist remarks"
-//        case .abusiveLanguageAndSlander: return "Abusive language and slande"
-//        case .others: return "Others"
-//        }
-//    }
+    case clipboardReport = 0 // 클립보드 신고
+    case boardReport // 보드 신고
+    case userReport // 유저 프로필 신고
 }
 
 class ReportViewController: UIViewController {
