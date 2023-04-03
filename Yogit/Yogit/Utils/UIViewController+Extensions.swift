@@ -21,9 +21,17 @@ import UIKit
 
 extension UIViewController {
     func setAuthAlertAction(_ type: String) {
-        let authAlertController = UIAlertController(title: "\(type) 사용 권한이 필요합니다.", message: "\(type) 권한을 허용하여야 해당 기능을 사용하실 수 있습니다.", preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let getAuthAction = UIAlertAction(title: "Setting", style: .default, handler: { (UIAlertAction) in
+        // Access to the 'Photos' app is required.
+        // Access to the '%@' app is required.
+        // '%@'앱의 접근 권한이 필요합니다.
+        // AUTHORIZATION_ALERT_TITLE
+        // AUTHORIZATION_ALERT_MESSAGE "\(type) 권한을 허용하여야 해당 기능을 사용하실 수 있습니다."
+        
+        let title = String(format: "AUTHORIZATION_ALERT_TITLE".localized(), "\(type)")
+        let message = String(format: "AUTHORIZATION_ALERT_MESSAGE".localized(), "\(type)")
+        let authAlertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
+        let getAuthAction = UIAlertAction(title: "SET_AUTHORIZATION_SETTING".localized(), style: .default, handler: { (UIAlertAction) in
             if let appSettings = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(appSettings,options: [:],completionHandler: nil)
             }

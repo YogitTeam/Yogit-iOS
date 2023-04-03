@@ -30,24 +30,12 @@ class NameViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "NAME_TITLE".localized()
+        label.text = "NAME_NOTICE".localized()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.semibold)
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
         label.numberOfLines = 0
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
-        return label
-    }()
-    
-    private let subTitleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "NAME_SUBTITLE".localized()
-        label.textAlignment = .left
-        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.regular)
-        label.numberOfLines = 0
-        label.textColor = .systemGray
-        label.sizeToFit()
         return label
     }()
     
@@ -90,12 +78,8 @@ class NameViewController: UIViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-        subTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
         nameTextField.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(16)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(50)
         }
@@ -117,7 +101,6 @@ class NameViewController: UIViewController {
     private func configureView() {
         view.backgroundColor = .systemBackground
         [titleLabel,
-         subTitleLabel,
          nameTextField,
          textCountLabel].forEach { view.addSubview($0) }
     }

@@ -63,19 +63,19 @@ class LanguagesViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
 //        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "🗣 Let global friends know what I can speak"
+        label.text = "LANGUAGE_TITLE".localized()
         label.numberOfLines = 0
         label.textAlignment = .left
         label.adjustsFontSizeToFitWidth = true
         label.sizeToFit()
-        label.font = .systemFont(ofSize: 22, weight: .semibold)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     
     private lazy var titleView: UIView = {
         let view = UIView()
 //        view.translatesAutoresizingMaskIntoConstraints = false
-        view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 60)
+        view.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 36)
         view.addSubview(titleLabel)
         return view
     }()
@@ -84,42 +84,44 @@ class LanguagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("처음 oldfilter section \(oldFilterSection)")
-//        sections = [
-//            Section(title: "English", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-//            Section(title: "Chinese", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-//            Section(title: "Korean", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-//            Section(title: "Spanish", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-//            Section(title: "French", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-//            Section(title: "Italian", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"]),
-//            Section(title: "Japanese", options: ["Beginner", "Elementary", "Intermediate", "Fluent", "Native"])
-//        ]
-        configureViewComponent()
-        setLanguages()
+        configureNav()
+        configureView()
+        configureSearchController()
+        configureLanguagesTableView()
+        configureLanguages()
         duplicateRemove(userLanuages: userLangs)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         languagesTableView.frame = view.bounds
-        languagesTableView.tableHeaderView = titleView
-        languagesTableView.tableHeaderView?.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 16, marginRight: 0, color: .systemGray3, width: 0.7, marginTop: 0)
-        titleLabel.snp.makeConstraints { (make) in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.top.equalToSuperview().inset(0)
-        }
+//        languagesTableView.tableHeaderView = titleView
+//        languagesTableView.tableHeaderView?.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 16, marginRight: 0, color: .systemGray3, width: 0.7, marginTop: 0)
+//        titleLabel.snp.makeConstraints { (make) in
+//            make.leading.trailing.equalToSuperview().inset(20)
+//            make.top.equalToSuperview().inset(0)
+//        }
     }
     
-    private func configureViewComponent() {
+    private func configureView() {
         self.view.addSubview(languagesTableView)
-        self.navigationItem.title = "Language"
-        self.setupSearchController()
         self.view.backgroundColor = .systemBackground
+    }
+    
+    private func configureSearchController() {
+        setupSearchController()
+    }
+    
+    private func configureNav() {
+        self.navigationItem.title = "LANGUAGE_NAVIGATIONITEM_TITLE".localized()
+    }
+    
+    private func configureLanguagesTableView() {
         languagesTableView.delegate = self
         languagesTableView.dataSource = self
     }
     
-    private func setLanguages() {
+    private func configureLanguages() {
         let languageCodes = NSLocale.isoLanguageCodes
         
         // 원어
@@ -177,7 +179,7 @@ class LanguagesViewController: UIViewController {
     
     func setupSearchController() {
         let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "Search Language"
+        searchController.searchBar.placeholder = "LANGUAGE_SEARCHBAR_PLACEHOLDER".localized()
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchResultsUpdater = self
         self.navigationItem.searchController = searchController
@@ -197,12 +199,8 @@ extension LanguagesViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             if isFiltering { // 열린와중에 검색여 선택시 에러
                 // 검색시 그전에 열린 섹션은 인덱스에 벗어남 따라서 검색시에는 그전에 열렸던 섹션 닫아줘야한다.
-                print("섹션 벗어남 \(oldFilterSection)") // 0
-                print("필터 배열 개수 \(filteredSections.count)") // 1
                 if oldFilterSection != nil && oldFilterSection != indexPath.section && filteredSections[oldFilterSection!].opened == true  { // 처음 아니고, 그전 섹션이랑 다르고, 열려있으면
                     // 섹션 벗어남 filter 0 까지 인데 1 연거임
-//                    print("섹션 벗어남 \(oldFilterSection)"
-//                    print("필터 배열 개수 \(filteredSections.count)")
                     filteredSections[oldFilterSection!].opened = false // 닫아줌
                     tableView.reloadSections([oldFilterSection!], with: .automatic) // 업데이트
                     print("old fitler sections reload")

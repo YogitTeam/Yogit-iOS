@@ -11,9 +11,19 @@
 // CONST
 "DONE" = "Done";
 "OK" = "Okay";
+"CANCEL" = "Cancel";
+"DELETE" = "Delete";
+"SET_AUTHORIZATION_SETTING" = "Setting";
+"PHOTO" = "Photos";
+"CAMERA" = "Camera";
+"AUTHORIZATION_ALERT_TITLE" = "Access authorization to the '%@' app required.";
+"AUTHORIZATION_ALERT_MESSAGE" = "It should be allow authorization for the '%@' app to use this funtion.";
 
 "Gathering" = "Gathering";
 "gathering" = "gathering";
+
+
+// Push Noti
 "CLIPBOARD_CHATTING_TITLE" = "Clipboard alarm";
 "CLIPBOARD_CHATTING_BODY" = "%@ chatted on the %@ clipboard.";
 "GATHERING_JOIN_TITLE" = "Join alarm";
@@ -77,8 +87,19 @@
 "PROFILE_LEVEL_4" = "Natvie";
 
 // NameViewController
-"NAME_TITLE" = "Let global friends know what my name.🤚";
-"NAME_SUBTITLE" = "We recommend a name that is easy for global friends to call.";
+"NAME_NOTICE" = "We recommend a name that is easy for global friends to call.";
 "NAME_PLACEHOLDER" = "Name";
 "NAME_NAVIGATIONITEM_TITLE" = "Name";
 "NAME_ALERT" = "Please input the name according to the condition.";
+
+// SetProfileImagesViewController
+"IMAGE_NOTICE" = "Pleas show people a photos of your face and a photos that can show yourself well.";
+"IMAGE_NAVIGATIONITEM_TITLE" = "Profile photos";
+"IMAGE_ALERT" = "Please upload at least main photo.";
+"UPLOAD_PHOTO" = "Upload photo";
+"TAKE_PHOTO" = "Take photo";
+
+// LanguagesViewController
+"LANGUAGE_TITLE" = "Let global friends know what you can speak";
+"LANGUAGE_NAVIGATIONITEM_TITLE" = "Language";
+"LANGUAGE_SEARCHBAR_PLACEHOLDER" = "Search Language";

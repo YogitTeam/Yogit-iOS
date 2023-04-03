@@ -112,7 +112,7 @@ class LanguagesTableViewCell: UITableViewCell {
     public func configure(text: String, isSelected: Bool?) {
         cellLabel.text = text
         if let isSelected = isSelected {
-            cellLabel.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+            cellLabel.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
             cellLabel.snp.makeConstraints { make in
                 make.centerY.equalToSuperview()
                 make.leading.equalToSuperview().offset(20)
@@ -120,11 +120,11 @@ class LanguagesTableViewCell: UITableViewCell {
             }
             if isSelected {
                 cellLabel.textColor = ServiceColor.primaryColor
-                let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
+                let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
                 let imageMinus = UIImage(systemName: "minus", withConfiguration: imageConfig)
                 cellRightImageView.image = imageMinus?.withTintColor(ServiceColor.primaryColor, renderingMode: .alwaysOriginal)
             } else {
-                let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .light)
+                let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .thin)
                 let imagePlus = UIImage(systemName: "plus", withConfiguration: imageConfig)
                 cellRightImageView.image = imagePlus?.withTintColor(.label, renderingMode: .alwaysOriginal)
             }

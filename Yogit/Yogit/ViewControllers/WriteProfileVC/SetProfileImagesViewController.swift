@@ -18,10 +18,14 @@ protocol ImagesProtocol: AnyObject {
 class SetProfileImagesViewController: UIViewController {
     weak var delegate: ImagesProtocol?
     
-    private var userImagesData = UserImagesData()
+    private var userImagesData = UserImagesData() {
+        didSet {
+            print("userImagesData", userImagesData)
+        }
+    }
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
         return button
     }()
@@ -29,8 +33,8 @@ class SetProfileImagesViewController: UIViewController {
     private let noticeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
-        label.text = "🖼 Please show people a picture of your face and shows you well."
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+        label.text = "IMAGE_NOTICE".localized()
         label.sizeToFit()
         label.numberOfLines = 0
         return label
@@ -48,7 +52,7 @@ class SetProfileImagesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureSuperView()
+        configureView()
         initProgressHUD()
         configureCollectionView()
         getUserImages()
@@ -71,14 +75,14 @@ class SetProfileImagesViewController: UIViewController {
         }
     }
     
-    private func configureSuperView() {
+    private func configureView() {
         view.addSubview(noticeLabel)
         view.addSubview(imagesCollectionView)
         view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {
-        navigationItem.title = "Photos"
+        navigationItem.title = "IMAGE_NAVIGATIONITEM_TITLE".localized()
         navigationItem.backButtonTitle = "" // remove back button title
         navigationItem.rightBarButtonItem = rightButton
     }
@@ -108,8 +112,8 @@ class SetProfileImagesViewController: UIViewController {
             .responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value, value.httpCode == 200, let data = value.data else { return }
-                    if value.httpCode == 200 {
+                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
+                        guard let data = value.data else { return }
                         print("Success - Download User Images")
                         DispatchQueue.global(qos: .userInitiated).async { [self] in
                             userImagesData.imageIds = data.userImageIds
@@ -188,8 +192,8 @@ class SetProfileImagesViewController: UIViewController {
         } else if userImagesData.uploadImages.count != 0  {
             profileImage = userImagesData.uploadImages.first
         } else {
-            let alert = UIAlertController(title: "Can't save photos", message: "Please upload at least main photo", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
+            let alert = UIAlertController(title: "", message: "IMAGE_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK".localized(), style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
             return
@@ -270,14 +274,14 @@ extension SetProfileImagesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 //        alert.view.tintColor = UIColor.label
-        let cancel = UIAlertAction(title: "cancel", style: .cancel, handler: nil)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
         alert.addAction(cancel)
         if indexPath.row < userImagesData.downloadImages.count + userImagesData.uploadImages.count {
-            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in self.deleteImage(indexPath.row)}
+            let delete = UIAlertAction(title: "DELETE".localized(), style: .destructive) { (action) in self.deleteImage(indexPath.row)}
             alert.addAction(delete)
         } else {
-            let library = UIAlertAction(title: "Upload photo", style: .default) { (action) in self.openLibrary() }
-            let camera = UIAlertAction(title: "Take photo", style: .default) { (action) in self.openCamera() }
+            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { (action) in self.openLibrary() }
+            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { (action) in self.openCamera() }
             alert.addAction(library)
             alert.addAction(camera)
         }
@@ -293,7 +297,6 @@ extension SetProfileImagesViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:  MyImagesCollectionViewCell.identifier, for: indexPath) as? MyImagesCollectionViewCell else { return UICollectionViewCell() }
         
         if indexPath.row < userImagesData.downloadImages.count {
@@ -301,7 +304,7 @@ extension SetProfileImagesViewController: UICollectionViewDataSource {
         } else if indexPath.row < userImagesData.downloadImages.count + userImagesData.uploadImages.count {
             cell.configureUpload(image: userImagesData.uploadImages[indexPath.row - userImagesData.downloadImages.count], sequence: indexPath.row + 1, kind: Kind.profile)
         } else {
-            cell.configureNull(image: UIImage(named: "ImageNULL")?.withRenderingMode(.alwaysTemplate), sequence: indexPath.row + 1, kind: Kind.profile)
+            cell.configureNull(image: UIImage(named: "IMAGE_NULL")?.withRenderingMode(.alwaysTemplate), sequence: indexPath.row + 1, kind: Kind.profile)
         }
         return cell
     }
@@ -335,30 +338,25 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         imagePicker.settings.selection.max = 6 - userImagesData.downloadImages.count - userImagesData.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        DispatchQueue.global(qos: .userInitiated).async {
-            ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
-                print("Auth", Auth)
+        ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
+            DispatchQueue.main.async(qos: .userInteractive) {
                 if Auth {
-                    DispatchQueue.main.async(qos: .userInteractive) {
-                        self.presentImagePicker(imagePicker, select: { (asset) in
-                            print("Selected: \(asset)")
-                        }, deselect: { (asset) in
-                            print("Deselected: \(asset)")
-                        }, cancel: { (assets) in
-                            print("Canceled with selections: \(assets)")
-                        }, finish: { (assets) in
-                            print("Finished with selections: \(assets)")
-                            let appendImages = self.convertAssetsToImages(asstes: assets)
-                            self.userImagesData.uploadImages.append(contentsOf: appendImages)
-                            self.imagesCollectionView.reloadData()
-                        }, completion: {
-                            
-                        })
-                    }
+                    self.presentImagePicker(imagePicker, select: { (asset) in
+                        print("Selected: \(asset)")
+                    }, deselect: { (asset) in
+                        print("Deselected: \(asset)")
+                    }, cancel: { (assets) in
+                        print("Canceled with selections: \(assets)")
+                    }, finish: { (assets) in
+                        print("Finished with selections: \(assets)")
+                        let appendImages = self.convertAssetsToImages(asstes: assets)
+                        self.userImagesData.uploadImages.append(contentsOf: appendImages)
+                        self.imagesCollectionView.reloadData()
+                    }, completion: {
+                        
+                    })
                 } else {
-                    DispatchQueue.main.async {
-                        self.setAuthAlertAction("Photo")
-                    }
+                    self.setAuthAlertAction("PHOTO".localized())
                 }
             }
         }
@@ -368,8 +366,14 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = .camera
-        DispatchQueue.main.async {
-            self.present(imagePicker, animated: true, completion: nil)
+        ImageManager.shared.checkCameraAuthorization { (Auth) in
+            DispatchQueue.main.async(qos: .userInteractive) {
+                if Auth {
+                    self.present(imagePicker, animated: true, completion: nil)
+                } else {
+                    self.setAuthAlertAction("CAMERA".localized())
+                }
+            }
         }
     }
 

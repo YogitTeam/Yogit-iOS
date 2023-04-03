@@ -9,6 +9,7 @@ import Foundation
 import Kingfisher
 import Photos
 import UIKit
+import AVFoundation
 
 final class ImageManager {
     static let shared = ImageManager()
@@ -52,5 +53,17 @@ final class ImageManager {
                 }
             }
         }
+    }
+    
+    func checkCameraAuthorization(completion: @escaping(Bool) -> Void) {
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
+          if granted {
+              print("Camera: 권한 허용")
+              completion(true)
+          } else {
+              print("Camera: 권한 거부")
+              completion(false)
+          }
+       })
     }
 }
