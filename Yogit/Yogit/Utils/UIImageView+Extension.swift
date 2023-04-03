@@ -33,4 +33,14 @@ extension UIImageView {
             }
         }
     }
+    
+    func removeCache() {
+      //모든 캐시 삭제
+      ImageCache.default.clearMemoryCache()
+      ImageCache.default.clearDiskCache { print("done clearDiskCache") }
+      
+      //만료된 캐시만 삭제
+      ImageCache.default.cleanExpiredMemoryCache()
+      ImageCache.default.cleanExpiredDiskCache { print("done cleanExpiredDiskCache") }
+    }
 }

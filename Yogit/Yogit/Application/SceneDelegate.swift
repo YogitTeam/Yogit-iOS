@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        let setUpVC = ReportViewController() //JobViewController() //MKMapLocalSearchViewController() //GatheringBoardContentViewController()//SetProfileViewController() //GatheringBoardOptionViewController() //AboutMeViewController() //MKMapLocalSearchViewController() //InterestsViewController() //MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
+        let setUpVC = SetProfileViewController() //JobViewController() //MKMapLocalSearchViewController() //GatheringBoardContentViewController()//SetProfileViewController() //GatheringBoardOptionViewController() //AboutMeViewController() //MKMapLocalSearchViewController() //InterestsViewController() //MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
         let rootVC = UINavigationController(rootViewController: setUpVC)
         rootVC.navigationBar.tintColor = UIColor.label
         rootVC.navigationBar.topItem?.backButtonTitle = ""
@@ -32,9 +32,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        SessionManager.checkUserAuth { (AuthState) in
 //            var rootViewState: RootViewState
 //            switch AuthState {
-//            case .undefine, .signOut, .deleteAccout: rootViewState = .loginView
+//            case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
 //            case .signInService: rootViewState = .homeView
-//            case .signInSNS: rootViewState = .setProfileView
+////            case .signInSNS: rootViewState = .setProfileView
 //            }
 //            DispatchQueue.main.async {
 //                let currentVC: UIViewController
@@ -47,10 +47,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //                    let homeVC = ServiceTapBarViewController()
 //                    currentVC = homeVC
 //                    break
-//                case .setProfileView:
-//                    let setProfileVC = SetProfileViewController()
-//                    currentVC = setProfileVC
-//                    break
+////                case .setProfileView:
+////                    let setProfileVC = SetProfileViewController()
+////                    currentVC = setProfileVC
+////                    break
 //                }
 //                let rootVC = UINavigationController(rootViewController: currentVC)
 //                rootVC.navigationBar.tintColor = UIColor.label

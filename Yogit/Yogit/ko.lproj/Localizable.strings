@@ -34,3 +34,51 @@
 "REPORT" = "Report";
 
 "REPORT_CONTENT_ALERT" = "간단하게 신고 내용을 작성해주세요.";
+
+
+// SetProfileViewController
+
+"GENDER_NONE" = "선택 안함";
+"GENDER_MALE" = "남자";
+"GENDER_FEMALE" = "여자";
+
+"CHANGE_PHOTOS" = "사진 변경";
+"SELECT_PHOTOS" = "사진 선택";
+"PROFILE_IMAGE" = "프로필 이미지";
+"PROFILE_NAME" = "이름";
+"PROFILE_AGE" = "나이";
+"PROFILE_LANGUAGE" = "언어";
+"PROFILE_NATIONALIY" = "국적";
+"PROFILE_GENDER" = "성별";
+"PROFILE_JOB" = "직업/주 활동";
+"PROFILE_ABOUTME" = "자기소개";
+"PROFILE_PESONALITY_INTERESTS" = "성격 & 관심사";
+
+"PROFILE_NAME_PLACEHOLDER" = "이름 입력";
+"PROFILE_AGE_PLACEHOLDER" = "국제 나이 선택";
+"PROFILE_LANGUAGE_PLACEHOLDER" = "회화 언어 선택";
+"PROFILE_NATIONALIY_PLACEHOLDER" = "국적 선택";
+"PROFILE_GENDER_PLACEHOLDER" = "성별 선택";
+"PROFILE_JOB_PLACEHOLDER" = "나의 하는 일 입력";
+"PROFILE_ABOUTME_PLACEHOLDER" = "자기소개 입력";
+"PROFILE_PESONALITY_INTERESTS_PLACEHOLDER" = "성격 & 관심사 선택";
+
+"PROFILE" = "프로필";
+"PROFILE_MISSING_DATA_ALERT" = "%@를 입력해주세요.";
+
+"PROFILE_FOOTER_NAME" = "가입 후에는 이름을 수정할 수 없습니다.\n신중하게 결정하세요.";
+"PROFILE_FOOTER_NATIONALITY" = "가입 후 국적 변경이 불가능합니다.";
+"PROFILE_FOOTER_LAST" = "사진, 이름, 나이, 언어, 국적 등이 공개됩니다. 하지만 성별은 공개되지 않습니다.";
+
+"PROFILE_LEVEL_0" = "초급";
+"PROFILE_LEVEL_1" = "중급";
+"PROFILE_LEVEL_2" = "고급";
+"PROFILE_LEVEL_3" = "이중 언어";
+"PROFILE_LEVEL_4" = "원어민";
+
+// NameViewController
+"NAME_TITLE" = "글로벌 친구들에게 이름을 알려주세요.🤚";
+"NAME_SUBTITLE" = "글로벌 친구들이 부르기 쉬운 이름을 추천드려요.";
+"NAME_PLACEHOLDER" = "이름";
+"NAME_NAVIGATIONITEM_TITLE" = "이름";
+"NAME_ALERT" = "이름을 조건에 맞게 입력해주세요.";

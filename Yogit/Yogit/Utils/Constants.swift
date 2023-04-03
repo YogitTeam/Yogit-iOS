@@ -20,7 +20,7 @@ enum CreateError: Error {
 
 
 enum RootViewState {
-    case loginView, homeView, setProfileView
+    case loginView, homeView //setProfileView
 }
 
 enum ServiceColor {
@@ -110,46 +110,54 @@ enum ProfileSectionData: Int {
     case interests
     
     func toString() -> String {
+        let str: String
         switch self {
-        case .name: return "Name"
-        case .age: return "Age"
-        case .languages: return "Languages"
-        case .nationality: return "Nationality"
-        case .gender: return "Gender"
-        case .job: return "Job"
-        case .aboutMe: return "AboutMe"
-        case .interests: return "Personality & Interests"
+        case .name: str = "PROFILE_NAME"
+        case .age: str = "PROFILE_AGE"
+        case .languages: str = "PROFILE_LANGUAGE"
+        case .nationality: str = "PROFILE_NATIONALIY"
+        case .gender: str = "PROFILE_GENDER"
+        case .job: str = "PROFILE_JOB"
+        case .aboutMe: str = "PROFILE_ABOUTME"
+        case .interests: str = "PROFILE_PESONALITY_INTERESTS"
         }
+        return str.localized()
     }
   
     func placeHolder() -> String {
+        let str: String
         switch self {
-        case .name: return "Nick name"
-        case .age: return "International age"
-        case .languages: return "Add conversational language"
-        case .nationality: return "Select nationaltiy"
-        case .gender: return "Select gender"
-        case .job: return "What do you do?"
-        case .aboutMe: return "Who are you?"
-        case .interests: return "What's your interests"
+        case .name: str = "PROFILE_NAME_PLACEHOLDER"
+        case .age: str = "PROFILE_AGE_PLACEHOLDER"
+        case .languages: str = "PROFILE_LANGUAGE_PLACEHOLDER"
+        case .nationality: str = "PROFILE_NATIONALIY_PLACEHOLDER"
+        case .gender: str = "PROFILE_GENDER_PLACEHOLDER"
+        case .job: str = "PROFILE_JOB_PLACEHOLDER"
+        case .aboutMe: str = "PROFILE_ABOUTME_PLACEHOLDER"
+        case .interests: str = "PROFILE_PESONALITY_INTERESTS_PLACEHOLDER"
         }
+        return str.localized()
     }
 }
 
 enum LanguageLevels: Int {
-    case beginner = 0
+    case elementary = 0
     case intermediate
-    case fluent
+    case advanced
+    case bilingual
     case native
-    
+
     func toString() -> String {
+        let str: String
         switch self.rawValue {
-        case 0: return "Beginner"
-        case 1: return "Intermediate"
-        case 2: return "Fluent"
-        case 3: return "Natvie"
+        case 0: str = "PROFILE_LEVEL_0"
+        case 1: str = "PROFILE_LEVEL_1"
+        case 2: str = "PROFILE_LEVEL_2"
+        case 3: str = "PROFILE_LEVEL_3"
+        case 4: str = "PROFILE_LEVEL_4"
         default: fatalError("Not exist language level")
         }
+        return str.localized()
     }
 }
 

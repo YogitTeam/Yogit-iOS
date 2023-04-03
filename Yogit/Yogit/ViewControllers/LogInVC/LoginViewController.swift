@@ -12,9 +12,10 @@ import Alamofire
 import ProgressHUD
 
 class LoginViewController: UIViewController {
-
+    
     private lazy var signInWithAppleButton: ASAuthorizationAppleIDButton = {
-        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .black)
+//        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black)
+        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .whiteOutline)
         button.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         return button
     }()
@@ -31,17 +32,14 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(iconImageView)
-        view.addSubview(signInWithAppleButton)
         configureViewComponent()
-        ProgressHUD.colorAnimation = ServiceColor.primaryColor
-        ProgressHUD.animationType = .circleStrokeSpin
-        NotificationCenter.default.addObserver(self, selector: #selector(revokeTokenRefreshNotification(_:)), name: .revokeTokenRefresh, object: nil)
+        initProgressHUD()
+        addNotiCenter()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: .revokeTokenRefresh, object: nil)
+        removeNotiCenter()
     }
     
     override func viewDidLayoutSubviews() {
@@ -57,6 +55,25 @@ class LoginViewController: UIViewController {
         }
     }
     
+    private func configureViewComponent() {
+        view.addSubview(iconImageView)
+        view.addSubview(signInWithAppleButton)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
+    }
+    
+    private func addNotiCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(revokeTokenRefreshNotification(_:)), name: .revokeTokenRefresh, object: nil)
+    }
+    
+    private func removeNotiCenter() {
+        NotificationCenter.default.removeObserver(self, name: .revokeTokenRefresh, object: nil)
+    }
+    
     @objc private func revokeTokenRefreshNotification(_ notification: Notification) {
         print("LoginVC - revokeTokenRefreshNotification")
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
@@ -69,12 +86,9 @@ class LoginViewController: UIViewController {
             .responseDecodable(of: APIResponse<String>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 || value.httpCode == 201 {
-//                        guard let data = value.data else { return }
+                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
                         do {
                             try KeychainManager.deleteUserItem(userItem: userItem)
-//                            try KeychainManager.deleteUserItem()
                             UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
                             UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
                             DispatchQueue.main.async {
@@ -86,17 +100,11 @@ class LoginViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("Delete account decoding error", error)
+                    DispatchQueue.main.async { // 변경
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
-    }
-    
-    
-    private func configureViewComponent() {
-        view.backgroundColor = .systemBackground
-    }
-    
-    private func configureNotiCenter() {
-        
     }
     
     
@@ -110,60 +118,15 @@ class LoginViewController: UIViewController {
         authorizationController.performRequests()
     }
     
-    // Code move to the view requirement data
-    //
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
-// 로그인
-// 로그아웃 >> 서버(로그아웃 상태 처리) >> 애플 서버()
-// 계정삭제 >> 서버 토큰 삭제 & 애플 서버 알림
-
-// 설정 창 >> 애플 사용 중단 >> 서버 endpoint로 전달-로그 아웃 처리
-// 애플 사용 중단 이후 (로그아웃) >> 프론트 애플 자격 증명 요청 >> .revoke >> 로그인 페이지 >> 키체인 계정 정보 확인
-//
-
-
-// 프론트 >> 애플 로그인 버튼 클릭 >> 서버로 로그인 요청 >> 응답 (계정 정보 저장)
-// 프론트 >> 로그 아웃 버튼 클릭 >> 서바로 로그 아웃 상태 처리 요청 & 애플  >> 응답 (키체인 상태 저장)
-// 프론트 >> 계정 삭제 버튼 클릭 >> 서바로 계정 삭제 버튼 클릭 >> 응답 (키체인 계정 정보 삭제)
-
-
-// 아직 안함: profile 입력후 응답갑 반환시 hasRequirementdata 값 서버에서 반환
 extension LoginViewController: ASAuthorizationControllerDelegate {
     
-    // 컨트롤러 뷰 애플 자격증먕 확인 완료 후 실행
-    // 로그아웃 (키체인 state logout이면 홈화면 넘어감)
-    // 설정창에서 애플 아이디 사용 중지시 (계정 삭제)
-    // 애플 아이디 사용 중지하면 즉각적으로 알아야함 (화면 바로 들어가면 정보 용청을 하닌깐)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         print("Run authorizationController")
-        // face id 거치고 뷰 전환 필요함
-        // token 있는지 없는지 확인 후에
-        // 로그아웃시 세션 및 화면 처리 요구
-        // 키체인 status로 구분
-        
-        
-        // 애플 계정 상태 이미 확인 후에
-        // 로그아웃 >> 로그인 api쏜다음 userStatus 값 변경후, SignInManager로 애플 권한 있는지만 확인후 서비스 화면 이동(로그아웃은 서비스화면에서만 가능함으로, hasRequirementInfo 확인할 필요 없다.)
-        // 계정삭제 및 애플 사용 중단 (이미 SignInManager에서 키체인 유저 정보 삭제 및 애플 권한 revoke처리 되어있음, 애플 권한 갱신 필요)
-        // 회원 가입 ()
-        // 애플 사용자 중단
         
         ProgressHUD.show(interaction: false)
-    
-//
+
         // 로그 아웃시 처리 (이미 키체인에 저장되어있고 서비스 타입은 삭제되어있는 경우)
         if let userItem = try? KeychainManager.getUserItem(serviceType: SessionManager.Service.APPLE_SIGNIN) { // SignInManager.service.
             // 로그인 api 요청후, 키체인 userstatus 업데이트 후 루트뷰 service화면으로 변경
@@ -181,16 +144,15 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                 userItem.userStatus = data.userStatus
                                 try KeychainManager.updateUserItem(userItem: userItem)
                                 
-                                let moveToVC: UIViewController
-                                if userItem.account.hasRequirementInfo {
-                                    moveToVC = ServiceTapBarViewController()
-                                } else {
-                                    moveToVC = SetProfileViewController()
-                                }
-                                DispatchQueue.main.async { [self] in
-                                    let rootVC = UINavigationController(rootViewController: moveToVC)
-                                    view.window?.rootViewController = rootVC
-                                    view.window?.makeKeyAndVisible()
+                                DispatchQueue.main.async(qos: .userInteractive){ [self] in
+                                    if userItem.account.hasRequirementInfo {
+                                        let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
+                                        view.window?.rootViewController = rootVC
+                                        view.window?.makeKeyAndVisible()
+                                    } else {
+                                        let SPVC = SetProfileViewController()
+                                        navigationController?.pushViewController(SPVC, animated: true)
+                                    }
                                     ProgressHUD.dismiss()
                                 }
                             } catch {
@@ -199,6 +161,9 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                         }
                     case let .failure(error):
                         print(error)
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 }
         } else {
@@ -210,24 +175,20 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 
                 // Real user indicator
                 let realUserStatus = appleIDCredential.realUserStatus// not nil
+                print("realUserStatus", realUserStatus)
                 
                 guard let identityTokenData = appleIDCredential.identityToken,
                       let identityToken = String(data: identityTokenData, encoding: .utf8),
                       let authorizationCodeData = appleIDCredential.authorizationCode,
                       let authorizationCode = String(data: authorizationCodeData, encoding: .utf8)
-                else { return } // can nil
+                else { return }
                 
-////                // 처음 애플 서버 인증시에만 나옴
-//                guard let givenName = appleIDCredential.fullName?.givenName,
-//                      let familyName = appleIDCredential.fullName?.familyName,
-//                      let userEmail = appleIDCredential.email
-//                else { return }
-
                 let userData: User
                 if let user = try? KeychainManager.getUser(userType: SessionManager.Service.User.APPLE) {
                     userData = user
                     print("기존 User", userData.name, userData.email)
                 } else {
+                    // 처음 애플 서버 인증시에만 나옴
                     guard let givenName = appleIDCredential.fullName?.givenName,
                           let familyName = appleIDCredential.fullName?.familyName,
                           let userEmail = appleIDCredential.email
@@ -244,25 +205,12 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                         print("KeychainManager.saveUser \(error.localizedDescription)")
                     }
                     
-                    print("새로운 User", userData.name, userData.email)
+                    print("새로운 User name, email", userData.name, userData.email)
                 }
                 
-                let state = "SIGNIN"
-                print("state \(state)")
-                print("IdentityToken \(identityToken)")
-                print("AuthorizationCode \(authorizationCode)")
-                print("User Identifier \(identifier)")
-                print("Full Name \(userData.name)")
-                print("Email \(userData.email)")
-                print("RealUserStatus \(realUserStatus.rawValue)")
-                
-                
-//                let name = Name(firstName: givenName, lastName: familyName)
-//                let user = User(name: name, email: userEmail)
-                
-
-                
-                let account = Account(state: state, code: authorizationCode, id_token: identityToken, user: userData, identifier: identifier, hasRequirementInfo: false)
+                let state = "SIGNIN" // state 사용안함, UserItem의 userStatus로 상태관리
+               
+                let account = Account(state: state, code: authorizationCode, id_token: identityToken, user: userData, identifier: identifier, hasRequirementInfo: false) // state 사용안함, UserItem의 userStatus로 상태관리
                 
                 // 회원가입
                 AlamofireManager.shared.session
@@ -271,8 +219,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                     .responseDecodable(of: APIResponse<UserItem>.self) { response in
                         switch response.result {
                         case .success:
-                            guard let value = response.value else { return }
-                            if value.httpCode == 200 || value.httpCode == 201 {
+                            if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
                                 guard let data = value.data else { return }
                                 do {
                                     // 신규 가입
@@ -284,26 +231,22 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                     }
                                     
                                     try KeychainManager.saveUserItem(userItem: data)
-                                    print("키체인에 저장한 userItem", data)
-//                                    DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-//                                        let SPVC = SetProfileViewController()
-//                                        navigationController?.pushViewController(SPVC, animated: true)
-//                                        ProgressHUD.dismiss()
-//                                    })
                                     
-                                    // 루트뷰 바꿔버림
-                                    DispatchQueue.main.async { [self] in
-                                        let rootVC = UINavigationController(rootViewController: SetProfileViewController())
-                                        view.window?.rootViewController = rootVC
-                                        view.window?.makeKeyAndVisible()
+                                    DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                                        let SPVC = SetProfileViewController()
+                                        navigationController?.pushViewController(SPVC, animated: true)
                                         ProgressHUD.dismiss()
-                                    }
+                                    })
+                                    
                                 } catch {
                                     print("KeychainManager saveUserItem error \(error.localizedDescription)")
                                 }
                             }
                         case let .failure(error):
                             print(error)
+                            DispatchQueue.main.async { // 변경
+                                ProgressHUD.dismiss()
+                            }
                         }
                     }
             case let passwordCredential as ASPasswordCredential:

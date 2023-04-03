@@ -57,7 +57,7 @@ class SetProfileTableViewFooter: UITableViewHeaderFooterView {
     }
     
     public func configure(text: String, kind: Int) {
-        footerLabel.text = text
+        footerLabel.text = text.localized()
         footerLabel.textColor = .darkGray
         switch kind {
         case ProfileSectionData.name.rawValue:

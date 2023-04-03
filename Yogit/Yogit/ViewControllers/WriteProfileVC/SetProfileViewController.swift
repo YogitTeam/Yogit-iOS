@@ -9,6 +9,7 @@
 
 import UIKit
 import ProgressHUD
+import SkeletonView
 
 protocol FetchUserProfileProtocol: AnyObject {
     func sendFetchedUserProfile(data: FetchUserProfile)
@@ -16,10 +17,10 @@ protocol FetchUserProfileProtocol: AnyObject {
 
 class SetProfileViewController: UIViewController {
     
-    private let genderData = ["Prefer not to say", "Male", "Female"]
+    private let genderData = ["GENDER_NONE".localized(), "GENDER_MALE".localized(), "GENDER_FEMALE".localized()]
     private var ageData = [Int]()
     private var userAge = 18
-    private var userGender = "Prefer not to say"
+    private var userGender = "GENDER_NONE".localized()
     private var sectionNumber: Int = 5
     private var lastSectionFooterHeight: CGFloat = 100
     
@@ -40,32 +41,31 @@ class SetProfileViewController: UIViewController {
     var userProfile = UserProfile() {
         didSet {
             print("userProfile", userProfile)
-//            checkAllData()
         }
     }
     
     var userProfileImage: String? {
         didSet {
             if let imageString = userProfileImage {
-                DispatchQueue.main.async(qos: .userInteractive) { [self] in
-                    profileImageView.setImage(with: imageString)
-                    profileImageLabel.textColor = .label
-                    profileImageLabel.text = "Change photos"
-//                    checkAllData()
-                }
+                let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
+                profileImageView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
+                profileImageView.setImage(with: imageString)
+                profileImageLabel.textColor = .label
+                profileImageLabel.text = "CHANGE_PHOTOS".localized()
+                profileImageView.stopSkeletonAnimation()
+                profileImageView.hideSkeleton()
             }
         }
     }
     
     private lazy var nextButton: UIButton = {
         let button = UIButton()
-//        button.setTitle("Done", for: .normal)
-        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.setImage(image, for: .normal)
         button.tintColor = .white
         button.isHidden = false
-        button.backgroundColor = ServiceColor.primaryColor//.placeholderText
-//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-//        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        button.backgroundColor = ServiceColor.primaryColor
         button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -89,7 +89,7 @@ class SetProfileViewController: UIViewController {
     }()
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.isHidden = true
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
         return button
@@ -127,7 +127,8 @@ class SetProfileViewController: UIViewController {
 
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "profileImageNULL")
+        imageView.isSkeletonable = true
+        imageView.image = UIImage(named: "PROFILE_IMAGE_NULL")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .placeholderText
         imageView.layer.cornerRadius = 55
@@ -142,7 +143,7 @@ class SetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
-        label.text = "Select photos"
+        label.text = "SELECT_PHOTOS".localized()
         label.textColor = .placeholderText
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
@@ -182,29 +183,31 @@ class SetProfileViewController: UIViewController {
     }()
     
     private var hasMissingValue: String? {
+        let str: String?
         if userProfileImage == nil {
-            return "profile image"
+            str = "PROFILE_IMAGE"
         } else if userProfile.userName == nil {
-            return "name"
+            str = "PROFILE_NAME"
         } else if userProfile.userAge == nil {
-            return "age"
+            str = "PROFILE_AGE"
         } else if !((userProfile.languageCodes?.count ?? 0 > 0) && (userProfile.languageLevels?.count ?? 0 > 0)) {
-            return "language"
+            str = "PROFILE_LANGUAGE"
         } else if userProfile.nationality == nil  {
-            return "nationality"
+            str = "PROFILE_NATIONALIY"
         } else if userProfile.gender == nil {
-            return "gender"
+            str = "PROFILE_GENDER"
         } else {
-            return nil
+            str = nil
         }
+        return str?.localized().lowercased()
 //        let isTrue = (userProfileImage != nil) && (userProfile.userName != nil) && (userProfile.userAge != nil) && (userProfile.languageCodes?.count ?? 0 > 0) && (userProfile.languageLevels?.count ?? 0 > 0) && (userProfile.nationality != nil) && (userProfile.gender != nil)
 //        return isTrue
     }
     
-    // viewload 시 get 요청
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureSuperView()
+        configureView()
+        initProgressHUD()
         configureTableView()
         configurePickerVew()
     }
@@ -218,7 +221,6 @@ class SetProfileViewController: UIViewController {
         dismissKeyboard()
     }
 
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         infoTableView.frame = view.bounds
@@ -246,7 +248,7 @@ class SetProfileViewController: UIViewController {
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
     
-    private func configureSuperView() {
+    private func configureView() {
         view.addSubview(infoTableView)
         view.addSubview(pendingView)
         view.addSubview(nextButton)
@@ -254,9 +256,14 @@ class SetProfileViewController: UIViewController {
     }
     
     private func configureNav() {
-        navigationItem.title = "Profile"
+        navigationItem.title = "PROFILE".localized()
         navigationItem.backButtonTitle = "" // remove back button title
         navigationItem.rightBarButtonItem = rightButton
+    }
+    
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
     }
     
     private func configureTableView() {
@@ -271,23 +278,20 @@ class SetProfileViewController: UIViewController {
         for i in 18...60 { ageData.append(i) }
     }
     
-//    private func missingValueAlert() {
-//        guard hasMissingValue == nil else {
-//            let alert = UIAlertController(title: "Can't sign up", message: "Please enter \(hasMissingValue!)", preferredStyle: UIAlertController.Style.alert)
-//            let okAction = UIAlertAction(title: "OK", style: .default)
-//            alert.addAction(okAction)
-//            present(alert, animated: false, completion: nil)
-//            return
-//        }
-//    }
+    private func missingDataAlert() {
+        let message = String(format: "PROFILE_MISSING_DATA_ALERT".localized(), "\(hasMissingValue!)")
+        let alert = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title: "OK".localized(), style: .default)
+        alert.addAction(okAction)
+        DispatchQueue.main.async(qos: .userInteractive) {
+            self.present(alert, animated: false, completion: nil)
+        }
+    }
     
-    @objc func nextButtonTapped(_ sender: UIButton) {
+    @objc private func nextButtonTapped(_ sender: UIButton) {
         
         guard hasMissingValue == nil else {
-            let alert = UIAlertController(title: "", message: "Please enter \(hasMissingValue!)", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alert.addAction(okAction)
-            present(alert, animated: false, completion: nil)
+            missingDataAlert()
             return
         }
         
@@ -299,32 +303,20 @@ class SetProfileViewController: UIViewController {
         })
     }
     
-    // rightbutton는 pop이고
-    // 하단 버튼은 push이다.
     @objc private func rightButtonPressed(_ sender: Any) {
         print("rightButtonPressed userProfile Data", userProfile)
-        
         guard hasMissingValue == nil else {
-            let alert = UIAlertController(title: "Can't sign up", message: "Please enter \(hasMissingValue!)", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alert.addAction(okAction)
-            present(alert, animated: false, completion: nil)
+            missingDataAlert()
             return
         }
         
-        ProgressHUD.colorAnimation = ServiceColor.primaryColor
-        ProgressHUD.animationType = .circleStrokeSpin
         ProgressHUD.show(interaction: false)
         
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        
         userProfile.userId = userItem.userId
         userProfile.refreshToken = userItem.refresh_token
 
-        
-        // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
-        // userProfile에  SearchUserProfile 모든 데이터 포함
-     
-        
         let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
         if let parameters = urlRequestConvertible.toDictionary {
             print("parameters", parameters)
@@ -349,16 +341,16 @@ class SetProfileViewController: UIViewController {
                 case .success:
                     if let value = response.value, value.httpCode == 200, let data = value.data, self.mode == .edit {
                         DispatchQueue.main.async { [weak self] in
-                            // 프로토콜로 전달
                             self?.delegate?.sendFetchedUserProfile(data: data)
                             self?.navigationController?.popViewController(animated: true)
+                            ProgressHUD.dismiss()
                         }
                     }
                 case let .failure(error):
                     print("SetProfileVC - upload response result Not return", error)
-                }
-                DispatchQueue.main.async { // 변경
-                    ProgressHUD.dismiss()
+                    DispatchQueue.main.async { // 변경
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
         }
@@ -374,7 +366,6 @@ class SetProfileViewController: UIViewController {
 //        }
 //    }
     
-    
     @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async {
             let SPICV = SetProfileImagesViewController()
@@ -384,7 +375,6 @@ class SetProfileViewController: UIViewController {
     }
     
     @objc private func donePressed(_ sender: UIButton) {
-        print("seder.tag", sender.tag)
         switch sender.tag {
         case 1: userProfile.userAge = userAge
         case 4: userProfile.gender = userGender
@@ -420,7 +410,6 @@ extension SetProfileViewController: UITableViewDataSource {
         return sectionNumber
     }
 
-    
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SetProfileTableViewCell.identifier, for: indexPath) as? SetProfileTableViewCell else { return UITableViewCell() }
@@ -497,19 +486,16 @@ extension SetProfileViewController: UITableViewDataSource {
         }
         cell.layoutIfNeeded()
         cell.addBottomBorderWithColor(color: .placeholderText, width: 1)
-        print("Setup profile cell update section = \(indexPath.section)")
         return cell
         
     }
     
     @objc private func deleteButtonTapped(_ button: UIButton) {
-        print("Language of profile deleteButtonTapped")
-        let deletedLanguage = userProfile.languageCodes?.remove(at: button.tag)
-        let deletedLevel = userProfile.languageLevels?.remove(at: button.tag)
+        userProfile.languageCodes?.remove(at: button.tag)
+        userProfile.languageLevels?.remove(at: button.tag)
         DispatchQueue.main.async {
             self.infoTableView.reloadData()
         }
-        print("deletedLangInfo \(deletedLanguage!) \(deletedLevel!)")
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -519,27 +505,14 @@ extension SetProfileViewController: UITableViewDataSource {
         headerView.layoutIfNeeded()
         return headerView
     }
-
-//    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-//        // enum toString 작업 요구
-//        switch section {
-//        case 2:
-//            return "Your name, age, languageNames will be public.\n\n"
-//        case 4:
-//            return "Gender, nationality help improve recommendations but are not shown publicly."
-//        default:
-//            return nil
-//        }
-//    }
-//
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         guard let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: SetProfileTableViewFooter.identifier) as? SetProfileTableViewFooter else { return UITableViewHeaderFooterView() }
         // userName, age, lanages, gender, nationality
         switch section {
-        case 0: footerView.configure(text: "The name can't be modified after sign up.\nPlease make a careful decision.", kind: section)
-        case 3: footerView.configure(text: "The nationality can't be modified after sign up.", kind: section)
-        case 4: footerView.configure(text: "Your photos, name, age, languages, nationality will be public. But gender is not shown publicly.", kind: section)
+        case 0: footerView.configure(text: "PROFILE_FOOTER_NAME", kind: section)
+        case 3: footerView.configure(text: "PROFILE_FOOTER_NATIONALITY", kind: section)
+        case 4: footerView.configure(text: "PROFILE_FOOTER_LAST", kind: section)
         default: return nil
         }
         return footerView
@@ -550,7 +523,7 @@ extension SetProfileViewController: UITableViewDataSource {
             case 0: return 46
             case 3: return 30
             case 4: return lastSectionFooterHeight // 40 or 120
-            default: return 14 // origin 8
+            default: return 14 // origin 14
         }
     }
 }
@@ -558,13 +531,8 @@ extension SetProfileViewController: UITableViewDataSource {
 extension SetProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        guard let cell = tableView.cellForRow(at: indexPath) as? SetProfileTableViewCell else { return }
         tableView.deselectRow(at: indexPath, animated: true)
-//        if let cell = tableView.cellForRow(at: indexPath) {
-//            cell.backgroundColor = UIColor.blue
-//        }
-        
-        print("Cell 선택")
+
         DispatchQueue.main.async(qos: .userInteractive) {
             switch indexPath.section {
             case 0:
@@ -667,8 +635,6 @@ extension SetProfileViewController: LanguageProtocol {
         userProfile.languageLevels = userProfile.languageLevels ?? []
         userProfile.languageCodes?.append(languageCode)
         userProfile.languageLevels?.append(level)
-        print("유저 프로필 언어", userProfile.languageCodes, userProfile.languageLevels)
-//        print("데이터 다 있음?", hasAllValue)
         DispatchQueue.main.async {
             self.infoTableView.reloadData()
         }
@@ -691,12 +657,9 @@ extension SetProfileViewController: UIPickerViewDataSource {
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView.tag {
-        case ProfileSectionData.age.rawValue:
-            return self.ageData.count
-        case ProfileSectionData.gender.rawValue:
-            return self.genderData.count
-        default:
-            fatalError("일치하는 피커뷰 없다")
+        case ProfileSectionData.age.rawValue: return self.ageData.count
+        case ProfileSectionData.gender.rawValue: return self.genderData.count
+        default: fatalError("Non exist picker view")
         }
     }
     
@@ -752,10 +715,8 @@ extension SetProfileViewController {
     }
 
     @objc private func dismissKeyboard() {
-        print("tableView Tap")
         DispatchQueue.main.async {
             self.infoTableView.endEditing(true)
         }
-        
     }
 }

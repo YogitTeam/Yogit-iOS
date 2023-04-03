@@ -21,7 +21,7 @@ extension String {
         return image
     }
     
-    func localized(comment: String = "" ) -> String {
+    func localized(comment: String = "") -> String {
         return NSLocalizedString(self, comment: comment)
     }
     

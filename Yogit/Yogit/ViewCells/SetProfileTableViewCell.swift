@@ -58,11 +58,12 @@ class SetProfileTableViewCell: UITableViewCell {
         let button = UIButton()
         button.isHidden = true
         button.isEnabled = false
-        button.setImage(UIImage(named: "push")?.withRenderingMode(.alwaysTemplate), for: .disabled)
-        button.setImage(UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.imageView?.tintColor = .placeholderText
-//        button.layer.borderColor = UIColor.systemYellow.cgColor
-//        button.layer.borderWidth = 1
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let imageNormal = UIImage(systemName: "xmark", withConfiguration: imageConfig)
+        let imageDisable = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.setImage(imageNormal, for: .normal)
+        button.setImage(imageDisable, for: .disabled)
+        button.tintColor = .placeholderText
         return button
     }()
     
@@ -156,7 +157,7 @@ class SetProfileTableViewCell: UITableViewCell {
     // cell content update
     func configure(text: String?, section: Int) {
         commonTextField.text = text
-        commonTextField.placeholder = ProfileSectionData(rawValue: section)?.placeHolder()
+        commonTextField.placeholder = ProfileSectionData(rawValue: section)?.placeHolder().localized()
         switch section {
         case ProfileSectionData.name.rawValue: 
             rightButton.isHidden = false

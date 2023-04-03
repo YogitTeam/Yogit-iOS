@@ -202,7 +202,7 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 6
+        stackView.spacing = 10
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
@@ -243,7 +243,7 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 6
+        stackView.spacing = 10
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
@@ -284,7 +284,7 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 6
+        stackView.spacing = 10
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
@@ -325,7 +325,7 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 6
+        stackView.spacing = 10
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true

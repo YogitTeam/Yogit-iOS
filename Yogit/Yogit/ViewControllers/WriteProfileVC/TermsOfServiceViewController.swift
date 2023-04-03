@@ -237,7 +237,7 @@ class TermsOfServiceViewController: UIViewController {
 
         // generalAttributes(기본 스타일) 적용
         mutableString.append(
-        NSAttributedString(string: generalText,attributes: generalAttributes)
+        NSAttributedString(string: generalText, attributes: generalAttributes)
         )
 
         // 각 문자열의 range에 linkAttributes 적용

@@ -12,7 +12,6 @@
 "DONE" = "Done";
 "OK" = "Okay";
 
-"Nationality" = "Nationality";
 "Gathering" = "Gathering";
 "gathering" = "gathering";
 "CLIPBOARD_CHATTING_TITLE" = "Clipboard alarm";
@@ -28,7 +27,7 @@
 "ABUSIVE_LANGUAGE_AND_SLANDE" = "Abusive language and slande";
 "OTHERS" = "Others";
 
-"REPORT_CONTENT_PLACEHOLDER" = "Please fill out a brief report";
+"REPORT_CONTENT_PLACEHOLDER" = "Please input a brief report.";
 "REPORT_NOTE_TITLE" = "Note";
 "REPORT_NOTE_SUBTITLE" = "Please report images or contentsthat are harmful to other users. The report will be sent to the yogit team for review.";
 "REPORT_TYPE_KIND_TITLE" = "Report kind";
@@ -36,5 +35,50 @@
 
 "REPORT" = "Report";
 
-"REPORT_CONTENT_ALERT" = "Please fill out the report";
+"REPORT_CONTENT_ALERT" = "Please fill out the report.";
 
+// SetProfileViewController
+"GENDER_NONE" = "Prefer not to say";
+"GENDER_MALE" = "Male";
+"GENDER_FEMALE" = "Female";
+
+"CHANGE_PHOTOS" = "Change photos";
+"SELECT_PHOTOS" = "Select photos";
+"PROFILE_IMAGE" = "Profile image";
+"PROFILE_NAME" = "Name";
+"PROFILE_AGE" = "Age";
+"PROFILE_LANGUAGE" = "Language";
+"PROFILE_NATIONALIY" = "Nationality";
+"PROFILE_GENDER" = "Gender";
+"PROFILE_JOB" =  "Job/Main activity";
+"PROFILE_ABOUTME" = "AboutMe";
+"PROFILE_PESONALITY_INTERESTS" = "Personality & Interests";
+
+"PROFILE_NAME_PLACEHOLDER" = "Input name";
+"PROFILE_AGE_PLACEHOLDER" = "Select international age";
+"PROFILE_LANGUAGE_PLACEHOLDER" = "Select conversational language";
+"PROFILE_NATIONALIY_PLACEHOLDER" = "Select nationaltiy";
+"PROFILE_GENDER_PLACEHOLDER" = "Select gender";
+"PROFILE_JOB_PLACEHOLDER" = "Input what I do";
+"PROFILE_ABOUTME_PLACEHOLDER" = "Input who I am";
+"PROFILE_PESONALITY_INTERESTS_PLACEHOLDER" = "Select personality & interests";
+
+"PROFILE" = "Profile";
+"PROFILE_MISSING_DATA_ALERT" = "Please input the %@";
+
+"PROFILE_FOOTER_NAME" = "The name can't be modified after sign up.\nPlease make a careful decision.";
+"PROFILE_FOOTER_NATIONALITY" = "The nationality can't be modified after sign up.";
+"PROFILE_FOOTER_LAST" = "Your photos, name, age, languages, nationality will be public. But gender is not shown publicly.";
+
+"PROFILE_LEVEL_0" = "Elementary";
+"PROFILE_LEVEL_1" = "Intermediate";
+"PROFILE_LEVEL_2" = "Advanced";
+"PROFILE_LEVEL_3" = "Bilingual";
+"PROFILE_LEVEL_4" = "Natvie";
+
+// NameViewController
+"NAME_TITLE" = "Let global friends know what my name.🤚";
+"NAME_SUBTITLE" = "We recommend a name that is easy for global friends to call.";
+"NAME_PLACEHOLDER" = "Name";
+"NAME_NAVIGATIONITEM_TITLE" = "Name";
+"NAME_ALERT" = "Please input the name according to the condition.";

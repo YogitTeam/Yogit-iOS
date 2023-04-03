@@ -33,7 +33,7 @@
 		792A11C1295C23E200F67094 /* BasicAudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A11C0295C23E200F67094 /* BasicAudioController.swift */; };
 		792A11C9295CB75400F67094 /* ContentSizedTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A11C8295CB75400F67094 /* ContentSizedTableView.swift */; };
 		792A11D5295E1D5E00F67094 /* MessageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 792A11D4295E1D5E00F67094 /* MessageKit */; };
-		792A11D82961BA0D00F67094 /* ClipBoardViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A11D72961BA0D00F67094 /* ClipBoardViewController2.swift */; };
+		792A11D82961BA0D00F67094 /* ClipBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A11D72961BA0D00F67094 /* ClipBoardViewController.swift */; };
 		792A11DB2962D73700F67094 /* ClipBoardRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A11DA2962D73700F67094 /* ClipBoardRouter.swift */; };
 		792A11DF2966956D00F67094 /* SettingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A11DE2966956D00F67094 /* SettingProfileViewController.swift */; };
 		79519FBF291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */; };
@@ -56,7 +56,6 @@
 		7951A0BC292A29F800D8E6CF /* ServiceTapBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */; };
 		7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */; };
 		7953ED2A297025A2003ACB27 /* ProfileRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953ED29297025A2003ACB27 /* ProfileRouter.swift */; };
-		7953ED2D2970C35B003ACB27 /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953ED2C2970C35B003ACB27 /* PopUpViewController.swift */; };
 		7953ED31297435C8003ACB27 /* URLConvertible+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7953ED30297435C8003ACB27 /* URLConvertible+Extension.swift */; };
 		7954854A28D5D006005ED367 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7954854928D5D006005ED367 /* LoginViewController.swift */; };
 		795D9BC028F1993300228E34 /* RequirementTableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795D9BBF28F1993300228E34 /* RequirementTableViewHeader.swift */; };
@@ -169,7 +168,7 @@
 		792A11BE295B63F200F67094 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		792A11C0295C23E200F67094 /* BasicAudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAudioController.swift; sourceTree = "<group>"; };
 		792A11C8295CB75400F67094 /* ContentSizedTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSizedTableView.swift; sourceTree = "<group>"; };
-		792A11D72961BA0D00F67094 /* ClipBoardViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipBoardViewController2.swift; sourceTree = "<group>"; };
+		792A11D72961BA0D00F67094 /* ClipBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipBoardViewController.swift; sourceTree = "<group>"; };
 		792A11DA2962D73700F67094 /* ClipBoardRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipBoardRouter.swift; sourceTree = "<group>"; };
 		792A11DE2966956D00F67094 /* SettingProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingProfileViewController.swift; sourceTree = "<group>"; };
 		79519FBE291D070400D8E6CF /* GatheringBoardCategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GatheringBoardCategoryTableViewCell.swift; sourceTree = "<group>"; };
@@ -190,7 +189,6 @@
 		7951A0BB292A29F800D8E6CF /* ServiceTapBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTapBarViewController.swift; sourceTree = "<group>"; };
 		7951A0BD292A7D4300D8E6CF /* TimeMeasure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeMeasure.swift; sourceTree = "<group>"; };
 		7953ED29297025A2003ACB27 /* ProfileRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRouter.swift; sourceTree = "<group>"; };
-		7953ED2C2970C35B003ACB27 /* PopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
 		7953ED30297435C8003ACB27 /* URLConvertible+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+Extension.swift"; sourceTree = "<group>"; };
 		7954854828D5CF99005ED367 /* Yogit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yogit.entitlements; sourceTree = "<group>"; };
 		7954854928D5D006005ED367 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -396,7 +394,7 @@
 		791F6CAF2940F77000C1D470 /* ClipBoard */ = {
 			isa = PBXGroup;
 			children = (
-				792A11D72961BA0D00F67094 /* ClipBoardViewController2.swift */,
+				792A11D72961BA0D00F67094 /* ClipBoardViewController.swift */,
 				792A11BE295B63F200F67094 /* ChatViewController.swift */,
 				792A11C0295C23E200F67094 /* BasicAudioController.swift */,
 			);
@@ -475,14 +473,6 @@
 				792A11DD2966952B00F67094 /* PushNotification */,
 			);
 			path = ServiceVC;
-			sourceTree = "<group>";
-		};
-		7953ED2B2970C2FD003ACB27 /* PopUpVC */ = {
-			isa = PBXGroup;
-			children = (
-				7953ED2C2970C35B003ACB27 /* PopUpViewController.swift */,
-			);
-			path = PopUpVC;
 			sourceTree = "<group>";
 		};
 		795D9BC128F1993F00228E34 /* ViewHeaderFooters */ = {
@@ -664,7 +654,6 @@
 			children = (
 				797302662997ED9B006EFFB9 /* ReportVC */,
 				79730249298B99CF006EFFB9 /* GatheringBoardUser */,
-				7953ED2B2970C2FD003ACB27 /* PopUpVC */,
 				7962CEDE29384055007FCC10 /* LogInVC */,
 				7962CEDD29383FDD007FCC10 /* WriteProfileVC */,
 				7951A0BA292A247100D8E6CF /* ServiceVC */,
@@ -1007,7 +996,7 @@
 				79519FEF291E8DA300D8E6CF /* GatheringBoard.swift in Sources */,
 				79F022D0290D8D91007D59B8 /* LanguagesTableViewCell.swift in Sources */,
 				7951A0B9292A240900D8E6CF /* GetProfileViewController.swift in Sources */,
-				792A11D82961BA0D00F67094 /* ClipBoardViewController2.swift in Sources */,
+				792A11D82961BA0D00F67094 /* ClipBoardViewController.swift in Sources */,
 				79519FF1291E95E600D8E6CF /* Image.swift in Sources */,
 				79D28AC1297A8E6700F4FD64 /* InterestsViewController.swift in Sources */,
 				79F0230E291CDD82007D59B8 /* StepViewHeader.swift in Sources */,
@@ -1054,7 +1043,6 @@
 				79D28AC7297E4AB200F4FD64 /* BoardRouter.swift in Sources */,
 				791F6CFE294F765A00C1D470 /* GatheringBoardThumbnailCollectionViewCell.swift in Sources */,
 				79519FFC291FB6B800D8E6CF /* TextField.swift in Sources */,
-				7953ED2D2970C35B003ACB27 /* PopUpViewController.swift in Sources */,
 				7951A0BE292A7D4300D8E6CF /* TimeMeasure.swift in Sources */,
 				7953ED2A297025A2003ACB27 /* ProfileRouter.swift in Sources */,
 				79F022D629111100007D59B8 /* LanguagesViewController.swift in Sources */,

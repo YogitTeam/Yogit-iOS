@@ -26,11 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().tintColor = ServiceColor.primaryColor
         UITabBar.appearance().backgroundColor = .systemBackground
         
-        // 시맨틱 콘텐츠 속성을 설정하여 UIView앱 내에 표시되는 모든 콘텐츠가 사용자의 기본 설정 언어 설정에 따라 올바른 방향으로 배치
-//        UIView.appearance().semanticContentAttribute = UIApplication.shared
-//               .userInterfaceLayoutDirection == .rightToLeft ? .forceRightToLeft : .forceLeftToRight
-//
-//
+//        // 시맨틱 콘텐츠 속성을 설정하여 UIView앱 내에 표시되는 모든 콘텐츠가 사용자의 기본 설정 언어 설정에 따라 올바른 방향으로 배치
+//        UIView.appearance().semanticContentAttribute = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .forceRightToLeft : .forceLeftToRight
+////
+////
 //        UNUserNotificationCenter.current().delegate = self
 //        
 //        registerForPushNotifications()

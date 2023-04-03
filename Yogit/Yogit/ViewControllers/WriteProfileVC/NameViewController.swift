@@ -8,13 +8,13 @@
 import UIKit
 import SnapKit
 
-protocol NameProtocol {
+protocol NameProtocol: AnyObject {
     func nameSend(name: String)
 }
 
 class NameViewController: UIViewController {
     
-    var delegate: NameProtocol?
+    weak var delegate: NameProtocol?
     
     var userName: String?
   
@@ -22,7 +22,7 @@ class NameViewController: UIViewController {
     private let textMax = 18
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
         return button
     }()
@@ -30,9 +30,9 @@ class NameViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "🤚 Let global friends know what my name"
+        label.text = "NAME_TITLE".localized()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
+        label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
@@ -42,26 +42,26 @@ class NameViewController: UIViewController {
     private let subTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "It would be nice to make an easy name for global friends."
+        label.text = "NAME_SUBTITLE".localized()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.semibold)
+        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         label.numberOfLines = 0
-        label.textColor = .darkGray
+        label.textColor = .systemGray
         label.sizeToFit()
-//        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-        textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.medium)
+        textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textField.isEnabled = true
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Name"
+        textField.placeholder = "NAME_PLACEHOLDER".localized()
         textField.text = userName
         textField.layer.borderColor = UIColor.placeholderText.cgColor
         textField.layer.borderWidth = 1.2
         textField.layer.cornerRadius = 10
+        textField.delegate = self
         textField.addLeftPadding(width: 10)
         return textField
     }()
@@ -80,12 +80,8 @@ class NameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        [titleLabel,
-         subTitleLabel,
-         nameTextField,
-         textCountLabel].forEach { view.addSubview($0) }
-        configureViewComponent()
-        nameTextField.delegate = self
+        configureNav()
+        configureView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -95,7 +91,7 @@ class NameViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         subTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
         nameTextField.snp.makeConstraints {
@@ -113,10 +109,17 @@ class NameViewController: UIViewController {
         self.view.endEditing(true)
     }
     
-    private func configureViewComponent() {
-        self.navigationItem.title = "Name"
-        self.view.backgroundColor = .systemBackground
-        self.navigationItem.rightBarButtonItem = rightButton
+    private func configureNav() {
+        navigationItem.title = "NAME_NAVIGATIONITEM_TITLE".localized()
+        navigationItem.rightBarButtonItem = rightButton
+    }
+    
+    private func configureView() {
+        view.backgroundColor = .systemBackground
+        [titleLabel,
+         subTitleLabel,
+         nameTextField,
+         textCountLabel].forEach { view.addSubview($0) }
     }
     
     @objc private func rightButtonPressed(_ sender: Any) {
@@ -125,8 +128,8 @@ class NameViewController: UIViewController {
             delegate?.nameSend(name: userName)
             self.navigationController?.popViewController(animated: true)
         } else {
-            let alert = UIAlertController(title: "Can't save name", message: "Please enter correctly", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
+            let alert = UIAlertController(title: "", message: "NAME_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "OK".localized(), style: .default)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
         }
@@ -143,6 +146,7 @@ extension NameViewController: UITextFieldDelegate {
         }
         textCountLabel.text = "\(textField.text?.count ?? 0) / \(textMax)"
     }
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentText = textField.text ?? ""
         guard let stringRange = Range(range, in: currentText) else { return false }

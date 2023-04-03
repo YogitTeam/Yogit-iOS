@@ -13,9 +13,9 @@ import ProgressHUD
 
 class ClipBoardViewController: ChatViewController {
     
-    private var first = true {
+    private var isFirst = true {
         didSet {
-            if !first {
+            if !isFirst {
                 guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
                 guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
                 guard let boardId = self.boardId else { return }
@@ -547,8 +547,8 @@ extension ClipBoardViewController {
                 }
             } else {
                 if isInit {
-                    if first {
-                        first = false
+                    if isFirst {
+                        isFirst = false
                     }
                 }
             }

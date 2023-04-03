@@ -68,7 +68,7 @@ class LanguagesTableViewCell: UITableViewCell {
         cellRightImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(20)
-            make.width.height.equalTo(20)
+            make.width.height.equalTo(24)
         }
     }
     
@@ -119,10 +119,14 @@ class LanguagesTableViewCell: UITableViewCell {
                 make.trailing.equalTo(cellRightImageView.snp.leading)
             }
             if isSelected {
-                cellLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-                cellRightImageView.image = UIImage(named: "reduce")?.withTintColor(UIColor(rgb: 0x3232FF, alpha: 1.0), renderingMode: .alwaysOriginal)
+                cellLabel.textColor = ServiceColor.primaryColor
+                let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
+                let imageMinus = UIImage(systemName: "minus", withConfiguration: imageConfig)
+                cellRightImageView.image = imageMinus?.withTintColor(ServiceColor.primaryColor, renderingMode: .alwaysOriginal)
             } else {
-                cellRightImageView.image = UIImage(named: "expand")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+                let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .light)
+                let imagePlus = UIImage(systemName: "plus", withConfiguration: imageConfig)
+                cellRightImageView.image = imagePlus?.withTintColor(.label, renderingMode: .alwaysOriginal)
             }
         } else {
             cellLeftButton.snp.makeConstraints { make in

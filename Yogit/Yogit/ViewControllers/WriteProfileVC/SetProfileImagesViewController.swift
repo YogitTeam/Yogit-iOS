@@ -240,14 +240,15 @@ class SetProfileImagesViewController: UIViewController {
                                 guard let profileImage = userImagesData.downloadProfileImage else { return }
                                 delegate?.imagesSend(profileImage: profileImage)
                                 navigationController?.popViewController(animated: true)
+                                ProgressHUD.dismiss()
                             }
                         }
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
         }
