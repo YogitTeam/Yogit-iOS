@@ -9,46 +9,60 @@ import UIKit
 import UserNotifications
 import Alamofire
 import ProgressHUD
-
-// UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) 으로 키체인에서 가져옴
-// UserDefaults.standard.removeObject(forKey: ClipBoardAlarmIdentifier) // 클립보드 알람 삭제
-// UserDefaults.standard.removeObject(forKey: ApplyAlarmIdentifier) // 애플 알람 삭제
+import SnapKit
 
 // navi >> tabbar >> vc
 class ServiceTapBarViewController: UITabBarController {
 
+    private let line: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray3
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureTapBarVC()
+        configureView()
+//        configureTapBarVC()
         configureInstanceVC()
-        setPushNotification()
-        print("보드 노티 등록")
-        NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
+        configureNotification()
     }
     
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        print("뷰디스어피어 ServiceTapBarView")
-//        NotificationCenter.default.removeObserver(self, name: .baordDetailRefresh, object: nil)
-//    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        line.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(0.5)
+            $0.bottom.equalTo(self.tabBar.snp.top)
+        }
+    }
+    
+    private func configureView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(line)
+    }
+    
+    private func configureNotification() {
+        UNUserNotificationCenter.current().delegate = self
+        if UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION) == nil { // 로그아웃, 계정삭제시만 디바이스 토큰 서버로 보냄
+            registerForPushNotifications()
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
+    }
     
     @objc private func didBoardDetailNotification(_ notification: Notification) {
         print("보드 알림 발생")
         guard let boardDetail = notification.object as? BoardDetail else { return }
         DispatchQueue.main.async(qos: .userInteractive) {
             let GDBVC = GatheringDetailBoardViewController()
-            GDBVC.boardWithMode.mode = .refresh
             GDBVC.bindBoardDetail(data: boardDetail)
+            GDBVC.boardWithMode.mode = .refresh
             self.navigationController?.pushViewController(GDBVC, animated: true)
         }
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        print(self.view.window?.rootViewController)
-//    }
 
     private func configureTapBarVC() {
-        self.view.backgroundColor = .systemBackground
        
 //        UITabBar.appearance().tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        UITabBar.appearance().backgroundColor = .systemBackground
@@ -56,61 +70,22 @@ class ServiceTapBarViewController: UITabBarController {
 //        self.tabBar.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
     }
     
-    private func setPushNotification() {
-        UNUserNotificationCenter.current().delegate = self
-        if UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION) == nil { // 로그아웃, 계정삭제시만 디바이스 토큰 서버로 보냄
-            registerForPushNotifications()
-        } 
-    }
-    
-    
     private func configureInstanceVC() {
         let homeVC = MainViewController()// SearchGatheringBoardController()
         let profileVC = GetProfileViewController()
         let myClubVC = MyClubViewController()
         let notiVC = PushNoficationViewController()
         
-//        homeVC.title = "Home"
-//        profileVC.title = "Profile"
-        
-//        // 위에 타이틀 text를 항상 크게 보이게 설정
-//        homeVC.navigationItem.largeTitleDisplayMode = .always
-//        profileVC.navigationItem.largeTitleDisplayMode = .always
-        
-        homeVC.tabBarItem.image = UIImage.init(named: TabBarKind.home.rawValue)
-        homeVC.tabBarItem.title = TabBarKind.home.rawValue
-//        homeVC.tabBarController?.navigationController?.navigationItem.title = "Home"
-//        homeVC.navigationController?.navigationBar.topItem?.title = "Home"
-//        self.tabBarController?.navigationController?.navigationBar.topItem?.title = "zedd"
-//        self.navigationController?.navigationBar.topItem?.title = "zedd"
-        myClubVC.tabBarItem.image = UIImage.init(named: TabBarKind.myClub.rawValue)
-        myClubVC.tabBarItem.title = TabBarKind.myClub.rawValue
-        profileVC.tabBarItem.image = UIImage.init(named: TabBarKind.profile.rawValue)
-        profileVC.tabBarItem.title = TabBarKind.profile.rawValue
-        notiVC.tabBarItem.image = UIImage.init(named: TabBarKind.notification.rawValue)
-        notiVC.tabBarItem.title = TabBarKind.notification.rawValue
-        // navigationController의 root view 설정
-//        let navigationHome = UINavigationController(rootViewController: homeVC)
-//
-//        navigationHome.navigationBar.tintColor = UIColor.label
-//        navigationHome.navigationBar.topItem?.backButtonTitle = ""
-//
-//        let navigationProfile = UINavigationController(rootViewController: profileVC)
-//
-//        navigationProfile.navigationBar.tintColor = UIColor.label
-//        navigationProfile.navigationBar.topItem?.backButtonTitle = ""
-//        navigationHome.navigationBar.prefersLargeTitles = true
-//        navigationProfile.navigationBar.prefersLargeTitles = true
-        
-//        let homveNavVC = UINavigationController(rootViewController: homeVC)
-//        let myClubNavVC = UINavigationController(rootViewController: myClubVC)
-//        let profileNavVC = UINavigationController(rootViewController: profileVC)
-//        let notiNavVC = UINavigationController(rootViewController: notiVC)
+        homeVC.tabBarItem.image = UIImage.init(named: TabBarKind.home.rawValue)?.withTintColor(.systemGray5)
+        homeVC.tabBarItem.title = TabBarKind.home.rawValue.localized()
+        myClubVC.tabBarItem.image = UIImage.init(named: TabBarKind.myClub.rawValue)?.withTintColor(.systemGray5)
+        myClubVC.tabBarItem.title = TabBarKind.myClub.rawValue.localized()
+        profileVC.tabBarItem.image = UIImage.init(named: TabBarKind.profile.rawValue)?.withTintColor(.systemGray5)
+        profileVC.tabBarItem.title = TabBarKind.profile.rawValue.localized()
+        notiVC.tabBarItem.image = UIImage.init(named: TabBarKind.notification.rawValue)?.withTintColor(.systemGray5)
+        notiVC.tabBarItem.title = TabBarKind.notification.rawValue.localized()
         
         setViewControllers([homeVC, myClubVC, profileVC, notiVC], animated: true)
-        
-//        setViewControllers([homveNavVC, myClubNavVC, profileNavVC, notiNavVC], animated: true)
-//        self.tabBarController?.tabBar.isHidden = false
     }
     
 //    private func sendDeviceToken(deviceToken: String) {
@@ -201,60 +176,28 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
     
     // 앱 열린 상태일때
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // 원격으로 들어오면, 열린 상태 함수 실행안됨
         print("WillPresent userNotificationCenter")
+        
         debugPrint(notification.request.content.userInfo)
-//        NotificationCenter.default.post(name: NSNotification.Name(""), object: boardId)
-//        print(response.notification.request.content.title)
-//        print(response.notification.request.content.body)
-        let content = notification.request.content
-        let title: String = content.title
-        let body: String = content.body
-        
-//        let data = Data(base64Encoded: encodeString)
-//
-//        if let decode = String(data: data!, encoding: .utf8) {
-//            print(decode)
-//        }
-        
-//        let localeIdentifier = Locale.preferredLanguages.first
 
-//        if let locArgs = content.userInfo["loc-args"] as? [Any] {
-//            let data = Data(base64Encoded: locArgs as? )
-//            let stringArray = locArgs.map { String(data: data!, encoding: .utf8) }
-//            print("stringArray", stringArray)
-////            let data = Data(base64Encoded: locArgs[0])
-////            if let decodeString = String(data: data!, encoding: .utf8) {
-////                print("decodeString", decodeString)
-////            }
-//        }
+        let content = notification.request.content
+        let title: String = content.title // 현재 title-loc-key로 키값 설정됨
+        let body: String = content.body // 현재 loc-key로 키값 걸정됨
         
         var args: [String] = []
         if let aps = content.userInfo["aps"] as? [String: Any],
             let alert = aps["alert"] as? [String: Any],
-//            let locKey = alert["loc-key"] as? String,
             let locArgs = alert["loc-args"] as? [String] {
-            // Do something with the loc-args array
             for arg in locArgs {
                 args.append(arg)
             }
         }
         
-        print("타이틀", title)
-        print("body", body)
-        print("args", args)
-        
-//        guard let locArgs = content.userInfo["loc-args"] as? [String] else {
-////            print("실패 locArgs", locArgs)
-//            return }
-//        guard let locArgs = content.userInfo["loc-args"] as? [UnicodeScalar] else {
-//            print("실패 locArgs", locAr)
-//            return }
-//        print("성공 locArgs", locArgs)
-        
         guard let id = content.userInfo["boardId"] as? Int64 else { return }
         guard let type = content.userInfo["pushType"] as? String else { return }
         let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-        print("alarmData", alarmData)
+        
         receivePushNotificationData(alarm: alarmData)
         
         // foreground 앱 알리는 형태
@@ -265,15 +208,29 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
     
     // 앱 원격 상태일때
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
         print("DidReceive userNotificationCenter")
+        
         debugPrint(response.notification.request.content.userInfo)
         
-//        let title: String = response.notification.request.content.title
-//        let body: String = response.notification.request.content.body
-//        guard let id = response.notification.request.content.userInfo["boardId"] as? Int64 else { return }
-//        guard let type = response.notification.request.content.userInfo["pushType"] as? String else { return }
-//        let alarmData = Alarm(type: type, title: title, body: body, id: id)
-//        receivePushNotificationData(alarm: alarmData)
+        let content = response.notification.request.content
+        let title: String = content.title
+        let body: String = content.body
+        
+        var args: [String] = []
+        if let aps = content.userInfo["aps"] as? [String: Any],
+            let alert = aps["alert"] as? [String: Any],
+            let locArgs = alert["loc-args"] as? [String] {
+            for arg in locArgs {
+                args.append(arg)
+            }
+        }
+        
+        guard let id = content.userInfo["boardId"] as? Int64 else { return }
+        guard let type = content.userInfo["pushType"] as? String else { return }
+        let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
+        
+        receivePushNotificationData(alarm: alarmData)
         
         DispatchQueue.main.async {
             self.navigationController?.popToRootViewController(animated: true)
@@ -282,15 +239,16 @@ extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
     }
     
     func receivePushNotificationData(alarm: Alarm) {
+        
         print("receivePushNotificationData")
+        
+        print("AlarmData to input", alarm)
+        
         guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
-        alarms.append(alarm)
-        AlarmManager.saveAlarms(alarms: alarms)
-        NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
-//        self.tabBarController?.selectedIndex = 3
-//        DispatchQueue.main.async {
-//            self.navigationController?.popToRootViewController(animated: true)
-//            self.selectedIndex = 3
-//        }
+        if alarms.last != alarm {
+            alarms.append(alarm)
+            AlarmManager.saveAlarms(alarms: alarms)
+            NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
+        }
     }
 }

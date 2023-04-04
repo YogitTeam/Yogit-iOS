@@ -60,7 +60,7 @@ class MyTextView: UIView {
         
         myTextView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.top.bottom.equalToSuperview().inset(10)
+            make.top.bottom.equalToSuperview()
         }
         
         textCountLabel.snp.makeConstraints { make in

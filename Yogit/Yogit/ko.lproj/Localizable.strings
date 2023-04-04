@@ -11,6 +11,12 @@
 "OK" = "확인";
 "CANCEL" = "취소";
 "DELETE" = "삭제";
+"SKIP" = "건너뛰기";
+"BLOCK" = "차단";
+"REPORT" = "신고";
+"EDIT" = "편집";
+"COPY" = "복사";
+
 "SET_AUTHORIZATION_SETTING" = "설정";
 "PHOTO" = "사진";
 "CAMERA" = "카메라";
@@ -21,11 +27,31 @@
 "Gathering" = "모임";
 "gathering" = "모임";
 
-// Push Noti
-"CLIPBOARD_CHATTING_TITLE" = "클립보드 알림";
-"CLIPBOARD_CHATTING_BODY" = "%@님이 %@ clipboard에 채팅을 남겼습니다.";
-"GATHERING_JOIN_TITLE" = "모임 신청 알림";
-"GATHERING_JOIN_BODY" = "%@님이 %@' gathering에 참여하였습니다."; // 이름, 모임명
+// Tabbar
+"MY_PROFILE" = "나의 프로필";
+
+// Gathering Kind
+"PARTY" = "파티";
+"LANGUAGE" = "언어";
+"OUTDOOR" = "야외";
+"EXERCISE" = "운동";
+"ART" = "예술";
+"DANCE" = "댄스";
+
+"PARTY_DESCRIBE" = "Pub 파티, 바베큐 파티, 홈 파티, Welcome 파티...";
+"LANGUAGE_DESCRIBE" = "언어 교환, 언어 학습...";
+"OUTDOOR_DESCRIBE" = "피크닉, 푸드 트럭 축제, 관광 명소...";
+"EXERCISE_DESCRIBE" = "등산, 피트니스, 테니스, 농구, 축구...";
+"ART_DESCRIBE" = "그림 그리기, 악기 연주 및 예술 활동...";
+"DANCE_DESCRIBE" = "Pop 댄스, Hip-pop 댄스, K-pop 댄스, 라틴 댄스...";
+
+// Push Notification
+"CLIPBOARD_CHATTING_TITLE" = "클립보드";
+"CLIPBOARD_CHATTING_BODY" = "%@ 님이 %@ 클립보드에 채팅을 남겼습니다.";
+"GATHERING_JOIN_TITLE" = "모임 신청";
+"GATHERING_JOIN_BODY" = "%@ 님이 %@ 모임에 참여하였습니다."; // 이름, 모임명
+"GATHERING_WITHDRAW_TITLE" = "모임 취소";
+"GATHERING_WITHDRAW_BODY" = "%@ 님이 %@ 모임 참여를 취소하였습니다."; // 이름, 모임명
 
 // ReportViewController
 "OBSCENITY" = "음란/성인";
@@ -40,16 +66,14 @@
 "REPORT_TYPE_KIND_TITLE" = "신고 사항";
 "REPORT_CONTENT_TITLE" = "신고 내용";
 
-"REPORT" = "Report";
-
 "REPORT_CONTENT_ALERT" = "간단하게 신고 내용을 작성해주세요.";
 
 
 // SetProfileViewController
 
-"GENDER_NONE" = "선택 안함";
-"GENDER_MALE" = "남자";
-"GENDER_FEMALE" = "여자";
+"Prefer not to say" = "선택 안함";
+"Male" = "남자";
+"Female" = "여자";
 
 "CHANGE_PHOTOS" = "사진 변경";
 "SELECT_PHOTOS" = "사진 선택";
@@ -82,23 +106,169 @@
 "PROFILE_LEVEL_0" = "초급";
 "PROFILE_LEVEL_1" = "중급";
 "PROFILE_LEVEL_2" = "고급";
-"PROFILE_LEVEL_3" = "이중 언어";
+"PROFILE_LEVEL_3" = "2개 국어";
 "PROFILE_LEVEL_4" = "원어민";
 
 // NameViewController
-"NAME_NOTICE" = "글로벌 친구들이 부르기 쉬운 이름을 추천드려요.";
+"NAME_NOTICE" = "글로벌 친구들이 부르기 쉬운 이름을 추천드려요!";
 "NAME_PLACEHOLDER" = "이름";
 "NAME_NAVIGATIONITEM_TITLE" = "이름";
 "NAME_ALERT" = "이름을 조건에 맞게 입력해주세요.";
 
 // SetProfileImagesViewController
-"IMAGE_NOTICE" = "사람들에게 얼굴 사진과 자신을 잘 나타낼수 있는 사진을 보여주세요.🖼";
+"IMAGE_NOTICE" = "사람들에게 얼굴 사진과 자신을 잘 나타낼수 있는 사진을 보여주세요!";
 "IMAGE_NAVIGATIONITEM_TITLE" = "프로필 사진";
 "IMAGE_ALERT" = "최소 메인 사진 하나를 업로드 해주세요.";
 "UPLOAD_PHOTO" = "사진 업로드";
 "TAKE_PHOTO" = "사진 찍기";
 
 // LanguagesViewController
-"LANGUAGE_TITLE" = "글로벌 친구들에게 말할 수 있는 언어를 알려주세요.";
+"LANGUAGE_TITLE" = "글로벌 친구들에게 말할 수 있는 언어를 알려주세요!";
 "LANGUAGE_NAVIGATIONITEM_TITLE" = "언어";
 "LANGUAGE_SEARCHBAR_PLACEHOLDER" = "언어 검색";
+
+// NationalityViewController
+"NATIONALITY_NAVIGATIONITEM_TITLE" = "국적";
+"NATIONALITY_SEARCHBAR_PLACEHOLDER" = "국가 검색";
+
+// JobViewController
+"JOB_TITLE" = "글로벌 친구에게 간단하게 하는 일을 알려주세요!";
+"JOB_NAVIGATIONITEM_TITLE" = "직업/주 활동";
+"JOB_PLACEHOLDER" = "어떤 일 혹은 활동을 하시나요?";
+"JOB_ALERT" = "직업/주 활동을 입력해주세요";
+
+// AboutMeViewController
+"ABOUTME_TITLE" = "글로벌 친구에게 어떤 사람인지 알려주세요!";
+"ABOUTME_NAVIGATIONITEM_TITLE" = "자기소개";
+"ABOUTME_PLACEHOLDER" = "나는 누구고, 무엇을 좋아하고, 무엇을 하는지...";
+"ABOUTME_ALERT" = "자기소개를 입력해주세요.";
+
+// InterestViewController
+"INTERESTS_TITLE" = "성격 혹은 관심사를 선택하세요.";
+"INTERESTS_NAVIGATIONITEM_TITLE" = "성격 & 관심사";
+"INTERESTS_ALERT" = "성격 혹은 관심사를 선택하세요.";
+"PERSONALITY" = "성격";
+"LIFESTYLE" = "라이프 스타일";
+"HOBBY" = "취미";
+"SPORTS" = "스포츠";
+"FOOD" = "음식";
+
+// TermsOfServiceViewController
+"TERMS_OF_SERVICE_TITLE" = "이용약관";
+"TERMS_OF_SERVICE_SUBTITLE" = "Yogit을 이용하기 위해서는 아래의 이용약관을 준수하여야 합니다.";
+"TERMS_OF_SERVICE_ALERT" = "필수 항목에 동의해주세요.";
+"TERMS_OF_SERVICE_CONSENT_TOTAL" = "아래 항목에 전부 동의합니다.";
+"TERMS_OF_SERVICE_CONSENT_TERMOFSERVICE" = "(필수) 이용약관에 동의합니다.";
+"TERMS_OF_SERVICE_CONSENT_PRIVACY_POLICY" = "(필수) 개인정보의 수집 및 이용에 동의합니다.";
+
+// GetProfileViewController
+"GET_PROFILE_BLOCK_ALERT_MESSAGE" = "이 사용자를 차단하시겠습니까?\n\n차단 후 변경이 불가하오니 주의하여 이용하시기 바랍니다.\n\n사용자를 차단하면 해당 사용자가 만든 수집 게시물 및 클립보드가 보이지 않게 됩니다.";
+"GET_PROFILE_DELETED_USER_ALERT_TITLE" = "삭제된 유저";
+"GET_PROFILE_DELETED_USER_ALERT_MESSAGE" = "해당 유저는 삭제된 계정입니다.";
+"GET_PROFILE_BLOCKED_USER_ALERT_TITLE" = "차단된 유저";
+"GET_PROFILE_BLOCKED_USER_ALERT_MESSAGE" = "해당 유저는 차단된 계정입니다.";
+
+// SettingViewController
+"LOGOUT_TITLE" = "로그아웃";
+"DELETE_ACCOUNT_TITLE" = "계정 삭제";
+"CUSTOMER_SERVICE_CENTER_TITLE" = "고객 서비스 센터";
+"SETTING" = "설정";
+"CUSTOMER_INQUIRY" = "고객 문의";
+"CUSTOMER_INQUIRY_CONENT" = "고객 문의 내용";
+
+"LOGOUT_ALERT_MESSAGE" = "로그아웃하시겠습니까?";
+"DELETE_ACCOUNT_ALERT_MESSAGE" = "계정을 삭제하시겠습니까?";
+
+"CUSTOMER_SERVICE_MAIL_TRANSFER_FAIL_ALERT_TITLE" = "메일 전송 실패";
+"CUSTOMER_SERVICE_MAIL_TRANSFER_FAIL_ALERT_MESSAGE" = "아이폰 이메일 설정을 확인하고 다시 시도하십시오.";
+
+// tabbar
+"HOME" = "홈";
+"MY_GATHERING" = "내 모임";
+"MY_PROFILE" = "내 프로필";
+"NOTIFICATION" = "알림";
+
+// GatheringBoardCategoryViewController
+"GATHERING_CATEGORY" = "모임 카테고리";
+"GATHERING_SETTING" = "모임 설정";
+"GATHERING_CONTENT" = "모임 콘텐츠";
+
+"GATHERING_MEMBER_NUMBER_HEADER" = "모임 인원";
+"GATHERING_DATE_TIME_HEADER" = "모임 날짜 & 시간";
+"GATHERING_PLACE_HEADER" = "모임 장소";
+"GATHERING_PLACE_DETAIL_HEADER" = "";
+"GATHERING_PHOTOS_HEADER" = "모임 사진";
+"GATHERING_TITLE_HEADER" = "모임 제목";
+"GATHERING_INTRODUCTION_HEADER" = "모임 소개";
+"GATHERING_KINDOFPERSON_HEADER" = "모임에 참여하면 좋은 분";
+
+"GATHERING_MEMBER_NUMBER_PLACEHOLDER" = "호스트 포함 모임 인원";
+"GATHERING_DATE_TIME_PLACEHOLDER" = "모임 날짜 & 시간 선택";
+"GATHERING_PLACE_PLACEHOLDER" = "만나는 주소(장소) 설정";
+"GATHERING_PLACE_DETAIL_PLACEHOLDER" = "Ex) Gangnam station 3 exit (option)";
+"GATHERING_PHOTOS_PLACEHOLDER" = "";
+"GATHERING_TITLE_PLACEHOLDER" = "Ex) Hongdae rooftop barbecue party";
+"GATHERING_INTRODUCTION_PLACEHOLDER" = "Ex) Hello buddies!\nI wanted to enjoy a barbecue party with global friends, so I held a  gathering.\nLet's have a barbecue party at Hongdae Rooftop Bar on a nice weekend.\nBarbecue is unlimited.\nThe participation fee is 30,000 won per person.\n3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\nNon-alcoholic drinks are also available.\nBarbecue equipment is available at the bar, so just your body needs to come.\n";
+"GATHERING_KINDOFPERSON_PLACEHOLDER" = "Ex) Someone who can get along well with global friends.\nWelcome to active people.\nYou can drink as much as you want and you don't have to!\n";
+
+//GATHERING_INTRODUCTION_PLACEHOLDER
+//Someone who can get along well with global friends.\n
+//Welcome to active people.\n
+//You can drink as much as you want and you don't have to!\n
+//
+//Hello! I wanted to enjoy a barbecue party with global friends, so I held a gathering.\n
+//Let's have a BBQ party at Hongdae Rooftop Bar on a nice weekend.\n
+//Barbecue is unlimited.\n
+//The participation fee is 30,000 won per person.\n
+//3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\n
+//Non-alcoholic drinks are also available.\n
+//Barbecue equipment is available at the bar, so just your body needs to come.\n
+//
+//GATHERING_KINDOFPERSON_PLACEHOLDER
+//안녕하세요! 글로벌 친구들과 함께 바베큐 파티를 즐기고 싶어서 모임을 열었습니다.
+//날씨 좋은 주말에 홍대 루프탑 바에서 비비큐 파티를 열어오.
+//바베큐는 무제한 제공 됩니다.
+//참가 비용은 인당 3만원이에요.
+//술은 (와인, 맥주) 3잔 포함되고, 추가 이용시 추가 금액이 발생합니다.
+//논알콜 음료도 구비되어있어요.
+//바베큐 장비는 바에 준비되어 있으니, 몸만 오시면 되요.
+//
+//글로벌 친구들과 함께 잘 어울릴수 있는분.
+//활발한 분 환영해요.
+//술은 드시고 싶은 만큼 드시면 되고 안마셔도 괜찮아요!
+
+// MKMapLocalSearchViewController
+"SEARCHBAR_NOTICE_DESCRIPTION" = "모임 위치를 검색하세요.";
+"SEARCHBAR_PLACEHOLDER" = "주소/우편번호/장소 검색";
+"SEARCH_FAIL_NOTICE_DESCRIPTION" = "죄송합니다, 주소를 찾지 못했습니다.";
+
+// GatheringBoardContentViewController
+"GATHERING_CONTENT_ALERT_MESSAGE" = "%@를 조건에 맞게 입력해주세요.";
+
+// GatheringDetailBoardViewController
+"JOIN_GATHERING_TITLE" = "모임 참여";
+"JOIN" = "참가";
+"JOIN_GATHERING_DESCRIPTION" = "모임에 참여하시겠습니까?";
+"HOST" = "호스트";
+"MEMBER" = "참여자";
+"LOCATION" = "위치";
+"WITHDRAWAL" = "참여 취소";
+"CLIPBOARD" = "클립보드";
+"WITHDRAWAL_ALERT" = "참여한 모임을 취소하시겠습니까?";
+"MEMBER_FULL_ALERT_TITLE" = "참가 불가";
+"MEMBER_FULL_ALERT_MESSAGE" = "모임 인원이 찼습니다.";
+"DELETE_GATHERING_ALERT_MESSAGE" = "모임 글을 삭제하시겠습니까?";
+"BOARD_DELETED_ALERT_TITLE" = "삭제된 모임 글";
+"BOARD_DELETED_ALERT_MESSAGE" = "모임 글이 삭제되었습니다.";
+"APPLE_MAP" = "애플 지도";
+"GOOGLE_MAP" = "구글 지도";
+"KAKAO_MAP" = "카카오 지도";
+
+// ClipboardViewController
+"CLIPBOARD_SERVICE_NOTICE" = "실시간 채팅이 아닙니다.\n업데이트하려면 아래에서 위로 스크롤해주세요.";
+
+// MyClubViewController
+"JOINED" = "참여";
+"OPENED" = "개설";
+"ACTIVITY" = "활동";
+

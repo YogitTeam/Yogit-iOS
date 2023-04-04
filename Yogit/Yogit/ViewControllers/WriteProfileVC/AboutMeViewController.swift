@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol AboutMeProtocol {
+protocol AboutMeProtocol: AnyObject {
     func aboutMeSend(aboutMe: String)
 }
 
@@ -16,7 +16,6 @@ class AboutMeViewController: UIViewController {
     var mode: Mode = .create {
         didSet {
             if mode == .edit {
-//                rightButton.isHidden = false
                 nextButton.isHidden = true
             }
         }
@@ -24,24 +23,23 @@ class AboutMeViewController: UIViewController {
     
     var userProfile = UserProfile()
     
-    var delegate: AboutMeProtocol?
+    weak var delegate: AboutMeProtocol?
     
     private let textMax = 300
     
     let aboutMeTextView = MyTextView()
     
-    private let placeholder = "I am, I like, I do..."
+    private let placeholder = "ABOUTME_PLACEHOLDER".localized()
     
     private lazy var nextButton: UIButton = {
         let button = UIButton()
-//        button.setTitle("Done", for: .normal)
-        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.setImage(image, for: .normal)
         button.tintColor = .white
         button.isHidden = false
         button.isEnabled = true
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-//        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        button.backgroundColor = ServiceColor.primaryColor
         button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -49,11 +47,11 @@ class AboutMeViewController: UIViewController {
     private lazy var rightButton: UIBarButtonItem = {
         let buttonTitle: String
         if mode == .create {
-            buttonTitle = "Skip"
+            buttonTitle = "SKIP"
         } else {
-            buttonTitle = "Done"
+            buttonTitle = "DONE"
         }
-        let button = UIBarButtonItem(title: buttonTitle, style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: buttonTitle.localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        button.isHidden = true
         return button
@@ -62,9 +60,9 @@ class AboutMeViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "👋 Let global friends know who you are"
+        label.text = "ABOUTME_TITLE".localized()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
         label.numberOfLines = 0
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
@@ -73,12 +71,8 @@ class AboutMeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        [titleLabel,
-         aboutMeTextView,
-        nextButton].forEach { view.addSubview($0) }
-        aboutMeTextView.myTextView.delegate = self
-        view.backgroundColor = .systemBackground
-        configureTextView()
+        configureView()
+        configureAboutMeTextView()
         // Do any additional setup after loading the view.
     }
     
@@ -111,12 +105,20 @@ class AboutMeViewController: UIViewController {
     }
     
     private func configureNav() {
-        self.navigationItem.title = "About Me"
+        self.navigationItem.title = "ABOUTME_NAVIGATIONITEM_TITLE".localized()
         self.navigationItem.backButtonTitle = "" // remove back button title
         self.navigationItem.rightBarButtonItem = rightButton
     }
     
-    private func configureTextView() {
+    private func configureView() {
+        [titleLabel,
+         aboutMeTextView,
+        nextButton].forEach { view.addSubview($0) }
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureAboutMeTextView() {
+        aboutMeTextView.myTextView.delegate = self
         aboutMeTextView.textCountLabel.text = "\(aboutMeTextView.myTextView.text.count) / \(textMax)"
         if aboutMeTextView.myTextView.text == nil || aboutMeTextView.myTextView.text == "" {
             aboutMeTextView.myTextView.text = placeholder
@@ -131,6 +133,15 @@ class AboutMeViewController: UIViewController {
             IVC.mode = self.mode
             IVC.userProfile = self.userProfile
             self.navigationController?.pushViewController(IVC, animated: true)
+        }
+    }
+    
+    private func aboutMeAlert() {
+        let alert = UIAlertController(title: "", message: "ABOUTME_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title: "OK".localized(), style: .default)
+        alert.addAction(okAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: false, completion: nil)
         }
     }
     
@@ -150,12 +161,7 @@ class AboutMeViewController: UIViewController {
     @objc private func nextButtonTapped(_ sender: UIButton) {
         
         if aboutMeTextView.myTextView.text == placeholder || aboutMeTextView.myTextView.text == nil || aboutMeTextView.myTextView.text == "" {
-            let alert = UIAlertController(title: "", message: "Please enter the AboutMe", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alert.addAction(okAction)
-            DispatchQueue.main.async {
-                self.present(alert, animated: false, completion: nil)
-            }
+            aboutMeAlert()
         } else {
             userProfile.aboutMe = aboutMeTextView.myTextView.text
             moveToIVC()
@@ -176,7 +182,6 @@ class AboutMeViewController: UIViewController {
 
 extension AboutMeViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        print(" shouldChangeTextIn",textView.tag)
 
         // get the current text, or use an empty string if that failed
         let currentText = textView.text ?? ""
@@ -192,7 +197,6 @@ extension AboutMeViewController: UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        print("textViewDidBeginEditing",textView.tag)
         if textView.text == placeholder {
             textView.text = nil
             textView.textColor = .label
@@ -200,7 +204,6 @@ extension AboutMeViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        print("textViewDidEndEditing",textView.tag)
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = placeholder
             textView.textColor = .placeholderText
@@ -208,12 +211,6 @@ extension AboutMeViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        // textfield count
-        // 개수 표시
-//        let indexPath = IndexPath(row: 0, section: textView.tag)
-//        guard let cell = textDetailTableView.cellForRow(at: indexPath) as?  MyTextViewTableViewCell else { return }
-        
-        print("textViewDidChange", textView.text.count)
         aboutMeTextView.textCountLabel.text = "\(textView.text.count) / \(textMax)"
         if aboutMeTextView.myTextView.text != placeholder {
             aboutMeTextView.textCountLabel.textColor = .label

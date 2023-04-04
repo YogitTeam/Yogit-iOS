@@ -26,7 +26,7 @@ class SetProfileImagesViewController: UIViewController {
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
-        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor = ServiceColor.primaryColor
         return button
     }()
     
@@ -112,7 +112,7 @@ class SetProfileImagesViewController: UIViewController {
             .responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
                 switch response.result {
                 case .success:
-                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
+                    if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
                         guard let data = value.data else { return }
                         print("Success - Download User Images")
                         DispatchQueue.global(qos: .userInitiated).async { [self] in

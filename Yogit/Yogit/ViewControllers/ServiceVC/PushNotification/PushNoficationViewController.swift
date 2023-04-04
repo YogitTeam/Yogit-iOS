@@ -23,15 +23,12 @@ class PushNoficationViewController: UIViewController {
     // () parameter
     private let notiTableView: UITableView = {
         let tableView = UITableView()
-        // register new cell
-        // self: reference the type object
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
         return tableView
     }()
     
     private lazy var segmentedControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["Clip Board Notification", "Activity Notification"])
+        let control = UISegmentedControl(items: ["CLIPBOARD".localized(), "ACTIVITY".localized()])
         control.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
         control.selectedSegmentIndex = 0
 //        control.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -46,24 +43,18 @@ class PushNoficationViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(segmentedControl)
-        view.addSubview(notiTableView)
-        notiTableView.dataSource = self
-        notiTableView.delegate = self
-        configureViewComponent()
+        configureView()
+        configureNotification()
+        configureTableView()
         refreshAlarmData(alarmType: AlarmManager.AlarmType.clipBoard.toKey())
-        NotificationCenter.default.addObserver(self, selector: #selector(didRecieveNotification(_:)), name: .alarmRefresh, object: nil)
-//        getAlarmDataFlag(flag: self.getFlag)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         initNavigationBar()
     }
-
-//    
+   
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        self.navigationItem.title = "Nationality"
         segmentedControl.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.leading.trailing.equalToSuperview().inset(20)
@@ -71,35 +62,39 @@ class PushNoficationViewController: UIViewController {
         }
         notiTableView.snp.makeConstraints { make in
             make.top.equalTo(segmentedControl.snp.bottom)
-//            make.leading.equalToSuperview().inset(10)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-//        notiTableView.frame = view.bounds
+    }
+    
+    private func configureView() {
+        view.addSubview(segmentedControl)
+        view.addSubview(notiTableView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(didRecieveNotification(_:)), name: .alarmRefresh, object: nil)
+    }
+    
+    private func configureTableView() {
+        notiTableView.dataSource = self
+        notiTableView.delegate = self
     }
     
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
-        print("selectedSegmentIndex \(sender.selectedSegmentIndex)")
         alarmData.removeAll()
         if sender.selectedSegmentIndex == 0 {
-            // 조회 get 요청
-            print("ClipBoard Alarm - segement 0")
-            
             refreshAlarmData(alarmType: AlarmManager.AlarmType.clipBoard.toKey())
         } else {
-            // 생성 get 요청
-            print("ApplyBoard Alarm - segment 1")
             refreshAlarmData(alarmType: AlarmManager.AlarmType.apply.toKey())
         }
-
-//        self.searchMyBoardCollectionView.isHidden = !self.searchMyBoardCollectionView.isHidden
-//        self.createMyBoardCollectionView.isHidden = !self.createMyBoardCollectionView.isHidden
      }
     
     // 푸쉬 알림 누른후 전달
     @objc func didRecieveNotification(_ notification: Notification) {
         guard let alarmType = notification.object as? String else { return }
-//        refreshAlarmData(alarmType: alarmType)
+        refreshAlarmData(alarmType: alarmType)
         if alarmType == AlarmManager.AlarmType.clipBoard.toKey() {
             segmentedControl.selectedSegmentIndex = 0
         } else {
@@ -107,16 +102,8 @@ class PushNoficationViewController: UIViewController {
         }
     }
     
-//    func getAlarmDataFlag(flag: Bool) {
-//        if !flag { refreshAlarmData(alarmType: AlarmManager.AlarmType.apply.toKey()) }
-//    }
-    
-    private func configureViewComponent() {
-        view.backgroundColor = .systemBackground
-    }
-    
     private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue)
+        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue.localized())
 //        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
 //        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
 //        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
@@ -124,10 +111,9 @@ class PushNoficationViewController: UIViewController {
 //        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
     }
     
-    func refreshAlarmData(alarmType: String) {
+    private func refreshAlarmData(alarmType: String) {
         guard let alarms = AlarmManager.loadAlarms(type: alarmType) else { return }
         alarmData = alarms
-//        getFlag = true
     }
     
     // MARK: - Table view data source object
@@ -135,18 +121,11 @@ class PushNoficationViewController: UIViewController {
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        // Configure content
-        // Similar View - ViewModel arhitecture
         
         var content = cell.defaultContentConfiguration()
         let args = alarmData[indexPath.row].args
         let bodyLocKey = alarmData[indexPath.row].body
         let localizedString = NSLocalizedString(bodyLocKey, comment: "")
-//        let body = String.localizedStringWithFormat(localizedString, args)
-        print("alarmData[indexPath.row].title", alarmData[indexPath.row].title)
-        print("args", args)
-        print("bodyLocKey", localizedString)
-        print("localizedString", localizedString)
       
         content.text = alarmData[indexPath.row].title.localized()
         content.secondaryText = localizedString.localized()
@@ -172,10 +151,8 @@ extension PushNoficationViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         // clipboard, 게시판 분리
         // 클립보드에서 왔을경우 두번 push
-        print("Tap alarmData", alarmData[indexPath.row].id)
         DispatchQueue.main.async {
             let GDBVC = GatheringDetailBoardViewController()
-//            GDBVC.boardId = self.alarmData[indexPath.row].id
             GDBVC.boardWithMode.boardId = self.alarmData[indexPath.row].id
             if self.segmentedControl.selectedSegmentIndex == 0 { GDBVC.isClipBoardAlarm = true }
             self.navigationController?.pushViewController(GDBVC, animated: true)

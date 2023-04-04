@@ -19,7 +19,7 @@ struct Country {
     }
 }
 
-protocol NationalityProtocol {
+protocol NationalityProtocol: AnyObject {
     func nationalitySend(nationality: Country)
 }
 
@@ -31,7 +31,7 @@ class NationalityViewController: UIViewController {
     private var countries = [Country]()
     private var filteredCountries = [Country]()
     
-    var delegate: NationalityProtocol?
+    weak var delegate: NationalityProtocol?
     
    
     private var isFiltering: Bool {
@@ -54,12 +54,11 @@ class NationalityViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(nationalityTableView)
-        setCountries()
-        nationalityTableView.dataSource = self
-        nationalityTableView.delegate = self
-        configureViewComponent()
-        setupSearchController()
+        configureView()
+        configureNav()
+        configureSearchController()
+        configureNationalityTableView()
+        configureCountries()
     }
     
     override func viewDidLayoutSubviews() {
@@ -69,7 +68,7 @@ class NationalityViewController: UIViewController {
         nationalityTableView.frame = view.bounds
     }
     
-    private func setCountries() {
+    private func configureCountries() {
         let allCountryCodes = NSLocale.isoCountryCodes
         let countries = allCountryCodes.map { (code:String) -> Country  in
             let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
@@ -98,20 +97,28 @@ class NationalityViewController: UIViewController {
         })
     }
     
-    private func configureViewComponent() {
-        self.navigationItem.title = "Nationality"
-        self.setupSearchController()
-        self.view.backgroundColor = .systemBackground
+    private func configureView() {
+        view.addSubview(nationalityTableView)
+        view.backgroundColor = .systemBackground
     }
     
-    func setupSearchController() {
+    private func configureNav() {
+        navigationItem.title = "NATIONALITY_NAVIGATIONITEM_TITLE".localized()
+    }
+    
+    private func configureSearchController() {
         let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "Search Language"
+        searchController.searchBar.placeholder = "NATIONALITY_SEARCHBAR_PLACEHOLDER".localized()
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
+    private func configureNationalityTableView() {
+        nationalityTableView.dataSource = self
+        nationalityTableView.delegate = self
     }
     
     
@@ -157,7 +164,9 @@ extension NationalityViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         // 검색시 그전에 열린 섹션은 인덱스에 벗어남 따라서 검색시에는 그전에 열렸던 섹션 닫아줘야한다.
         guard let text = searchController.searchBar.text?.lowercased() else { return }
-        filteredCountries = countries.filter { $0.countryName.lowercased().hasPrefix(text) }
+        filteredCountries = countries.filter {
+            $0.countryName.lowercased().contains(text)
+        }
         DispatchQueue.main.async(qos: .userInteractive, execute: {
             self.nationalityTableView.reloadData()
         })

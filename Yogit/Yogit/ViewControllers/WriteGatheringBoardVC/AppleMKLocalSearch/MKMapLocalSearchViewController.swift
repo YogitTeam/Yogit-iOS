@@ -146,7 +146,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.medium)
         label.numberOfLines = 1
-        label.text = "↑ Search in the search bar above"
+        label.text = "↑ " + "SEARCHBAR_NOTICE_DESCRIPTION".localized()
         label.textColor = .white
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
@@ -174,14 +174,11 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     
     private lazy var saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Done", for: .normal)
+        button.setTitle("DONE".localized(), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 8
-//        button.isHidden = true
         button.isEnabled = false
-        button.backgroundColor = .placeholderText //UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-//        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        button.backgroundColor = .placeholderText 
         button.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -222,17 +219,14 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(mapView)
-        view.addSubview(saveButton)
-//        view.addSubview(searchGuideView)
-        view.addSubview(noticeView)
-        configureViewComponent()
+        configureNav()
+        configureView()
         configureSearchController()
         configureMapComponent()
         configureLocationManager()
 //        configureGuideLabel()
         timerRun()
-        blinkNoticeView(noticeView: noticeView)
+        searhBarNoticeView(noticeView: noticeView)
     }
     
     override func viewDidLayoutSubviews() {
@@ -269,7 +263,20 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         timerQuit()
     }
     
-    private func blinkNoticeView(noticeView: UIView) {
+    private func configureView() {
+        view.addSubview(mapView)
+        view.addSubview(saveButton)
+//        view.addSubview(searchGuideView)
+        view.addSubview(noticeView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureNav() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+    }
+    
+    
+    private func searhBarNoticeView(noticeView: UIView) {
         var repeatCount = 0
         var m = -12
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
@@ -283,17 +290,6 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
                 repeatCount += 1
             })
         }
-//        Timer.scheduledTimer(withTimeInterval: 0.7, repeats: true) { timer in
-//            UIView.animate(withDuration: 0.7, animations: {
-//                noticeView.alpha = noticeView.alpha == 1 ? 0 : 1
-//            }, completion: { (finished) in
-//                if repeatCount > 3 {
-//                    timer.invalidate()
-//                    noticeView.alpha = 0
-//                }
-//                repeatCount += 1
-//            })
-//        }
     }
     
     private func timerRun() {
@@ -309,12 +305,6 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    private func configureViewComponent() {
-//        self.navigationItem.title = "Profile"
-        view.backgroundColor = .systemBackground
-//        setupSearchController()
-    }
-    
     private func configureMapComponent() {
         self.mapView.showsUserLocation = true
         mapView.delegate = self
@@ -324,7 +314,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         self.navigationItem.searchController = searchVC
         searchVC.searchResultsUpdater = self
         searchVC.searchBar.delegate = self
-        searchVC.searchBar.placeholder = "Search address / postcode / place"
+        searchVC.searchBar.placeholder = "SEARCHBAR_PLACEHOLDER".localized()
         searchVC.searchBar.addSubview(activityIndicator)
     }
     
@@ -445,7 +435,6 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     
     @objc func saveButtonTapped(_ sender: UIButton) {
         self.delegate?.locationSend(meetUpPlace: self.meetUpPlace)
-        print("meetUpPlace locality", meetUpPlace.locality)
         self.navigationController?.popViewController(animated: true)
     }
 
@@ -498,17 +487,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         guard let text = self.searchVC.searchBar.text?.lowercased(), let resultsVC = self.searchVC.searchResultsController as? MKResultsLocalSearchTableViewController else {
             return
         }
-    
-//        filter { $0.title.lowercased().hasPrefix(text) }
-//
-//        let str = "2020-12-25"
-//        let str2 = str.components(separatedBy: ["-"]).joined()
-//        print(str2)
-        
-//        let str = text.localizedLowercase.components(separatedBy: [",", " ", "-"]).joined()
-//        print(str)
-        // range NSMakeRange(0, 6)
-//        let locale = Locale(identifier: "ko-KR")
         
         
         // 37.5495209, 127.075086 (위경도로 검색 가능)
@@ -535,33 +513,11 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             }
             
             var mapItems: [MKMapItem] = []
-//            var hasNotPostCode: Bool = false
             for item in response.mapItems {
                 if let postCode = item.placemark.postalCode {
                     print("postCode", postCode)
-                    mapItems.append(item)
+                    mapItems.append(item) // 우편번호만 있는 주소 값만 저장 (도, 시 제외)
                 }
-//                if let name = item.name { // 경기도 / 용인시
-//                    print("name", name)
-//                }
-//                if let countryCode = item.placemark.countryCode {
-//                    print("countryCode", countryCode)
-//                }
-//                if let location = item.placemark.location {
-//                    print("location", location)
-//                }
-//                if let placeMarkName = item.placemark.name {
-//                    print("placeMarkName", placeMarkName) // 경기도 / 용인시
-//                }
-//                if let placeMarkTitle = item.placemark.title {
-//                    print("placeMarkTitle", placeMarkTitle) // 대한민국 경기도 / 대한민국 경기도 용인시
-//                }
-//                if let placeMarkPhoneNumber = item.phoneNumber {
-//                    print("placeMarkPhoneNumber", placeMarkPhoneNumber)
-//                }
-//                if let placeMarkLocality = item.placemark.locality {
-//                    print("placemark locality", placeMarkLocality)
-//                }
             }
             if mapItems.count == 0 {
                 resultsVC.notFound()
@@ -589,13 +545,9 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
     func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
         print("forwardGeocoding locality", address)
         let geocoder = CLGeocoder()
-//        let locale = Locale(identifier: "en_US")
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
 //        let region = Locale.current.region?.identifier // KR
-//        print("region", region)
         let locale = Locale(identifier: identifier)
-//        print("locale",locale)
-        print("identifier", identifier)
 
         // 주소 다됨 (country, locality, "KR" >> South Korea)
         geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: { (placemarks, error) in
@@ -641,23 +593,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
             }
             completion(reverseGeoData)
         })
-//
-//        geocoder.reverseGeocodeLocation(findLocation, completionHandler: {
-//            (placemarks, error) in
-//            guard let pm = placemarks?.last else { return }
-//            let administrativeArea = "\(pm.administrativeArea ?? "")"
-//            let locality = "\(pm.locality ?? "")"
-//            var centerAddress: String?
-//            if administrativeArea == locality {
-//                centerAddress = locality
-//            } else {
-//                centerAddress = administrativeArea + " " + locality
-//            }
-//            centerAddress = "\(centerAddress ?? "") \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
-//            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: administrativeArea)
-//            print("administrativeArea\(administrativeArea)")
-//            completion(reverseGeoData)
-//        })
+
     }
 }
 
@@ -805,18 +741,13 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
         
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
 //            self.searchGuideView.isHidden = true
-            if self.activityIndicator.isAnimating {
+            if activityIndicator.isAnimating {
                 searchBar.searchTextField.leftView?.isHidden = false
-                self.activityIndicator.stopAnimating()
+                activityIndicator.stopAnimating()
             }
-            self.searchVC.dismiss(animated: true)
+            searchVC.dismiss(animated: true)
         })
     }
-    
-    
-    
-    
-    
     
 //    func searchBarTextDidEndEditing(_ searchBar:UISearchBar) {
 //        print("검색완료")
@@ -834,23 +765,11 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
 
 extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControllerDelegate {
     func didTapPlace(coordinate: CLLocationCoordinate2D, placeName: String, placeTitle: String) {
-//        self.saveButton.isHidden = true
-        
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
             searchVC.searchBar.resignFirstResponder()
             searchVC.dismiss(animated: true, completion: nil)
             searchVC.searchBar.text = placeName
         })
-        // 그전 핀 삭제
-//        mapView.removeAnnotations(mapView.annotations)
-//        let annotations = mapView.annotations
-//        mapView.removeAnnotation(annotations as? MKAnnotation!)
-        // add a map min
-//        let pin = MKPointAnnotation()
-//        pin.coordinate = coordinate
-//        mapView.addAnnotation(pin)
-//        mapView.setRegion(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)), animated: true)
-//        mapView.removeAnnotations(mapView.annotations)
         moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
             .longitude, delta: 0.01)
         setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: placeName, subtitle: placeTitle)

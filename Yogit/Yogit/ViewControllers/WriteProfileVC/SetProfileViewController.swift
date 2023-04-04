@@ -16,11 +16,10 @@ protocol FetchUserProfileProtocol: AnyObject {
 }
 
 class SetProfileViewController: UIViewController {
-    
-    private let genderData = ["GENDER_NONE".localized(), "GENDER_MALE".localized(), "GENDER_FEMALE".localized()]
+    private let genderData = ["Prefer not to say", "Male", "Female"]
     private var ageData = [Int]()
     private var userAge = 18
-    private var userGender = "GENDER_NONE".localized()
+    private var userGender = "Prefer not to say"
     private var sectionNumber: Int = 5
     private var lastSectionFooterHeight: CGFloat = 100
     
@@ -339,7 +338,8 @@ class SetProfileViewController: UIViewController {
             .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
                 switch response.result {
                 case .success:
-                    if let value = response.value, value.httpCode == 200, let data = value.data, self.mode == .edit {
+                    if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
+                        guard let data = value.data else { return }
                         DispatchQueue.main.async { [weak self] in
                             self?.delegate?.sendFetchedUserProfile(data: data)
                             self?.navigationController?.popViewController(animated: true)
@@ -465,7 +465,7 @@ extension SetProfileViewController: UITableViewDataSource {
             }
             case 4:
             cell.selectionStyle = .none
-            cell.configure(text: userProfile.gender, section: indexPath.section) // "Select gender"
+            cell.configure(text: userProfile.gender?.localized(), section: indexPath.section) // "Select gender"
             cell.commonTextField.inputView = genderPickerView
             cell.commonTextField.inputAccessoryView = pickerViewToolBar
             genderPickerView.tag = indexPath.section
@@ -666,7 +666,7 @@ extension SetProfileViewController: UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         switch pickerView.tag {
         case ProfileSectionData.age.rawValue: return "\(self.ageData[row])"
-        case ProfileSectionData.gender.rawValue: return "\(self.genderData[row])"
+        case ProfileSectionData.gender.rawValue: return "\(self.genderData[row].localized())"
         default: fatalError("Pickerview tag error")
         }
     }

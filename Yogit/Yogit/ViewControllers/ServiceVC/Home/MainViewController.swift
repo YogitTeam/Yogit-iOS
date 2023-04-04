@@ -211,11 +211,6 @@ class  MainViewController: UIViewController {
     private let modular = 10
     private var tasks = [Task<(), Error>]()
     private var categoryId: Int = 1
-    private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
-//    private let taskGroup: Task//TaskGroup<Int, Error>()
-//    private var task: Task<(), Error>?
-    //    private var isInit = true
-//    private var filter = Filter(fillterType: .none)
     
     private var selectedCell: CategoryImageViewCollectionViewCell? {
         didSet {
@@ -235,42 +230,23 @@ class  MainViewController: UIViewController {
             }
         }
     }
-//    private lazy var gatheringBoardTableView: UITableView = {
-//        let tableView = UITableView()
-////        tableView.separatorStyle = .none
-//        tableView.translatesAutoresizingMaskIntoConstraints = false
-//        tableView.backgroundColor = .systemBackground
-////        tableView.tableHeaderView = categoryImageViewCollectionView
-//        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 124)
-////        tableView.estimatedRowHeight = 120
-//        // register new cell
-//        // self: reference the type object
-//        tableView.register(SmallGatheringBoardTableViewCell.self, forCellReuseIdentifier: SmallGatheringBoardTableViewCell.identifier)
-//        return tableView
-//    }()
-    
-//    private lazy var refreshControl: UIRefreshControl = {
-//        let refreshControl = UIRefreshControl()
-//        refreshControl.addTarget(self, action: #selector(refreshGatheringBoards), for: .valueChanged)
-//        gatheringBoardCollectionView.refreshControl = refreshControl
-//        return refreshControl
-//    }()
-//
+
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(refreshGatheringBoards), for: .valueChanged)
-        
 //        control.transform = CGAffineTransformMakeScale(0.5, 0.5)
         return control
     }()
     
     private lazy var createGatheringBoardButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "Edit")?.withTintColor(.label, renderingMode: .alwaysOriginal), for: .normal)
-//        button.tintColor = .white
-//        button.layer.cornerRadius = 24
+//        button.setImage(UIImage(named: "Edit")?.withTintColor(.label, renderingMode: .alwaysOriginal), for: .normal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "plus", withConfiguration: imageConfig)
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
         button.isEnabled = true
-        button.backgroundColor = .systemGray6
+        button.backgroundColor = ServiceColor.primaryColor
         button.addTarget(self, action: #selector(self.createBoardButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -286,9 +262,6 @@ class  MainViewController: UIViewController {
         collectionView.backgroundColor = .systemBackground
         collectionView.showsVerticalScrollIndicator = true
         collectionView.isSkeletonable = true
-//        collectionView.layer.borderWidth = 1
-//        collectionView.layer.borderColor = UIColor.red.cgColor
-//        collectionView.backgroundColor = .systemBackground
         return collectionView
     }()
 
@@ -301,13 +274,7 @@ class  MainViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(CategoryImageViewCollectionViewCell.self, forCellWithReuseIdentifier: CategoryImageViewCollectionViewCell.identifier)
-//        collectionView.layer.borderColor = UIColor.red.cgColor
-//        collectionView.layer.borderWidth = 1
-//        collectionView.layer.borderWidth = 0.3
-//        collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
-//        collectionView.isHidden = true
-//        collectionView.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 100)// CGRect(origin: .zero, size: CGSize(width: view.frame.size.width, height: 100))
         return collectionView
     }()
 
@@ -321,66 +288,24 @@ class  MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureViewComponent()
+        configureView()
         configureCollectionView()
+        initAPICall()
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        <#code#>
-//    }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        print("viewDidAppear")
-//
-////        DispatchQueue.main.async { [weak self] in
-////            self?.gatheringBoardCollectionView.reloadData()
-////            self?.categoryImageViewCollectionView.isHidden = false
-//        if let cell = self?.categoryImageViewCollectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
-//            self?.selectedCell = cell
-//        }
-//////                print("뷰 변경 성공")
-//////            }
-//////            print("뷰 변경 실패")
-////        }
-////
-////        // 첫번째 요청 이후
-////        let indexPath = IndexPath(item: categoryId-1, section: 0)
-////        guard let cell = categoryImageViewCollectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell else {
-////            print("뷰 변경 실패")
-////            return }
-////        selectedCell = cell
-////        self?.categoryImageViewCollectionView.isHidden = false
-////        print("뷰 변경")
-//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         initNavigationBar()
-//        print("아직")
-//        if let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: categoryId-, section: 0)) as? CategoryImageViewCollectionViewCell {
-//            print("들어옴")
-//            selectedCell = cell
-//        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("viewDidAppear")
         if let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: categoryId-1, section: 0)) as? CategoryImageViewCollectionViewCell {
-            print("들어옴")
             selectedCell = cell
         }
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//            if self.first {
-//                self.gatheringBoardCollectionView.stopSkeletonAnimation()
-//                self.gatheringBoardCollectionView.hideSkeleton()
-//                self.first = false
-//            }
-//        }
     }
 
-    private func configureViewComponent() {
+    private func configureView() {
         view.addSubview(categoryImageViewCollectionView)
         view.addSubview(gatheringBoardCollectionView)
         view.addSubview(lineView)
@@ -389,7 +314,7 @@ class  MainViewController: UIViewController {
     }
     
     private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue)
+        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
     }
     
     override func viewDidLayoutSubviews() {
@@ -397,7 +322,7 @@ class  MainViewController: UIViewController {
         categoryImageViewCollectionView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(80)
+            $0.height.equalTo(86)
         }
         lineView.snp.makeConstraints {
             $0.top.equalTo(categoryImageViewCollectionView.snp.bottom)
@@ -417,18 +342,6 @@ class  MainViewController: UIViewController {
         createGatheringBoardButton.layer.cornerRadius = createGatheringBoardButton.frame.size.width/2
     }
     
-
-//    private func initGahtheringBoards() {
-//        for _ in 0..<CategoryId.allCases.count {
-//            gatheringBoards.append([])
-//        }
-////        if !isPaging {
-////            pagingBoardsByCategory(categoryId: categoryId)
-////        }
-////        Task(priority: .high, operation: {
-////            await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-////        })
-//    }
     
     private func configureCollectionView() {
         categoryImageViewCollectionView.delegate = self
@@ -436,6 +349,9 @@ class  MainViewController: UIViewController {
         gatheringBoardCollectionView.delegate = self
         gatheringBoardCollectionView.dataSource = self
         gatheringBoardCollectionView.refreshControl = refreshControl
+    }
+    
+    private func initAPICall() {
         isPaging = true
         pagingBoardsByCategory(categoryId: categoryId, firstPage: true)
     }
@@ -445,13 +361,9 @@ class  MainViewController: UIViewController {
         gatheringBoards.removeAll() //[categoryId-1].removeAll()
         pageCursor = 0
         pageListCnt = 0
-        DispatchQueue.main.async { [weak self] in
-            self?.gatheringBoardCollectionView.reloadData()
+        DispatchQueue.main.async {
+            self.gatheringBoardCollectionView.reloadData()
         }
-//        print("삭제후 개수 gatheringBoards[categoryId-1]", gatheringBoards[categoryId-1])
-//        gatheringBoardCollectionView.reloadData() //
-//        pagesListCount[categoryId-1] = 0
-//        pagesCursor[categoryId-1] = 0
     }
     
     private func fetchGatheringBoardsByCategory(category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
@@ -508,6 +420,7 @@ class  MainViewController: UIViewController {
     private func pagingBoardsByCategory(categoryId: Int, firstPage: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if firstPage {
+            let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
             gatheringBoardCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
         isLoading = false
@@ -614,14 +527,10 @@ class  MainViewController: UIViewController {
 //    }
     
     @objc private func refreshGatheringBoards() {
-        print("리프레쉬 ??")
         if !isPaging {
-            print("리프레쉬 됨")
             isPaging = true
             resetBoardsData(categoryId: categoryId)
             pagingBoardsByCategory(categoryId: categoryId, firstPage: true)
-        } else {
-            print("리프레쉬 안됨")
         }
         refreshControl.endRefreshing()
     }
@@ -635,66 +544,11 @@ class  MainViewController: UIViewController {
     }
 }
 
-//extension  MainViewController: UITableViewDataSource {
-//    // Reporting the number of sections and rows in the table.
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        if gatheringBoards.count == 0 {
-//            return 0
-//        } else {
-//            return gatheringBoards[categoryId - 1].count
-//        }
-//    }
-//
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        return 1
-//    }
-//
-//
-//    // Providing cells for each row of the table.
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        guard let cell = tableView.dequeueReusableCell(withIdentifier: SmallGatheringBoardTableViewCell.identifier, for: indexPath) as? SmallGatheringBoardTableViewCell else { return UITableViewCell() }
-////        if gatheringBoards.count != 0 {
-////            cell.configure(with: gatheringBoards[categoryId - 1][indexPath.row])
-////        }
-////        cell.configure(with: gatheringBoards[categoryId][indexPath.row])
-//        cell.selectionStyle = .none
-//        cell.configure(with: gatheringBoards[categoryId - 1][indexPath.row])
-//        cell.layoutIfNeeded()
-//        return cell
-//
-//    }
-//
-//
-//}
-
-//extension  MainViewController: UITableViewDelegate {
-//
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
-//        // board detail 요청
-//    }
-//
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        // 셀의 데이터 세팅이 완료 된 후 실제 높이 값을
-//        cellHeights[indexPath] = cell.frame.size.height
-//        print("cell 높이", cellHeights[indexPath])
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 120 // UITableView.automaticDimension
-//    }
-//
-//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 120 //cellHeights[indexPath] ?? UITableView.automaticDimension
-//    }
-//}
-
 extension  MainViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
         if scrollView == gatheringBoardCollectionView && !isPaging {
-            if scrollView.contentOffset.y > 80 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
+            if scrollView.contentOffset.y > 86 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
                 .height)) { // -500
                 print("하단 스크롤링")
                 print("😀Upload for up scroling", categoryId)
@@ -707,29 +561,6 @@ extension  MainViewController: UIScrollViewDelegate {
             }
         }
     }
-    
-//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-////        Task(priority: .high) {
-////            if scrollView.tag == 1 {
-////                if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
-////                    .height-300)) {
-////                    print("Upload for up scroling")
-////                    await pagingBoardsByCategory(categoryId: categoryId, isPaging: isPaging)
-////                    print("End Bottom Load")
-////                }
-////            }
-////        }
-//
-//        if scrollView == gatheringBoardCollectionView && !isPaging {
-//            if (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
-//                .height-300)) {
-//                print("Upload for up scroling")
-//                isPaging = true
-//                pagingBoardsByCategory(categoryId: categoryId)
-//                print("End Bottom Load")
-//            }
-//        }
-//    }
 }
 
 extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionViewDelegate
@@ -745,7 +576,6 @@ extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionVie
                 DispatchQueue.main.async { [weak self] in
                     if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
                         self?.selectedCell = cell
-                        
                     }
                 }
                 categoryId = indexPath.row + 1
@@ -814,7 +644,7 @@ extension MainViewController: SkeletonCollectionViewDataSource {
 extension MainViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == categoryImageViewCollectionView {
-            return CGSize(width: 54, height: 54)
+            return CGSize(width: 58, height: 58)
         } else {
             return CGSize(width: collectionView.frame.width/2-25, height: (collectionView.frame.width/2-25)*5/4)
         }

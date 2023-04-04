@@ -47,7 +47,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     var avatarImages: [String:UIImage] = ["SERVICE":UIImage(named: "ServiceIcon")!]
     
     let modular = 10
-    let serviceNotice = "📢 This is not a real-time chat.\n      Please scroll to update."
+    let serviceNotice = "📢" + "CLIPBOARD_SERVICE_NOTICE".localized()
     lazy var serviceMessageId = upPageCusor*modular+upPageListCount
     
     private let messageFormatter: DateFormatter = {
@@ -58,7 +58,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
         dateFormatter.timeZone = .current//TimeZone(identifier: "UTC")
-        print("dateFormatter.timeZone", dateFormatter.timeZone)
         return dateFormatter
     }()
     
@@ -111,7 +110,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //       control.transform = CGAffineTransformMakeScale(0.5, 0.5)
 //      return control
 //    }()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -180,7 +178,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         }
         return message
     }
-    
     
     func configureViewComponent() {
         navigationItem.largeTitleDisplayMode = .never
@@ -549,7 +546,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
 //            }
 //        }
 //    }
-    
+        
     func processInputBar(_ inputBar: InputBarAccessoryView) {
         print("버튼 누름")
         if !isPaging {
@@ -706,7 +703,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                         let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "")
                                         if avatarImages[sender.senderId] == nil {
                                             if clipBoardList[i].profileImgURL.contains("null") {
-                                                self.avatarImages[sender.senderId] = UIImage(named: "profileImageNULL")
+                                                self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
                                             } else {
                                                 let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
                                                 self.avatarImages[sender.senderId] = profileImage

@@ -12,7 +12,7 @@ class BaseInterceptor: RequestInterceptor {
     // 
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         print("BaseInterceptor adapt() called")
-        var request = urlRequest
+        let request = urlRequest
         
         // Add header
 //        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
@@ -31,8 +31,6 @@ class BaseInterceptor: RequestInterceptor {
         
         
         print("statusCode", statusCode)
-        
-//        let data = ["statusCode" : statusCode]
         
         switch statusCode {
         case 401:
@@ -57,5 +55,5 @@ class BaseInterceptor: RequestInterceptor {
 //            NotificationCenter.default.post(name: NSNotification.Name(rawValue: NOTIFICATION.API.AUTH_FAIL), object: nil, userInfo: data)
             
         completion(.doNotRetry)
-        }
+    }
 }

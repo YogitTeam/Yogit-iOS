@@ -17,14 +17,16 @@ private enum InterestsCategoryId: Int, CaseIterable {
     case food
 
     func toTitle() -> String {
+        let str: String
         switch self.rawValue {
-        case 0: return "Personality"
-        case 1: return "Lifestyle"
-        case 2: return "Hobby"
-        case 3: return "Sports"
-        case 4: return "Food"
+        case 0: str = "PERSONALITY"
+        case 1: str = "LIFESTYLE"
+        case 2: str = "HOBBY"
+        case 3: str = "SPORTS"
+        case 4: str = "FOOD"
         default: fatalError("Not exist HashTagCategoryId")
         }
+        return str.localized()
     }
 }
 
@@ -69,14 +71,13 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     
     private lazy var nextButton: UIButton = {
         let button = UIButton()
-//        button.setTitle("Done", for: .normal)
-        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.setImage(image, for: .normal)
         button.tintColor = .white
         button.isHidden = false
         button.isEnabled = true
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-//        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        button.backgroundColor = ServiceColor.primaryColor
         button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -102,8 +103,8 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     private let noticeLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
-        label.text = "Choose your personaliy, interests"
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.semibold)
+        label.text = "INTERESTS_TITLE".localized()
         label.sizeToFit()
         label.numberOfLines = 0
         return label
@@ -113,7 +114,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
         let label = UILabel()
         label.textAlignment = .left
         label.textColor = ServiceColor.primaryColor
-        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
+        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.medium)
         label.text = "\(selectedTags.count) / \(seletedMax)"
         label.sizeToFit()
         label.numberOfLines = 1
@@ -123,25 +124,14 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     private lazy var rightButton: UIBarButtonItem = {
         let buttonTitle: String
         if mode == .create {
-            buttonTitle = "Skip"
+            buttonTitle = "SKIP"
         } else {
-            buttonTitle = "Done"
+            buttonTitle = "DONE"
         }
-        let button = UIBarButtonItem(title: buttonTitle, style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: buttonTitle.localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor = ServiceColor.primaryColor
         return button
     }()
-    
-//    private lazy var nextButton: UIButton = {
-//        let button = UIButton()
-//        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-//        button.tintColor = .white
-//        button.isHidden = false
-//        button.isEnabled = true
-//        button.backgroundColor = ServiceColor.primaryColor
-//        button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
-//        return button
-//    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -185,7 +175,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     }
     
     private func configureNav() {
-        navigationItem.title = "Personality & Interests"
+        navigationItem.title = "INTERESTS_NAVIGATIONITEM_TITLE".localized()
         navigationItem.backButtonTitle = "" // remove back button title
         navigationItem.rightBarButtonItem = rightButton
     }
@@ -207,7 +197,6 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             let tagViewHeight = setupTagView(tagView: tagView)
             let stackViewHeight = labelHeight + tagViewHeight + stackView.spacing + tagView.verticalSpacing
             setupStackView(stackView: stackView)
-            print("label, tagview. stackview", labelHeight, tagViewHeight, stackViewHeight)
             NSLayoutConstraint.activate([
                 stackView.topAnchor.constraint(equalTo: categoryTagContentView.topAnchor, constant: stackViewAccumulatedY + CGFloat(30 * i)),
                 stackView.leadingAnchor.constraint(equalTo: categoryTagContentView.leadingAnchor, constant: 20),
@@ -227,7 +216,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
         if let title = InterestsCategoryId(rawValue: label.tag)?.toTitle() {
             label.text = title
         }
-        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.font = .systemFont(ofSize: 18, weight: .medium)
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         label.sizeToFit()
@@ -311,14 +300,18 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
         }
     }
     
+    private func interestsAlert() {
+        let alert = UIAlertController(title: "", message: "INTERESTS_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title: "OK".localized(), style: .default)
+        alert.addAction(okAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: false, completion: nil)
+        }
+    }
+    
     @objc private func nextButtonTapped(_ sender: UIButton) {
         if selectedTags.isEmpty {
-            let alert = UIAlertController(title: "", message: "Please select the interests", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alert.addAction(okAction)
-            DispatchQueue.main.async {
-                self.present(alert, animated: false, completion: nil)
-            }
+            interestsAlert()
         } else {
             userProfile.interests = selectedTags
             moveToVC()
@@ -337,59 +330,6 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             })
         }
     }
-    
-//    @objc private func nextButtonTapped(_ sender: UIButton) {
-//
-//
-////        userProfile.aboutMe = aboutMeTextView.myTextView.text
-////
-////        print("nextButtonTapped userPrfile data", userProfile)
-//
-////        guard let userItem = try? KeychainManager.getUserItem() else { return }
-////        userProfile.userId = userItem.userId
-////        userProfile.refreshToken = userItem.refresh_token
-////
-////        // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
-////        // userProfile에  SearchUserProfile 모든 데이터 포함
-////        let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
-//        if let parameters = urlRequestConvertible.toDictionary {
-//            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-//                for (key, value) in parameters {
-//                    if let arrayValue = value as? [Any] {
-//                        for arrValue in arrayValue {
-//                            multipartFormData.append(Data("\(arrValue)".utf8), withName: key)
-//                        }
-//                    } else {
-//                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-//                    }
-//                }
-//            }, with: urlRequestConvertible)
-//            .validate(statusCode: 200..<501)
-//            .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
-//                switch response.result {
-//                case .success:
-//                    do {
-//                        guard let value = response.value else { return }
-//                        guard let data = value.data else { return }
-//                        if value.httpCode == 200 {
-//                            userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
-//                            userItem.userName = data.name // 유저 이름, 상태 저장
-//                            try KeychainManager.updateUserItem(userItem: userItem)
-//                            let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
-//                            DispatchQueue.main.async { [self] in
-//                                view.window?.rootViewController = rootVC
-//                                view.window?.makeKeyAndVisible()
-//                            }
-//                        }
-//                    } catch {
-//                        print("Error - KeychainManager.update \(error.localizedDescription)")
-//                    }
-//                case let .failure(error):
-//                    print("SetProfileVC - upload response result Not return", error)
-//                }
-//            }
-//        }
-//    }
     
     func textTagCollectionView(_ textTagCollectionView: TTGTextTagCollectionView!, canTap tag: TTGTextTag!, at index: UInt) -> Bool {
         if selectedTags.count < seletedMax && tag.selected == false {

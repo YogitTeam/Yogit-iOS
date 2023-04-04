@@ -15,13 +15,20 @@ class GetProfileViewController: UIViewController {
     // profile
     // profile image >> pagecontrol
     
-    private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
-    
     var getUserId: Int64? {
         didSet {
             leftButton.isHidden = false
         }
     }
+    
+//    private lazy var footerViews: [UIView] = {
+//        let views = [UIView](repeating: UIView(), count: 4)
+//        for view in views {
+//            view.frame = CGRect(origin: .zero, size: CGSize(width: self.view.frame.size.width-40, height: 1))
+//            view.backgroundColor = .red
+//        }
+//        return views
+//    }()
     
     private var isBlockedUser: Int? {
         didSet {
@@ -42,7 +49,7 @@ class GetProfileViewController: UIViewController {
     private var languagesInfo: String = ""
     
     private lazy var leftButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(leftButtonPressed(_:)))
+        let button = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(leftButtonPressed(_:)))
         button.tintColor = .label
         button.isHidden = true
         return button
@@ -55,32 +62,33 @@ class GetProfileViewController: UIViewController {
         return button
     }()
     
-//    private lazy var blockNotiView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = true
-//        view.backgroundColor = .systemRed
-//        view.addSubview(blockLabel)
-//        view.isHidden = true
-//        return view
-//    }()
-//
-//    private let blockLabel: UILabel = {
-//        let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textAlignment = .left
-//        label.font = .systemFont(ofSize: 14, weight: UIFont.Weight.medium)
-//        label.sizeToFit()
-//        label.numberOfLines = 1
-//        label.text = "The user is a blocked"
-//        return label
-//    }()
+    private let footerView1: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        return view
+    }()
     
-//    private let footerView1: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = true
-//        view.backgroundColor = .systemGray6
-//        return view
-//    }()
+    private let footerView2: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        return view
+    }()
+    
+    private let footerView3: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        return view
+    }()
+    
+    private let footerView4: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        return view
+    }()
     
     private lazy var profileContentScrollView: UIScrollView = {
        let scrollView = UIScrollView()
@@ -116,7 +124,6 @@ class GetProfileViewController: UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.backgroundColor = .placeholderText
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
         imageView.isSkeletonable = true
@@ -151,12 +158,11 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 16
+        stackView.spacing = 22
         stackView.alignment = .leading
         stackView.isSkeletonable = true
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.red.cgColor
         [profileImageStackView,
+         footerView1,
          profileLanguagesStackView].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -179,10 +185,9 @@ class GetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20)
-//        label.textColor = .systemGray
         label.numberOfLines = 1
         label.sizeToFit()
-//        label.isSkeletonable = true
+        label.isSkeletonable = true
         return label
     }()
     
@@ -194,7 +199,7 @@ class GetProfileViewController: UIViewController {
         label.textColor = .systemGray
         label.numberOfLines = 1
         label.sizeToFit()
-//        label.isSkeletonable = true
+        label.isSkeletonable = true
         return label
     }()
     
@@ -202,15 +207,13 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = 6
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
-        let footerView = createFooterView()
-        footerViewConstraint(footerView: footerView)
-        [footerView,
-         profileLanguagesTitleLabel,
+        [profileLanguagesTitleLabel,
          profileLanguagesLabel].forEach { stackView.addArrangedSubview($0) }
+        stackView.sizeToFit()
         return stackView
     }()
     
@@ -218,9 +221,8 @@ class GetProfileViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.text = "Languages"
+        label.text = ProfileSectionData.languages.toString()
         label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
-//        label.textColor = .systemGray
         label.numberOfLines = 1
         label.sizeToFit()
         label.isSkeletonable = true
@@ -243,14 +245,11 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = 6
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
-        let footerView = createFooterView()
-        footerViewConstraint(footerView: footerView)
-        [footerView,
-         profileJobTitleLabel,
+        [profileJobTitleLabel,
          profileJobLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -260,10 +259,9 @@ class GetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
-//        label.textColor = .systemGray
         label.numberOfLines = 1
         label.sizeToFit()
-        label.text = "What I do"
+        label.text = ProfileSectionData.job.toString()
         label.isSkeletonable = true
         return label
     }()
@@ -284,14 +282,11 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = 6
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
-        let footerView = createFooterView()
-        footerViewConstraint(footerView: footerView)
-        [footerView,
-         profileAboutMeTitleLabel,
+        [profileAboutMeTitleLabel,
          profileAboutMeLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -301,10 +296,9 @@ class GetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
-//        label.textColor = .systemGray
         label.numberOfLines = 0
         label.sizeToFit()
-        label.text = "About Me"
+        label.text = ProfileSectionData.aboutMe.toString()
         label.isSkeletonable = true
         return label
     }()
@@ -325,14 +319,11 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = 6
         stackView.alignment = .leading
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
-        let footerView = createFooterView()
-        footerViewConstraint(footerView: footerView)
-        [footerView,
-         profileInterestsTitleLabel,
+        [profileInterestsTitleLabel,
          profileInterestsTagView].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -342,10 +333,9 @@ class GetProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 18, weight: UIFont.Weight.medium)
-//        label.textColor = .systemGray
         label.numberOfLines = 0
         label.sizeToFit()
-        label.text = "Personality & Interests"
+        label.text = ProfileSectionData.interests.toString()
         label.isSkeletonable = true
         return label
     }()
@@ -375,109 +365,29 @@ class GetProfileViewController: UIViewController {
             $0.centerX.bottom.top.equalToSuperview()
 //            $0.top.equalTo(boardContentScrollView.bounds.minY)
         }
-        profileImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(100)
-        }
-//        footerView1.snp.makeConstraints {
-//            $0.width.equalTo(view.frame.width-40)
-//            $0.height.equalTo(1)
-//        }
         profileImageView.layoutIfNeeded()
         profileImageView.layer.cornerRadius = profileImageView.frame.size.width/2
-//        profileImageStackView.snp.makeConstraints {
-////            $0.centerX.equalToSuperview()
-//            $0.top.equalToSuperview().inset(20)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        profileLanguagesImageView.snp.makeConstraints {
-//            $0.width.height.equalTo(20)
-//        }
-//        profileJobImageView.snp.makeConstraints {
-//            $0.width.height.equalTo(20)
-//        }
-//        profileAboutMeImageView.snp.makeConstraints {
-//            $0.width.height.equalTo(20)
-//        }
-        
-//        profileNameLabel.snp.makeConstraints {
-//            $0.trailing.equalTo(view).inset(20)
-//        }
-//
-//        profileCountyLabel.snp.makeConstraints {
-//            $0.trailing.equalTo(view).inset(20)
-//        }
-//        profileLanguagesTitleLabel.snp.makeConstraints {
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        profileLanguagesLabel.snp.makeConstraints {
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-        
-        profileNameCountryStackView.snp.makeConstraints {
-            $0.trailing.equalToSuperview()
+        profileNameLabel.snp.makeConstraints {
+            $0.trailing.equalTo(view).inset(20)
         }
-        profileLanguagesStackView.snp.makeConstraints {
-            $0.trailing.equalToSuperview()
+        profileLanguagesTitleLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+        }
+        profileLanguagesLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+        }
+        profileImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(100)
         }
         profileContentStackView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(20)
         }
-        
-//        blockLabel.snp.makeConstraints {
-//            $0.center.equalToSuperview()
-//            $0.leading.trailing.equalTo(view).inset(20)
-////            $0.top.bottom.equalToSuperview().inset(8)
-////            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//
-//        blockNotiView.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide)
-//            $0.top.bottom.equalTo(blockLabel).inset(-4)
-//            $0.leading.trailing.equalTo(blockLabel).inset(-20)
-//        }
-        
-//        profileLanguagesTitleLabel.layoutIfNeeded()
-//        profileJobTitleLabel.layoutIfNeeded()
-//        profileAboutMeTitleLabel.layoutIfNeeded()
-//        profileLanguagesTitleLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
-//
-//        profileJobTitleLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
-//
-//        profileAboutMeTitleLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
-        
-//        footerView1.snp.makeConstraints {
-//            $0.top.equalTo(profileImageStackView.snp.bottom).offset(20)
-//            $0.leading.trailing.equalToSuperview()
-//            $0.height.equalTo(6)
-//        }
-//        lanuageLabel.snp.makeConstraints { make in
-//            make.top.equalTo(footerView1.snp.bottom).offset(20)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        profileLanguagesLabel.snp.makeConstraints { make in
-//            make.top.equalTo(lanuageLabel.snp.bottom).offset(10)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        footerView2.snp.makeConstraints {
-//            $0.top.equalTo(profileLanguagesLabel.snp.bottom).offset(20)
-//            $0.leading.trailing.equalToSuperview()
-//            $0.height.equalTo(6)
-//        }
-//        aboutMeLabel.snp.makeConstraints { make in
-//            make.top.equalTo(footerView2.snp.bottom).offset(20)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        aboutMe.snp.makeConstraints { make in
-//            make.top.equalTo(aboutMeLabel.snp.bottom).offset(10)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        profileContentView.snp.makeConstraints { make in
-//            make.top.equalTo(view.safeAreaLayoutGuide)
-////            make.bottom.equalToSuperview()
-//            make.bottom.leading.trailing.equalToSuperview()
-//        }
+        footerView1.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.height.equalTo(1)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -491,9 +401,9 @@ class GetProfileViewController: UIViewController {
     private func configureNavItem() {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if getUserId == userItem.userId {
-            self.navigationItem.title = "My profile"
+            self.navigationItem.title = "MY_PROFILE".localized()
         } else {
-            self.navigationItem.title = "Profile"
+            self.navigationItem.title = "PROFILE".localized()
         }
         self.navigationItem.leftBarButtonItem = leftButton
         self.navigationItem.rightBarButtonItem = rightButton
@@ -509,10 +419,10 @@ class GetProfileViewController: UIViewController {
     }
     
     private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue)
+        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue.localized())
         if getUserId == nil { // 상대방 조회 없을때
             let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
-            let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
+            let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "SETTING")
             let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
             spacer.width = 15
             self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
@@ -527,14 +437,14 @@ class GetProfileViewController: UIViewController {
     
     @objc private func rightButtonPressed(_ sender: Any) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
         if isBlockedUser != 1 {
-            let block = UIAlertAction(title: "Block", style: .destructive) { (action) in
+            let block = UIAlertAction(title: "BLOCK".localized(), style: .destructive) { (action) in
                 self.blockAlert()
             }
             alert.addAction(block)
         }
-        let report = UIAlertAction(title: "Report", style: .destructive) {(action) in
+        let report = UIAlertAction(title: "REPORT".localized(), style: .destructive) {(action) in
             guard let reportedUserId = self.getUserId else { return }
             self.reportBoard(reportedUserId: reportedUserId)
         }
@@ -546,9 +456,9 @@ class GetProfileViewController: UIViewController {
     }
     
     private func blockAlert() {
-        let alert = UIAlertController(title: "Block", message: "Are you sure to block this user?\n\nYou can't change it after blocking it, so please use it carefully.\n\nIf you block a user, the gathering posts and clipboards created by those users will become invisible.", preferredStyle: .alert) 
-        let cancel = UIAlertAction(title: "cancel", style: .cancel)
-        let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
+        let alert = UIAlertController(title: "BLOCK".localized(), message: "GET_PROFILE_BLOCK_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
+        let ok = UIAlertAction(title: "OK".localized(), style: .destructive) { (ok) in
             guard let userIdToBlock = self.getUserId else { return }
             self.blockUser(userIdToBlock: userIdToBlock)
         }
@@ -560,7 +470,7 @@ class GetProfileViewController: UIViewController {
     }
     
     private func deleteAlert() {
-        let alert = UIAlertController(title: "Deleted user", message: "This user was deleted account", preferredStyle: .alert)
+        let alert = UIAlertController(title: "GET_PROFILE_DELETED_USER_ALERT_TITLE".localized(), message: "GET_PROFILE_DELETED_USER_ALERT_MESSAGE".localized(), preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
             DispatchQueue.main.async {
                 self.dismiss(animated: true)
@@ -573,7 +483,7 @@ class GetProfileViewController: UIViewController {
     }
     
     private func isBlockedUserAlert() {
-        let alert = UIAlertController(title: "Blocked user", message: "This user was blocked account", preferredStyle: .alert)
+        let alert = UIAlertController(title: "GET_PROFILE_BLOCKED_USER_ALERT_TITLE".localized(), message: "GET_PROFILE_BLOCKED_USER_ALERT_MESSAGE".localized(), preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default)
         alert.addAction(ok)
         DispatchQueue.main.async {
@@ -617,7 +527,6 @@ class GetProfileViewController: UIViewController {
     }
     
     @objc private func editButtonTapped(_ sender: UIButton) {
-        print("editButtonTapped")
         DispatchQueue.main.async(qos: .userInteractive) {
             let SPVC = SetProfileViewController()
             SPVC.mode = .edit
@@ -629,7 +538,6 @@ class GetProfileViewController: UIViewController {
     }
     
     @objc private func settingButtonTapped(_ sender: UIButton) {
-        print("settingButtonTapped")
         DispatchQueue.main.async {
             let SPVC = SettingProfileViewController()
             self.navigationController?.pushViewController(SPVC, animated: true)
@@ -658,7 +566,7 @@ class GetProfileViewController: UIViewController {
             let localizedLocale = Locale(identifier: localeIdentifier)
 //            let originLocale = Locale(identifier: code)
             if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let langLevelStr = LanguageLevels(rawValue: data.languageLevels[i])?.toString() {
-                langInfos += "\(localizedLanguage) (\(langLevelStr))\n"
+                langInfos += "\(localizedLanguage)(\(langLevelStr))\n"
             }
         }
         if langInfos.count > 0 { // 원래 값 있어야함
@@ -683,38 +591,40 @@ class GetProfileViewController: UIViewController {
             }
             
             profileInterestsStackView.removeFromSuperview()
+            footerView4.removeFromSuperview()
             profileAboutMeStackView.removeFromSuperview()
+            footerView3.removeFromSuperview()
             profileJobStackView.removeFromSuperview()
+            footerView2.removeFromSuperview()
             
             if let job = data.job, job != "" {
                 profileJobLabel.text = job
+                profileContentStackView.addArrangedSubview(footerView2)
+                constraintFooterView(footerView: footerView2)
                 profileContentStackView.addArrangedSubview(profileJobStackView)
             }
             if let aboutMe = data.aboutMe, aboutMe != "" {
                 profileAboutMeLabel.text = aboutMe
+                profileContentStackView.addArrangedSubview(footerView3)
+                constraintFooterView(footerView: footerView3)
                 profileContentStackView.addArrangedSubview(profileAboutMeStackView)
             }
             if let interests = data.interests, interests != [] {
+                profileContentStackView.addArrangedSubview(footerView4)
+                constraintFooterView(footerView: footerView4)
                 profileContentStackView.addArrangedSubview(profileInterestsStackView)
                 setupTagView(tagView: profileInterestsTagView, interests: interests)
             }
             isBlockedUser = data.isBlockingUser
-//            if data.isBlockingUser == 1 {
-//                isBlockedUserAlert()
-//            }
-//            leftButton.isHidden = false
-//            rightButton.isHidden = false
         }
     }
     
     private func setupTagView(tagView: TTGTextTagCollectionView, interests: [String]) {
-        print("setUpTagView")
         tagView.removeAllTags()
         tagView.backgroundColor = UIColor.systemBackground
         tagView.scrollDirection = .horizontal
         tagView.alignment = .left
         tagView.showsHorizontalScrollIndicator = false
-//        tagView.delegate = self
         
         let n = interests.count/3
         let m = interests.count%3 != 0 ? 1 : 0
@@ -749,18 +659,12 @@ class GetProfileViewController: UIViewController {
         
     }
     
-    private func createFooterView() -> UIView {
-        let footerView = UIView()
-        footerView.translatesAutoresizingMaskIntoConstraints = false
-        footerView.backgroundColor = .systemGray6
-        return footerView
-    }
-    
-    private func footerViewConstraint(footerView: UIView) {
+    private func constraintFooterView(footerView: UIView) {
         footerView.snp.makeConstraints {
-            $0.width.equalTo(view.frame.width-40)
+            $0.width.equalToSuperview()
             $0.height.equalTo(1)
         }
+        footerView.layoutIfNeeded()
     }
     
     private func getUserProfile() {
@@ -772,8 +676,8 @@ class GetProfileViewController: UIViewController {
             userId = userItem.userId
         }
         let getUserProfile = GetUserProfile(refreshToken: userItem.refresh_token, refreshTokenUserId: userItem.userId, userId: userId)
+        let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
         profileContentScrollView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
-        print("refeshUserId, searchUserId", userItem.userId, userId)
         AlamofireManager.shared.session
             .request(ProfileRouter.readProfile(parameters: getUserProfile))
             .validate(statusCode: 200..<501)
@@ -787,46 +691,6 @@ class GetProfileViewController: UIViewController {
                         } else {
                             DispatchQueue.global(qos: .userInteractive).async { [weak self] in
                                 self?.sprayViewUserProfileData(data: data)
-                            //                            let langCnt = data.languageCodes.count
-                            //                            var langInfos: String = ""
-                            //                            guard let localeIdentifier = Locale.preferredLanguages.first else { return }
-                            //                            for i in 0..<langCnt {
-                            //                                let code = data.languageCodes[i]
-                            //                                let localizedLocale = Locale(identifier: localeIdentifier)
-                            //                                let originLocale = Locale(identifier: code)
-                            //                                if let localizedLanguage = localizedLocale.localizedString(forIdentifier: code), let originLanguage = originLocale.localizedString(forIdentifier: code) {
-                            //                                    if localizedLanguage == originLanguage {
-                            //                                        langInfos += "\(localizedLanguage), "
-                            //                                    } else {
-                            //                                        langInfos += "\(localizedLanguage) (\(originLanguage)), "
-                            //                                    }
-                            //                                }
-                            //                            }
-                            ////                            langInfos.removeLast(2)
-                            //
-                            //                                // 국가
-                            ////                            let code = data.nationality
-                            ////                            let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-                            ////                            let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
-                            ////                            let flag = code.emojiFlag
-                            //                            // 노출될 값 flag + " " + countryName
-                            //
-                            //                            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-                            //                                profileImageView.setImage(with: data.profileImg)
-                            //                                profileImageLabel.text = data.name
-                            //                                profileLanguagesLabel.text = langInfos
-                            //                                profileImages = data.imageUrls
-                            //                            })
-                            //
-                            //                            self.sendFetchedUserProfile(data: data)
-                            ////                            self.setUserProfile.userName = data.name
-                            ////                            self.setUserProfile.nationality = data.nationality
-                            ////                            self.setUserProfile.userAge = data.age
-                            ////                            self.setUserProfile.gender = data.gender
-                            ////                            self.setUserProfile.languageCodes = data.languageCodes
-                            ////                            self.setUserProfile.languageLevels = data.languageLevels
-                            ////                            self.setUserProfile.job = data.job
-                            ////                            self.setUserProfile.aboutMe = data.aboutMe
                             }
                         }
                     }
@@ -836,29 +700,11 @@ class GetProfileViewController: UIViewController {
             }
     }
     
-//    @objc func rightButtonPressed(_ sender: Any) {
-////        navigationController.push
-//
-//
-////        guard let userItem = try? KeychainManager.getUserItem() else { return }
-////        userProfile.userId = userItem.userId
-////        print(userProfile)
-////
-////
-////
-////        DispatchQueue.main.async {
-////            let
-////            self.navigationController?.pushViewController(<#T##viewController: UIViewController##UIViewController#>, animated: <#T##Bool#>)
-////        }
-//    }
-    
     @objc func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async {
             let GPIVC = GetProfileImagesViewController()
             GPIVC.profileImages = self.profileImages
             GPIVC.modalPresentationStyle = .fullScreen
-//            let NC = UINavigationController(rootViewController: GPIVC)
-//            NC.modalPresentationStyle = .fullScreen
             self.present(GPIVC, animated: true, completion: nil)
         }
     }
@@ -877,7 +723,6 @@ class GetProfileViewController: UIViewController {
 
 extension GetProfileViewController: FetchUserProfileProtocol {
     func sendFetchedUserProfile(data: FetchUserProfile) {
-        print("프로필 델리게이트 전달")
         DispatchQueue.global(qos: .userInteractive).async {
             self.sprayViewUserProfileData(data: data)
         }

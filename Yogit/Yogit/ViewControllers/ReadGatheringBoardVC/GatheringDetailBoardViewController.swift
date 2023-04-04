@@ -17,62 +17,16 @@ import SkeletonView
 //}
 
 class GatheringDetailBoardViewController: UIViewController {
-
-//    var boardId: Int64? {
-//        didSet {
-//            print("boardId \(boardId)")
-//        }
-//    }
     
-//    private var hostId: Int64? {
-//        didSet {
-//            self.rightButton.isHidden = false
-//        }
-//    }
-    
-//    private var coordinate: CLLocationCoordinate2D?
-    
-//    private var boardImages: [UIImage] = [] {
-//        didSet(oldVal){
-//            DispatchQueue.main.async {
-//                if self.boardImages.count >= 2 {
-//                    self.boardImagesPageControl.numberOfPages = self.boardImages.count
-//                }
-//                self.configureScrollView()
-////                if self.BoardImagesScrollView.subviews.count == 2 {
-////                    self.configureScrollView()
-////                }
-//            }
-//        }
-//    }
-    
-    // 고쳐야 함
+    var boardWithMode = BoardWithMode()
+ 
     var isClipBoardAlarm: Bool? = false {
         didSet {
             if isClipBoardAlarm == true { moveToClipBoard() }
         }
     }
     
-    private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
-    
     private var boardImages: [String] = []
-    
-//    private var boardImages: [String] = [] {
-//        didSet {
-//            if boardImages.count >= 2 {
-//                boardImagesPageControl.numberOfPages = boardImages.count
-//            }
-//            DispatchQueue.main.async { [weak self] in
-//                self?.configureImagesScrollView()
-//            }
-//        }
-//    }
-    
-//    private var memberImages: [UIImage] = [] {
-//        didSet {
-//            self.imagesCollectionView.reloadData()
-//        }
-//    }
     
     private var memberImages: [String] = [] {
         didSet {
@@ -82,33 +36,13 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private var userIds = [Int64]()
     
-//    private var applyButtonState: ApplyButtonState?
-    
-//    private var _applyButton: Bool {
-//        get {
-//            return applyButton.isEnabled
-//        } set(newValue) {
-//            applyButton.isEnabled = newValue
-//            if !applyButton.isEnabled {
-//                applyButton.backgroundColor = .placeholderText
-//            } else {
-//                clipBoardButton.backgroundColor = .placeholderText
-//            }
-//        }
-//    }
-    
-    var boardWithMode = BoardWithMode()
-    
-//    var boardDetail: BoardDetail?
-    
     private let mapView: MKMapView = {
         let view = MKMapView()
         view.isUserInteractionEnabled = false
         view.isSkeletonable = true
         return view
     }()
-//    private let placeBoardInfoView = BoardInfoView()
-//    private let dateBoardInfoView = BoardInfoView()
+
     private let placeBoardInfoView: BoardInfoView = {
         let view = BoardInfoView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -124,30 +58,21 @@ class GatheringDetailBoardViewController: UIViewController {
         view.isSkeletonable = true
         return view
     }()
-//    private let dateBoardInfoView = BoardInfoView()
-    
     
     private lazy var bulletinManager: BLTNItemManager = {
         
-        let item = BLTNPageItem(title: "Join the gathering")
+        let item = BLTNPageItem(title: "JOIN_GATHERING_TITLE".localized())
         item.image = "👋".stringToImage(width: 100, height: 100)//UIImage(named: "pro1")
         
-//        item.imageAccessibilityLabel = "👋"
-//        item.descriptionLabel?.text = "Join the gathering"
-        item.actionButtonTitle = "Join"
-//        item.alternativeButtonTitle = "Cancel"
-        item.descriptionText = "Would you want to join the gathering?"
+        item.actionButtonTitle = "JOIN".localized()
+
+        item.descriptionText = "JOIN_GATHERING_DESCRIPTION".localized()
         item.appearance.actionButtonColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        item.appearance.alternativeButtonTitleColor = .gray
         item.actionHandler = { _ in
-            ProgressHUD.colorAnimation = ServiceColor.primaryColor
-            ProgressHUD.animationType = .circleStrokeSpin
-            ProgressHUD.show(interaction: false)
             self.joinBoardRequest() // 분기처리 요구됨
         }
-//        item.alternativeHandler = { _ in
-//            print("Tap alter ")
-//        }
+
         return BLTNItemManager(rootItem: item)
     }()
     
@@ -177,30 +102,18 @@ class GatheringDetailBoardViewController: UIViewController {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.isScrollEnabled = true
-//        scrollView.backgroundColor = .2placeholderText
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.bounces = true // 경계지점에서 bounce될건지 체크 (첫 or 마지막 페이지에서 바운스 스크롤 효과 여부)
         scrollView.isSkeletonable = true
-//        scrollView.layer.borderWidth = 1
-//        scrollView.layer.borderColor = UIColor.brown.c
-//        scrollView.isPagingEnabled = true
-//        scrollView.backgroundColor = .gray
-        
-//        scrollView.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.width)
-        
         return scrollView
     }()
     
     private lazy var boardContentScrollView: UIScrollView = {
        let scrollView = UIScrollView()
-//        scrollView.backgroundColor = .systemRed
-//        scrollView.backgroundColor = .systemBackground
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isScrollEnabled = true
         scrollView.addSubview(contentView)
         scrollView.isSkeletonable = true
-//        scrollView.addSubview(boardImagesScrollView)
-//        scrollView.addSubview(contentView)
         return scrollView
     }()
     
@@ -256,7 +169,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private let hostLabel: UILabel = {
         let label = UILabel()
-        label.text = "Host"
+        label.text = "HOST".localized()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
@@ -280,7 +193,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private let memberLabel: UILabel = {
         let label = UILabel()
-        label.text = "Member"
+        label.text = "MEMBER".localized()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
@@ -295,10 +208,7 @@ class GatheringDetailBoardViewController: UIViewController {
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
         collectionView.register(MemberImagesCollectionViewCell.self, forCellWithReuseIdentifier: MemberImagesCollectionViewCell.identifier)
-//        collectionView.layer.borderColor = UIColor.systemGray.cgColor
-//        collectionView.layer.borderWidth = 1
         collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isSkeletonable = true
@@ -319,7 +229,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private let introductionLabel: UILabel = {
         let label = UILabel()
-        label.text = "Gathering Introduction"
+        label.text = "GATHERING_INTRODUCTION_HEADER".localized()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
@@ -341,17 +251,6 @@ class GatheringDetailBoardViewController: UIViewController {
         return textView
     }()
     
-//    private let introductionContentLabel: UILabel = {
-//        let label = UILabel()
-////        label.text = "Gathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering IntroductionGathering Introduction"
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.textAlignment = .left
-//        label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
-//        label.numberOfLines = 0
-////        label.sizeToFit()
-//        return label
-//    }()
-    
     private lazy var kindOfPersonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -367,7 +266,7 @@ class GatheringDetailBoardViewController: UIViewController {
     private let kindOfPersonLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Please apply this kind of person"
+        label.text = "GATHERING_KINDOFPERSON_HEADER".localized()
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
         label.numberOfLines = 1
@@ -403,7 +302,7 @@ class GatheringDetailBoardViewController: UIViewController {
     private let mapLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Location"
+        label.text = "LOCATION".localized()
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: UIFont.Weight.medium)
         label.numberOfLines = 1
@@ -457,19 +356,11 @@ class GatheringDetailBoardViewController: UIViewController {
         return view
     }()
     
-//    private let lineView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .systemGray6
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        return view
-//    }()
     
     private lazy var joinBoardButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        button.setImage(UIImage(named: "Apply")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
-        button.setTitle("Join", for: .normal)
-//        button.setTitle("Applied", for: .disabled)
+        button.backgroundColor = ServiceColor.primaryColor
+        button.setTitle("JOIN".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         button.tintColor = .white
         button.setTitleColor(.white, for: .normal) // 이렇게 해야 적용된다!
@@ -484,15 +375,12 @@ class GatheringDetailBoardViewController: UIViewController {
     private lazy var withdrawalButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .systemBackground
-//        button.setImage(UIImage(named: "Apply")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
-        button.setTitle("Cancel join", for: .normal)
-//        button.setTitle("Applied", for: .disabled)
+        button.setTitle("WITHDRAWAL".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
-        button.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal) // 이렇게 해야 적용된다!
+        button.tintColor = ServiceColor.primaryColor
+        button.setTitleColor(ServiceColor.primaryColor, for: .normal) // 이렇게 해야 적용된다!
+        button.setTitleColor(.placeholderText, for: .disabled)
         button.layer.cornerRadius = 8
-//        button.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
-//        button.layer.borderWidth = 2
         button.isEnabled = true
         button.isHidden = true
         button.isSkeletonable = true
@@ -525,7 +413,7 @@ class GatheringDetailBoardViewController: UIViewController {
         button.layer.cornerRadius = 8
         button.tintColor = .white
         button.setImage(UIImage(named: "BoardClipBoard")?.withTintColor(.white, renderingMode: .alwaysTemplate), for: .normal)
-        button.setTitle("Clip board", for: .normal)
+        button.setTitle("CLIPBOARD".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         button.setTitleColor(.white, for: .normal)
         button.isEnabled = true
@@ -537,12 +425,12 @@ class GatheringDetailBoardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(boardContentScrollView)
-        view.addSubview(boardBottomView)
-        configureViewComponent()
+        configureNav()
+        configureView()
         configureInteractionInfoComponent()
         configureScrollView()
-        mapView.delegate = self
+        configureCollectionView()
+        configureMap()
         initProgressHUD()
         setViewWithMode(mode: boardWithMode.mode)
 //        bulletinManager.backgroundViewStyle = .blurred(style: .systemUltraThinMaterialLight, isDark: true)
@@ -558,47 +446,27 @@ class GatheringDetailBoardViewController: UIViewController {
         self.navigationController?.navigationBar.tintColor = .label 
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print("시작")
-//        view.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
-//
-//        contentView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
-//        boardBottomView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
-//        contentView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
+    private func configureMap() {
+        mapView.delegate = self
     }
     
     private func configureScrollView() {
         boardContentScrollView.delegate = self
         boardImagesScrollView.delegate = self
+    }
+    
+    private func configureCollectionView() {
         imagesCollectionView.delegate = self
         imagesCollectionView.dataSource = self
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        self.navigationController?.navigationBar.isTranslucent = true
-//        self.navigationController?.navigationBar.barTintColor = UIColor.clear
-//        self.navigationController?.navigationBar.backgroundColor = UIColor.clear
-//        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-//        self.navigationController?.navigationBar.shadowImage = UIImage()
-//
-//        let backImage = UIImage(named: "BackButton")
-//        self.navigationController?.navigationBar.backIndicatorImage = backImage
-//        self.navigationController?.navigationBar.tintColor = UIColor.white
-//        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
-//    }
-//
-//    override func viewDidDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        self.navigationController?.navigationBar.backIndicatorImage = nil
-//        self.navigationController?.navigationBar.tintColor = .label
-//        navigationItem.leftItemsSupplementBackButton = false
-//        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = nil
-//    }
+    private func configureView() {
+        view.addSubview(boardContentScrollView)
+        view.addSubview(boardBottomView)
+        view.backgroundColor = .systemBackground
+    }
     
-    private func configureViewComponent() {
-        self.view.backgroundColor = .systemBackground
+    private func configureNav() {
         self.navigationItem.rightBarButtonItem = self.rightButton
     }
     
@@ -608,10 +476,7 @@ class GatheringDetailBoardViewController: UIViewController {
                 viewBinding(data: boardWithMode)
             })
         } else {
-            self.getBoardDetail(isInteraction: false)
-//            DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
-//                self.getBoardDetail(isInteraction: false)
-//            }
+            self.getBoardDetail()
         }
     }
     
@@ -620,15 +485,11 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     func configureInteractionInfoComponent() {
-        self.placeBoardInfoView.infoLabel.text = "Place infoLabel"
         self.placeBoardInfoView.leftImageView.image = UIImage(named: "Place")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.rightImageView.image = UIImage(named: "push")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
-        self.dateBoardInfoView.infoLabel.text = "Date infoLabel"
         self.dateBoardInfoView.leftImageView.image = UIImage(named: "Date")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
         self.placeBoardInfoView.isUserInteractionEnabled = true
         self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
-//        self.placeBoardInfoView.leftImageLabel.text = "Meet up"
-//        self.dateBoardInfoView.leftImageLabel.text = "Date   "
     }
     
     override func viewDidLayoutSubviews() {
@@ -636,19 +497,11 @@ class GatheringDetailBoardViewController: UIViewController {
         boardContentScrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-//        contentView.frame = CGRect(x: 0, y: boardContentScrollView.bounds.minY, width: view.frame.size.width, height: contentView.frame.size.width)
         contentView.snp.makeConstraints {
             $0.width.equalToSuperview()
             $0.centerX.bottom.equalToSuperview()
             $0.top.equalTo(boardContentScrollView.bounds.minY)
-//            $0.top.equalToSuperview()
         }
-//        boardImagesScrollView.snp.makeConstraints {
-//            $0.top.leading.trailing.equalToSuperview()
-//            $0.height.equalTo(view.frame.size.width * 2/3)
-////            $0.bottom.equalToSuperview()
-//        }
-        
         boardImagesScrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(view.frame.size.width)
@@ -713,34 +566,13 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.top.equalTo(footerView2.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-        
-//        introductionLabel.snp.makeConstraints {
-//            $0.top.equalTo(footerView2.snp.bottom).offset(20)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        introductionContentTextView.snp.makeConstraints {
-//            $0.top.equalTo(introductionLabel.snp.bottom).offset(10)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-////            $0.height.equalTo(100)
-//        }
-//        lineView.snp.makeConstraints {
-//            $0.top.equalTo(introductionContentLabel.snp.bottom).offset(15)
-//            $0.height.equalTo(1)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        introductionContentLabel.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 20, marginRight: 20, color: .systemGray6, width: 1, marginTop: 10)
         kindOfPersonStackView.snp.makeConstraints {
-            $0.top.equalTo(introductionStackView.snp.bottom).offset(21)
+            $0.top.equalTo(introductionStackView.snp.bottom).offset(31)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-//        kindOfPersonLabel.snp.makeConstraints {
-//            $0.top.equalTo(introductionContentTextView.snp.bottom).offset(21)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        kindOfPersonContentTextView.snp.makeConstraints {
-//            $0.top.equalTo(kindOfPersonLabel.snp.bottom).offset(10)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
+        kindOfPersonLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview()
+        }
         footerView3.snp.makeConstraints {
             $0.top.equalTo(kindOfPersonStackView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
@@ -750,14 +582,6 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.top.equalTo(footerView3.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-//        mapLabel.snp.makeConstraints {
-//            $0.top.equalTo(footerView3.snp.bottom).offset(20)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
-//        mapAddressLabel.snp.makeConstraints {
-//            $0.top.equalTo(mapLabel.snp.bottom).offset(10)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//        }
         mapView.snp.makeConstraints {
             $0.top.equalTo(mapStackView.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -787,17 +611,10 @@ class GatheringDetailBoardViewController: UIViewController {
 //            $0.bottom.equalToSuperview().inset(30)
 //            $0.height.equalTo(50)
 //        }
-//        clipBoardButton.snp.makeConstraints {
-//            $0.trailing.equalToSuperview().inset(20)
-//            $0.bottom.equalToSuperview().inset(30)
-//            $0.height.equalTo(50)
-//            $0.width.equalTo((view.frame.width-60)/2)
-//        }
-//        placeBoardInfoView.addToViewBottomBorderWithColor(color: .systemGray6, width: 1)
+        
         placeBoardInfoView.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 0)
         memberLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
-//        introductionContentLabel.layoutIfNeeded()
-        kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
+        kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 15)
     }
     
     @objc func joinBoardButtonTapped(_ sender: UIButton) {
@@ -807,12 +624,9 @@ class GatheringDetailBoardViewController: UIViewController {
     @objc func withdrawalButtonTapped(_ sender: UIButton) {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if userItem.userId != boardWithMode.hostId { // hostId
-            let alert = UIAlertController(title: "Withdrawal", message: "Are you sure you want to withdraw the gathering?", preferredStyle: .alert)
-            let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-            let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
-                ProgressHUD.colorAnimation = ServiceColor.primaryColor
-                ProgressHUD.animationType = .circleStrokeSpin
-                ProgressHUD.show(interaction: false)
+            let alert = UIAlertController(title: "WITHDRAWAL".localized(), message: "WITHDRAWAL_ALERT".localized(), preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
+            let ok = UIAlertAction(title: "OK".localized(), style: .destructive) { (ok) in
                 self.withdrawalBoardRequest()
             }
             alert.addAction(cancel)
@@ -831,6 +645,11 @@ class GatheringDetailBoardViewController: UIViewController {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
 //        guard let boardId = boardId else { return }
         guard let boardId = boardWithMode.boardId else { return }
+        
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
+        ProgressHUD.show(interaction: false)
+        
         let boardUserReq = BoardUserReq(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
             .request(BoardUserRouter.joinGatheringBoard(parameters: boardUserReq))
@@ -839,34 +658,42 @@ class GatheringDetailBoardViewController: UIViewController {
                 switch response.result {
                 case .success:
                     if let value = response.value {
-                        if value.httpCode == 200 || value.httpCode == 201 {
+                        DispatchQueue.main.async {
                             self.bulletinManager.dismissBulletin(animated: true)
                             ProgressHUD.dismiss()
-                            self.getBoardDetail(isInteraction: true)
-                        } else if value.httpCode == 400 {
-                            if value.errorCode == "B003" {
-                                // 경고창 띄우고 리프레시 해야함 (멤버 꽉차면, 조인 버튼 disable, 텍스트 마감), 보드 리프레시
-                                let alert = UIAlertController(title: "", message: "Which of the two codes above is the better one?", preferredStyle: .alert)
-                                let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-                                let ok = UIAlertAction(title: "OK", style: .default)
-                                alert.addAction(cancel)
-                                alert.addAction(ok)
-                                DispatchQueue.main.async {
-                                    self.present(alert, animated: true)
-                                }
+                        }
+                        if value.httpCode == 200 || value.httpCode == 201 {
+                            self.getBoardDetail()
+                        } else if value.httpCode == 400, value.errorCode == "B003" {
+                            // 경고창 띄우고 리프레시 해야함 (멤버 꽉차면, 조인 버튼 disable, 텍스트 마감), 보드 리프레시
+                            let alert = UIAlertController(title: "MEMBER_FULL_ALERT_TITLE".localized(), message: "MEMBER_FULL_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+                            let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
+                            let ok = UIAlertAction(title: "OK".localized(), style: .default)
+                            alert.addAction(cancel)
+                            alert.addAction(ok)
+                            DispatchQueue.main.async {
+                                self.present(alert, animated: true)
                             }
+                            self.getBoardDetail()
                         }
                     }
                 case let .failure(error):
                     print(error)
+                    DispatchQueue.main.async {
+                        self.bulletinManager.dismissBulletin(animated: true)
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
     }
     
     func withdrawalBoardRequest() {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-//        guard let boardId = boardId else { return }
         guard let boardId = boardWithMode.boardId else { return }
+        
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
+        ProgressHUD.show(interaction: false)
         let boardUserReq = BoardUserReq(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session
             .request(BoardUserRouter.withdrawalGatheringBoard(parameters: boardUserReq))
@@ -876,8 +703,10 @@ class GatheringDetailBoardViewController: UIViewController {
                 case .success:
                     if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
                         print("취소 성공")
-                        ProgressHUD.dismiss()
-                        self.getBoardDetail(isInteraction: true)
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
+                        self.getBoardDetail()
                     } else {
                         print("취소 실패")
                     }
@@ -885,24 +714,6 @@ class GatheringDetailBoardViewController: UIViewController {
                     print(error)
                 }
             }
-        
-        
-//        AF.request(API.BASE_URL + "boardusers",
-//                   method: .post,
-//                   parameters: getAllBoardsReq,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .response { response in // reponseData
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                self.applyButton.isEnabled = false
-//                self.applyButton.backgroundColor = .placeholderText
-//            case .failure(let error):
-//                debugPrint(response)
-//                print(error)
-//            }
-//        }
     }
     
     @objc func clipBoardTapped(_ sender: UITapGestureRecognizer) {
@@ -932,17 +743,17 @@ class GatheringDetailBoardViewController: UIViewController {
         guard let latitude = self.boardWithMode.latitude else { return }
         guard let longitude = self.boardWithMode.longitute else { return }
         let zoom = 15
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let copy = UIAlertAction(title: "Copy", style: .default) { (action) in
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
+        let copy = UIAlertAction(title: "COPY".localized(), style: .default) { (action) in
             guard let address = self.boardWithMode.address else { return }
             UIPasteboard.general.string = address
         }
         // 애플맵은 앱에서만 작동
-        let appleMap = UIAlertAction(title: "Apple Map", style: .default) { (action) in
+        let appleMap = UIAlertAction(title: "APPLE_MAP".localized(), style: .default) { (action) in
             guard let appUrl = URL(string:"maps://?q=\(latitude),\(longitude)") else { return }
             UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
         }
-        let googleMap = UIAlertAction(title: "Google Map", style: .default) { (action) in
+        let googleMap = UIAlertAction(title: "GOOGLE_MAP".localized(), style: .default) { (action) in
 //            guard let url = URL(string: "comgooglemaps://?q=세종대학교&center=\(latitude),\(longitude)") else { return }
 //            UIApplication.shared.open(url, options: [:], completionHandler: nil)
             guard let address = self.boardWithMode.address else { return }
@@ -957,7 +768,7 @@ class GatheringDetailBoardViewController: UIViewController {
             }
         }
         // 카카오맵은 앱에서만 작동
-        let kakaoMap = UIAlertAction(title: "Kakao Map", style: .default) { (action) in
+        let kakaoMap = UIAlertAction(title: "KAKAO_MAP".localized(), style: .default) { (action) in
             if UIApplication.shared.canOpenURL(URL(string:"kakaomap://")!){
                 guard let appUrl = URL(string:"kakaomap://look?p=\(latitude),\(longitude)") else { return }
                 UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
@@ -988,18 +799,18 @@ class GatheringDetailBoardViewController: UIViewController {
         // bottom view
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 //        alert.view.tintColor = UIColor.label
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if userItem.userId != boardWithMode.hostId { // hostId
-            let report = UIAlertAction(title: "Report", style: .destructive) { (action) in
+            let report = UIAlertAction(title: "REPORT".localized(), style: .destructive) { (action) in
                 guard let reportBoardId = self.boardWithMode.boardId else { return }
                 guard let reportedUserId = self.boardWithMode.hostId else { return }
                 self.reportAlert(reportBoardId: reportBoardId, reportedUserId: reportedUserId)
             }
             alert.addAction(report)
         } else {
-            let edit = UIAlertAction(title: "Edit", style: .default) { (action) in self.editBoard() }
-            let delete = UIAlertAction(title: "Delete", style: .default) { (action) in self.deleteAlert() }
+            let edit = UIAlertAction(title: "EDIT".localized(), style: .default) { (action) in self.editBoard() }
+            let delete = UIAlertAction(title: "DELETE".localized(), style: .default) { (action) in self.deleteAlert() }
             alert.addAction(edit)
             alert.addAction(delete)
         }
@@ -1009,7 +820,7 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    func reportAlert(reportBoardId: Int64, reportedUserId: Int64) {
+    private func reportAlert(reportBoardId: Int64, reportedUserId: Int64) {
         DispatchQueue.main.async(qos: .userInteractive) {
             let RVC = ReportViewController()
             RVC.reportedBoardId = reportBoardId
@@ -1021,10 +832,10 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    func deleteAlert() {
-        let alert = UIAlertController(title: "Delete", message: "Would you want to delete a board?", preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "cancel", style: .cancel)
-        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+    private func deleteAlert() {
+        let alert = UIAlertController(title: "DELETE".localized(), message: "DELETE_GATHERING_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
+        let ok = UIAlertAction(title: "OK".localized(), style: .default) { (ok) in
             self.deleteBoard()
         }
         alert.addAction(cancel)
@@ -1034,20 +845,10 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    func editBoard() {
+    private func editBoard() {
         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
             let GBCVC = GatheringBoardCategoryViewController()
             boardWithMode.mode = .edit
-////            boardWithMode.hostId = hostId
-//            boardWithMode.title = titleLabel.text
-//            boardWithMode.address = placeBoardInfoView.infoLabel.text
-//            boardWithMode.addressDetail = placeBoardInfoView.subInfoLabel.text
-////            boardWithMode.longitute = coordinate?.longitude
-////            boardWithMode.latitude = coordinate?.latitude
-//            boardWithMode.introduction = introductionContentLabel.text
-//            boardWithMode.kindOfPerson = kindOfPersonContentTextView.text
-////            boardWithMode.boardId = boardId
-//            boardWithMode.downloadImages = boardImages
             GBCVC.categoryId = (boardWithMode.categoryId ?? 0) - 1
             GBCVC.boardWithMode = boardWithMode
             print("editBoard boardwithmode", boardWithMode)
@@ -1055,7 +856,7 @@ class GatheringDetailBoardViewController: UIViewController {
         })
     }
     
-    func deleteBoard() {
+    private func deleteBoard() {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
 //        guard let boardId = boardId else { return }
         guard let hostId = boardWithMode.hostId else { return }
@@ -1081,9 +882,9 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     
-    func isDeletedAlert() {
-        let alert = UIAlertController(title: "Board is deleted", message: "The gathering board is deleted", preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default) { (ok) in
+    private func isDeletedAlert() {
+        let alert = UIAlertController(title: "BOARD_DELETED_ALERT_TITLE".localized(), message: "BOARD_DELETED_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK".localized(), style: .default) { (ok) in
             DispatchQueue.main.async {
                 self.navigationController?.popViewController(animated: true)
             }
@@ -1116,13 +917,9 @@ class GatheringDetailBoardViewController: UIViewController {
 //    }
     
     private func configureImagesScrollView() {
-//        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
-//         CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
-        
         boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
         boardImagesScrollView.isPagingEnabled = true
         for x in 0..<boardImages.count {
-            print("configure")
             let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * boardImagesScrollView.frame.width, y: boardImagesScrollView.frame.minY, width: boardImagesScrollView.frame.width, height: boardImagesScrollView.frame.width))
             print(boardImages[x].size)
             imageView.clipsToBounds = true
@@ -1134,100 +931,7 @@ class GatheringDetailBoardViewController: UIViewController {
             boardImagesScrollView.addSubview(imageView)
         }
     }
-    
-    
-    
-    
-//    func getBoardDetail() {
-//        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        guard let boardId = boardId else { return }
-//        let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
-//        AF.request(API.BASE_URL + "boards/get/detail",
-//                   method: .post,
-//                   parameters: getBoardDetailReq,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .responseData { response in
-//            switch response.result {
-//            case .success:
-//                debugPrint(response)
-//                guard let data = response.value else { return }
-//                do{
-//                    let decodedData = try JSONDecoder().decode(APIResponse<BoardDetail>.self, from: data)
-//                    guard let myData = decodedData.data else { return }
-//                    print("APIResponse<BoardDetail>", myData)
-//
-//
-//
-//
-//
-//
-//                    var boardImages: [UIImage] = []
-//                    var hostImage: UIImage?
-//                    var memberImages: [UIImage] = []
-//                    DispatchQueue.global().async {
-//                        for imageUrl in myData.imageUrls {
-//                            imageUrl.urlToImage { (image) in
-//                                guard let image = image else {
-//                                    print("imageUrls can't read")
-//                                    return
-//                                }
-//                                boardImages.append(image)
-//                            }
-//                        }
-//                        myData.profileImgUrl.urlToImage { (image) in
-//                            guard let image = image else {
-//                                print("profileImgUrl can't read")
-//                                return
-//                            }
-//                            hostImage = image
-//                        }
-//                        if let userImages = myData.userImageUrls {
-//                            for userImage in userImages {
-//                                userImage.urlToImage { (image) in
-//                                    guard let image = image else {
-//                                        print("imageUrls can't read")
-//                                        return
-//                                    }
-//                                    memberImages.append(image)
-//                                }
-//                            }
-//                        }
-////                        memberImages.append(UIImage(named: "user2")!)
-////                        memberImages.append(UIImage(named: "user1")!)
-////                        memberImages.append(UIImage(named: "user3")!)
-//                        print("print(memberImages)", memberImages)
-//                        DispatchQueue.main.async() {
-//                            self.boardImages = boardImages
-//                            self.memberImages = memberImages
-//                            self.hostImageView.image = hostImage
-//                            self.titleLabel.text = myData.title
-//                            self.placeBoardInfoView.infoLabel.text = myData.address
-//                            self.placeBoardInfoView.subInfoLabel.text = myData.addressDetail
-//                            self.dateBoardInfoView.infoLabel.text = myData.date.stringToDate()?.dateToStringUser() //?.dateToString()
-//                            self.hostNameLabel.text = myData.hostName
-//                            self.hostId = myData.hostId
-//                            self.memberLabel.text = "\(self.memberLabel.text ?? "") (\(myData.currentMember)/\(myData.totalMember))"
-//                            self.introductionContentLabel.text = myData.introduction
-//                            self.kindOfPersonContentTextView.text = myData.kindOfPerson
-//                            self.mapAddressLabel.text = myData.address
-//                            let coordinate = CLLocationCoordinate2D(latitude: 37.5510763, longitude: 127.075836)
-//                            self.moveLocation(latitudeValue: coordinate.latitude, longtudeValue: coordinate
-//                                .longitude, delta: 0.01)
-//                            self.setAnnotation(latitudeValue: coordinate.latitude, longitudeValue: coordinate.longitude, delta: 0.01, title: "", subtitle: myData.address)
-//                        }
-//                    }
-//                }
-//                catch{
-//                    print("catch can't read")
-//                    print(error.localizedDescription)
-//                }
-//            case let .failure(error):
-//                print(error)
-//            }
-//        }
-//    }
-    
+
     func bindBoardDetail(data: BoardDetail) {
         // boardDetail로 화면 뿌려줌 & boardWithMode 저장
         boardWithMode.userIds = data.userIds
@@ -1265,7 +969,7 @@ class GatheringDetailBoardViewController: UIViewController {
         
         if let imageString = data.hostImage {
             if imageString.contains("null") {
-                hostImageView.image = UIImage(named: "profileImageNULL")
+                hostImageView.image = UIImage(named: "PROFILE_IMAGE_NULL")
             } else {
                 hostImageView.setImage(with: imageString)
             }
@@ -1278,28 +982,6 @@ class GatheringDetailBoardViewController: UIViewController {
         placeBoardInfoView.subInfoLabel.text = data.addressDetail
         dateBoardInfoView.infoLabel.text = data.date?.stringToDate()?.dateToStringUser() //?.dateToString()
         
-//        hostNameLabel.text = data.hostName
-        
-//        let contentSize = introductionContentTextView.sizeThatFits(introductionContentTextView.bounds.size)
-//        introductionContentTextView.frame.size = contentSize
-//        let size = CGSize(width: introductionContentTextView.frame.size.width, height: .infinity)
-//        introductionContentTextView.sizeThatFits(size)
-//        introductionContentTextView.sizeToFit()
-//        introductionContentTextView.frame.size.height = introductionContentTextView.contentSize.height
-        
-//        let boardDate = board.date.stringToDate()!
-//        let currentDate = Date().dateToStringUTC().stringToDate()!
-//        let timeInterval = boardDate.timeIntervalSince(currentDate)
-//        let showToDate = boardDate.dateAndMonthFormatter()
-//        print("보드 시간", boardDate)
-//        print("현재 시간", currentDate)
-//        print("시간 차 (초)", timeInterval)
-//        print("보여질 시간", showToDate)
-//        if timeInterval > 0 {
-//            blurView.isHidden = false
-//            print("날짜 초과")
-//        }
-
         moveLocation(latitudeValue: data.latitude!, longtudeValue: data.longitute!, delta: 0.01)
         setAnnotation(latitudeValue: data.latitude!, longitudeValue: data.longitute!, delta: 0.01, title: "", subtitle: data.address!)
     
@@ -1314,7 +996,6 @@ class GatheringDetailBoardViewController: UIViewController {
                 $0.leading.trailing.equalToSuperview().inset(20)
                 $0.bottom.equalToSuperview().inset(30)
                 $0.height.equalTo(50)
-//                $0.width.equalTo((view.frame.width-60)/2)
             }
 //            joinListButton.isHidden = !joinBoardButton.isHidden
         } else {
@@ -1327,31 +1008,55 @@ class GatheringDetailBoardViewController: UIViewController {
             withdrawalButton.isHidden = !joinBoardButton.isHidden
         }
         clipBoardButton.isHidden = !joinBoardButton.isHidden
+        
+        guard let boardDate = data.date?.stringToDate() else { return }
+        guard let currentDate = Date().dateToStringUTC().stringToDate() else { return }
+        let timeInterval = boardDate.timeIntervalSince(currentDate)
+        
+        if timeInterval < 0 { // 날짜 지남
+            withdrawalButton.isEnabled = false
+            joinBoardButton.isEnabled = false
+            joinBoardButton.backgroundColor = .placeholderText
+            withdrawalButton.backgroundColor = .placeholderText
+            withdrawalButton.layer.borderColor = UIColor.placeholderText.cgColor
+            if timeInterval < -259200 { // 3일: 259200초
+                clipBoardButton.isEnabled = false
+                clipBoardButton.backgroundColor = .placeholderText
+            }
+        } else {
+            withdrawalButton.isEnabled = true
+            joinBoardButton.isEnabled = true
+            joinBoardButton.backgroundColor = ServiceColor.primaryColor
+            withdrawalButton.backgroundColor = .systemBackground
+            withdrawalButton.layer.borderColor = ServiceColor.primaryColor.cgColor
+        }
+        
         view.layoutIfNeeded()
         view.stopSkeletonAnimation()
         view.hideSkeleton(reloadDataAfter: true)
+        
+        withdrawalButton.layer.borderWidth = 2
         rightButton.isHidden = false
         if boardImages.count >= 2 {
             boardImagesPageControl.numberOfPages = boardImages.count
         }
         configureImagesScrollView()
-        memberLabel.text = "Member (\(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
+        memberLabel.text = "MEMBER".localized() + "(\(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
         titleLabel.text = data.title
         mapAddressLabel.text = data.address
-        withdrawalButton.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
-        withdrawalButton.layer.borderWidth = 2
         // 신청 버튼 (신청 / 취소)
 //        _applyButton = !data.isJoinedUser
     }
     
-    private func getBoardDetail(isInteraction: Bool) {
-        // boardWithMode 미리 정해짐 (read/refresh)
+    private func getBoardDetail() {
+
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = boardWithMode.boardId else {
             print("getBoardDetail - boardId is nil")
             return
         }
-//        boardImagesScrollView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
+
+        let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
         contentView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         boardBottomView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         let getBoardDetailReq = GetBoardDetail(boardId: boardId, refreshToken: userItem.refresh_token, userId: userItem.userId)
@@ -1362,33 +1067,24 @@ class GatheringDetailBoardViewController: UIViewController {
             switch response.result {
             case .success:
                 guard let value = response.value else { return }
-                if value.httpCode == 200 || value.httpCode == 201, let data = value.data {
-                    if data.status == Status.active.rawValue {
-                        DispatchQueue.global().async(qos: .userInteractive) { [weak self] in
-                            self?.bindBoardDetail(data: data)
-                            DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
-                                self?.viewBinding(data: self!.boardWithMode)
-//                                contentView.stopSkeletonfAnimation()
-//                                contentView.hideSkeleton(reloadDataAfter: false)
-                                if isInteraction {
-                                    ProgressHUD.showSucceed(interaction: true)
-                                }
-//                                view.hideSkeleton(reloadDataAfter: false)
-                            }
+                if value.httpCode == 200 || value.httpCode == 201,
+                    let data = value.data, data.status == Status.active.rawValue {
+                    DispatchQueue.global().async(qos: .userInitiated) { [weak self] in
+                        self?.bindBoardDetail(data: data)
+                        DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
+                            self?.viewBinding(data: self!.boardWithMode)
                         }
                     }
-                } else if value.httpCode == 400, let message = value.message, message.contains("보드 인원") { // 멤버수 증가에 따른 에러 처리 (httpCode:400, message: 보드 인원이 다 찼습니다.)
-                    let alert = UIAlertController(title: "Can't join the gathering", message: "The gathering is full.", preferredStyle: .alert)
-                    let ok = UIAlertAction(title: "OK", style: .default) 
+                } else if value.httpCode == 400, let message = value.message, message.contains("보드 인원") { // 멤버수 증가에 따른 에러 처리 (httpCode:400, message: 보드 인원이 다 찼습니다.) 후에 보드 리프레시
+                    let alert = UIAlertController(title: "MEMBER_FULL_ALERT_TITLE".localized(), message: "MEMBER_FULL_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK".localized(), style: .default)
                     alert.addAction(ok)
                     DispatchQueue.main.async {
                         self.present(alert, animated: true, completion: nil)
                     }
-                    
-                } else if value.httpCode == 404 { // 삭제되 데이터 조회시
-                    if value.errorCode == "B0001" {
-                        self.isDeletedAlert()
-                    }
+                    self.getBoardDetail()
+                } else if value.httpCode == 404, value.errorCode == "B0001" { // 삭제되 데이터 조회시
+                    self.isDeletedAlert()
                 }
             case let .failure(error):
                 print(error)
@@ -1409,7 +1105,6 @@ class GatheringDetailBoardViewController: UIViewController {
 
 extension GatheringDetailBoardViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("scrollViewDidScroll")
         if scrollView == boardContentScrollView {
             if scrollView.contentOffset.y <= 0 {
                 self.navigationController?.navigationBar.tintColor = .white // scroll down: change back button color to red
@@ -1419,7 +1114,6 @@ extension GatheringDetailBoardViewController: UIScrollViewDelegate {
                 self.rightButton.tintColor = .label
             }
         } else if scrollView == boardImagesScrollView {
-            print("scrollView.contentOffset.x, scrollView.frame.size.width", scrollView.contentOffset.x, scrollView.frame.size.width)
             boardImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
         }
     }
@@ -1439,19 +1133,15 @@ extension GatheringDetailBoardViewController: SkeletonCollectionViewDataSource {
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       // 아래의 코드로 컬렉션뷰를 다 채울 수 있다.
        return UICollectionView.automaticNumberOfSkeletonItems
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 10
         return memberImages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("ProfileImages indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MemberImagesCollectionViewCell.identifier, for: indexPath) as? MemberImagesCollectionViewCell else { return UICollectionViewCell() }
-//        cell.configure(image: self.memberImages[indexPath.row])
         cell.configure(imageString: memberImages[indexPath.row])
         return cell
     }
@@ -1459,12 +1149,6 @@ extension GatheringDetailBoardViewController: SkeletonCollectionViewDataSource {
 
 extension GatheringDetailBoardViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    
-//        let size: CGFloat = imagesCollectionView.frame.size.width/2
-////        CGSize(width: size, height: size)
-//
-//        CGSize(width: view.frame.width / 5, height: view.frame.width / 5)
-        print("Sizing collectionView")
         return CGSize(width: collectionView.frame.height - 20, height: collectionView.frame.height - 20)
     }
 }

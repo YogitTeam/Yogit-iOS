@@ -11,18 +11,6 @@ class StepHeaderView: UIView {
     
     static let identifier = "StepHeaderView"
     
-//    let step: CGFloat?
-    var step: Float = 0.0
-    
-//    lazy var contentView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.backgroundColor = .white
-//        view.addSubview(stateDefaultView)
-//        view.addSubview(titleLabel)
-//        return view
-//    }()
-    
     let progressView: UIProgressView = {
         let view = UIProgressView(progressViewStyle: .default)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -30,23 +18,6 @@ class StepHeaderView: UIView {
         view.trackTintColor = .placeholderText
         return view
     }()
-
-//    lazy var stateDefaultView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.backgroundColor = .placeholderText
-//        view.layer.cornerRadius = 3
-//        view.addSubview(stateStepView)
-//        return view
-//    }()
-//
-//    let stateStepView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        view.layer.cornerRadius = 3
-//        return view
-//    }()
 
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -57,50 +28,44 @@ class StepHeaderView: UIView {
         label.adjustsFontSizeToFitWidth = true
         return label
     }()
-//    
-//    init(frame: CGRect, step: CGFloat) {
-//        super.init(frame: frame)
-//        self.step = step
-////        addSubview(contentView)
-//        addSubview(stateDefaultView)
-//        addSubview(titleLabel)
-//    }
-//    
-    override init(frame: CGRect) {
+
+    init(frame: CGRect, step: Float) {
         super.init(frame: frame)
-//        addSubview(stateDefaultView)
         addSubview(progressView)
         addSubview(titleLabel)
+        initProgress(step: step)
     }
-    
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+
+//    override init(frame: CGRect) {
+//        super.init(frame: frame)
+////        addSubview(stateDefaultView)
+//        progressView.progress = step
+//        addSubview(progressView)
+//        addSubview(titleLabel)
+//    }
     
     override func layoutSubviews() {
         progressView.snp.makeConstraints {
             $0.height.equalTo(5)
             $0.leading.trailing.equalToSuperview().inset(100)
         }
-//        stateDefaultView.snp.makeConstraints { make in
-////            make.top.equalToSuperview().inset(4)
-//            make.height.equalTo(5)
-//            make.leading.trailing.equalToSuperview().inset(100)
-//        }
-//        stateStepView.snp.makeConstraints { make in
-//            make.leading.top.bottom.height.equalToSuperview()
-//            make.width.equalToSuperview().multipliedBy(step * (1 / 3))
-//        }
-//        titleLabel.snp.makeConstraints { make in
-//            make.top.equalTo(stateDefaultView.snp.bottom).offset(30)
-//            make.leading.trailing.equalToSuperview().inset(10)
-//        }
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(progressView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(10)
         }
-        progressView.layoutIfNeeded()
-        progressView.setProgress(step * (1 / 3), animated: true)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func initProgress(step: Float) {
+        progressView.progress = step * (1 / 3)
+    }
+    
+    public func fillProgress(step: Float) {
+        DispatchQueue.main.async(qos: .userInitiated) { [weak self] in
+            self?.progressView.setProgress(step * (1 / 3), animated: true)
+        }
     }
 }

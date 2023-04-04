@@ -181,10 +181,10 @@ class UserItem: Codable {
 
 class FetchedUserImages: Decodable {
     let imageUrls: [String]
-    let profileImageUrl: String
+    let profileImageUrl: String?
     let userImageIds: [Int64]
     
-    init(imageUrls: [String], profileImageUrl: String, userImageIds: [Int64]) {
+    init(imageUrls: [String], profileImageUrl: String?, userImageIds: [Int64]) {
         self.imageUrls = imageUrls
         self.profileImageUrl = profileImageUrl
         self.userImageIds = userImageIds

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Alarm {
+struct Alarm: Equatable {
     let type: String
     let title: String
     let body: String

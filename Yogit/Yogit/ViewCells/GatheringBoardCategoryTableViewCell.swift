@@ -72,9 +72,9 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     let categoryTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        label.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.semibold)
         label.sizeToFit()
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         return label
     }()
     
@@ -109,6 +109,7 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
         categoryLabelStackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(categoryImageView.snp.trailing).offset(20)
+            make.trailing.equalToSuperview().inset(20)
         }
         
         categoryContentView.snp.makeConstraints { make in

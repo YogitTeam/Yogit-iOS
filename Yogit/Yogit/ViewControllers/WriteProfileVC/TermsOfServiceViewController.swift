@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import ProgressHUD
 
 class TermsOfServiceViewController: UIViewController {
     
@@ -23,7 +24,7 @@ class TermsOfServiceViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Terms of Service"
+        label.text = "TERMS_OF_SERVICE_TITLE".localized()
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
         label.numberOfLines = 0
@@ -35,7 +36,7 @@ class TermsOfServiceViewController: UIViewController {
     private let subTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "To use yogit, you must comply with the terms and conditions below."
+        label.text = "TERMS_OF_SERVICE_SUBTITLE".localized()
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         label.numberOfLines = 0
@@ -50,7 +51,7 @@ class TermsOfServiceViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
-        label.text = "I consent to all of the below.".localized()
+        label.text = "TERMS_OF_SERVICE_CONSENT_TOTAL".localized()
         label.numberOfLines = 0
         label.sizeToFit()
         return label
@@ -75,8 +76,6 @@ class TermsOfServiceViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-//        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-//        label.textColor = .systemGray
         label.isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped(_:)))
         label.addGestureRecognizer(tapGestureRecognizer)
@@ -104,8 +103,6 @@ class TermsOfServiceViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-//        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-//        label.textColor = .systemGray
         label.isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped(_:)))
         label.addGestureRecognizer(tapGestureRecognizer)
@@ -131,7 +128,7 @@ class TermsOfServiceViewController: UIViewController {
     }()
     
     private lazy var rightButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor = ServiceColor.primaryColor
         return button
     }()
@@ -139,8 +136,9 @@ class TermsOfServiceViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        configureLabel(label: termOfUseButtonLabel, text: "I consent to the Terms of Use (mandatory)".localized(), hyperText: "Term of Service".localized())
-        configureLabel(label: personalInfoButtonLabel, text: "I consent to the collection and user of my personal (mandatory)".localized(), hyperText: "Privacy Policy".localized())
+        configureLabel(label: termOfUseButtonLabel, text: "TERMS_OF_SERVICE_CONSENT_TERMOFSERVICE".localized(), hyperText: "Term of Service".localized())
+        configureLabel(label: personalInfoButtonLabel, text: "TERMS_OF_SERVICE_CONSENT_PRIVACY_POLICY".localized(), hyperText: "Privacy Policy".localized())
+        initProgressHUD()
         // Do any additional setup after loading the view.
     }
     
@@ -157,10 +155,10 @@ class TermsOfServiceViewController: UIViewController {
         }
         subTitleLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(6)
         }
         totalButton.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(20)
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().inset(10)
             $0.width.height.equalTo(44)
         }
@@ -192,7 +190,7 @@ class TermsOfServiceViewController: UIViewController {
     }
     
     private func configureNav() {
-        navigationItem.title = "Terms of Service"
+        navigationItem.title = ""
         navigationItem.backButtonTitle = "" // remove back button title
         navigationItem.rightBarButtonItem = rightButton
     }
@@ -207,6 +205,11 @@ class TermsOfServiceViewController: UIViewController {
         personalInfoButton,
         personalInfoButtonLabel].forEach { view.addSubview($0) }
         view.backgroundColor = .systemBackground
+    }
+    
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
     }
     
     private func configureLabel(label: UILabel, text: String, hyperText: String) {
@@ -251,9 +254,11 @@ class TermsOfServiceViewController: UIViewController {
     
     private func registerProfile() {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        
+        ProgressHUD.show(interaction: false)
+        
         userProfile.userId = userItem.userId
         userProfile.refreshToken = userItem.refresh_token
-        
         // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
         // userProfile에  SearchUserProfile 모든 데이터 포함
         let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
@@ -285,6 +290,7 @@ class TermsOfServiceViewController: UIViewController {
                                 navigationController?.popToRootViewController(animated: false)
                                 view.window?.rootViewController = rootVC
                                 view.window?.makeKeyAndVisible()
+                                ProgressHUD.dismiss()
                             }
                         }
                     } catch {
@@ -292,6 +298,9 @@ class TermsOfServiceViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileVC - upload response result Not return", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
+                    }
                 }
             }
         }

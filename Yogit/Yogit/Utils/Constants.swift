@@ -174,24 +174,73 @@ enum BoardTextDetailData: Int {
     case kindOfPerson
 }
 
+enum GatheringElement: Int {
+    case memberNumber = 0
+    case dateTime
+    case addressRepsent
+    case addressDetail
+    case photos
+    case title
+    case introduction
+    case kindOfPerson
+   
+    func toTitle() -> String {
+        switch self.rawValue {
+        case 0: return "GATHERING_MEMBER_NUMBER_HEADER"
+        case 1: return "GATHERING_DATE_TIME_HEADER"
+        case 2: return "GATHERING_PLACE_HEADER"
+        case 3: return "GATHERING_PLACE_DETAIL_HEADER"
+        case 4: return "GATHERING_PHOTOS_HEADER"
+        case 5: return "GATHERING_TITLE_HEADER"
+        case 6: return "GATHERING_INTRODUCTION_HEADER"
+        case 7: return "GATHERING_KINDOFPERSON_HEADER"
+        default: fatalError("Not exist categoryId")
+        }
+    }
+    
+    func toHolder() -> String {
+        switch self.rawValue {
+        case 0: return "GATHERING_MEMBER_NUMBER_PLACEHOLDER"
+        case 1: return "GATHERING_DATE_TIME_PLACEHOLDER"
+        case 2: return "GATHERING_PLACE_PLACEHOLDER"
+        case 3: return "GATHERING_PLACE_DETAIL_PLACEHOLDER"
+        case 4: return "GATHERING_PHOTOS_PLACEHOLDER"
+        case 5: return "GATHERING_TITLE_PLACEHOLDER"
+        case 6: return "GATHERING_INTRODUCTION_PLACEHOLDER"
+        case 7: return "GATHERING_KINDOFPERSON_PLACEHOLDER"
+        default: fatalError("Not exist categoryId")
+        }
+    }
+}
+
 enum CategoryId: Int, CaseIterable {
-//    case total = 0
     case socialParty = 1
     case languageCulture
     case natureOutdoor
     case exerciseSports
     case art
     case dance
-    
+   
     func toString() -> String {
         switch self.rawValue {
-//        case 0: return "All"
-        case 1: return "Party"
-        case 2: return "Language"
-        case 3: return "Outdoor"
-        case 4: return "Exercise"
-        case 5: return "Art"
-        case 6: return "Dance"
+        case 1: return "PARTY"
+        case 2: return "LANGUAGE"
+        case 3: return "OUTDOOR"
+        case 4: return "EXERCISE"
+        case 5: return "ART"
+        case 6: return "DANCE"
+        default: fatalError("Not exist categoryId")
+        }
+    }
+    
+    func getDescribe() -> String {
+        switch self.rawValue {
+        case 1: return "PARTY_DESCRIBE"
+        case 2: return "LANGUAGE_DESCRIBE"
+        case 3: return "OUTDOOR_DESCRIBE"
+        case 4: return "EXERCISE_DESCRIBE"
+        case 5: return "ART_DESCRIBE"
+        case 6: return "DANCE_DESCRIBE"
         default: fatalError("Not exist categoryId")
         }
     }
@@ -199,10 +248,10 @@ enum CategoryId: Int, CaseIterable {
 
 
 enum TabBarKind: String {
-    case home = "Home"
-    case myClub = "My gathering"
-    case profile = "My profile"
-    case notification = "Notification"
+    case home = "HOME"
+    case myClub = "MY_GATHERING"
+    case profile = "MY_PROFILE"
+    case notification = "NOTIFICATION"
 }
 
 

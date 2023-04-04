@@ -35,15 +35,10 @@ class MyClubViewController: UIViewController {
     private var pageCursor = 0
     private var pageListCnt = 0
     private var boardType: String = MyClubType.search.toString()
-//    private var createPage = SmallGatheringPage()
-//    private var searchPage = SmallGatheringPage()
-//    private var taskArray = [DispatchWorkItem]()
     private var isPaging: Bool = false
     private var isLoading: Bool = false
     private let modular = 10
     private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
-//    private var createdBoards: [Board] = []
-//    private var searchBoards: [Board] = []
     
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
@@ -59,8 +54,6 @@ class MyClubViewController: UIViewController {
         
         collectionView.register(GatheringBoardThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier)
         collectionView.register(LoadingFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LoadingFooterView.identifier)
-//        collectionView.layer.borderColor = UIColor.systemGray.cgColor
-//        collectionView.layer.borderWidth = 1
         collectionView.backgroundColor = .systemBackground
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isSkeletonable = true
@@ -68,37 +61,8 @@ class MyClubViewController: UIViewController {
     }()
     
     
-//    private let searchMyBoardCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .vertical
-//        layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
-//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//
-//        collectionView.register(GatheringBoardThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier)
-////        collectionView.layer.borderColor = UIColor.systemGray.cgColor
-////        collectionView.layer.borderWidth = 1
-//        collectionView.backgroundColor = .systemBackground
-//        collectionView.isHidden = false
-//        collectionView.showsHorizontalScrollIndicator = false
-//        return collectionView
-//    }()
-//
-//    private let createMyBoardCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .vertical
-//        layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
-//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        collectionView.isHidden = true
-//        collectionView.register(GatheringBoardThumbnailCollectionViewCell.self, forCellWithReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier)
-////        collectionView.layer.borderColor = UIColor.systemGray.cgColor
-////        collectionView.layer.borderWidth = 1
-//        collectionView.backgroundColor = .systemBackground
-//        collectionView.showsHorizontalScrollIndicator = false
-//        return collectionView
-//    }()
-    
     private lazy var segmentedControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: ["Applied", "Opened"])
+        let control = UISegmentedControl(items: ["JOINED".localized(), "OPENED".localized()])
         control.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
         control.selectedSegmentIndex = 0
 //        control.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
@@ -114,14 +78,7 @@ class MyClubViewController: UIViewController {
         super.viewDidLoad()
         configureView()
         configureCollectionView()
-//        self.view.addSubview(searchMyBoardCollectionView)
-//        self.view.addSubview(createMyBoardCollectionView)
-//        searchMyBoardCollectionView.delegate = self
-//        searchMyBoardCollectionView.dataSource = self
-//        createMyBoardCollectionView.delegate = self
-//        createMyBoardCollectionView.dataSource = self
-//        getMyBoardThumbnail(type: MyClubType.search.toString(), cursor: searchPage.cursor)
-        // Do any additional setup after loading the view.
+        initAPICall()
     }
 
 
@@ -136,16 +93,6 @@ class MyClubViewController: UIViewController {
             make.top.equalTo(segmentedControl.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalToSuperview()
         }
-//        searchMyBoardCollectionView.snp.makeConstraints { make in
-//            make.top.equalTo(segmentedControl.snp.bottom).offset(10)
-////            make.leading.equalToSuperview().inset(10)
-//            make.leading.trailing.bottom.equalToSuperview()
-//        }
-//        createMyBoardCollectionView.snp.makeConstraints { make in
-//            make.top.equalTo(segmentedControl.snp.bottom)
-////            make.leading.equalToSuperview().inset(10)
-//            make.leading.trailing.bottom.equalToSuperview()
-//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -162,26 +109,25 @@ class MyClubViewController: UIViewController {
         myBoardsCollectionView.delegate = self
         myBoardsCollectionView.dataSource = self
         myBoardsCollectionView.refreshControl = refreshControl
+    }
+    
+    private func initAPICall() {
         isPaging = true
         pagingMyBoards(type: boardType, firstPage: true)
     }
     
     @objc private func refreshGatheringBoards() {
-        print("리프레쉬 ??")
         if !isPaging {
-            print("리프레쉬 됨")
             isPaging = true
             resetBoardsData()
             pagingMyBoards(type: boardType, firstPage: true)
-        } else {
-            print("리프레쉬 안됨")
         }
         refreshControl.endRefreshing()
     }
 
     
     private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.myClub.rawValue)
+        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.myClub.rawValue.localized())
 //        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
 //        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
 //        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
@@ -201,7 +147,7 @@ class MyClubViewController: UIViewController {
             throw FetchError.badResponse
         }
         case let .failure(error):
-            print("fetchGatheringMyBoards", error)
+            print("fetchGatheringMyBoards error", error)
             throw FetchError.failureResponse
         }
     }
@@ -221,7 +167,6 @@ class MyClubViewController: UIViewController {
                 if pageCursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
-                    print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
                     if Task.isCancelled {
                        return
                     }
@@ -263,55 +208,6 @@ class MyClubViewController: UIViewController {
         tasks.append(task)
     }
     
-//    private func getMyBoardThumbnail(type: String, cursor: Int) {
-//        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        print("Type-getMyBoard", type)
-//        let getMyClub = GetMyClub(cursor: cursor, myClubType: type, refreshToken: userItem.refresh_token, userId: userItem.userId)
-//        AF.request(API.BASE_URL + "boards/get/myclub",
-//                   method: .post,
-//                   parameters: getMyClub,
-//                   encoder: JSONParameterEncoder.default) // default set body and Content-Type HTTP header field of an encoded request is set to application/json
-//        .validate(statusCode: 200..<500)
-//        .response { response in // reponseData
-//            switch response.result {
-//            case .success:
-//                if let data = response.data {
-//                    do{
-//                        let decodedData = try JSONDecoder().decode(APIResponse<[Board]>.self, from: data)
-//                        guard let boardsData = decodedData.data else { return }
-//                        print("boardsData", boardsData)
-//                        //
-//                        DispatchQueue.main.async {
-//                            if type == MyClubType.search.toString() {
-//                                // 10 < 10
-//                                if searchPage.cursorList.count%(modular+1) < boardsData.count {
-//                                    self.searchPage.cursor += 1
-//                                    self.searchPage.boards.append(contentsOf: boardsData)
-//                                    self.searchMyBoardCollectionView.reloadData()
-//                                }
-//                            }
-//                            else {
-//                                self.createPage.cursor += 1
-//                                self.createPage.boards.append(contentsOf: boardsData)
-//                                self.createMyBoardCollectionView.reloadData()
-//                            }
-//                            pageListCnt = getBoardCnt%modular
-//                            if pageListCnt == 0 {
-//                                pageCursor += 1
-//                            }
-//                            self.isPaging = false
-//                        }
-//                    }
-//                    catch{
-//                        print(error.localizedDescription)
-//                    }
-//                }
-//            case .failure(let error):
-//                print(error)
-//            }
-//        }
-//    }
-    
     private func resetBoardsData() {
         gatheringBoards.removeAll() //[categoryId-1].removeAll()
         pageCursor = 0
@@ -322,25 +218,15 @@ class MyClubViewController: UIViewController {
     }
     
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
-        print("selectedSegmentIndex \(sender.selectedSegmentIndex)")
-//        self.searchMyBoardCollectionView.isHidden = !self.searchMyBoardCollectionView.isHidden
-//        self.createMyBoardCollectionView.isHidden = !self.createMyBoardCollectionView.isHidden
-
         for task in tasks {
             task.cancel()
         }
         isPaging = true
         resetBoardsData()
         if sender.selectedSegmentIndex == 0 {
-            // 조회 get 요청
-            print("MyClubType.search - segement 0")
-            boardType = MyClubType.search.toString()
-//            getMyBoardThumbnail(type: MyClubType.search.toString(), cursor: searchPage.cursor)
+            boardType = MyClubType.search.toString() // 조회 모임
         } else {
-            // 생성 get 요청
-            print("MyClubType.search - segment 1")
-            boardType = MyClubType.create.toString()
-//            getMyBoardThumbnail(type: MyClubType.create.toString(), cursor: createPage.cursor)
+            boardType = MyClubType.create.toString() // 생성 모임
         }
         pagingMyBoards(type: boardType, firstPage: true)
      }
@@ -349,14 +235,6 @@ class MyClubViewController: UIViewController {
 extension MyClubViewController: SkeletonCollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        print("Tapped gatherging board collectionview image")
-//        var boardId: Int64
-//        if self.searchMyBoardCollectionView.isHidden {
-//            boardId = createPage.boards[indexPath.row].boardID
-//        } else {
-//            boardId = searchPage.boards[indexPath.row].boardID
-//        }
-//
         let boardId = gatheringBoards[indexPath.row].boardID
         DispatchQueue.main.async {
             let GDBVC = GatheringDetailBoardViewController()
@@ -382,7 +260,6 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       // 아래의 코드로 컬렉션뷰를 다 채울 수 있다.
        return UICollectionView.automaticNumberOfSkeletonItems
     }
     
@@ -391,7 +268,6 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("indexpath update \(indexPath)")
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
         Task(priority: .userInitiated, operation: {
             let data = gatheringBoards[indexPath.row]
@@ -403,7 +279,6 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
 
 extension MyClubViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        print("Sizing collectionView")
         return CGSize(width: collectionView.frame.width/2-25, height: (collectionView.frame.width/2-25)*5/4)
     }
     
@@ -425,7 +300,6 @@ extension  MyClubViewController: UIScrollViewDelegate {
         if !isPaging {
             if scrollView.contentOffset.y > 80 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
                 .height)) { // -500
-                print("하단 스크롤링")
                 isPaging = true
                 isLoading = true
                 let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1

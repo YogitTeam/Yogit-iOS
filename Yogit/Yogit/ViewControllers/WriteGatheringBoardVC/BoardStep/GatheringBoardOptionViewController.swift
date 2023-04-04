@@ -7,54 +7,56 @@
 
 import UIKit
 
-class GatheringBoardOptionViewController: UIViewController {
+class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate {
 
-    private let step: Float = 2.0
-    private let stepHeaderView = StepHeaderView()
-    private var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
-    private let placeholderData = ["Number of member including host", "Gathering date", "Address", "Ex) Gangnam station 3 exit (option)"]
-    private var gatheringKind = GatheringKind.small
-    private let textMax = 50
-//    var mode: Mode? {
-//        didSet {
-//            if self.mode == .edit {
-//                viewGetValues()
-//            }
-//        }
-//    }
-//    var createBoardReq = CreateBoardReq() {
-//        didSet {
-//            hasAllData()
-//            print("Select Detail createBoardReq\(createBoardReq)")
-//        }
-//    }
-//
-//    var images: [UIImage] = []
-    
-    
-    
-//    var boardWithMode = BoardWithMode(boardReq: CreateBoardReq(), boardId: nil, imageIds: [], images: []) {
-//        didSet {
-//            print("boardWitMode2", boardWithMode)
-//            DispatchQueue.main.async {
-//                self.hasAllData()
-//                print(self.boardWithMode)
-//            }
-//        }
-//    }
-    
     var boardWithMode = BoardWithMode() {
         didSet {
-            print("boardWithMode", boardWithMode.date)
             self.hasAllData()
         }
     }
+    
+    private let step: Float = 1.0
+    private let textMax = 50
+
+    private lazy var stepHeaderView: StepHeaderView = {
+        let view = StepHeaderView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 70), step: step)
+        view.titleLabel.text = "GATHERING_SETTING".localized()
+        return view
+    }()
+    
+    private var headerView: [MyHeaderView] = [MyHeaderView(), MyHeaderView(), MyHeaderView()]
+    
+    private var gatheringKind = GatheringKind.small
     
     private var memberNumberData: [Int] = []
     
     private var meetDate: String?
     
     private var totalNumber = 3
+    
+    private lazy var settingContentScrollView: UIScrollView = {
+       let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = .systemBackground
+        scrollView.addSubview(settingContentView)
+        return scrollView
+    }()
+    
+    private lazy var settingContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.translatesAutoresizingMaskIntoConstraints = false
+        [self.headerView[0],
+         self.memberTextField,
+         self.headerView[1],
+         self.dateTextField,
+         self.headerView[2],
+         self.placeTextField,
+         self.placeDetailTextField,
+         self.textCountLabel].forEach { view.addSubview($0) }
+        return view
+    }()
     
     private lazy var textCountLabel: UILabel = {
         let label = UILabel()
@@ -80,6 +82,7 @@ class GatheringBoardOptionViewController: UIViewController {
        let datePicker = UIDatePicker()
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.datePickerMode = .dateAndTime
+        datePicker.backgroundColor = .systemGray6
         let localeIdentifier = Locale.preferredLanguages.first
         datePicker.locale = Locale(identifier: localeIdentifier!)
 //        datePicker.locale = Locale(identifier: "en") // Need localized
@@ -127,13 +130,6 @@ class GatheringBoardOptionViewController: UIViewController {
         return toolBar
     }()
     
-//    private lazy var dateContainerView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(datePicker)
-//        return view
-//    }()
-    
     private lazy var datePickerToolBar: UIToolbar = {
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
@@ -151,11 +147,11 @@ class GatheringBoardOptionViewController: UIViewController {
     
     private lazy var nextButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.setImage(image, for: .normal)
         button.tintColor = .white
-        button.layer.cornerRadius = 8
-        button.isEnabled = false
+        button.isHidden = false
         button.backgroundColor = .placeholderText
         button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
         return button
@@ -167,8 +163,6 @@ class GatheringBoardOptionViewController: UIViewController {
         textField.isEnabled = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tintColor = .clear
-//        textField.layer.borderWidth = 1
-//        textField.layer.borderColor = UIColor.systemRed.cgColor
         return textField
     }()
     
@@ -178,8 +172,6 @@ class GatheringBoardOptionViewController: UIViewController {
         textField.isEnabled = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tintColor = .clear
-//        textField.layer.borderWidth = 1
-//        textField.layer.borderColor = UIColor.systemRed.cgColor
         return textField
     }()
     
@@ -189,9 +181,6 @@ class GatheringBoardOptionViewController: UIViewController {
         textField.isEnabled = true
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tintColor = .clear
-//        textField.rightView?.tintColor = .placeholderText
-//        textField.layer.borderWidth = 1
-//        textField.layer.borderColor = UIColor.systemRed.cgColor
         textField.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.searchPlaceTapped(_:))))
         return textField
     }()
@@ -201,46 +190,48 @@ class GatheringBoardOptionViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textField.isEnabled = true
         textField.translatesAutoresizingMaskIntoConstraints = false
-//        textField.tintColor = .clear
         textField.isHidden = true
-//        textField.layer.borderWidth = 1
-//        textField.layer.borderColor = UIColor.systemRed.cgColor
+        textField.returnKeyType = .done
         return textField
     }()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        [self.stepHeaderView,
-         self.nextButton,
-         self.memberTextField,
-         self.dateTextField,
-         self.placeTextField,
-         self.placeDetailTextField,
-         self.textCountLabel].forEach { view.addSubview($0) }
-        [self.headerView[0],
-         self.headerView[1],
-         self.headerView[2]].forEach { view.addSubview($0) }
-        numberPickerView.delegate = self
-        numberPickerView.dataSource = self
-        for i in 3...gatheringKind.memberNumber() { memberNumberData.append(i) }
-        configureViewComponent()
-        configureTextField()
+        configureNav()
+        configureView()
+        configureScrollView()
+        configurePickerView()
         configureHeaderView()
+        configureTextField()
         viewGetValues(mode: boardWithMode.mode)
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        stepHeaderView.fillProgress(step: step + 1)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         stepHeaderView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.right.equalToSuperview()
             make.height.equalTo(70)
         }
+        settingContentScrollView.snp.makeConstraints {
+            $0.top.equalTo(stepHeaderView.snp.bottom)
+            $0.bottom.leading.trailing.equalToSuperview()
+        }
+        settingContentView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.centerX.top.equalToSuperview()
+            $0.bottom.equalTo(textCountLabel.snp.bottom).offset(80)
+        }
         headerView[0].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
-            $0.top.equalTo(stepHeaderView.snp.bottom)
+            $0.top.equalToSuperview()
         }
         headerView[1].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
@@ -282,57 +273,66 @@ class GatheringBoardOptionViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(20)
         }
         
-//        memberTextField.layoutIfNeeded()
-//        dateTextField.layoutIfNeeded()
-//        placeTextField.layoutIfNeeded()
-//        placeDetailTextField.layoutIfNeeded()
         memberTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
         dateTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
         placeTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
         placeDetailTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
-       
-        print("viewDidLayoutSubview")
     }
     
-    private func configureViewComponent() {
-//        self.navigationItem.title = "Profile"
+    private func configureView() {
         view.backgroundColor = .systemBackground
-//        self.configureDatePicker()
-        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        stepHeaderView.step = self.step
-        stepHeaderView.titleLabel.text = "Setting"
+        view.addSubview(stepHeaderView)
+        view.addSubview(settingContentScrollView)
+        view.addSubview(nextButton)
     }
     
+    private func configureNav() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+    }
+    
+    private func configureScrollView() {
+        settingContentScrollView.delegate = self
+    }
+    
+    private func configurePickerView() {
+        numberPickerView.delegate = self
+        numberPickerView.dataSource = self
+        for i in 3...gatheringKind.memberNumber() { memberNumberData.append(i) }
+    }
     
     private func configureTextField() {
         memberTextField.delegate = self
         dateTextField.delegate = self
         placeTextField.delegate = self
         placeDetailTextField.delegate = self
+        
         memberTextField.tag = 0
         dateTextField.tag = 1
         placeTextField.tag = 2
         placeDetailTextField.tag = 3
-        memberTextField.placeholder = placeholderData[0]
-        dateTextField.placeholder = placeholderData[1]
-        placeTextField.placeholder = placeholderData[2]
-        placeDetailTextField.placeholder = placeholderData[3]
+        
+        memberTextField.placeholder = GatheringElement.memberNumber.toHolder().localized()
+        dateTextField.placeholder = GatheringElement.dateTime.toHolder().localized()
+        placeTextField.placeholder = GatheringElement.addressRepsent.toHolder().localized()
+        placeDetailTextField.placeholder = GatheringElement.addressDetail.toHolder().localized()
+        
         memberTextField.inputView = numberPickerView
         memberTextField.inputAccessoryView = pickerViewToolBar
-        memberTextField.addLeftImageWithMargin(image: UIImage(named: "MemberNumber")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
+
         dateTextField.inputView = datePicker
         dateTextField.inputView?.backgroundColor = .systemGray6
         dateTextField.inputAccessoryView = datePickerToolBar
-//        memberTextField.addLeftImage(image: UIImage(named: "MemberNumber"))
+        
+        memberTextField.addLeftImageWithMargin(image: UIImage(named: "MemberNumber")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
         dateTextField.addLeftImageWithMargin(image: UIImage(named: "Date")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
         placeTextField.addLeftImageWithMargin(image: UIImage(named: "Place")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
         placeTextField.addRightImage(image: UIImage(named: "push"))
     }
     
     private func configureHeaderView() {
-        headerView[0].contentNameLabel.text = "The number of people in a gathering"
-        headerView[1].contentNameLabel.text = "Date & Time"
-        headerView[2].contentNameLabel.text = "Meet up place"
+        headerView[0].contentNameLabel.text = GatheringElement.memberNumber.toTitle().localized()
+        headerView[1].contentNameLabel.text = GatheringElement.dateTime.toTitle().localized()
+        headerView[2].contentNameLabel.text = GatheringElement.addressRepsent.toTitle().localized()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -340,7 +340,6 @@ class GatheringBoardOptionViewController: UIViewController {
     }
     
     @objc func searchPlaceTapped(_ sender: UITapGestureRecognizer) {
-        print("searchPlaceTapped")
         DispatchQueue.main.async {
             let MLSVC = MKMapLocalSearchViewController()
             MLSVC.delegate = self
@@ -348,58 +347,15 @@ class GatheringBoardOptionViewController: UIViewController {
         }
     }
     
-//    @objc func numberPickerViewTapped(_ sender: UITapGestureRecognizer) {
-//        print(" numberPickerViewTapped")
-//        self.boardWithMode.boardReq?.totalMember = 3
-//        guard let boardReq = boardWithMode.boardReq else { return }
-//        guard let memberNumber = boardReq.totalMember else { return }
-//        self.memberTextField.text = String(memberNumber)
-//    }
-    
-//    private func formatDate(date: Date) -> String{
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
-//        boardWithMode.boardReq?.date = date.dateToStringAPI() // formatter.string(from: date) // api 데이터
-////        createBoardReq.date = formatter.string(from: date)
-//        formatter.dateFormat = "E, MMM d, h:mm a"
-//        return formatter.string(from: date) // 보여줄 데이터
-//    }
-    
-//    private func hasAllData() {
-//        if self.boardWithMode.boardReq?.totalMember != nil && self.boardWithMode.boardReq?.date != nil && self.boardWithMode.boardReq?.latitude != nil && self.boardWithMode.boardReq?.longitute != nil && self.boardWithMode.boardReq?.localityName != nil && self.boardWithMode.boardReq?.address != nil {
-//            self.nextButton.isEnabled = true
-//            self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//            print("Has all data")
-//        } else {
-//            print("Not has all data")
-//            self.nextButton.isEnabled = false
-//            self.nextButton.backgroundColor = .placeholderText
-//        }
-//    }
-    
     private func hasAllData() {
         if boardWithMode.totalMember != nil && boardWithMode.date != nil && boardWithMode.latitude != nil && boardWithMode.longitute != nil && boardWithMode.city != nil && boardWithMode.address != nil {
             nextButton.isEnabled = true
             nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-            print("Has all data")
         } else {
-            print("Not has all data")
             nextButton.isEnabled = false
             nextButton.backgroundColor = .placeholderText
         }
     }
-    
-//    private func viewGetValues(mode: Mode?) {
-//        if mode != .edit { return }
-//        guard let memberNumber = boardWithMode.boardReq?.totalMember else { return }
-//        self.memberTextField.text = String(memberNumber)
-//        self.dateTextField.text = boardWithMode.boardReq?.date?.stringToDate()?.dateToStringUser()
-//        self.placeTextField.text = boardWithMode.boardReq?.address
-//        if boardWithMode.boardReq?.address != nil {
-//            self.placeDetailTextField.text = boardWithMode.boardReq?.addressDetail
-//            self.placeDetailTextField.isHidden = false
-//        }
-//    }
     
     private func viewGetValues(mode: Mode?) {
         if mode != .edit { return }
@@ -430,27 +386,13 @@ class GatheringBoardOptionViewController: UIViewController {
     @objc func nextButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBTDVC = GatheringBoardContentViewController()
-//            GBTDVC.createBoardReq = self.createBoardReq
-//            GBTDVC.images = self.images
-//            GBTDVC.mode = self.mode
             GBTDVC.boardWithMode = self.boardWithMode
             self.navigationController?.pushViewController(GBTDVC, animated: true)
         }
     }
     
-//    @objc func donePressed(_ sender: UIButton) {
-//        boardWithMode.boardReq?.totalMember = self.totalNumber
-//        guard let boardReq = boardWithMode.boardReq else { return }
-//        guard let memberNumber = boardReq.totalMember else { return }
-//        self.memberTextField.text = String(memberNumber)
-//        self.view.endEditing(true)
-//    }
-    
     @objc func donePressed(_ sender: UIButton) {
         boardWithMode.totalMember = totalNumber
-//        guard let boardReq = boardWithMode.boardReq else { return }
-//        guard let memberNumber = boardReq.totalMember else { return }
-//        guard let memberNumber = boardWithMode.totalMember else { return }
         self.memberTextField.text = String(totalNumber)
         self.view.endEditing(true)
     }
@@ -477,7 +419,6 @@ extension GatheringBoardOptionViewController: UIPickerViewDataSource {
 extension GatheringBoardOptionViewController: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        print("select total number")
         self.totalNumber = self.memberNumberData[row]
     }
 
@@ -487,29 +428,11 @@ extension GatheringBoardOptionViewController: UIPickerViewDelegate {
 }
 
 extension GatheringBoardOptionViewController: UITextFieldDelegate {
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        boardWithMode.boardReq?.addressDetail = textField.text
-//        textField.resignFirstResponder()
-//        return true
-//    }
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        print("textFieldDidEndEditing", textField.text)
-//        if textField.tag == 3 {
-//            boardWithMode.addressDetail = textField.text
-//        }
-//    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
-
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//        switch textField.tag {
-//        case 3: return true
-//        default: return false
-//        }
-//    }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField.tag == 3 {
@@ -536,15 +459,6 @@ extension GatheringBoardOptionViewController: UITextFieldDelegate {
 }
 
 extension GatheringBoardOptionViewController: MeetUpPlaceProtocol {
-//    func locationSend(meetUpPlace: MeetUpPlace?) {
-//        self.boardWithMode.boardReq?.address = meetUpPlace?.address
-//        self.boardWithMode.boardReq?.latitude = meetUpPlace?.latitude
-//        self.boardWithMode.boardReq?.longitute = meetUpPlace?.longitude
-//        self.boardWithMode.boardReq?.localityName = meetUpPlace?.locality
-//        placeTextField.text = self.boardWithMode.boardReq?.address
-//        placeDetailTextField.isHidden = false
-//    }
-    
     func locationSend(meetUpPlace: MeetUpPlace?) {
         boardWithMode.address = meetUpPlace?.address
         boardWithMode.latitude = meetUpPlace?.latitude

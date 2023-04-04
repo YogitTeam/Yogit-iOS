@@ -63,7 +63,7 @@ class GetProfileImagesViewController: UIViewController {
     
     private lazy var leftButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "delete")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(UIImage(named: "DELETE")?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.addTarget(self, action: #selector(leftButtonPressed(_:)), for: .touchUpInside)
         button.tintColor = .white
         return button

@@ -16,7 +16,8 @@ import MessageUI
 class SettingProfileViewController: UIViewController {
     // MARK: - TableView
     // 이미지도 같이
-    private let settings: [String] = ["Logout", "Delete account", "Customer service center"]
+
+    private let settings: [String] = ["LOGOUT_TITLE".localized(), "DELETE_ACCOUNT_TITLE".localized(), "CUSTOMER_SERVICE_CENTER_TITLE".localized()]
     
     private let settingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -35,14 +36,14 @@ class SettingProfileViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.navigationItem.title = "Setting"
+        self.navigationItem.title = "SETTING".localized()
         settingTableView.frame = view.bounds
     }
 
     private func logOutButtonTapped() {
-        let alert = UIAlertController(title: "Logout", message: "Are you sure want to log out?", preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
+        let alert = UIAlertController(title: "LOGOUT_TITLE".localized(), message: "LOGOUT_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
+        let ok = UIAlertAction(title: "OK".localized(), style: .destructive) { (ok) in
             self.logOut()
         }
         alert.addAction(cancel)
@@ -53,9 +54,9 @@ class SettingProfileViewController: UIViewController {
     }
     
     private func deleteButtonTapped() {
-        let alert = UIAlertController(title: "Delete account", message: "Are you sure want to delete account?", preferredStyle: .alert)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let ok = UIAlertAction(title: "OK", style: .destructive) { (ok) in
+        let alert = UIAlertController(title: "DELETE_ACCOUNT_TITLE".localized(), message: "DELETE_ACCOUNT_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
+        let ok = UIAlertAction(title: "OK".localized(), style: .destructive) { (ok) in
             self.deleteAccount()
         }
         alert.addAction(cancel)
@@ -165,7 +166,7 @@ extension SettingProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 58
+        return 50
     }
 }
 
@@ -193,14 +194,14 @@ extension SettingProfileViewController: MFMailComposeViewControllerDelegate {
             
             DispatchQueue.main.async(qos: .userInteractive) {
                 compseVC.setToRecipients(["yogit.service@gmail.com"])
-                compseVC.setSubject("Customer inquiry")
-                compseVC.setMessageBody("Customer Inquiry Content", isHTML: false)
+                compseVC.setSubject("CUSTOMER_INQUIRY".localized())
+                compseVC.setMessageBody("CUSTOMER_INQUIRY_CONENT".localized(), isHTML: false)
                 self.present(compseVC, animated: true, completion: nil)
             }
         }
         else {
-            let alert = UIAlertController(title: "Mail transfer failed", message: "Please check your iPhone email settings and try again.", preferredStyle: .alert)
-            let ok = UIAlertAction(title: "OK", style: .default)
+            let alert = UIAlertController(title:  "CUSTOMER_SERVICE_MAIL_TRANSFER_FAIL_ALERT_TITLE".localized(), message:  "CUSTOMER_SERVICE_MAIL_TRANSFER_FAIL_ALERT_MESSAGE".localized(), preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK".localized(), style: .default)
             alert.addAction(ok)
             DispatchQueue.main.async(qos: .userInteractive) {
                 self.present(alert, animated: true, completion: nil)

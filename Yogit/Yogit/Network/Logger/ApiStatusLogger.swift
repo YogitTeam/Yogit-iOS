@@ -16,14 +16,10 @@ final class ApiStatusLogger: EventMonitor {
     let monitor = NWPathMonitor()
     
     init() {
-        print("ApiStatusLogger init")
         monitor.start(queue: queue)
     }
     
-    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) { // 1
-        print("ApiStatusLogger - request.didCreateURLRequest")
-        //        monitor.start(queue: queue)
-        print("monitor.currentPath.status", monitor.currentPath.status)
+    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
         if monitor.currentPath.status == .unsatisfied {
             request.cancel()
             DispatchQueue.main.async {

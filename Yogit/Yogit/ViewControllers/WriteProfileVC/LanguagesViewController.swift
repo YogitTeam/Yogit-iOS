@@ -24,8 +24,6 @@ protocol LanguageProtocol: AnyObject {
 class LanguagesViewController: UIViewController {
     
     // MARK: - Data
-    
-//    var lang = ["English", "Korean", "Japanese", "Chinese", "fdfdf", "wqwq"]
 
     private var sections = [SectionLanguage]()
     
@@ -109,7 +107,12 @@ class LanguagesViewController: UIViewController {
     }
     
     private func configureSearchController() {
-        setupSearchController()
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "LANGUAGE_SEARCHBAR_PLACEHOLDER".localized()
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        self.navigationItem.searchController = searchController
+        self.navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     private func configureNav() {
@@ -175,15 +178,6 @@ class LanguagesViewController: UIViewController {
                 self.sections = self.sections.filter { $0.code != userLanuages![i] } // title.hasPrefix(userLanuages![i])
             }
         }
-    }
-    
-    func setupSearchController() {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "LANGUAGE_SEARCHBAR_PLACEHOLDER".localized()
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchResultsUpdater = self
-        self.navigationItem.searchController = searchController
-        self.navigationItem.hidesSearchBarWhenScrolling = false
     }
 }
 

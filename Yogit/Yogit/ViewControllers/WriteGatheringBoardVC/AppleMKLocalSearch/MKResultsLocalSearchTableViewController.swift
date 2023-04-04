@@ -31,7 +31,7 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
     private let guideLabel: UILabel = {
         let label = UILabel()
         label.isHidden = true
-        label.text = "Sorry, the address was not found."
+        label.text = "SEARCH_FAIL_NOTICE_DESCRIPTION".localized()
         label.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
         label.sizeToFit()
         label.numberOfLines = 1
@@ -41,17 +41,12 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(placeTableView)
-        view.addSubview(guideLabel)
-        view.backgroundColor = .systemBackground
-        placeTableView.frame = view.bounds
-        placeTableView.delegate = self
-        placeTableView.dataSource = self
+        configureView()
+        configureTableView()
         // Do any additional setup after loading the view.
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        print("🥲사라짐 resultsview disapper")
         guideLabel.isHidden = true
         placeTableView.isHidden = true
     }
@@ -61,6 +56,18 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
             make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.leading.equalToSuperview().inset(20)
         }
+    }
+    
+    private func configureView() {
+        view.addSubview(placeTableView)
+        view.addSubview(guideLabel)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureTableView() {
+        placeTableView.frame = view.bounds
+        placeTableView.delegate = self
+        placeTableView.dataSource = self
     }
     
     func updateMK(with places: [MKMapItem]) {
@@ -85,60 +92,17 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
         print(places[indexPath.row])
         content.text = places[indexPath.row].placemark.name
         content.secondaryText = places[indexPath.row].placemark.title
-//        content.text = places[indexPath.row].name
-//        content.secondaryText = places[indexPath.row].placemark.
         cell.contentConfiguration = content
-//        print(places[indexPath.row])
-        
-//        content.text = places[indexPath.row].name
-//        content.secondaryText = places[indexPath.row].placeName
-//        cell.contentConfiguration = content
-//        print(places[indexPath.row])
         return cell
-        
-        //        let name: String
-        //        let identifier: String
-        //        let businessStatus: String
-        //        let formattedAddress: String
-        //        let phoneNumber: String
-        //        let rating: String
-        //        let openingHours: String
-        //        print("name \(places[indexPath.row].name)")
-        //        print("id \(places[indexPath.row].identifier)")
-        //        print("format add \(places[indexPath.row].formattedAddress)")
-        //        print("phoneNumber\(places[indexPath.row].phoneNumber)")
-        //        print("rating \(places[indexPath.row].rating)")
-        //        print("openingHours \(places[indexPath.row].openingHours)")
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Didselect")
         tableView.isHidden = true
-        
-        // 위경도 전달
         let place = places[indexPath.row]
         guard let coordinate = place.placemark.location?.coordinate else { return }
-        print("coordinate", coordinate)
         guard let placeName = place.placemark.name else { return }
-        print("placeName", placeName)
         guard let placeTitle = place.placemark.title else { return } // 주소, 우편번호
-        print("placeTitle", placeTitle)
-        guard let placeAdministrativeArea = place.placemark.administrativeArea else { return }
-        print("placeAdministrativeArea", placeAdministrativeArea)
-//        guard let placeLocaclity = place.placemark.locality else { return }
-//        print("coordinate", coordinate)
-        
-//        var resultLocal: String = placeAdministrativeArea
-//
-//        if let placeLocaclity = place.placemark.locality {
-//            if resultLocal != placeLocaclity {
-//                resultLocal = resultLocal + " " + placeLocaclity
-//            }
-//        }
-        
-//        print("resultLocal", resultLocal)
-        // 필드 변경 (administerativeArea >> locality)
-        // 로컬라이즈
         self.delegate?.didTapPlace(coordinate: coordinate, placeName: placeName, placeTitle: placeTitle)
         self.dismiss(animated: true)
     }

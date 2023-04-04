@@ -32,14 +32,13 @@ class JobViewController: UIViewController {
     
     private lazy var nextButton: UIButton = {
         let button = UIButton()
-//        button.setTitle("Done", for: .normal)
-        button.setImage(UIImage(named: "push")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.setImage(image, for: .normal)
         button.tintColor = .white
         button.isHidden = false
         button.isEnabled = true
-        button.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-//        button.setTitleColor(UIColor(rgb: 0x3232FF, alpha: 1.0), for: .normal)
-//        button.titleLabel?.font = .systemFont(ofSize: 18, weight: UIFont.Weight.semibold)
+        button.backgroundColor = ServiceColor.primaryColor
         button.addTarget(self, action: #selector(self.nextButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -47,11 +46,11 @@ class JobViewController: UIViewController {
     private lazy var rightButton: UIBarButtonItem = {
         let buttonTitle: String
         if mode == .create {
-            buttonTitle = "Skip"
+            buttonTitle = "SKIP"
         } else {
-            buttonTitle = "Done"
+            buttonTitle = "DONE"
         }
-        let button = UIBarButtonItem(title: buttonTitle, style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
+        let button = UIBarButtonItem(title: buttonTitle.localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        button.isHidden = true
         return button
@@ -60,9 +59,9 @@ class JobViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "💼 Let global friends know what I do"
+        label.text = "JOB_TITLE".localized()
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 22, weight: UIFont.Weight.semibold)
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.medium)
         label.numberOfLines = 0
         label.sizeToFit()
         label.adjustsFontSizeToFitWidth = true
@@ -71,10 +70,10 @@ class JobViewController: UIViewController {
     
     let jobTextField: UITextField = {
         let textField = UITextField()
-        textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.medium)
+        textField.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
         textField.isEnabled = true
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "What do you do?"
+        textField.placeholder = "JOB_PLACEHOLDER".localized()
         textField.layer.borderColor = UIColor.placeholderText.cgColor
         textField.layer.borderWidth = 1.2
         textField.layer.cornerRadius = 10
@@ -96,12 +95,8 @@ class JobViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        [titleLabel,
-         jobTextField,
-         textCountLabel,
-        nextButton].forEach { view.addSubview($0) }
-        jobTextField.delegate = self
-        view.backgroundColor = .systemBackground
+        configureView()
+        configureJobTextField()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -136,8 +131,20 @@ class JobViewController: UIViewController {
         self.view.endEditing(true)
     }
     
+    private func configureView() {
+        [titleLabel,
+         jobTextField,
+         textCountLabel,
+        nextButton].forEach { view.addSubview($0) }
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureJobTextField() {
+        jobTextField.delegate = self
+    }
+    
     private func configureNav() {
-        self.navigationItem.title = "What I do"
+        self.navigationItem.title = "JOB_NAVIGATIONITEM_TITLE".localized()
         self.navigationItem.backButtonTitle = "" // remove back button title
         self.navigationItem.rightBarButtonItem = rightButton
     }
@@ -148,6 +155,15 @@ class JobViewController: UIViewController {
             AMVC.mode = self.mode
             AMVC.userProfile = self.userProfile
             self.navigationController?.pushViewController(AMVC, animated: true)
+        }
+    }
+    
+    private func jobAlert() {
+        let alert = UIAlertController(title: "", message: "JOB_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title: "OK".localized(), style: .default)
+        alert.addAction(okAction)
+        DispatchQueue.main.async {
+            self.present(alert, animated: false, completion: nil)
         }
     }
     
@@ -162,14 +178,9 @@ class JobViewController: UIViewController {
         }
     }
     
-    @objc func nextButtonTapped(_ sender: UIButton) {
+    @objc private func nextButtonTapped(_ sender: UIButton) {
         if jobTextField.text == "" || jobTextField.text == nil {
-            let alert = UIAlertController(title: "", message: "Please enter what you do", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default)
-            alert.addAction(okAction)
-            DispatchQueue.main.async {
-                self.present(alert, animated: false, completion: nil)
-            }
+            jobAlert()
         } else {
             userProfile.job = jobTextField.text
             moveToAMVC()

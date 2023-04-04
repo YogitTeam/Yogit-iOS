@@ -493,7 +493,7 @@ extension ClipBoardViewController {
                         let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? " Unknown")
                         if avatarImages[sender.senderId] == nil {
                             if clipBoardList[i].profileImgURL.contains("null") {
-                                self.avatarImages[sender.senderId] = UIImage(named: "profileImageNULL")
+                                self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
                             } else {
                                 let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
                                 self.avatarImages[sender.senderId] = profileImage
