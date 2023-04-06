@@ -47,7 +47,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     var avatarImages: [String:UIImage] = ["SERVICE":UIImage(named: "ServiceIcon")!]
     
     let modular = 10
-    let serviceNotice = "📢" + "CLIPBOARD_SERVICE_NOTICE".localized()
+    let serviceNotice = "📢 " + "CLIPBOARD_SERVICE_NOTICE".localized()
     lazy var serviceMessageId = upPageCusor*modular+upPageListCount
     
     private let messageFormatter: DateFormatter = {
@@ -121,13 +121,11 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("😀appear")
         IQKeyboardManager.shared.enable = false
     }
    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print("🥲disappear")
         IQKeyboardManager.shared.enable = true
     }
     
@@ -139,11 +137,11 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         print("shouldShowMenuForItemAt", indexPath.section)
         let message = getTheMessageText(messageKind: messages[indexPath.section].kind)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let copy = UIAlertAction(title: "Copy", style: .default) { (action) in
+        let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
+        let copy = UIAlertAction(title: "COPY".localized(), style: .default) { (action) in
             UIPasteboard.general.string = message
         }
-        let report = UIAlertAction(title: "Report", style: .destructive) { (action) in
+        let report = UIAlertAction(title: "REPORT".localized(), style: .destructive) { (action) in
             guard let clipBoardId = Int64(self.messages[indexPath.section].messageId) else { return }
             guard let reportedUserId = Int64(self.messages[indexPath.section].sender.senderId) else { return }
             self.reportClipboard(content: message, clipBoardId: clipBoardId, reportedUserId: reportedUserId)
@@ -181,7 +179,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     func configureViewComponent() {
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.title = "ClipBoard"
+        navigationItem.title = "CLIPBOARD".localized()
     }
     
     func configureCurrentUser() {
@@ -213,7 +211,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         messageInputBar.setRightStackViewWidthConstant(to: 38, animated: false)
         messageInputBar.setStackViewItems([ messageInputBar.sendButton, InputBarButtonItem.fixedSpace(2)], forStack: .right, animated: false)
-        messageInputBar.sendButton.imageView?.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        messageInputBar.sendButton.imageView?.backgroundColor = ServiceColor.primaryColor
         messageInputBar.sendButton.configuration?.contentInsets =  NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
         messageInputBar.sendButton.setSize(CGSize(width: 36, height: 36), animated: false)
         messageInputBar.sendButton.image = UIImage(named: "chat_up")!
@@ -363,19 +361,9 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     
     func insertMessage(_ message: Message) {
-        print("삽입전 개수", messages.count)
-        
+
         messages.append(message)
         messagesCollectionView.insertSections([messages.count - 1])
-        
-//        messagesCollectionView.performBatchUpdates({
-//            messages.append(message)
-//            messagesCollectionView.insertSections([messages.count - 1])
-//            if messages.count >= 2 {
-//                messagesCollectionView.reloadSections([messages.count - 2])
-//            }
-//        })
-        print("삽입후 개수", messages.count)
 //        if messages.count >= 2 {
 //          messagesCollectionView.reloadSections([messages.count - 2])
 //        }
@@ -384,12 +372,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //        }
 //        print("삽입후 개수", messages.count)
         
-        
-        
-//      messagesCollectionView.performBatchUpdates({
-//        messagesCollectionView.insertSections([messages.count - 1])
-//          print("삽입후 개수", messages.count)
-//      })
     }
     
     func insertFirst(_ message: Message) {
@@ -425,35 +407,8 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     
     func deleteMessage() {
-        print("삭제전 개수", messages.count)
         messages.removeLast()
         messagesCollectionView.deleteSections([self.messages.count])
-        
-//        if messages.count >= 1 {
-//            messagesCollectionView.reloadSections([messages.count - 1])
-//        }
-        print("삭제후 개수", messages.count)
-//        if messages.count >= 1 {
-//          messagesCollectionView.reloadSections([messages.count - 1])
-//        }
-//        if isLastSectionVisible() == true {
-//          messagesCollectionView.scrollToLastItem(animated: true)
-//        }
-//        print("삭제후 개수", messages.count)
-        
-        
-//        print("삭제후 개수", messages.count)
-//        if messages.count >= 1 {
-//          messagesCollectionView.reloadSections([messages.count - 1])
-//        }
-//        if isLastSectionVisible() == true {
-//          messagesCollectionView.scrollToLastItem(animated: true)
-//        }
-//         Reload last section to update header/footer labels and insert a new one
-//        messagesCollectionView.performBatchUpdates({
-//        messagesCollectionView.deleteSections([messages.count])
-//        print("삭제후 개수", messages.count)
-//        })
       }
     
 
@@ -550,23 +505,30 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     func processInputBar(_ inputBar: InputBarAccessoryView) {
         print("버튼 누름")
         if !isPaging {
-            isPaging = true
-            // Here we can parse for which substrings were autocompleted
-            let attributedText = inputBar.inputTextView.attributedText!
-            let range = NSRange(location: 0, length: attributedText.length)
-            attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
-                
-                let substring = attributedText.attributedSubstring(from: range)
-                let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
-                print("Autocompleted: `", substring, "` with context: ", context ?? [])
+            if inputBar.inputTextView.text.count > 500 {
+                let alert = UIAlertController(title: "CLIPBOARD_TEXT_OVER_ALERT_TITLE".localized(), message: "CLIPBOARD_TEXT_OVER_ALERT_MESSAGE".localized(), preferredStyle: UIAlertController.Style.alert)
+                let okAction = UIAlertAction(title: "OK".localized(), style: .default)
+                alert.addAction(okAction)
+                DispatchQueue.main.async(qos: .userInteractive) {
+                    self.present(alert, animated: false, completion: nil)
+                }
+            } else {
+                isPaging = true
+                let attributedText = inputBar.inputTextView.attributedText!
+                let range = NSRange(location: 0, length: attributedText.length)
+                attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
+                    
+                    let substring = attributedText.attributedSubstring(from: range)
+                    let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
+                    print("Autocompleted: `", substring, "` with context: ", context ?? [])
+                }
+                let components = inputBar.inputTextView.components
+                inputBar.inputTextView.text = String()
+                inputBar.invalidatePlugins()
+                inputBar.inputTextView.placeholder = ""
+                inputBar.sendButton.startAnimating()
+                insertMessages(components)
             }
-            
-            let components = inputBar.inputTextView.components
-            inputBar.inputTextView.text = String()
-            inputBar.invalidatePlugins()
-            inputBar.inputTextView.placeholder = "Sending..."
-            inputBar.sendButton.startAnimating()
-            insertMessages(components)
         }
     }
     

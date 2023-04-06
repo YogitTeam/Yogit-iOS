@@ -52,7 +52,7 @@ class AboutMeViewController: UIViewController {
             buttonTitle = "DONE"
         }
         let button = UIBarButtonItem(title: buttonTitle.localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
-        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor =  ServiceColor.primaryColor
 //        button.isHidden = true
         return button
     }()

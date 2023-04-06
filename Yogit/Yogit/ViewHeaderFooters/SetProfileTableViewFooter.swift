@@ -61,9 +61,9 @@ class SetProfileTableViewFooter: UITableViewHeaderFooterView {
         footerLabel.textColor = .darkGray
         switch kind {
         case ProfileSectionData.name.rawValue:
-            footerLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            footerLabel.textColor = ServiceColor.primaryColor
         case ProfileSectionData.nationality.rawValue:
-            footerLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            footerLabel.textColor = ServiceColor.primaryColor
         default: break
         }
     }

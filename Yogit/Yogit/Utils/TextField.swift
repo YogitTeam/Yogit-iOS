@@ -68,15 +68,15 @@ extension UITextField {
         self.rightViewMode = .always
     }
     
-    func addrightView(view: UIView?) {
-        guard let view = view else { return }
-        
-        let rightView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
-//        rightImage.image = view
-        self.rightView = view
-        self.rightViewMode = .always
-    }
-    
+//    func addrightView(view: UIView?) {
+//        guard let view = view else { return }
+//
+//        let rightView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height))
+////        rightImage.image = view
+//        self.rightView = view
+//        self.rightViewMode = .always
+//    }
+//
     func addBottomBorderWithColor(color: UIColor, width: CGFloat) {
         self.layoutIfNeeded()
         let border = CALayer()

@@ -72,7 +72,7 @@ class SetProfileViewController: UIViewController {
     private lazy var pendingView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0).withAlphaComponent(0.7)
+        view.backgroundColor = ServiceColor.primaryColor.withAlphaComponent(0.7)
         view.frame = CGRect(origin: .zero, size: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height))
         view.isHidden = true
         return view
@@ -82,7 +82,7 @@ class SetProfileViewController: UIViewController {
     private lazy var requirementView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        view.backgroundColor = ServiceColor.primaryColor
         view.layer.cornerRadius = 4
         return view
     }()
@@ -90,7 +90,7 @@ class SetProfileViewController: UIViewController {
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.isHidden = true
-        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor =  ServiceColor.primaryColor
         return button
     }()
     
@@ -119,7 +119,7 @@ class SetProfileViewController: UIViewController {
 //        cancelButton.tintColor = .systemGray
         toolBar.backgroundColor = .systemGray4
         toolBar.layer.cornerRadius = 10
-        doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        doneButton.tintColor = ServiceColor.primaryColor
         toolBar.setItems([flexSpace, doneButton], animated: true)
         return toolBar
     }()
@@ -359,7 +359,7 @@ class SetProfileViewController: UIViewController {
 //    private func checkAllData() {
 //        if mode == .create {
 //            if hasMissingValue == nil {
-//                nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//                nextButton.backgroundColor = ServiceColor.primaryColor
 //            } else {
 //                nextButton.backgroundColor = .placeholderText
 //            }
@@ -536,7 +536,7 @@ extension SetProfileViewController: UITableViewDelegate {
         DispatchQueue.main.async(qos: .userInteractive) {
             switch indexPath.section {
             case 0:
-                if self.mode == .create {
+                if self.mode == .edit {
                     let NVC = NameViewController()
                     NVC.delegate = self
                     NVC.userName = self.userProfile.userName
@@ -550,7 +550,7 @@ extension SetProfileViewController: UITableViewDelegate {
                     self.navigationController?.pushViewController(LVC, animated: true)
                 }
             case 3:
-                if self.mode == .create {
+                if self.mode == .edit {
                     let NVC = NationalityViewController()
                     NVC.delegate = self
                     self.navigationController?.pushViewController(NVC, animated: true)

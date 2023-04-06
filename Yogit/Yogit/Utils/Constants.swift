@@ -24,7 +24,8 @@ enum RootViewState {
 }
 
 enum ServiceColor {
-    static let primaryColor: UIColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+    
+    static let primaryColor: UIColor = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? UIColor(rgb: 0x3C3CDB, alpha: 1.0) : UIColor(rgb: 0x3232FF, alpha: 1.0)
 }
 
 enum GatheringKind: Int {

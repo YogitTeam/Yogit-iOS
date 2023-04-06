@@ -125,7 +125,7 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPressed))
         cancelButton.tintColor = .systemGray
-        doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        doneButton.tintColor = ServiceColor.primaryColor
         toolBar.setItems([cancelButton, flexSpace, doneButton], animated: true)
         return toolBar
     }()
@@ -139,7 +139,7 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dateDone))
         let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelPressed))
         cancelButton.tintColor = .systemGray
-        doneButton.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        doneButton.tintColor = ServiceColor.primaryColor
         toolBar.setItems([cancelButton, flexSpace, doneButton], animated: true)
         toolBar.sizeToFit()
         return toolBar
@@ -272,11 +272,10 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
             $0.top.equalTo(placeDetailTextField.snp.bottom).offset(4)
             $0.trailing.equalToSuperview().inset(20)
         }
-        
-        memberTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
-        dateTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
-        placeTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
-        placeDetailTextField.addBottomBorderWithColor(color: .placeholderText, width: 0.5)
+        memberTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+        dateTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+        placeTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+        placeDetailTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
     }
     
     private func configureView() {
@@ -326,7 +325,10 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
         memberTextField.addLeftImageWithMargin(image: UIImage(named: "MemberNumber")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
         dateTextField.addLeftImageWithMargin(image: UIImage(named: "Date")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
         placeTextField.addLeftImageWithMargin(image: UIImage(named: "Place")?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal), width: 20, height: 20, margin: 4)
-        placeTextField.addRightImage(image: UIImage(named: "push"))
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
+        placeTextField.rightView = UIImageView(image: image)
+        placeTextField.rightViewMode = .always
     }
     
     private func configureHeaderView() {
@@ -350,7 +352,7 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
     private func hasAllData() {
         if boardWithMode.totalMember != nil && boardWithMode.date != nil && boardWithMode.latitude != nil && boardWithMode.longitute != nil && boardWithMode.city != nil && boardWithMode.address != nil {
             nextButton.isEnabled = true
-            nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            nextButton.backgroundColor = ServiceColor.primaryColor
         } else {
             nextButton.isEnabled = false
             nextButton.backgroundColor = .placeholderText

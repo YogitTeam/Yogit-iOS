@@ -30,7 +30,7 @@ class GatheringBoardContentViewController: UIViewController {
     private let placeholderData = [GatheringElement.title.toHolder().localized(), GatheringElement.introduction.toHolder().localized(), GatheringElement.kindOfPerson.toHolder().localized()]
     private var textViewCount = [0, 0, 0]
     private let minChar = [10, 50, 30]
-    private let maxChar = [50, 2000, 2000]
+    private let maxChar = [50, 3000, 3000]
     
     private lazy var stepHeaderView: StepHeaderView = {
         let view = StepHeaderView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 70), step: step)
@@ -40,7 +40,7 @@ class GatheringBoardContentViewController: UIViewController {
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(buttonPressed(_:)))
-        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor =  ServiceColor.primaryColor
         return button
     }()
     
@@ -265,6 +265,11 @@ class GatheringBoardContentViewController: UIViewController {
             urlRequestConvertible = BoardRouter.createBoard(parameters: updateBoard)
         }
 
+        if let data = boardWithMode.introduction!.data(using: .utf8) {
+            let bytes = [UInt8](data)
+            print("소개글 바이트수", bytes)
+        }
+        
         if let parameters = urlRequestConvertible.toDictionary {
             print("Upload parameters", parameters)
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in

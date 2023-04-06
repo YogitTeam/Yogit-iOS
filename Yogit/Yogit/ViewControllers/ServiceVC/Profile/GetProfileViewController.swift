@@ -65,28 +65,28 @@ class GetProfileViewController: UIViewController {
     private let footerView1: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .clear
         return view
     }()
     
     private let footerView2: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .clear
         return view
     }()
     
     private let footerView3: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .clear
         return view
     }()
     
     private let footerView4: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .clear
         return view
     }()
     
@@ -94,6 +94,7 @@ class GetProfileViewController: UIViewController {
        let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isScrollEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
         scrollView.addSubview(profileContentView)
         scrollView.isSkeletonable = true
         return scrollView
@@ -158,11 +159,10 @@ class GetProfileViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 22
+        stackView.spacing = 31
         stackView.alignment = .leading
         stackView.isSkeletonable = true
         [profileImageStackView,
-         footerView1,
          profileLanguagesStackView].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -212,7 +212,8 @@ class GetProfileViewController: UIViewController {
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
         [profileLanguagesTitleLabel,
-         profileLanguagesLabel].forEach { stackView.addArrangedSubview($0) }
+         profileLanguagesLabel,
+        footerView1].forEach { stackView.addArrangedSubview($0) }
         stackView.sizeToFit()
         return stackView
     }()
@@ -237,6 +238,7 @@ class GetProfileViewController: UIViewController {
         label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
         label.numberOfLines = 0
         label.sizeToFit()
+        
         label.isSkeletonable = true
         return label
     }()
@@ -250,7 +252,8 @@ class GetProfileViewController: UIViewController {
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
         [profileJobTitleLabel,
-         profileJobLabel].forEach { stackView.addArrangedSubview($0) }
+         profileJobLabel,
+         footerView2].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
     
@@ -287,7 +290,8 @@ class GetProfileViewController: UIViewController {
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
         [profileAboutMeTitleLabel,
-         profileAboutMeLabel].forEach { stackView.addArrangedSubview($0) }
+         profileAboutMeLabel,
+         footerView3].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
     
@@ -324,7 +328,8 @@ class GetProfileViewController: UIViewController {
         stackView.backgroundColor = .systemBackground
         stackView.isSkeletonable = true
         [profileInterestsTitleLabel,
-         profileInterestsTagView].forEach { stackView.addArrangedSubview($0) }
+         profileInterestsTagView,
+         footerView4].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
     
@@ -342,14 +347,20 @@ class GetProfileViewController: UIViewController {
     
     private let profileInterestsTagView: TTGTextTagCollectionView = {
         let view = TTGTextTagCollectionView()
+        view.backgroundColor = UIColor.systemBackground
+        view.scrollDirection = .horizontal
+        view.alignment = .left
+        view.horizontalSpacing = 12
+        view.verticalSpacing = 12
+        view.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
+        view.showsHorizontalScrollIndicator = false
         view.isSkeletonable = true
         return view
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(profileContentScrollView)
-        configureViewComponent()
+        configureView()
         configureNavItem()
         initProgressHUD()
         getUserProfile()
@@ -370,6 +381,9 @@ class GetProfileViewController: UIViewController {
         profileNameLabel.snp.makeConstraints {
             $0.trailing.equalTo(view).inset(20)
         }
+        profileLanguagesStackView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+        }
         profileLanguagesTitleLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
         }
@@ -386,8 +400,10 @@ class GetProfileViewController: UIViewController {
         }
         footerView1.snp.makeConstraints {
             $0.width.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(30)
         }
+        profileLanguagesStackView.layoutIfNeeded()
+        profileLanguagesStackView.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 15)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -409,8 +425,9 @@ class GetProfileViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightButton
     }
 
-    private func configureViewComponent() {
-        self.view.backgroundColor = .systemBackground
+    private func configureView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(profileContentScrollView)
     }
     
     private func initProgressHUD() {
@@ -556,6 +573,19 @@ class GetProfileViewController: UIViewController {
         self.setUserProfile.interests = data.interests
     }
     
+    private func configureStackView(stackView: UIStackView, footerView: UIView) {
+        footerView.backgroundColor = .clear
+        stackView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+        }
+        footerView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.height.equalTo(30)
+        }
+        stackView.layoutIfNeeded()
+        stackView.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 15)
+    }
+    
     func sprayViewUserProfileData(data: FetchUserProfile) {
         bindingUserProfileData(data: data)
         let langCnt = data.languageCodes.count
@@ -576,7 +606,13 @@ class GetProfileViewController: UIViewController {
         DispatchQueue.main.async(qos: .userInteractive) { [self] in
             view.stopSkeletonAnimation()
             view.hideSkeleton()
-            profileLanguagesLabel.text = langInfos
+            
+            let attributedString = NSMutableAttributedString(string: langInfos)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 4
+            attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attributedString.length))
+
+            profileLanguagesLabel.attributedText = attributedString
             profileImages = data.imageUrls
             profileImageView.setImage(with: data.profileImg)
             if let name = data.name, let age = data.age {
@@ -589,31 +625,25 @@ class GetProfileViewController: UIViewController {
                 profileFlagLabel.text = flag
                 profileCountyLabel.text = countryName
             }
-            
+        
             profileInterestsStackView.removeFromSuperview()
-            footerView4.removeFromSuperview()
             profileAboutMeStackView.removeFromSuperview()
-            footerView3.removeFromSuperview()
             profileJobStackView.removeFromSuperview()
-            footerView2.removeFromSuperview()
             
             if let job = data.job, job != "" {
                 profileJobLabel.text = job
-                profileContentStackView.addArrangedSubview(footerView2)
-                constraintFooterView(footerView: footerView2)
                 profileContentStackView.addArrangedSubview(profileJobStackView)
+                configureStackView(stackView: profileJobStackView, footerView: footerView2)
             }
             if let aboutMe = data.aboutMe, aboutMe != "" {
                 profileAboutMeLabel.text = aboutMe
-                profileContentStackView.addArrangedSubview(footerView3)
-                constraintFooterView(footerView: footerView3)
                 profileContentStackView.addArrangedSubview(profileAboutMeStackView)
+                configureStackView(stackView: profileAboutMeStackView, footerView: footerView3)
             }
             if let interests = data.interests, interests != [] {
-                profileContentStackView.addArrangedSubview(footerView4)
-                constraintFooterView(footerView: footerView4)
-                profileContentStackView.addArrangedSubview(profileInterestsStackView)
                 setupTagView(tagView: profileInterestsTagView, interests: interests)
+                profileContentStackView.addArrangedSubview(profileInterestsStackView)
+                configureStackView(stackView: profileInterestsStackView, footerView: footerView4)
             }
             isBlockedUser = data.isBlockingUser
         }
@@ -621,11 +651,6 @@ class GetProfileViewController: UIViewController {
     
     private func setupTagView(tagView: TTGTextTagCollectionView, interests: [String]) {
         tagView.removeAllTags()
-        tagView.backgroundColor = UIColor.systemBackground
-        tagView.scrollDirection = .horizontal
-        tagView.alignment = .left
-        tagView.showsHorizontalScrollIndicator = false
-        
         let n = interests.count/3
         let m = interests.count%3 != 0 ? 1 : 0
         let linesNum: UInt = UInt(n + m)
@@ -649,24 +674,31 @@ class GetProfileViewController: UIViewController {
             
             tagView.addTag(tag)
         }
-        
-        tagView.horizontalSpacing = 12
-        tagView.verticalSpacing = 12
-
-        tagView.contentInset = UIEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
         tagView.reload()
         tagView.sizeToFit()
         
     }
     
-    private func constraintFooterView(footerView: UIView) {
+    private func createFooterView() -> UIView {
+        let footerView = UIView()
+//        footerView.translatesAutoresizingMaskIntoConstraints = false
+        footerView.backgroundColor = .red
         footerView.snp.makeConstraints {
             $0.width.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(50)
         }
         footerView.layoutIfNeeded()
+        return footerView
     }
     
+//    private func constraintFooterView(footerView: UIView) {
+//        footerView.snp.makeConstraints {
+//            $0.width.equalToSuperview()
+//            $0.height.equalTo(1)
+//        }
+//        footerView.layoutIfNeeded()
+//    }
+//
     private func getUserProfile() {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let userId: Int64

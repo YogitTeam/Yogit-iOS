@@ -24,8 +24,8 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
                     categoryDescriptionLabel.textColor = UIColor.label
                 }
                 else if isTapped == true {
-                    categoryContentView.layer.borderColor = UIColor(rgb: 0x3232FF, alpha: 1.0).cgColor
-                    categoryContentView.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                    categoryContentView.layer.borderColor = ServiceColor.primaryColor.cgColor
+                    categoryContentView.backgroundColor = ServiceColor.primaryColor
                     categoryImageView.tintColor = .white
                     categoryTitleLabel.textColor = .white
                     categoryDescriptionLabel.textColor = .white

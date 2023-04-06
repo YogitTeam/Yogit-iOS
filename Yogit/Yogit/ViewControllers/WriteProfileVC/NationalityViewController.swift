@@ -79,9 +79,7 @@ class NationalityViewController: UIViewController {
         }
         
         let region = Locale.current.region?.identifier
-//        let firstUserCountries = countries.sorted { (a, b) -> Bool in
-//            return a.countryName < b.countryName
-//        }
+        
         let firstUserCountries = countries.sorted { (a, b) -> Bool in
             if a.countryCode == region {
                 return true

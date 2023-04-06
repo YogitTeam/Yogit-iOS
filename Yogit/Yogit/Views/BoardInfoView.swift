@@ -34,7 +34,7 @@ class BoardInfoView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
-        label.font = .systemFont(ofSize: 15, weight: UIFont.Weight.medium)
+        label.font = .systemFont(ofSize: 14, weight: UIFont.Weight.medium)
         
         // Label frame size to fit as text of label
         label.numberOfLines = 1
@@ -101,38 +101,20 @@ class BoardInfoView: UIView {
         }
         leftImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
-            make.height.width.equalTo(22)
+            make.height.width.equalTo(24)
             make.centerY.equalToSuperview()
         }
         labelVerticalStackView.snp.makeConstraints { make in
-            make.leading.equalTo(leftImageView.snp.trailing).offset(4)
+            make.leading.equalTo(leftImageView.snp.trailing).offset(8)
             make.trailing.equalTo(rightImageView.snp.leading)
             make.centerY.equalToSuperview()
         }
         
-//        infoLabel.snp.makeConstraints { make in
-//            make.trailing.equalTo(rightImageView.snp.leading)
-//        }
-//
-//        subInfoLabel.snp.makeConstraints { make in
-//            make.trailing.equalTo(rightImageView.snp.leading)
-//        }
-        
         rightImageView.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(0)
-            make.height.width.equalTo(40)
+            make.height.width.equalTo(24)
             make.centerY.equalToSuperview()
         }
     }
 
 }
-
-//extension BoardInfoView {
-//    func addToViewBottomBorderWithColor(color: UIColor, width: CGFloat) {
-//        self.layoutIfNeeded()
-//        let border = CALayer()
-//        border.backgroundColor = color.cgColor
-//        border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
-//        self.layer.addSublayer(border)
-//    }
-//}

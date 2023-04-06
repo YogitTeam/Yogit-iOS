@@ -42,7 +42,7 @@ class GetProfileImagesViewController: UIViewController {
         // 페이지 표시 색상을 밝은 회색 설정
         pageControl.pageIndicatorTintColor = .placeholderText
         // 현재 페이지 표시 색상
-        pageControl.currentPageIndicatorTintColor = .white// UIColor(rgb: 0x3232FF, alpha: 1.0)
+        pageControl.currentPageIndicatorTintColor = .white// ServiceColor.primaryColor
         pageControl.backgroundColor = .clear
         
         pageControl.addTarget(self, action: #selector(pageControlDidChange(_:)), for: .valueChanged)

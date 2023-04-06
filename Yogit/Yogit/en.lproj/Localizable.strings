@@ -36,7 +36,7 @@
 "ART" = "Art";
 "DANCE" = "Dance";
 
-"PARTY_DESCRIBE" = "Pub party, Barbecue party, Home party, Welcome party...";
+"PARTY_DESCRIBE" = "Pub party, BBQ party, Home party, Welcome party...";
 "LANGUAGE_DESCRIBE" = "Language exchange, Language learning...";
 "OUTDOOR_DESCRIBE" = "Picnic, Food Truck Festival, Tourist attraction...";
 "EXERCISE_DESCRIBE" = "Hiking, Fitness, Tennis, Basketball, Soccer...";
@@ -206,24 +206,24 @@
 "GATHERING_MEMBER_NUMBER_PLACEHOLDER" = "Number of member including host";
 "GATHERING_DATE_TIME_PLACEHOLDER" = "Select gathering date & time";
 "GATHERING_PLACE_PLACEHOLDER" = "Set meet up address(place)";
-"GATHERING_PLACE_DETAIL_PLACEHOLDER" = "Ex) Gangnam station 3 exit (option)";
+"GATHERING_PLACE_DETAIL_PLACEHOLDER" = "ex) Gangnam station 3 exit (option)";
 "GATHERING_PHOTOS_PLACEHOLDER" = "";
-"GATHERING_TITLE_PLACEHOLDER" = "Ex) Hongdae rooftop barbecue party";
-"GATHERING_INTRODUCTION_PLACEHOLDER" = "Ex) Hello buddies!\nI wanted to enjoy a barbecue party with global friends, so I held a gathering.\nLet's have a barbecue party at Hongdae Rooftop Bar on a nice weekend.\nBarbecue is unlimited.\nThe participation fee is 30,000 won per person.\n3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\nNon-alcoholic drinks are also available.\nBarbecue equipment is available at the bar, so just your body needs to come.\n";
-"GATHERING_KINDOFPERSON_PLACEHOLDER" = "Ex) Someone who can get along well with global friends.\nWelcome to active people.\nYou can drink as much as you want and you don't have to!\n";
+"GATHERING_TITLE_PLACEHOLDER" = "ex) Hongdae rooftop BBQ party";
+"GATHERING_INTRODUCTION_PLACEHOLDER" = "ex) Hello buddies!\nI wanted to enjoy a BBQ party with global friends, so I held a gathering.\nLet's have a BBQ party at Hongdae Rooftop Bar on a nice weekend.\nBBQ is unlimited.\nThe participation fee is 30,000 won per person.\n3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\nNon-alcoholic drinks are also available.\nBBQ equipment is available at the bar, so just your body needs to come.\n";
+"GATHERING_KINDOFPERSON_PLACEHOLDER" = "ex) Someone who can get along well with global friends.\nWelcome to active people.\nYou can drink as much as you want and you don't have to!\n";
 
 //GATHERING_INTRODUCTION_PLACEHOLDER
 //Someone who can get along well with global friends.\n
 //Welcome to active people.\n
 //You can drink as much as you want and you don't have to!\n
 //
-//Hello! I wanted to enjoy a barbecue party with global friends, so I held a gathering.\n
+//Hello! I wanted to enjoy a BBQ party with global friends, so I held a gathering.\n
 //Let's have a BBQ party at Hongdae Rooftop Bar on a nice weekend.\n
-//Barbecue is unlimited.\n
+//BBQ is unlimited.\n
 //The participation fee is 30,000 won per person.\n
 //3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\n
 //Non-alcoholic drinks are also available.\n
-//Barbecue equipment is available at the bar, so just your body needs to come.\n
+//BBQ equipment is available at the bar, so just your body needs to come.\n
 //
 //GATHERING_KINDOFPERSON_PLACEHOLDER
 //안녕하세요! 글로벌 친구들과 함께 바베큐 파티를 즐기고 싶어서 모임을 열었습니다.
@@ -267,10 +267,13 @@
 
 // ClipboardViewController
 "CLIPBOARD_SERVICE_NOTICE" = "This is not a real-time chat.\nPlease scroll from bottom to top to update.";
-
+"MESSAGE_SENDING" = "Sending...";
+"CLIPBOARD_TEXT_OVER_ALERT_TITLE" = "Too many characters";
+"CLIPBOARD_TEXT_OVER_ALERT_MESSAGE" = "You can send up to 500 characters.";
 
 // MyClubViewController
 "JOINED" = "Joined";
 "OPENED" = "Opened";
 "ACTIVITY" = "Activity";
+
 

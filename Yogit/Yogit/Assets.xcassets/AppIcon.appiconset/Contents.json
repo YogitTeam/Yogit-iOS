@@ -1,43 +1,49 @@
 {
   "images" : [
     {
+      "filename" : "Yogit_(40x40).png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
+      "filename" : "Yogit_(60x60).png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
+      "filename" : "Yogit_(58x58).png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
+      "filename" : "Yogit_(87x87).png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
+      "filename" : "Yogit_(80x80).png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
+      "filename" : "Yogit_(120x120).png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "40x40"
     },
     {
-      "filename" : "Iphone app_C-1(120x120).png",
+      "filename" : "Yogit_(120x120) 1.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
-      "filename" : "Iphone app_C-1(180x180).png",
+      "filename" : "Yogit_(180x180).png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
@@ -88,6 +94,7 @@
       "size" : "83.5x83.5"
     },
     {
+      "filename" : "Yogit_(1024x1024).png",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"

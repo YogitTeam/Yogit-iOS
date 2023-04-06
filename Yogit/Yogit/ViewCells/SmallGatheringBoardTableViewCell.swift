@@ -430,7 +430,7 @@ class SmallGatheringBoardTableViewCell: UITableViewCell {
         let geocoder = CLGeocoder()
 //        let locale = Locale(identifier: "en_US")
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
-        let region = Locale.current.region?.identifier // KR
+//        let region = Locale.current.region?.identifier // KR
         let locale = Locale(identifier: identifier)
 
         // 주소 다됨 (country, locality, "KR" >> South Korea)

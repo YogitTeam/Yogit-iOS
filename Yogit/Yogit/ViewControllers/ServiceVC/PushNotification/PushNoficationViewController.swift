@@ -31,8 +31,8 @@ class PushNoficationViewController: UIViewController {
         let control = UISegmentedControl(items: ["CLIPBOARD".localized(), "ACTIVITY".localized()])
         control.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
         control.selectedSegmentIndex = 0
-//        control.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
-        control.selectedSegmentTintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+//        control.backgroundColor = ServiceColor.primaryColor
+        control.selectedSegmentTintColor = ServiceColor.primaryColor
         control.layer.cornerRadius = 30
         control.layer.masksToBounds = true
 //        control.clipsToBounds = true
@@ -123,7 +123,7 @@ class PushNoficationViewController: UIViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
         var content = cell.defaultContentConfiguration()
-        let args = alarmData[indexPath.row].args
+//        let args = alarmData[indexPath.row].args
         let bodyLocKey = alarmData[indexPath.row].body
         let localizedString = NSLocalizedString(bodyLocKey, comment: "")
       

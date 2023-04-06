@@ -14,7 +14,7 @@ class MyHeaderView: UIView {
     let requirementView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        view.backgroundColor = ServiceColor.primaryColor
         view.layer.cornerRadius = 3
         return view
     }()

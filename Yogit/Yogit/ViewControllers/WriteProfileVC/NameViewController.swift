@@ -23,7 +23,7 @@ class NameViewController: UIViewController {
     
     private lazy var rightButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "DONE".localized(), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
-        button.tintColor =  UIColor(rgb: 0x3232FF, alpha: 1.0)
+        button.tintColor =  ServiceColor.primaryColor
         return button
     }()
     
@@ -123,7 +123,7 @@ extension NameViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
         userName = textField.text
         if userName?.count ?? 0 >= textMin {
-            textCountLabel.textColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            textCountLabel.textColor = ServiceColor.primaryColor
         } else {
             textCountLabel.textColor = .systemRed
         }

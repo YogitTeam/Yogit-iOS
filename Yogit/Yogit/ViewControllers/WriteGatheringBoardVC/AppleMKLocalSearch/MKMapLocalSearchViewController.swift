@@ -103,7 +103,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
                     saveButton.backgroundColor = .placeholderText
                 } else {
                     saveButton.isEnabled = true
-                    saveButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+                    saveButton.backgroundColor = ServiceColor.primaryColor
                 }
             })
         }

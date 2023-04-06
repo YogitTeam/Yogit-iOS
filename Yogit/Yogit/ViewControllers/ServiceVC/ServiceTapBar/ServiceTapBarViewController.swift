@@ -149,26 +149,21 @@ class ServiceTapBarViewController: UITabBarController {
 extension ServiceTapBarViewController: UNUserNotificationCenterDelegate  {
     
     func registerForPushNotifications() {
-        print("registerForPushNotifications")
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
             // 3 - 완료 핸들러는 인증이 성공했는지 여부를 나타내는 Bool을 수신합니다. 인증 결과를 표시합니다.
             if let error = error {
                 print("ERROR|Request Notificattion Authorization : \(error)")
             }
-            print("Permission granted: \(granted)")
-            
             guard granted else { return }
             self?.getNotificationSettings()
         }
     }
     
     func getNotificationSettings() {
-        print("getNotificationSettings")
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             print("Notification settings: \(settings)")
             guard settings.authorizationStatus == .authorized else { return }
             DispatchQueue.main.async {
-                print("Before registerForRemoteNotifications")
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }

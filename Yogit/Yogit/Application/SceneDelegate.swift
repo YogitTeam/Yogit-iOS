@@ -17,8 +17,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
-
-//        let setUpVC = PushNoficationViewController() //MainViewController() //ServiceTapBarViewController() //GetProfileViewController() //MKMapLocalSearchViewController() //GatheringBoardContentViewController()//SetProfileViewController() //GatheringBoardOptionViewController() //AboutMeViewController() //MKMapLocalSearchViewController() //InterestsViewController() //MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
+//
+//        let setUpVC = GatheringDetailBoardViewController() //MainViewController() //ServiceTapBarViewController() //GetProfileViewController() //MKMapLocalSearchViewController() //GatheringBoardContentViewController()//SetProfileViewController() //GatheringBoardOptionViewController() //AboutMeViewController() //MKMapLocalSearchViewController() //InterestsViewController() //MainViewController() //MKMapLocalSearchViewController() // ViewAllGatheringBoardsViewController() //ReportViewController() //AlertTestViewController() //ViewAllGatheringBoardsViewController() // SwipeTestViewController()//SearchGatheringBoardController() // JobViewController() //AlertTestViewController() //SetProfileViewController() // ClipBoardViewController2()
 //        let rootVC = UINavigationController(rootViewController: setUpVC)
 //        rootVC.navigationBar.tintColor = UIColor.label
 //        rootVC.navigationBar.topItem?.backButtonTitle = ""
@@ -27,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        window = UIWindow(windowScene: scene)
 //        window?.rootViewController = rootVC
 //        window?.makeKeyAndVisible()
-//
+////
 
         SessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState

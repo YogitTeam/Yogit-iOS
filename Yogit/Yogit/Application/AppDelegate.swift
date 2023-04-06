@@ -26,17 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().backgroundColor = .systemBackground
         UITabBar.appearance().unselectedItemTintColor = .systemGray3
         
-//        UITabBar.appearance().layer.borderWidth = 1
-//        UITabBar.appearance().layer.borderColor = UIColor.black.cgColor
-//        
-//        let topBorder = CALayer()
-//        topBorder.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 1)
-//        topBorder.backgroundColor = UIColor.black.cgColor
-//        UITabBar.appearance().layer.addSublayer(topBorder)
-        
-//        UITabBar.appearance().layer.top
-//        UITabBar.appearance().layer.borderColor = UIColor.black.cgColor
-        
 //        // 시맨틱 콘텐츠 속성을 설정하여 UIView앱 내에 표시되는 모든 콘텐츠가 사용자의 기본 설정 언어 설정에 따라 올바른 방향으로 배치
 //        UIView.appearance().semanticContentAttribute = UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft ? .forceRightToLeft : .forceLeftToRight
 //
@@ -74,7 +63,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
                         let deviceToken = data.deviceToken
                         UserDefaults.standard.set(deviceToken, forKey: Preferences.PUSH_NOTIFICATION)
-                        print("UserDefaults Preferences.PUSH_NOTIFICATION",UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION))
                     }
                 case let .failure(error):
                     print(error)

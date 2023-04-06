@@ -100,17 +100,14 @@ extension ClipBoardViewController: MessagesDisplayDelegate {
     
     // footerview 사이즈 미리 업데이트 후 footerview add
     func messageFooterView(for indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageReusableView {
-//        print("Make footer")
         let footerView = messagesCollectionView.dequeueReusableFooterView(MessageReusableView.self, for: indexPath)
         footerView.subviews.forEach { $0.removeFromSuperview() }
-//        print("Make footView item and section", indexPath.item, indexPath.section)
         return createLoadingView(footerView: footerView, isPaging: isPaging, isLoading: isLoading, section: indexPath.section)
     }
     
     func textColor(for message: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> UIColor {
         if message.sender.senderId == "SERVICE" { return .white }
         else { return .label }
-  //    isFromCurrentSender(message: message) ? .white : .label
     }
 
     func detectorAttributes(for detector: DetectorType, and _: MessageType, at _: IndexPath) -> [NSAttributedString.Key: Any] {
@@ -127,9 +124,9 @@ extension ClipBoardViewController: MessagesDisplayDelegate {
     // MARK: - All Messages
 
     func backgroundColor(for message: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> UIColor {
-        if message.sender.senderId == "SERVICE" { return UIColor(rgb: 0x3232FF, alpha: 1.0) }
-        else { return isFromCurrentSender(message: message) ? UIColor(rgb: 0x7979FF, alpha: 1.0) : .systemGray4 }
-  //      isFromCurrentSender(message: message) ? UIColor(rgb: 0x3232FF, alpha: 1.0) : .systemGray4 //UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
+        if message.sender.senderId == "SERVICE" { return ServiceColor.primaryColor }
+        else { return isFromCurrentSender(message: message) ? UIColor(rgb: 0x7979FF, alpha: 1.0) : .systemGray5 }
+  //      isFromCurrentSender(message: message) ? ServiceColor.primaryColor : .systemGray4 //UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
     }
       
     
@@ -138,8 +135,7 @@ extension ClipBoardViewController: MessagesDisplayDelegate {
       let tail: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
       return .bubbleTail(tail, .curved)
     }
-
-      
+    
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at _: IndexPath, in _: MessagesCollectionView) {
         let avatar = getAvatarFor(sender: message.sender)
         avatarView.set(avatar: avatar)
@@ -475,7 +471,7 @@ extension ClipBoardViewController {
         }
         isLoading = false
         let startTime = DispatchTime.now().uptimeNanoseconds
-        Task(priority: .high) {
+        Task(priority: .medium) {
             do {
                 let getAllClipBoardsReq =  GetAllClipBoardsReq(boardId: boardId, cursor: cursor, refreshToken: refreshToken, userId: userId)
                 let getData = try await fetchClipBoardData2(getAllClipBoardsReq: getAllClipBoardsReq)
@@ -929,21 +925,18 @@ extension ClipBoardViewController {
         let contentSizeHeight = scrollView.contentSize.height
         let frameSizeHeight = scrollView.frame.size.height
         if scrollView == messagesCollectionView && !isPaging {
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
-            guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-            guard let boardId = self.boardId else { return }
+            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String,
+                  let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
+                  let boardId = self.boardId
+            else { return }
             isPaging = true
-            if contentOffSetY <= -contentInsetTop { // view.safeAreaInsets.top+200
-                print("top  scroling")
+            if contentOffSetY <= -contentInsetTop { // top scroll
                 loadMessages(isInit: false, isUp: false, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
-                print("End Top Load")
             }
-            else if (contentOffSetY > (contentSizeHeight-frameSizeHeight)) {
-                print("bottom scroling")
+            else if (contentOffSetY > (contentSizeHeight-frameSizeHeight)) { // bottom scroll
                 isLoading = true
                 messagesCollectionView.reloadSections([messages.count-1])
                 loadMessages(isInit: false, isUp: true, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
-                print("End Bottom Load")
             } else {
                 isPaging = false
             }

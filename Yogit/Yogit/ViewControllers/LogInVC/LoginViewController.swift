@@ -23,7 +23,7 @@ class LoginViewController: UIViewController {
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Yogit")?.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+        imageView.tintColor = ServiceColor.primaryColor
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = false
         imageView.sizeToFit()
