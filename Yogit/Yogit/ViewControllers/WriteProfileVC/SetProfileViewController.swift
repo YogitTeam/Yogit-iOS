@@ -536,7 +536,7 @@ extension SetProfileViewController: UITableViewDelegate {
         DispatchQueue.main.async(qos: .userInteractive) {
             switch indexPath.section {
             case 0:
-                if self.mode == .edit {
+                if self.mode == .create {
                     let NVC = NameViewController()
                     NVC.delegate = self
                     NVC.userName = self.userProfile.userName
@@ -550,7 +550,7 @@ extension SetProfileViewController: UITableViewDelegate {
                     self.navigationController?.pushViewController(LVC, animated: true)
                 }
             case 3:
-                if self.mode == .edit {
+                if self.mode == .create {
                     let NVC = NationalityViewController()
                     NVC.delegate = self
                     self.navigationController?.pushViewController(NVC, animated: true)
