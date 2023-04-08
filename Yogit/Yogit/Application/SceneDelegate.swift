@@ -17,6 +17,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
+        
+//        let vc = GatheringBoardOptionViewController()
+//        let rootVC = UINavigationController(rootViewController: vc)
+//        rootVC.navigationBar.tintColor = UIColor.label
+//        rootVC.navigationBar.topItem?.backButtonTitle = ""
+//        let navigationBarAppearance = UINavigationBarAppearance()
+//        navigationBarAppearance.backgroundColor = .systemBackground
+//        rootVC.navigationBar.standardAppearance = navigationBarAppearance
+//        self.window = UIWindow(windowScene: scene)
+//        self.window?.rootViewController = rootVC
+//        self.window?.makeKeyAndVisible()
 
         SessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState

@@ -27,7 +27,7 @@ protocol MeetUpPlaceProtocol: AnyObject {
 }
 
 // google map version
-class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
+class MKMapLocalSearchViewController: UIViewController {
     
     // 좌표 초기값
     // defualt 현재 국가로 표시
@@ -91,9 +91,16 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
 //    private let geoTimer: Selector = #selector(Geo_Tick_TimeConsole) // 위치 확인 타이머
     private let searchTimer: Selector = #selector(Search_Tick_TimeConsole) // search 확인 타이머
     
-    private let mapView = MKMapView()
+    private lazy var mapView: MKMapView = {
+        let view = MKMapView()
+        return view
+    }()
     
-    private let locationManager = CLLocationManager()   // 위치 객체
+    private lazy var locationManager: CLLocationManager = {
+        let manager = CLLocationManager()
+        manager.desiredAccuracy = kCLLocationAccuracyBest
+        return manager
+    }()
     
     private var meetUpPlace = MeetUpPlace() {
         didSet {
@@ -183,11 +190,11 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         return button
     }()
     
-//    private let searchGuideLabel: UILabel = {
-//        let label = UILabel()
-//        // localized 필요
-//        // Place: device lanuage
-//        // Postcode: number
+    private let searchGuideLabel: UILabel = {
+        let label = UILabel()
+        // localized 필요
+        // Place: device lanuage
+        // Postcode: number
 //        label.text = """
 //        It's better to find it in the language of the country for that location
 //
@@ -202,27 +209,29 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
 //        - Building name + Apartment name
 //        ex) 한양아파트 204동
 //        """
-//        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
-//        label.numberOfLines = 0
-//        label.sizeToFit()
-//        label.adjustsFontSizeToFitWidth = true
-//        return label
-//    }()
-//
-//    private lazy var searchGuideView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .systemBackground
-//        view.isHidden = true
-//        view.addSubview(searchGuideLabel)
-//        return view
-//    }()
+        
+        label.text = "SEARCH_GUIDE_TITLE".localized()
+        
+        label.font = .systemFont(ofSize: 16, weight: UIFont.Weight.regular)
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+
+    private lazy var searchGuideView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.isHidden = true
+        view.addSubview(searchGuideLabel)
+        return view
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNav()
         configureView()
         configureSearchController()
-        configureMapComponent()
         configureLocationManager()
 //        configureGuideLabel()
         timerRun()
@@ -237,13 +246,13 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
             make.bottom.equalTo(view.snp.bottom).inset(30)
             make.height.equalTo(44)
         }
-//        searchGuideView.snp.makeConstraints { make in
-//            make.top.leading.trailing.bottom.equalToSuperview()
-//        }
-//        searchGuideLabel.snp.makeConstraints { make in
-//            make.top.equalTo(searchGuideView.safeAreaLayoutGuide)
-//            make.leading.trailing.equalToSuperview().inset(20)
-//        }
+        searchGuideView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+        searchGuideLabel.snp.makeConstraints { make in
+            make.top.equalTo(searchGuideView.safeAreaLayoutGuide).offset(6)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
         activityIndicator.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(22)
             make.width.height.equalTo(20)
@@ -266,7 +275,7 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
     private func configureView() {
         view.addSubview(mapView)
         view.addSubview(saveButton)
-//        view.addSubview(searchGuideView)
+        view.addSubview(searchGuideView)
         view.addSubview(noticeView)
         view.backgroundColor = .systemBackground
     }
@@ -305,13 +314,8 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    private func configureMapComponent() {
-        self.mapView.showsUserLocation = true
-        mapView.delegate = self
-    }
-    
     private func configureSearchController() {
-        self.navigationItem.searchController = searchVC
+        navigationItem.searchController = searchVC
         searchVC.searchResultsUpdater = self
         searchVC.searchBar.delegate = self
         searchVC.searchBar.placeholder = "SEARCHBAR_PLACEHOLDER".localized()
@@ -366,14 +370,69 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
 //        self.navigationItem.hidesSearchBarWhenScrolling = false
 //    }
     
+//    // reset runtimeinerval
+//    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+//        geoRunTimeInterval = Date().timeIntervalSinceReferenceDate
+//    }
+    
+    @objc func saveButtonTapped(_ sender: UIButton) {
+        self.delegate?.locationSend(meetUpPlace: self.meetUpPlace)
+        self.navigationController?.popViewController(animated: true)
+    }
+
+}
+extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDelegate {
+    
+    // 위치 권한 변경시 실행
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        print("Check Location Authorization")
+        configureMap()
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            manager.startUpdatingLocation()
+            configureMapOption()
+        case .notDetermined: manager.requestWhenInUseAuthorization()
+        case .restricted, .denied: break
+        @unknown default: break
+        }
+        // 권한 유저 디폴트에 저장
+        //        UserDefaults.standard.set(isAuthorized, forKey: "LocationAuthorization");
+    }
+    
+    // locationManager 에러
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("Start")
+        let pLocation = locations.last // 최근 위치
+        guard let lat = pLocation?.coordinate.latitude else { return }
+        guard let lng = pLocation?.coordinate.longitude else { return }
+        moveLocation(latitudeValue: lat, longtudeValue: lng, delta: 0.01)
+        locationManager.stopUpdatingLocation()
+    }
+    
     func configureLocationManager() {
         locationManager.delegate = self
-        // 정확도 설정 - 최고로 높은 정확도
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        // 위치 데이터 승인 요구
-        locationManager.requestWhenInUseAuthorization()
-        // 위치 업데이트 시작
-        locationManager.startUpdatingLocation()
+    }
+    
+//    func configureLocationManager() {
+//        locationManager.delegate = self
+//        // 정확도 설정 - 최고로 높은 정확도
+//        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+//        // 위치 데이터 승인 요구
+//        locationManager.requestWhenInUseAuthorization()
+//        // 위치 업데이트 시작
+//        locationManager.startUpdatingLocation()
+//    }
+    
+    private func configureMap() {
+        mapView.delegate = self
+    }
+    
+    private func configureMapOption() {
+        mapView.showsUserLocation = true
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -427,50 +486,6 @@ class MKMapLocalSearchViewController: UIViewController, MKMapViewDelegate {
         annotation.subtitle = strSubTitle
         mapView.addAnnotation(annotation)
     }
-    
-//    // reset runtimeinerval
-//    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-//        geoRunTimeInterval = Date().timeIntervalSinceReferenceDate
-//    }
-    
-    @objc func saveButtonTapped(_ sender: UIButton) {
-        self.delegate?.locationSend(meetUpPlace: self.meetUpPlace)
-        self.navigationController?.popViewController(animated: true)
-    }
-
-}
-
-extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
-    
-    // 위치 권한 변경시 실행
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        print("Check Location Authorization")
-        switch manager.authorizationStatus {
-        case .authorizedWhenInUse, .authorizedAlways:
-            manager.requestWhenInUseAuthorization()
-            print("Location is Authorized")
-        case .notDetermined: break
-        case .restricted: break
-        case .denied: break
-        @unknown default: break
-        }
-        // 권한 유저 디폴트에 저장
-//        UserDefaults.standard.set(isAuthorized, forKey: "LocationAuthorization");
-    }
-    
-    // locationManager 에러
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Start")
-        let pLocation = locations.last // 최근 위치
-        guard let lat = pLocation?.coordinate.latitude else { return }
-        guard let lng = pLocation?.coordinate.longitude else { return }
-        moveLocation(latitudeValue: lat, longtudeValue: lng, delta: 0.01)
-        locationManager.stopUpdatingLocation()
-    }
 
     @objc func Search_Tick_TimeConsole() {
         print("실행중")
@@ -492,9 +507,10 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate {
         // 37.5495209, 127.075086 (위경도로 검색 가능)
         // 좌표 검색 시켜 >> 사용자마다 주소를 로컬라이즈화(자동) 불러와서
         
-        self.searchRequest.naturalLanguageQuery = text
-        self.searchRequest.resultTypes = [.address, .pointOfInterest]
-        self.searchRequest.region = searchRegion
+        searchRequest.naturalLanguageQuery = text
+        searchRequest.resultTypes = [.address, .pointOfInterest]
+        searchRequest.region = searchRegion
+//        searchRequest.region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 36.509272, longitude: 127.262724), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
         
         let search = MKLocalSearch(request: searchRequest)
         
@@ -705,48 +721,48 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         // 설명 뷰 띄우고, 검색 데이터 없데이트 완료후 view hide
         print("시작 searchBar")
-        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-//            self.searchGuideView.isHidden = false // 가이드뷰 숨김
+        DispatchQueue.main.async(qos: .userInteractive) { [self] in
+            searchGuideView.isHidden = false // 가이드뷰 숨김
             if !noticeView.isHidden { noticeView.isHidden = true }
-            if self.activityIndicator.isAnimating {
-                self.activityIndicator.stopAnimating()
+            if activityIndicator.isAnimating {
+                activityIndicator.stopAnimating()
                 searchBar.searchTextField.leftView?.isHidden = false
             }
-        })
+        }
     }
 
     // 입력하다 지웠을때나, 값 변경
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print("변경 searchBar")
         
-        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+        DispatchQueue.main.async(qos: .userInteractive) { [self] in
             if searchText == "" { // 값 없을때
-                if self.activityIndicator.isAnimating {
-                    self.activityIndicator.stopAnimating()
+                if activityIndicator.isAnimating {
+                    activityIndicator.stopAnimating()
                     searchBar.searchTextField.leftView?.isHidden = false
                 }
             }
             else { // 값있을때
-                if !self.activityIndicator.isAnimating {
+                if !activityIndicator.isAnimating {
                     searchBar.searchTextField.leftView?.isHidden = true
-                    self.activityIndicator.startAnimating()
+                    activityIndicator.startAnimating()
                 }
             }
-//            self.searchGuideView.isHidden = true
-        })
+            searchGuideView.isHidden = true
+        }
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         print("search bar 취소 버튼 클릭")
         
-        DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-//            self.searchGuideView.isHidden = true
+        DispatchQueue.main.async(qos: .userInteractive) { [self] in
+            searchGuideView.isHidden = true
             if activityIndicator.isAnimating {
                 searchBar.searchTextField.leftView?.isHidden = false
                 activityIndicator.stopAnimating()
             }
             searchVC.dismiss(animated: true)
-        })
+        }
     }
     
 //    func searchBarTextDidEndEditing(_ searchBar:UISearchBar) {

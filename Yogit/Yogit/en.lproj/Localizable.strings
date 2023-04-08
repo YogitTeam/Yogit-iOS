@@ -242,6 +242,7 @@
 "SEARCHBAR_NOTICE_DESCRIPTION" = "Search for gathering locations.";
 "SEARCHBAR_PLACEHOLDER" = "Search address/postcode/place";
 "SEARCH_FAIL_NOTICE_DESCRIPTION" = "Sorry, the address was not found.";
+"SEARCH_GUIDE_TITLE" = "We recommend that you search by address or zip code.";
 
 // GatheringBoardContentViewController
 "GATHERING_CONTENT_ALERT_MESSAGE" = "Please input the %@ according to the condition.";

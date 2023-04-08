@@ -209,6 +209,7 @@ class SetProfileViewController: UIViewController {
         initProgressHUD()
         configureTableView()
         configurePickerVew()
+        configureUserName()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -269,6 +270,14 @@ class SetProfileViewController: UIViewController {
         infoTableView.delegate = self
         infoTableView.dataSource = self
         hideKeyboardWhenTappedAroundInTableView()
+    }
+    
+    private func configureUserName() {
+        if mode == .create {
+            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+            userProfile.userName = userItem.account.user.name.lastName + " " + userItem.account.user.name.firstName
+            infoTableView.reloadData()
+        }
     }
     
     private func configurePickerVew() {
