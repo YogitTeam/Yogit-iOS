@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.string.strings
+  Yogit
+
+  Created by Junseo Park on 2023/04/09.
+  
+*/
+
+NSPhotoLibraryUsageDescription = "프로필이나 게시물에 사진을 포함하려면 사진에 액세스해야 합니다.";
+NSCameraUsageDescription = "프로필이나 게시물에 사진을 포함하려면 카메라에 액세스해야 합니다.";
+NSLocationWhenInUseUsageDescription = "지도에서 사용자의 현재 위치로 확대되고 표시됩니다.";

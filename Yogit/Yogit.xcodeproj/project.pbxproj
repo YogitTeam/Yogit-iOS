@@ -83,6 +83,7 @@
 		7973026B299B896A006EFFB9 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973026A299B896A006EFFB9 /* MainViewController.swift */; };
 		79731FC629C32C970062D091 /* NotificationCenter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79731FC529C32C970062D091 /* NotificationCenter+Extension.swift */; };
 		7977FCB029D69E5A008F5404 /* TermsOfServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7977FCAF29D69E5A008F5404 /* TermsOfServiceViewController.swift */; };
+		79A094DB29E2A5B600DDD148 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 79A094DD29E2A5B600DDD148 /* InfoPlist.strings */; };
 		79A8F66C28C7240300FEBE90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66B28C7240300FEBE90 /* AppDelegate.swift */; };
 		79A8F66E28C7240300FEBE90 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */; };
 		79A8F67028C7240300FEBE90 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A8F66F28C7240300FEBE90 /* ViewController.swift */; };
@@ -217,6 +218,8 @@
 		7973026A299B896A006EFFB9 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		79731FC529C32C970062D091 /* NotificationCenter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extension.swift"; sourceTree = "<group>"; };
 		7977FCAF29D69E5A008F5404 /* TermsOfServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceViewController.swift; sourceTree = "<group>"; };
+		79A094DC29E2A5B600DDD148 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		79A094DE29E2A5BC00DDD148 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		79A8F66828C7240300FEBE90 /* Yogit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yogit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A8F66B28C7240300FEBE90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		79A8F66D28C7240300FEBE90 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -619,6 +622,7 @@
 				79A8F67628C7240500FEBE90 /* LaunchScreen.storyboard */,
 				79A8F67928C7240500FEBE90 /* Info.plist */,
 				79D28ADA2987812900F4FD64 /* Localizable.strings */,
+				79A094DD29E2A5B600DDD148 /* InfoPlist.strings */,
 			);
 			path = Yogit;
 			sourceTree = "<group>";
@@ -836,6 +840,7 @@
 				79D28AD82987812900F4FD64 /* Localizable.strings in Resources */,
 				79A8F67528C7240500FEBE90 /* Assets.xcassets in Resources */,
 				79A8F67328C7240300FEBE90 /* Main.storyboard in Resources */,
+				79A094DB29E2A5B600DDD148 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1101,6 +1106,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		79A094DD29E2A5B600DDD148 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				79A094DC29E2A5B600DDD148 /* en */,
+				79A094DE29E2A5BC00DDD148 /* ko */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		79A8F67128C7240300FEBE90 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1261,10 +1275,9 @@
 				INFOPLIST_FILE = Yogit/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Yogit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSCameraUsageDescription = "사용자의 카메라 권한이 필요합니다.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "사용자의 앨범에 대한 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = test;
+				INFOPLIST_KEY_NSCameraUsageDescription = NSCameraUsageDescription;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = NSLocationWhenInUseUsageDescription;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = NSPhotoLibraryUsageDescription;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1302,10 +1315,9 @@
 				INFOPLIST_FILE = Yogit/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Yogit;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSCameraUsageDescription = "사용자의 카메라 권한이 필요합니다.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "사용자의 앨범에 대한 권한이 필요합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = test;
+				INFOPLIST_KEY_NSCameraUsageDescription = NSCameraUsageDescription;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = NSLocationWhenInUseUsageDescription;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = NSPhotoLibraryUsageDescription;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

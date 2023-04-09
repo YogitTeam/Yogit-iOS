@@ -20,8 +20,8 @@
 "SET_AUTHORIZATION_SETTING" = "설정";
 "PHOTO" = "사진";
 "CAMERA" = "카메라";
-"AUTHORIZATION_ALERT_TITLE" = "'%@' 앱의 접근 권한이 요구됩니다.";
-"AUTHORIZATION_ALERT_MESSAGE" = "해당 기능을 사용하기 위해서 '%@' 앱의 접근 권한이 필요합니다.";
+"AUTHORIZATION_ALERT_TITLE" = "'%@' 접근 허용";
+"AUTHORIZATION_ALERT_MESSAGE" = "사진 업로드를 위해 '%@' 앱에 대한 권한을 허용해주세요.";
 
 "Nationality" = "국적";
 "Gathering" = "모임";

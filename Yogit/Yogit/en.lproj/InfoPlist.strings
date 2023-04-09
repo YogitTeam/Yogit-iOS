@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.string.strings
+  Yogit
+
+  Created by Junseo Park on 2023/04/09.
+  
+*/
+
+NSPhotoLibraryUsageDescription = "Yogit needs access to your photos so you can include them in your profile or post.";
+NSCameraUsageDescription = "Yogit needs access to your camera so you can include them in your profile or post.";
+NSLocationWhenInUseUsageDescription = "Zoom in and display to your current location on the map.";

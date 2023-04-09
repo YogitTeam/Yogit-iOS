@@ -22,8 +22,8 @@
 "SET_AUTHORIZATION_SETTING" = "Setting";
 "PHOTO" = "Photos";
 "CAMERA" = "Camera";
-"AUTHORIZATION_ALERT_TITLE" = "Access authorization to the '%@' app required.";
-"AUTHORIZATION_ALERT_MESSAGE" = "It should be allow authorization for the '%@' app to use this funtion.";
+"AUTHORIZATION_ALERT_TITLE" = "Allow '%@' access";
+"AUTHORIZATION_ALERT_MESSAGE" = "Please allow access to the '%@' app for photo upload.";
 
 // Tabbar
 "MY_PROFILE" = "My Profile";
@@ -106,10 +106,10 @@
 "PROFILE_LEVEL_1" = "Intermediate";
 "PROFILE_LEVEL_2" = "Advanced";
 "PROFILE_LEVEL_3" = "Bilingual";
-"PROFILE_LEVEL_4" = "Natvie";
+"PROFILE_LEVEL_4" = "Native";
 
 // NameViewController
-"NAME_NOTICE" = "We recommend a name that is easy for global friends to call!";
+"NAME_NOTICE" = "A name that is easy for global friends to call is recommended.";
 "NAME_PLACEHOLDER" = "Name";
 "NAME_NAVIGATIONITEM_TITLE" = "Name";
 "NAME_ALERT" = "Please input the name according to the condition.";
@@ -242,7 +242,7 @@
 "SEARCHBAR_NOTICE_DESCRIPTION" = "Search for gathering locations.";
 "SEARCHBAR_PLACEHOLDER" = "Search address/postcode/place";
 "SEARCH_FAIL_NOTICE_DESCRIPTION" = "Sorry, the address was not found.";
-"SEARCH_GUIDE_TITLE" = "We recommend that you search by address or zip code.";
+"SEARCH_GUIDE_TITLE" = "Searching by address or postal code is recommended.";
 
 // GatheringBoardContentViewController
 "GATHERING_CONTENT_ALERT_MESSAGE" = "Please input the %@ according to the condition.";
@@ -276,5 +276,4 @@
 "JOINED" = "Joined";
 "OPENED" = "Opened";
 "ACTIVITY" = "Activity";
-
 
