@@ -597,7 +597,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             
             // 서버에 전송할때, country 키로, locality를 값 (영어로 전송) >> 받을때 유저 preference language로 geocoding해서 변환
             guard let pm = placemarks?.last else { return }
-            let country = pm.country ?? ""
+//            let country = pm.country ?? ""
             guard let locality = pm.locality else { return }
             
             let centerAddress = "\(locality) \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"

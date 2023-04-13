@@ -46,7 +46,7 @@ class ServiceTapBarViewController: UITabBarController {
     private func configureNotification() {
         print("노티피케이션 구현")
 //        UNUserNotificationCenter.current().delegate = self
-        print("configureNotificatio - Preferences.PUSH_NOTIFICATIO value", UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION))
+//        print("configureNotificatio - Preferences.PUSH_NOTIFICATIO value", UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION))
         if UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION) == nil { // 로그아웃, 계정삭제시만 디바이스 토큰 서버로 보냄
             registerForPushNotifications()
         }

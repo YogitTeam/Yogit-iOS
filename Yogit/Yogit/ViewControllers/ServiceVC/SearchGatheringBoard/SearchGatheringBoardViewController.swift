@@ -206,7 +206,7 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
         tableView.dataSource = self
         configureViewComponent()
         getBoardThumbnail()
-        initLocation()
+//        initLocation()
 //        NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(didDeleteBoardNotification(_:)), name: .deleteBoardRefresh, object: nil)
         // Do any additional setup after loading the view.
@@ -255,11 +255,11 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 //        tableViewheaderContentView.frame = tableView.tableHeaderView!.bounds
     }
     
-    private func initLocation() { // 위치 초기값 설정 (저장 안함)
-        UserAuthorizationLocation.KR.rawValue // country
-        UserAuthorizationLocation.KR.locality() // capital (locality) of country
-    }
-    
+//    private func initLocation() { // 위치 초기값 설정 (저장 안함)
+//        UserAuthorizationLocation.KR.rawValue // country
+//        UserAuthorizationLocation.KR.locality() // capital (locality) of country
+//    }
+//
     
     private func configureUserAuthorizationLocation() { // 유저 위치 인증 받았을때, 저장할 함수
         // [String: String] = [countryCode: locality]
@@ -396,7 +396,6 @@ class SearchGatheringBoardController: UIViewController, UITableViewDelegate, UIT
 ////        cell.configure(with: viewModel)
 //        cell.configure(with: boardAllData[indexPath.row])
         
-        print("categoryId, categoryString \(categoryId) \(categoryId?.toString())")
         return cell
     }
     
