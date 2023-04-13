@@ -218,5 +218,7 @@ final class KeychainManager {
         UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
         UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION) // 앱 삭제후 디바이스 토큰 삭제
 //        assert(status == noErr, "failed to delete the value, status code = \(status)")
+        UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
+        UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
     }
 }

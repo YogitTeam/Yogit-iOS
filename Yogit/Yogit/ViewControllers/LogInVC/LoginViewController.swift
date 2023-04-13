@@ -89,8 +89,6 @@ class LoginViewController: UIViewController {
                     if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
                         do {
                             try KeychainManager.deleteUserItem(userItem: userItem)
-                            UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
-                            UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
                             DispatchQueue.main.async {
                                 ProgressHUD.dismiss()
                             }

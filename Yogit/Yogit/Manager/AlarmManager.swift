@@ -33,9 +33,9 @@ final class AlarmManager {
     }
     
     enum AlarmType: String {
-        case apply = "JOINAPPLY"
-        case withdrawl = "DELAPPLY"
-        case clipBoard = "CLIPBOARD"
+        case apply = "JOINAPPLY" // JOINAPPLY
+        case withdrawl = "DELAPPLY" // DELAPPLY
+        case clipBoard = "CREATE_CLIPBOARD" // CREATE_CLIPBOARD
         
         func toKey() -> String {
             return self.rawValue

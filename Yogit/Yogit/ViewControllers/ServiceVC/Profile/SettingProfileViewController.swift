@@ -91,12 +91,9 @@ class SettingProfileViewController: UIViewController {
                 case .success:
                     guard let value = response.value else { return }
                     if value.httpCode == 200 || value.httpCode == 201 {
-//                        guard let data = value.data else { return }
                         do {
                             try KeychainManager.deleteUserItem(userItem: userItem)
-//                            try KeychainManager.deleteUserItem()
-                            UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
-                            UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
+                            
                             // 애플 회원탈퇴후 회원가입시 바로 안됨
                             DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
                                 moveToLoginVC()

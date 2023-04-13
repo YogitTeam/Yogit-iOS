@@ -11,4 +11,5 @@ extension Notification.Name {
     static let alarmRefresh = Notification.Name("AlarmRefresh")
     static let baordDetailRefresh = Notification.Name("BoardDetailRefresh")
     static let revokeTokenRefresh = Notification.Name("RevokeTokenRefresh")
+    static let moveToNotiTapVC = Notification.Name("MoveToNotiTapVC")
 }
