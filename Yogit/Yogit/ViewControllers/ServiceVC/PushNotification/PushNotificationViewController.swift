@@ -163,7 +163,7 @@ class PushNotificationViewController: UIViewController {
 //
 //        let bodyLocKey = alarmData[indexPath.row].body
 //        let localizedString = NSLocalizedString(bodyLocKey, comment: "")
-//      
+//
 //        content.text = alarmData[indexPath.row].title.localized()
 //        content.secondaryText = localizedString.localized()
 //

@@ -30,11 +30,21 @@ class LoginViewController: UIViewController {
         return imageView
     }()
     
+    private let setCountryTitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.medium)
+        label.numberOfLines = 1
+        label.sizeToFit()
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureViewComponent()
+        configureView()
         initProgressHUD()
         addNotiCenter()
+        setCountry()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -45,18 +55,23 @@ class LoginViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         signInWithAppleButton.snp.makeConstraints { make in
-            make.left.right.equalTo(view).inset(20)
-            make.bottom.equalTo(view.snp.bottom).inset(100)
+            make.bottom.equalToSuperview().inset(100)
             make.height.equalTo(50)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().inset(40)
         }
         iconImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().inset(300)
+            make.top.equalToSuperview().inset(200)
+        }
+        setCountryTitleLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
-    private func configureViewComponent() {
+    private func configureView() {
         view.addSubview(iconImageView)
+        view.addSubview(setCountryTitleLabel)
         view.addSubview(signInWithAppleButton)
         view.backgroundColor = .systemBackground
     }
@@ -72,6 +87,17 @@ class LoginViewController: UIViewController {
     
     private func removeNotiCenter() {
         NotificationCenter.default.removeObserver(self, name: .revokeTokenRefresh, object: nil)
+    }
+    
+    private func setCountry() {
+        let code = ServiceCountry.kr
+        let rawCode = code.rawValue
+        let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: rawCode])
+        let localeIdentifier = Locale.preferredLanguages.first ?? "" // en-KR
+        let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
+        let countryInfo = Country(countryCode: rawCode, countryName: countryName, countryEmoji: rawCode.emojiFlag)
+        setCountryTitleLabel.text = "\(countryInfo.countryEmoji) \(countryInfo.countryName)"
+        SessionManager.saveCountryCode(code: code)
     }
     
     @objc private func revokeTokenRefreshNotification(_ notification: Notification) {
@@ -144,7 +170,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                 
                                 DispatchQueue.main.async(qos: .userInteractive){ [self] in
                                     if userItem.account.hasRequirementInfo {
-                                        let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
+                                        let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
                                         view.window?.rootViewController = rootVC
                                         view.window?.makeKeyAndVisible()
                                     } else {

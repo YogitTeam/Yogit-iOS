@@ -45,7 +45,6 @@ final class SessionManager {
                     completion(.undefine)
                     break
                 case .authorized: // The Apple ID credential is valid. / 회원 가입시 자격권한 승인된 사람
-                    print("Authorized userItem.account.hasRequirementInfo", userItem.account.hasRequirementInfo)
                     if userItem.account.hasRequirementInfo { completion(.signInService) } // 서비스 로그인 (필수 정보 기입)
                     else { completion(.signInSNS) } // 애플 로그인 (애플 로그인만한 상태, 필수 정보 미기입)
                     break
@@ -53,7 +52,6 @@ final class SessionManager {
                     // 애플 키체인 삭제
                     // 현재 로그인 type 삭제 (내부 구현)
                     completion(.deleteAccout)
-                    print("애플 credentialState == .revoke")
                     break
                 default:
                     break
@@ -61,6 +59,15 @@ final class SessionManager {
             }
         default: fatalError("Not support service SignIn")
         }
+    }
+    
+    static func saveCountryCode(code: ServiceCountry) { // country save (server country)
+        UserDefaults.standard.set(code.rawValue, forKey: ServiceCountry.identifier)
+    }
+    
+    static func getSavedCountryCode() -> String? {
+        guard let code = UserDefaults.standard.object(forKey: ServiceCountry.identifier) as? ServiceCountry.RawValue else { return nil }
+        return code
     }
 }
 

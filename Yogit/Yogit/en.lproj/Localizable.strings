@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   Yogit
 
@@ -53,6 +53,15 @@
 
 "GATHERING_WITHDRAW_TITLE" = "Cancel joined gathering";
 "GATHERING_WITHDRAW_BODY" = "%@ has canceled joined a %@ gathering."; // 이름, 모임명
+"YEAR" = "y";
+"MONTH" = "m";
+"WEEK" = "w";
+"DAY" = "d";
+"HOUR" = "h";
+"MINUTE" = "m";
+"SECOND" = "A moment";
+"AGO" = "ago";
+
 
 
 // ReportViewController

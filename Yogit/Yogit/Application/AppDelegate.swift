@@ -118,38 +118,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // 앱 열린 상태일때
-//   func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-//       // 원격으로 들어오면, 열린 상태 함수 실행안됨
-//       print("WillPresent userNotificationCenter")
-//
-//       debugPrint(notification.request.content.userInfo)
-//
-//       let content = notification.request.content
-//       let title: String = content.title // 현재 title-loc-key로 키값 설정됨
-//       let body: String = content.body // 현재 loc-key로 키값 걸정됨
-//
-//       var args: [String] = []
-//       if let aps = content.userInfo["aps"] as? [String: Any],
-//           let alert = aps["alert"] as? [String: Any],
-//           let locArgs = alert["loc-args"] as? [String] {
-//           for arg in locArgs {
-//               args.append(arg)
-//           }
-//           print("WillPresent args, locArgs", args, locArgs)
+   func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+       // 원격으로 들어오면, 열린 상태 함수 실행안됨
+       print("WillPresent userNotificationCenter")
+
+       debugPrint(notification.request.content.userInfo)
+
+       let content = notification.request.content
+       let title: String = content.title // 현재 title-loc-key로 키값 설정됨
+       let body: String = content.body // 현재 loc-key로 키값 걸정됨
+
+       var args: [String] = []
+       
+       if let aps = content.userInfo["aps"] as? [String: Any],
+           let alert = aps["alert"] as? [String: Any],
+           let locArgs = alert["loc-args"] as? [String] {
+           for arg in locArgs {
+               args.append(arg)
+           }
+       }
+       
+       guard let boardId = content.userInfo["boardId"] as? Int64 else { return }
+       guard let type = content.userInfo["pushType"] as? String else { return }
+       guard let time = content.userInfo["time"] as? String else { return }
+       guard let isOpened = content.userInfo["isOpened"] as? Bool else { return }
+       
+       let noti = PushNotification(id: 0, type: type, title: title, body: body, argArray: args, boardId: boardId, time: time, isOpened: isOpened)
+       
+       PushNotificationManager.saveNotification(noti: noti)
+       
+//       // foreground 앱 알리는 형태
+//       if type != PushNotificationManager.NotiType.clipBoard.toKey() { // 신청, 취소 알림은 포어그라운드 알림
+//           completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
 //       }
-//
-//
-//       guard let id = content.userInfo["boardId"] as? Int64 else { return }
-//       guard let type = content.userInfo["pushType"] as? String else { return }
-//       let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-//
+       
+       
+       //       guard let id = content.userInfo["boardId"] as? Int64 else { return }
+       //       guard let type = content.userInfo["pushType"] as? String else { return }
+       //       let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
+    
+       
 //       receivePushNotificationData(alarm: alarmData)
-//
+
 //       // foreground 앱 알리는 형태
 //       if type != AlarmManager.AlarmType.clipBoard.toKey() { // 신청, 취소 알림은 포어그라운드 알림
 //           completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
 //       }
-//   }
+   }
 
     
    // 앱 원격 상태일때
@@ -164,6 +179,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
        let body: String = content.body
 
        var args: [String] = []
+       
        if let aps = content.userInfo["aps"] as? [String: Any],
            let alert = aps["alert"] as? [String: Any],
            let locArgs = alert["loc-args"] as? [String] {
@@ -173,28 +189,33 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
            print("DidReceive  args, locArgs", args, locArgs)
        }
 
-       guard let id = content.userInfo["boardId"] as? Int64 else { return }
+//       guard let id = content.userInfo["boardId"] as? Int64 else { return }
+//       guard let type = content.userInfo["pushType"] as? String else { return }
+//       let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
+//
+//       receivePushNotificationData(alarm: alarmData)
+//
+//       NotificationCenter.default.post(name: .moveToNotiTapVC, object: nil) // 탭바컨트롤러로 알림 쏴서 아래 함수 실행
+       
+       guard let boardId = content.userInfo["boardId"] as? Int64 else { return }
        guard let type = content.userInfo["pushType"] as? String else { return }
-       let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-
-       receivePushNotificationData(alarm: alarmData)
-
-
-       NotificationCenter.default.post(name: .moveToNotiTapVC, object: nil) // 탭바컨트롤러로 알림 쏴서 아래 함수 실행
+       guard let time = content.userInfo["time"] as? String else { return }
+       guard let isOpened = content.userInfo["isOpened"] as? Bool else { return }
+       
+       let noti = PushNotification(id: 0, type: type, title: title, body: body, argArray: args, boardId: boardId, time: time, isOpened: isOpened)
+       
+       PushNotificationManager.saveNotification(noti: noti)
+       
+       NotificationCenter.default.post(name: .moveToNotiTabVC, object: nil) // 탭바 컨트롤러 탭바 인덱스 변경 노티
 
        completionHandler()
    }
    
-   func receivePushNotificationData(alarm: Alarm) {
-       
-       print("receivePushNotificationData")
-       
-       guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
-       print("기존 알림 리스트", alarms)
-       print("새로운 알림", alarm)
-       alarms.append(alarm)
-       AlarmManager.saveAlarms(alarms: alarms)
-       NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
-   }
+//   func receivePushNotificationData(alarm: Alarm) {
+//       guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
+//       alarms.append(alarm)
+//       AlarmManager.saveAlarms(alarms: alarms)
+//       NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
+//   }
 }
 

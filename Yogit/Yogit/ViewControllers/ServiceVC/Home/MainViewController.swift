@@ -209,7 +209,7 @@ class  MainViewController: UIViewController {
     private var isPaging: Bool = false
     private var isLoading: Bool = false
     private let modular = 10
-    private var tasks = [Task<(), Error>]()
+    private var tasks = [Task<(), Never>]()
     private var categoryId: Int = 1
     
     private var selectedCell: CategoryImageViewCollectionViewCell? {
@@ -353,7 +353,7 @@ class  MainViewController: UIViewController {
     
     private func initAPICall() {
         isPaging = true
-        pagingBoardsByCategory(categoryId: categoryId, firstPage: true)
+        pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
     }
 
     // 카테고리 눌렀을때만 reloadData
@@ -417,9 +417,9 @@ class  MainViewController: UIViewController {
     
     // category 1부터 시작
     
-    private func pagingBoardsByCategory(categoryId: Int, firstPage: Bool) {
+    private func pagingBoardsByCategory(categoryId: Int, isFirstPage: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        if firstPage {
+        if isFirstPage {
             let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
             gatheringBoardCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
@@ -428,6 +428,27 @@ class  MainViewController: UIViewController {
         let task = Task {
             do {
                 let getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                
+                if isFirstPage {
+                    gatheringBoardCollectionView.stopSkeletonAnimation()
+                    gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
+                }
+                
+                let endTime = DispatchTime.now().uptimeNanoseconds
+                let elapsedTime = endTime - startTime
+                if elapsedTime <= 400_000_000 {
+                    do {
+                        try await Task.sleep(nanoseconds: 400_000_000 - elapsedTime)
+                    } catch {
+                        print("sleep nanoseconds error \(error.localizedDescription)")
+                    }
+                }
+                
+                if !isFirstPage {
+                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                    gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                }
+                
                 let totalPage = getData.totalPage
                 if pageCursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
@@ -452,18 +473,6 @@ class  MainViewController: UIViewController {
                 }
             } catch {
                 print("fetchGatheringBoardsByCategory error \(error.localizedDescription)")
-            }
-            if firstPage {
-                gatheringBoardCollectionView.stopSkeletonAnimation()
-                gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
-            } else {
-                let endTime = DispatchTime.now().uptimeNanoseconds
-                let elapsedTime = endTime - startTime
-                if elapsedTime <= 300_000_000 {
-                    try await Task.sleep(nanoseconds: 300_000_000 - elapsedTime)
-                }
-                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
             }
             isPaging = false
         }
@@ -530,7 +539,7 @@ class  MainViewController: UIViewController {
         if !isPaging {
             isPaging = true
             resetBoardsData(categoryId: categoryId)
-            pagingBoardsByCategory(categoryId: categoryId, firstPage: true)
+            pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
         }
         refreshControl.endRefreshing()
     }
@@ -556,7 +565,7 @@ extension  MainViewController: UIScrollViewDelegate {
                 isLoading = true
                 let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
                 gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
-                pagingBoardsByCategory(categoryId: categoryId, firstPage: false)
+                pagingBoardsByCategory(categoryId: categoryId, isFirstPage: false)
                 print("End Bottom Load")
             }
         }
@@ -581,7 +590,7 @@ extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionVie
                 categoryId = indexPath.row + 1
                 print("🎃", categoryId)
                 resetBoardsData(categoryId: categoryId)
-                pagingBoardsByCategory(categoryId: categoryId, firstPage: true)
+                pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
             }
         } else {
             DispatchQueue.main.async { [weak self] in
@@ -605,13 +614,14 @@ extension MainViewController: SkeletonCollectionViewDataSource {
         return UICollectionReusableView()
 //        fatalError("Unexpected element kind or section")
     }
-    
+
     func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {
         return GatheringBoardThumbnailCollectionViewCell.identifier
     }
-    
+
+
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return UICollectionView.automaticNumberOfSkeletonItems
+        return 6 //UICollectionView.automaticNumberOfSkeletonItems
     }
     
     //UICollectionViewDataSource

@@ -38,7 +38,6 @@ class MyClubViewController: UIViewController {
     private var isPaging: Bool = false
     private var isLoading: Bool = false
     private let modular = 10
-    private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
     
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
@@ -65,11 +64,17 @@ class MyClubViewController: UIViewController {
         let control = UISegmentedControl(items: ["JOINED".localized(), "OPENED".localized()])
         control.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
         control.selectedSegmentIndex = 0
-//        control.backgroundColor = ServiceColor.primaryColor
         control.selectedSegmentTintColor = ServiceColor.primaryColor
         control.layer.cornerRadius = 30
         control.layer.masksToBounds = true
-//        control.clipsToBounds = true
+        let normalAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.black,
+        ]
+        control.setTitleTextAttributes(normalAttributes, for: .normal)
+        let selectedAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.white,
+        ]
+        control.setTitleTextAttributes(selectedAttributes, for: .selected)
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
@@ -113,14 +118,14 @@ class MyClubViewController: UIViewController {
     
     private func initAPICall() {
         isPaging = true
-        pagingMyBoards(type: boardType, firstPage: true)
+        pagingMyBoards(type: boardType, isFirstPage: true)
     }
     
     @objc private func refreshGatheringBoards() {
         if !isPaging {
             isPaging = true
             resetBoardsData()
-            pagingMyBoards(type: boardType, firstPage: true)
+            pagingMyBoards(type: boardType, isFirstPage: true)
         }
         refreshControl.endRefreshing()
     }
@@ -152,10 +157,11 @@ class MyClubViewController: UIViewController {
         }
     }
     
-    private func pagingMyBoards(type: String, firstPage: Bool) {
+    private func pagingMyBoards(type: String, isFirstPage: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        if firstPage {
+        if isFirstPage {
+            let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
             myBoardsCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
         isLoading = false
@@ -163,6 +169,27 @@ class MyClubViewController: UIViewController {
         let task = Task {
             do {
                 let getData = try await fetchGatheringMyBoards(type: type, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                
+                if isFirstPage {
+                    myBoardsCollectionView.stopSkeletonAnimation()
+                    myBoardsCollectionView.hideSkeleton(reloadDataAfter: false)
+                }
+        
+                let endTime = DispatchTime.now().uptimeNanoseconds
+                let elapsedTime = endTime - startTime
+                if elapsedTime <= 400_000_000 {
+                    do {
+                        try await Task.sleep(nanoseconds: 400_000_000 - elapsedTime)
+                    } catch {
+                        print("sleep nanoseconds error \(error.localizedDescription)")
+                    }
+                }
+                
+                if !isFirstPage {
+                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                    myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                }
+                
                 let totalPage = getData.totalPage
                 if pageCursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
@@ -186,22 +213,6 @@ class MyClubViewController: UIViewController {
                 }
             } catch {
                 print("fetchGatheringMyBoards error \(error.localizedDescription)")
-            }
-            if firstPage {
-                myBoardsCollectionView.stopSkeletonAnimation()
-                myBoardsCollectionView.hideSkeleton(reloadDataAfter: false)
-            } else {
-                let endTime = DispatchTime.now().uptimeNanoseconds
-                let elapsedTime = endTime - startTime
-                if elapsedTime <= 300_000_000 {
-                    do {
-                        try await Task.sleep(nanoseconds: 300_000_000 - elapsedTime)
-                    } catch {
-                        print("sleep nanoseconds error \(error.localizedDescription)")
-                    }
-                }
-                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
             }
             isPaging = false
         }
@@ -228,7 +239,7 @@ class MyClubViewController: UIViewController {
         } else {
             boardType = MyClubType.create.toString() // 생성 모임
         }
-        pagingMyBoards(type: boardType, firstPage: true)
+        pagingMyBoards(type: boardType, isFirstPage: true)
      }
 }
 
@@ -260,7 +271,7 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-       return UICollectionView.automaticNumberOfSkeletonItems
+       return 6 //UICollectionView.automaticNumberOfSkeletonItems
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -296,7 +307,7 @@ extension  MyClubViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        // scrollView.contentOffset.y > 80 && 
+        // scrollView.contentOffset.y > 80 &&
         if !isPaging {
             if scrollView.contentOffset.y > 80 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
                 .height)) { // -500
@@ -304,7 +315,7 @@ extension  MyClubViewController: UIScrollViewDelegate {
                 isLoading = true
                 let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
                 myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
-                pagingMyBoards(type: boardType, firstPage: false)
+                pagingMyBoards(type: boardType, isFirstPage: false)
             }
         }
     }

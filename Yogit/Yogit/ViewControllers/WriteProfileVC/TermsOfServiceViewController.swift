@@ -286,7 +286,7 @@ class TermsOfServiceViewController: UIViewController {
                             userItem.userName = data.name // 유저 이름, 상태 저장
                             try KeychainManager.updateUserItem(userItem: userItem)
                             DispatchQueue.main.async { [self] in
-                                let rootVC = UINavigationController(rootViewController: ServiceTapBarViewController())
+                                let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
                                 navigationController?.popToRootViewController(animated: false)
                                 view.window?.rootViewController = rootVC
                                 view.window?.makeKeyAndVisible()

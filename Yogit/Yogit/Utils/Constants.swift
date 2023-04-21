@@ -20,11 +20,10 @@ enum CreateError: Error {
 
 
 enum RootViewState {
-    case loginView, homeView //setProfileView
+    case loginView, homeView 
 }
 
 enum ServiceColor {
-    
     static let primaryColor: UIColor = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? UIColor(rgb: 0x3C3CDB, alpha: 1.0) : UIColor(rgb: 0x3232FF, alpha: 1.0)
 }
 
@@ -59,23 +58,15 @@ enum PushNotificationKind {
 }
 
 // 권한 받은 유저
-enum UserAuthorizationLocation: String {
+enum UserAuthorizationLocation {
     static let LOCATION: String = "UserAuthorizationLocation"
-//    var locality: String? {
-//        let localityName = UserDefaults.standard.object(forKey: UserAuthorizationLocation.LOCATION) as? String
-//        return localityName
-//    }
-    case KR = "KR"
-
-
-
-    func locality() -> String {
-        switch self {
-        case .KR: return "SEOUL"
-        }
-    }
 }
 
+enum ServiceCountry: String {
+    static let identifier = "SetCountryIdentifier"
+    
+    case kr = "KR"
+}
 
 //enum LocalizedLanguage {
 //    static let LANGUAGE: String = "Language"

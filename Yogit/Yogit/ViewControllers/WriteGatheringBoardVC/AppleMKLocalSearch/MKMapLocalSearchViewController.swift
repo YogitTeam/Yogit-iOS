@@ -91,6 +91,9 @@ class MKMapLocalSearchViewController: UIViewController {
 //    private let geoTimer: Selector = #selector(Geo_Tick_TimeConsole) // 위치 확인 타이머
     private let searchTimer: Selector = #selector(Search_Tick_TimeConsole) // search 확인 타이머
     
+    
+    private let setCountryCode = SessionManager.getSavedCountryCode()
+    
     private lazy var mapView: MKMapView = {
         let view = MKMapView()
         return view
@@ -185,7 +188,7 @@ class MKMapLocalSearchViewController: UIViewController {
         button.tintColor = .white
         button.layer.cornerRadius = 8
         button.isEnabled = false
-        button.backgroundColor = .placeholderText 
+        button.backgroundColor = .placeholderText
         button.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -347,7 +350,7 @@ class MKMapLocalSearchViewController: UIViewController {
 //       attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.systemGray, range: range)
 //       searchGuideLabel.attributedText = attributedString
 //   }
-//    
+//
     
 //    @objc func onClickSwitch(sender: UISwitch) {
 //        // Inactive하면 화면 중앙 핀 hide=true, active 하면 핀 hide false
@@ -503,6 +506,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             return
         }
         
+        guard let setCountryCode = setCountryCode else { return }
         
         // 37.5495209, 127.075086 (위경도로 검색 가능)
         // 좌표 검색 시켜 >> 사용자마다 주소를 로컬라이즈화(자동) 불러와서
@@ -530,8 +534,10 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             
             var mapItems: [MKMapItem] = []
             for item in response.mapItems {
-                if let postCode = item.placemark.postalCode {
-                    print("postCode", postCode)
+                if let postCode = item.placemark.postalCode,
+                   let countryCode = item.placemark.countryCode,
+                   setCountryCode == countryCode { // 로컬 디비에 저장 해서 변경
+                    print("countrycode, postCode", countryCode, postCode)
                     mapItems.append(item) // 우편번호만 있는 주소 값만 저장 (도, 시 제외)
                 }
             }

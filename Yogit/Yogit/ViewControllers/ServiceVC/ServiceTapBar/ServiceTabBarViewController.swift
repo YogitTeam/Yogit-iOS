@@ -155,14 +155,14 @@ extension ServiceTabBarViewController { // UNUserNotificationCenterDelegate
 //            completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
 //        }
 //    }
-//    
+//
 //    // 앱 원격 상태일때
 //    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-//        
+//
 //        print("DidReceive userNotificationCenter")
-//        
+//
 //        debugPrint(response.notification.request.content.userInfo)
-//        
+//
 //        let content = response.notification.request.content
 //        let title: String = content.title
 //        let body: String = content.body
@@ -182,19 +182,19 @@ extension ServiceTabBarViewController { // UNUserNotificationCenterDelegate
 //        let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
 //
 //        receivePushNotificationData(alarm: alarmData)
-//        
+//
 //        DispatchQueue.main.async {
 //            self.navigationController?.popToRootViewController(animated: true)
 //            self.selectedIndex = 3
 //        }
-//        
+//
 //        completionHandler()
 //    }
-//    
+//
 //    func receivePushNotificationData(alarm: Alarm) {
-//        
+//
 //        print("receivePushNotificationData")
-//        
+//
 //        guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
 //        print("기존 알림 리스트", alarms)
 //        print("새로운 알림", alarm)

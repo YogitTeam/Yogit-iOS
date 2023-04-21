@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   Yogit
 
@@ -52,6 +52,14 @@
 "GATHERING_JOIN_BODY" = "%@ 님이 %@ 모임에 참여하였습니다."; // 이름, 모임명
 "GATHERING_WITHDRAW_TITLE" = "모임 취소";
 "GATHERING_WITHDRAW_BODY" = "%@ 님이 %@ 모임 참여를 취소하였습니다."; // 이름, 모임명
+"YEAR" = "년";
+"MONTH" = "달";
+"WEEK" = "주";
+"DAY" = "일";
+"HOUR" = "시간";
+"MINUTE" = "분";
+"SECOND" = "방금";
+"AGO" = "전";
 
 // ReportViewController
 "OBSCENITY" = "음란/성인";
@@ -241,7 +249,7 @@
 "SEARCHBAR_NOTICE_DESCRIPTION" = "모임 위치를 검색하세요.";
 "SEARCHBAR_PLACEHOLDER" = "주소/우편번호/장소 검색";
 "SEARCH_FAIL_NOTICE_DESCRIPTION" = "죄송합니다, 주소를 찾지 못했습니다.";
-"SEARCH_GUIDE_TITLE" = "주소나 우편 번호로 검색하시는 것을 추천드립니다.";
+"SEARCH_GUIDE_TITLE" = "주소 혹은 우편 번호로 검색하시는 것을 추천드립니다.";
 
 // GatheringBoardContentViewController
 "GATHERING_CONTENT_ALERT_MESSAGE" = "%@를 조건에 맞게 입력해주세요.";

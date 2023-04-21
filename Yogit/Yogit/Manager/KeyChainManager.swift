@@ -10,10 +10,6 @@ import Foundation
 final class KeychainManager {
     static let shared = KeychainManager()
     
-//    enum ServiceUser {
-//        static let APPLE_USER: String = "APPLE_USER"
-//    }
-    
     enum KeychainError: Error {
         case duplicateEntry // keychain data dulicated
         case unexpectedTokenData // unexpected token data type
@@ -31,16 +27,13 @@ final class KeychainManager {
             kSecValueData as String: data
         ]
         
-        print("keychain save query \(query)")
-        
         let status = SecItemAdd(query as CFDictionary, nil)
-        
-        print("keychain saved")
-        print("Read status \(status)")
         
         guard status != errSecDuplicateItem else { throw KeychainError.duplicateEntry }
         
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
+        
+        print("Keychain Save User")
     }
     
     // 사용자 (이메일, 이름) 삭제
@@ -50,9 +43,9 @@ final class KeychainManager {
                 kSecAttrService as String: userType
             ]
         let status = SecItemDelete(query)
-        print("애플 User type 삭제 미통과")
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-        print("애플 User type 삭제 통과")
+        
+        print("Keychain Delete User")
     }
     
     // 사용자 (이메일, 이름) 조회
@@ -61,17 +54,15 @@ final class KeychainManager {
         
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-//            kSecAttrService as String: serviceType, // 현재 서비스 타입인지 체크
+            kSecAttrService as String: userType, // 현재 서비스 타입인지 체크
             kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
             kSecReturnAttributes as String: true,
             kSecReturnData as String: true
         ]
         
         var item: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &item) // get
         
-        print("get Item \(String(describing: item))")
-        print("get query \(query)")
+        let status = SecItemCopyMatching(query as CFDictionary, &item) // get
         
         guard status != errSecItemNotFound else { return nil }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
@@ -79,14 +70,12 @@ final class KeychainManager {
         guard let existingItem = item as? [String : Any],
             let data = existingItem[kSecValueData as String] as? Data,
             let user = try? JSONDecoder().decode(User.self, from: data)
-//            let userType = existingItem[kSecAttrService as String] as? String,
-//            let userEmail =  existingItem[kSecAttrAccount as String] as? String
         else {
-            print("키체인 User 에러")
             throw KeychainError.unexpectedUserData
         }
+
+        print("Keychain Get User")
         
-        print("키체인 통과")
         return user
     }
     
@@ -100,12 +89,7 @@ final class KeychainManager {
             kSecValueData as String: data
         ]
         
-        print("keychain save query \(query)")
-        
         let status = SecItemAdd(query as CFDictionary, nil)
-        
-        print("keychain saved")
-        print("Read status \(status)")
         
         guard status != errSecDuplicateItem else { throw KeychainError.duplicateEntry }
         
@@ -113,6 +97,7 @@ final class KeychainManager {
         
         UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier)
         
+        print("Keychain Save UserItem")
     }
     
     // 조회
@@ -130,23 +115,18 @@ final class KeychainManager {
         var item: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &item) // get
         
-        print("get Item \(String(describing: item))")
-        print("get query \(query)")
-        
         guard status != errSecItemNotFound else { return nil }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         
         guard let existingItem = item as? [String : Any],
             let data = existingItem[kSecValueData as String] as? Data,
             let userItem = try? JSONDecoder().decode(UserItem.self, from: data)
-//            let userType = existingItem[kSecAttrService as String] as? String,
-//            let userEmail =  existingItem[kSecAttrAccount as String] as? String
         else {
-            print("키체인 에러")
             throw KeychainError.unexpectedTokenData
         }
         
-        print("키체인 통과")
+        print("Keychain Get UserItem")
+        
         return userItem
     }
     
@@ -155,16 +135,13 @@ final class KeychainManager {
     // 해당 유저아이템 변경
     static func updateUserItem(userItem: UserItem) throws {
         guard let data = try? JSONEncoder().encode(userItem) else { return }
-        print("keychain save data \(data)")
+        
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: userItem.userType,
             kSecAttrAccount as String: userItem.account.user.email,
             kSecValueData as String: data
         ]
-        
-        print("save userItem \(userItem)")
-        print("save query \(query)")
         
        // new query
         let item: [String: Any] = [
@@ -174,8 +151,6 @@ final class KeychainManager {
         ]
         
         let status = SecItemUpdate(query as CFDictionary, item as CFDictionary) // save
-        
-        print("Read status \(status)")
         
         guard status != errSecItemNotFound else { return }
         
@@ -188,22 +163,8 @@ final class KeychainManager {
             UserDefaults.standard.set(userItem.userType, forKey: SessionManager.currentServiceTypeIdentifier) // 앱 로그아웃 후 로그인하면 서비스 키값 저장
         }
         
-        print("keychain update")
+        print("Keychain Update UserItem")
     }
-    
-//    static func deleteUserItem() throws {
-//        let query: NSDictionary = [
-//                kSecClass as String: kSecClassGenericPassword,
-////                kSecAttrService as String: userItem.userType, // 추가 했으니 체크해야됨
-////                kSecAttrAccount as String: userItem.account.user.email, // 추가 했으니 체크해야됨
-//            ]
-//        let status = SecItemDelete(query)
-//
-//        guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-//        UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
-//        UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION)
-////        assert(status == noErr, "failed to delete the value, status code = \(status)")
-//    }
     
     static func deleteUserItem(userItem: UserItem) throws {
         let query: NSDictionary = [
@@ -211,14 +172,18 @@ final class KeychainManager {
                 kSecAttrService as String: userItem.userType, // 추가 했으니 체크해야됨
                 kSecAttrAccount as String: userItem.account.user.email, // 추가 했으니 체크해야됨
             ]
+        
         let status = SecItemDelete(query)
-        print("유저 계정 삭제 미통과")
+
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-        print("유저 계정 삭제 통과")
+    
         UserDefaults.standard.removeObject(forKey: SessionManager.currentServiceTypeIdentifier) // 앱 삭제후 로그인(유저 디폴트 삭제됨) 혹은 로그아웃
         UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION) // 앱 삭제후 디바이스 토큰 삭제
 //        assert(status == noErr, "failed to delete the value, status code = \(status)")
+        PushNotificationManager.deleteAllNotifications()
         UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
         UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
+        
+        print("Keychain Delete UserItem")
     }
 }

@@ -17,13 +17,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
-
+        
         SessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState
             switch AuthState {
             case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
             case .signInService: rootViewState = .homeView
-//            case .signInSNS: rootViewState = .setProfileView
             }
             DispatchQueue.main.async {
                 let currentVC: UIViewController
@@ -33,13 +32,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     currentVC = loginVC
                     break
                 case .homeView: // 필수 데이터 있으면
-                    let homeVC = ServiceTapBarViewController()
+                    let homeVC = ServiceTabBarViewController()
                     currentVC = homeVC
                     break
-//                case .setProfileView:
-//                    let setProfileVC = SetProfileViewController()
-//                    currentVC = setProfileVC
-//                    break
                 }
                 let rootVC = UINavigationController(rootViewController: currentVC)
                 rootVC.navigationBar.tintColor = UIColor.label

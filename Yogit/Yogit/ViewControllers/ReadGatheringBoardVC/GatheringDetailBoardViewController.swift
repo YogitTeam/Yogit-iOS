@@ -451,7 +451,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.tintColor = .label 
+        self.navigationController?.navigationBar.tintColor = .label
     }
     
     private func configureMap() {
@@ -475,7 +475,8 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     private func configureNav() {
-        self.navigationItem.rightBarButtonItem = self.rightButton
+        navigationItem.rightBarButtonItem = self.rightButton
+        navigationItem.backButtonTitle = "" // remove back button title
     }
     
     private func setViewWithMode(mode: Mode?) {
@@ -492,7 +493,7 @@ class GatheringDetailBoardViewController: UIViewController {
         ProgressHUD.colorAnimation = ServiceColor.primaryColor
     }
     
-    func configureInteractionInfoComponent() {
+    private func configureInteractionInfoComponent() {
         self.placeBoardInfoView.leftImageView.image = UIImage(named: "Place")?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
         let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
@@ -1002,7 +1003,7 @@ class GatheringDetailBoardViewController: UIViewController {
         boardWithMode.isJoinedUser = data.isJoinedUser
     }
     
-    // textview 업데이트 안됨 
+    // textview 업데이트 안됨
     func viewBinding(data: BoardWithMode) {
         guard let userIds = data.userIds else { return }
         self.userIds = userIds
