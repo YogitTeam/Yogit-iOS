@@ -25,4 +25,5 @@ target 'Yogit' do
   pod 'TTGTagCollectionView'
   pod 'ProgressHUD'
   pod 'SkeletonView'
+  pod 'RealmSwift', '~>10'
 end

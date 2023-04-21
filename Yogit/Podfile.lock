@@ -5,6 +5,11 @@ PODS:
   - IQKeyboardManagerSwift (6.5.11)
   - Kingfisher (7.6.2)
   - ProgressHUD (13.6.2)
+  - Realm (10.38.0):
+    - Realm/Headers (= 10.38.0)
+  - Realm/Headers (10.38.0)
+  - RealmSwift (10.38.0):
+    - Realm (= 10.38.0)
   - SkeletonView (1.30.4)
   - SnapKit (5.6.0)
   - TTGTagCollectionView (2.4.1)
@@ -16,6 +21,7 @@ DEPENDENCIES:
   - IQKeyboardManagerSwift (~> 6.5.0)
   - Kingfisher (~> 7.0)
   - ProgressHUD
+  - RealmSwift (~> 10)
   - SkeletonView
   - SnapKit (~> 5.6.0)
   - TTGTagCollectionView
@@ -28,6 +34,8 @@ SPEC REPOS:
     - IQKeyboardManagerSwift
     - Kingfisher
     - ProgressHUD
+    - Realm
+    - RealmSwift
     - SkeletonView
     - SnapKit
     - TTGTagCollectionView
@@ -39,10 +47,12 @@ SPEC CHECKSUMS:
   IQKeyboardManagerSwift: c7955c0bdbf7b2eb29bb7daaa44e3d90f55a9a85
   Kingfisher: 6c5449c6450c5239166510ba04afe374a98afc4f
   ProgressHUD: 355915c8f033e626788fa9b0d99d06e8691595ab
+  Realm: 5902885dd1d5e71b0b020830caab937ecdf5bf07
+  RealmSwift: 0fc037d6c32c7c4fc9362892380f380114ecdcf0
   SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   TTGTagCollectionView: 26255847362b4502578e2138144ec9e49ea7a55c
 
-PODFILE CHECKSUM: 9d89aaf833b1de57f2996448cb62b9c28e3867a1
+PODFILE CHECKSUM: b0101b6d2ffe645dccd28a0671ba773249feb41b
 
 COCOAPODS: 1.11.3
