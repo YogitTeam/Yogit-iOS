@@ -90,12 +90,12 @@ class MyClubViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(44)
         }
         myBoardsCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom).offset(10)
+            make.top.equalTo(segmentedControl.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
     }

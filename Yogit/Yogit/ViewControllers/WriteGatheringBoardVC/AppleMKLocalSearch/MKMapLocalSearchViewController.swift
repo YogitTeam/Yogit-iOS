@@ -506,7 +506,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             return
         }
         
-        guard let setCountryCode = setCountryCode else { return }
+        guard let serviceCountryCode = setCountryCode else { return }
         
         // 37.5495209, 127.075086 (위경도로 검색 가능)
         // 좌표 검색 시켜 >> 사용자마다 주소를 로컬라이즈화(자동) 불러와서
@@ -536,7 +536,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             for item in response.mapItems {
                 if let postCode = item.placemark.postalCode,
                    let countryCode = item.placemark.countryCode,
-                   setCountryCode == countryCode { // 로컬 디비에 저장 해서 변경
+                   serviceCountryCode == countryCode { // 로컬 디비에 저장 해서 변경
                     print("countrycode, postCode", countryCode, postCode)
                     mapItems.append(item) // 우편번호만 있는 주소 값만 저장 (도, 시 제외)
                 }
@@ -556,9 +556,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             }
         }
         
-        
-//        searchVC.searchBar.tag = 1
-//
 //        updateSearchResults(for: searchVC)
     
         searchRunTimeInterval = nil

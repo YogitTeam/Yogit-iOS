@@ -23,7 +23,7 @@ class ServiceTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-//        configureTapBarVC()
+        configureTapBarVC()
         configureInstanceVC()
         configureNotification()
     }
@@ -70,7 +70,9 @@ class ServiceTabBarViewController: UITabBarController {
     }
     
     private func configureTapBarVC() {
-       
+        self.tabBar.tintColor = ServiceColor.primaryColor
+        self.tabBar.backgroundColor = .systemBackground
+        self.tabBar.unselectedItemTintColor = .systemGray3
 //        UITabBar.appearance().tintColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
 //        UITabBar.appearance().backgroundColor = .systemBackground
 //        self.hidesBottomBarWhenPushed = true

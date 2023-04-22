@@ -8,21 +8,9 @@
 import UIKit
 
 class PushNotificationViewController: UIViewController {
-    // MARK: - TableView
-    // 이미지도 같이
-//    var alarmData: [Alarm] = [] {
-//        didSet {
-//            alarmData.reverse()
-//            notiTableView.reloadData()
-//        }
-//    }
-    
+  
     private var notiList: [PushNotification] = []
     
-//    var getFlag = false
-    
-    // closure parttern
-    // () parameter
     private let notiTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(PushNotificationTableViewCell.self, forCellReuseIdentifier: PushNotificationTableViewCell.identifier)
@@ -54,10 +42,7 @@ class PushNotificationViewController: UIViewController {
         configureView()
         configureNotification()
         configureTableView()
-        
-        refreshNotiData(notiType: PushNotificationManager.NotiType.clipBoard.toKey())
-        
-//        refreshAlarmData(alarmType: AlarmManager.AlarmType.clipBoard.toKey())
+        initGetNotiData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -67,12 +52,12 @@ class PushNotificationViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(44)
         }
         notiTableView.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom)
+            make.top.equalTo(segmentedControl.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
@@ -85,7 +70,6 @@ class PushNotificationViewController: UIViewController {
     }
     
     private func configureNotification() {
-//        NotificationCenter.default.addObserver(self, selector: #selector(didRecieveNotification(_:)), name: .alarmRefresh, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didRecieveNotification(_:)), name: .notiRefresh, object: nil)
     }
     
@@ -94,35 +78,26 @@ class PushNotificationViewController: UIViewController {
         notiTableView.delegate = self
     }
     
+    private func initGetNotiData() {
+        DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
+            self?.refreshNotiData(notiType: PushNotificationManager.NotiType.clipBoard.toKey())
+        }
+    }
+    
     // User touch event
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
         print("didChangeValue")
-        notiList.removeAll()
         if sender.selectedSegmentIndex == 0 {
             refreshNotiData(notiType: PushNotificationManager.NotiType.clipBoard.toKey())
         } else {
             refreshNotiData(notiType: PushNotificationManager.NotiType.apply.toKey())
         }
-//        alarmData.removeAll()
-//        if sender.selectedSegmentIndex == 0 {
-//            refreshAlarmData(alarmType: AlarmManager.AlarmType.clipBoard.toKey())
-//        } else {
-//            refreshAlarmData(alarmType: AlarmManager.AlarmType.apply.toKey())
-//        }
      }
     
     // 푸쉬 알림 누른후 전달
     @objc func didRecieveNotification(_ notification: Notification) {
         guard let notiType = notification.object as? String else { return }
         refreshNotiData(notiType: notiType)
-        
-//        guard let alarmType = notification.object as? String else { return }
-//        refreshAlarmData(alarmType: alarmType)
-//        if alarmType == AlarmManager.AlarmType.clipBoard.toKey() {
-//            segmentedControl.selectedSegmentIndex = 0
-//        } else {
-//            segmentedControl.selectedSegmentIndex = 1
-//        }
     }
     
     private func initNavigationBar() {
@@ -134,12 +109,8 @@ class PushNotificationViewController: UIViewController {
 //        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
     }
     
-//    private func refreshAlarmData(alarmType: String) {
-//        guard let alarms = AlarmManager.loadAlarms(type: alarmType) else { return }
-//        alarmData = alarms
-//    }
-    
     private func refreshNotiData(notiType: String) {
+        notiList.removeAll()
         if notiType == PushNotificationManager.NotiType.clipBoard.toKey() {
             segmentedControl.selectedSegmentIndex = 0
             
@@ -156,21 +127,8 @@ class PushNotificationViewController: UIViewController {
     
     // Providing cells for each row of the table.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PushNotificationTableViewCell.identifier, for: indexPath) as? PushNotificationTableViewCell else { return UITableViewCell() }
         cell.configure(data: notiList[indexPath.row])
-//        var content = cell.defaultContentConfiguration()
-//
-//        let bodyLocKey = alarmData[indexPath.row].body
-//        let localizedString = NSLocalizedString(bodyLocKey, comment: "")
-//
-//        content.text = alarmData[indexPath.row].title.localized()
-//        content.secondaryText = localizedString.localized()
-//
-//        content.image = UIImage(named: "ServiceIcon")
-//        // Customize appearence
-//        cell.contentConfiguration = content
-    
         return cell
     }
 }
@@ -196,10 +154,10 @@ extension PushNotificationViewController: UITableViewDelegate {
         // 클립보드에서 왔을경우 두번 push
         DispatchQueue.main.async {
             cell?.contentView.backgroundColor = .systemBackground
-//            let GDBVC = GatheringDetailBoardViewController()
-//            GDBVC.boardWithMode.boardId = self.notiList[indexPath.row].boardId//self.alarmData[indexPath.row].id
-//            if self.segmentedControl.selectedSegmentIndex == 0 { GDBVC.isClipBoardAlarm = true }
-//            self.navigationController?.pushViewController(GDBVC, animated: true)
+            let GDBVC = GatheringDetailBoardViewController()
+            GDBVC.boardWithMode.boardId = self.notiList[indexPath.row].boardId
+            if self.segmentedControl.selectedSegmentIndex == 0 { GDBVC.isClipBoardAlarm = true }
+            self.navigationController?.pushViewController(GDBVC, animated: true)
         }
         
         PushNotificationManager.updateIsOpened(id: notiList[indexPath.row].id) { (noti) in

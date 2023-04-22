@@ -39,22 +39,10 @@ enum GatheringKind: Int {
     }
 }
 
-//enum APIMethod {
-//    case edit
-//    case search
-//    case upload
-//    case delete
-//}
-
 enum Preferences {
     static let LOCATION: String = "LocationAuthorization" // 위치 권한 유무
     static let LiBRARY: String = "LibraryAuthorization" // 사진첩 권한 유무
     static let PUSH_NOTIFICATION: String = "PushNotificationAuthorization" // 알람 권한 유무 (디바이스 토큰)
-}
-
-enum PushNotificationKind {
-    static let ApplyAlarmIdentifier = "ApplyAlarm"
-    static let ClipBoardAlarmIdentifier = "ClipBoardAlarm"
 }
 
 // 권한 받은 유저
@@ -68,22 +56,10 @@ enum ServiceCountry: String {
     case kr = "KR"
 }
 
-//enum LocalizedLanguage {
-//    static let LANGUAGE: String = "Language"
-//}
-
 enum API {
     static let BASE_URL: String = "https://yogit.world/"
-    
-//    func toString() -> String {
-//        return self.rawValue
-//    }
 }
 
-//enum Service {
-//    static let APPLE_SIGNIN: String = "APPLE"
-//    static let FACEBOOK_SIGNIN: String = "FACEBOOK"
-//}
 
 enum Kind: Int {
     case profile = 0

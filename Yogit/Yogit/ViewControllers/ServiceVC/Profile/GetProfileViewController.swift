@@ -394,7 +394,7 @@ class GetProfileViewController: UIViewController {
             make.width.height.equalTo(100)
         }
         profileContentStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(20)
+            $0.top.equalToSuperview().inset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(20)
         }

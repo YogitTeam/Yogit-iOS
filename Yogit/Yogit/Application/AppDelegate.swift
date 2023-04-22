@@ -21,11 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         IQKeyboardManager.shared.enable = true
         IQKeyboardManager.shared.enableAutoToolbar = false
-
-        UITabBar.appearance().tintColor = ServiceColor.primaryColor
-        UITabBar.appearance().backgroundColor = .systemBackground
-        UITabBar.appearance().unselectedItemTintColor = .systemGray3
-        
+       
         UNUserNotificationCenter.current().delegate = self
 
         return true
@@ -152,18 +148,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 //           completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
 //       }
        
-       
-       //       guard let id = content.userInfo["boardId"] as? Int64 else { return }
-       //       guard let type = content.userInfo["pushType"] as? String else { return }
-       //       let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-    
-       
-//       receivePushNotificationData(alarm: alarmData)
-
-//       // foreground 앱 알리는 형태
-//       if type != AlarmManager.AlarmType.clipBoard.toKey() { // 신청, 취소 알림은 포어그라운드 알림
-//           completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
-//       }
    }
 
     
@@ -188,14 +172,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
            }
            print("DidReceive  args, locArgs", args, locArgs)
        }
-
-//       guard let id = content.userInfo["boardId"] as? Int64 else { return }
-//       guard let type = content.userInfo["pushType"] as? String else { return }
-//       let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-//
-//       receivePushNotificationData(alarm: alarmData)
-//
-//       NotificationCenter.default.post(name: .moveToNotiTapVC, object: nil) // 탭바컨트롤러로 알림 쏴서 아래 함수 실행
        
        guard let boardId = content.userInfo["boardId"] as? Int64 else { return }
        guard let type = content.userInfo["pushType"] as? String else { return }
@@ -210,12 +186,5 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
        completionHandler()
    }
-   
-//   func receivePushNotificationData(alarm: Alarm) {
-//       guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
-//       alarms.append(alarm)
-//       AlarmManager.saveAlarms(alarms: alarms)
-//       NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
-//   }
 }
 

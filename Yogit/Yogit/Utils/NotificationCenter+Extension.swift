@@ -8,7 +8,6 @@
 import Foundation
 
 extension Notification.Name {
-    static let alarmRefresh = Notification.Name("AlarmRefresh")
     static let notiRefresh = Notification.Name("NotificationRefresh")
     static let baordDetailRefresh = Notification.Name("BoardDetailRefresh")
     static let revokeTokenRefresh = Notification.Name("RevokeTokenRefresh")

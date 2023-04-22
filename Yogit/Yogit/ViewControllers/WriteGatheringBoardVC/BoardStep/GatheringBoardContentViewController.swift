@@ -176,7 +176,6 @@ class GatheringBoardContentViewController: UIViewController {
     
     private func configureNav() {
         self.navigationItem.rightBarButtonItem = self.rightButton
-        self.navigationController?.navigationBar.topItem?.backButtonTitle = ""
     }
     
     private func configureCollectionView() {

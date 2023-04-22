@@ -181,8 +181,6 @@ final class KeychainManager {
         UserDefaults.standard.removeObject(forKey: Preferences.PUSH_NOTIFICATION) // 앱 삭제후 디바이스 토큰 삭제
 //        assert(status == noErr, "failed to delete the value, status code = \(status)")
         PushNotificationManager.deleteAllNotifications()
-        UserDefaults.standard.removeObject(forKey: PushNotificationKind.ClipBoardAlarmIdentifier)
-        UserDefaults.standard.removeObject(forKey: PushNotificationKind.ApplyAlarmIdentifier)
         
         print("Keychain Delete UserItem")
     }

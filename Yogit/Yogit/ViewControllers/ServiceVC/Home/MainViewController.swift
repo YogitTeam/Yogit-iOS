@@ -619,7 +619,6 @@ extension MainViewController: SkeletonCollectionViewDataSource {
         return GatheringBoardThumbnailCollectionViewCell.identifier
     }
 
-
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 6 //UICollectionView.automaticNumberOfSkeletonItems
     }
