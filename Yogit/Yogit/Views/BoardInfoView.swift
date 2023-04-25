@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import SkeletonView
 
 class BoardInfoView: UIView {
     let leftImageView: UIImageView = {
@@ -15,7 +14,6 @@ class BoardInfoView: UIView {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.sizeToFit()
-//        imageView.isSkeletonable = true
         return imageView
     }()
     
@@ -24,7 +22,6 @@ class BoardInfoView: UIView {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.sizeToFit()
-//        imageView.isSkeletonable = true
         return imageView
     }()
     
@@ -58,7 +55,6 @@ class BoardInfoView: UIView {
        stackView.axis = .vertical
        stackView.spacing = 2
        stackView.alignment = .leading
-//        stackView.isSkeletonable = true
        [self.infoLabel,
         self.subInfoLabel].forEach { stackView.addArrangedSubview($0) }
        return stackView
@@ -76,11 +72,7 @@ class BoardInfoView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        isSkeletonable = true
         addSubview(contentView)
-//        addSubview(leftImageView)
-//        addSubview(labelVerticalStackView)
-//        addSubview(rightImageView)
     }
     
     private func configureViewComponent() {

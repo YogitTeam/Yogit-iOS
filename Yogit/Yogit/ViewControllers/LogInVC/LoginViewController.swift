@@ -44,7 +44,7 @@ class LoginViewController: UIViewController {
         configureView()
         initProgressHUD()
         addNotiCenter()
-        setCountry()
+        setServiceCountry()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,7 +89,7 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: .revokeTokenRefresh, object: nil)
     }
     
-    private func setCountry() {
+    private func setServiceCountry() {
         let code = ServiceCountry.kr
         let rawCode = code.rawValue
         let identifier = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: rawCode])

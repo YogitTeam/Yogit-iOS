@@ -258,6 +258,10 @@
 
 // GatheringDetailBoardViewController
 "JOIN_GATHERING_TITLE" = "Join the gathering";
+"JOINED_GATHERING_TITLE" = "Joined";
+"JOINED_GATHERING_DESCRIPTION" = "Say hello on the clipboard!";
+"WITHDRAWAL_GATHERING_TITLE" = "Canceled";
+"WITHDRAWAL_GATHERING_DESCRIPTION" = "The gathering participation has been canceled.";
 "JOIN" = "Join";
 "JOIN_GATHERING_DESCRIPTION" = "Would you want to join the gathering?";
 "HOST" = "Host";

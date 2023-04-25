@@ -257,6 +257,10 @@
 
 // GatheringDetailBoardViewController
 "JOIN_GATHERING_TITLE" = "모임 참여";
+"JOINED_GATHERING_TITLE" = "참여 완료";
+"WITHDRAWAL_GATHERING_TITLE" = "취소 완료";
+"WITHDRAWAL_GATHERING_DESCRIPTION" = "모임 참여가 취소되었습니다.";
+"JOINED_GATHERING_DESCRIPTION" = "클립보드에서 인사말을 건내 보세요!";
 "JOIN" = "참가";
 "JOIN_GATHERING_DESCRIPTION" = "모임에 참여하시겠습니까?";
 "HOST" = "호스트";

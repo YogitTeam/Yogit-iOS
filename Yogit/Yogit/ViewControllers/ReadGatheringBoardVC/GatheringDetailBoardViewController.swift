@@ -12,9 +12,9 @@ import BLTNBoard
 import ProgressHUD
 import SkeletonView
 
-//enum bottomButtonState {
-//    case join, withdrawl
-//}
+enum GatheringUserState: Int {
+    case none = 0, join, withdrawl
+}
 
 class GatheringDetailBoardViewController: UIViewController {
     
@@ -65,7 +65,7 @@ class GatheringDetailBoardViewController: UIViewController {
         return view
     }()
     
-    private lazy var bulletinManager: BLTNItemManager = {
+    private lazy var joinBulletinManager: BLTNItemManager = {
         
         let item = BLTNPageItem(title: "JOIN_GATHERING_TITLE".localized())
         item.image = "👋".stringToImage(width: 100, height: 100)//UIImage(named: "pro1")
@@ -80,6 +80,32 @@ class GatheringDetailBoardViewController: UIViewController {
         }
 
         return BLTNItemManager(rootItem: item)
+    }()
+    
+    private lazy var joinedBulletinManager: BLTNItemManager = {
+        
+        let page = BLTNPageItem(title: "JOINED_GATHERING_TITLE".localized())
+        page.image = UIImage(named: "COMPLETION")?.withTintColor(ServiceColor.primaryColor)
+        page.actionButtonTitle = "CLIPBOARD".localized()
+        page.descriptionText = "\("💬") \("JOINED_GATHERING_DESCRIPTION".localized())"
+        page.appearance.actionButtonColor = ServiceColor.primaryColor
+        
+        page.actionHandler = { item in
+            item.manager?.dismissBulletin(animated: true)
+            self.moveToClipBoard()
+        }
+        
+        
+        return BLTNItemManager(rootItem: page)
+    }()
+    
+    private lazy var withDrawedBulletinManager: BLTNItemManager = {
+        
+        let page = BLTNPageItem(title: "WITHDRAWAL_GATHERING_TITLE".localized())
+        page.image = UIImage(named: "COMPLETION")?.withTintColor(ServiceColor.primaryColor)
+        page.descriptionText = "WITHDRAWAL_GATHERING_DESCRIPTION".localized()
+
+        return BLTNItemManager(rootItem: page)
     }()
     
     private lazy var boardImagesPageControl: UIPageControl = {
@@ -441,7 +467,7 @@ class GatheringDetailBoardViewController: UIViewController {
         configureMap()
         initProgressHUD()
         setViewWithMode(mode: boardWithMode.mode)
-//        bulletinManager.backgroundViewStyle = .blurred(style: .systemUltraThinMaterialLight, isDark: true)
+//        joinBulletinManager.backgroundViewStyle = .blurred(style: .systemUltraThinMaterialLight, isDark: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -485,7 +511,7 @@ class GatheringDetailBoardViewController: UIViewController {
                 viewBinding(data: boardWithMode)
             })
         } else {
-            self.getBoardDetail(interaction: false)
+            getBoardDetail(state: .none)
         }
     }
     
@@ -629,7 +655,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     @objc func joinBoardButtonTapped(_ sender: UIButton) {
-        bulletinManager.showBulletin(above: self)
+        joinBulletinManager.showBulletin(above: self)
     }
     
     @objc func withdrawalButtonTapped(_ sender: UIButton) {
@@ -648,7 +674,7 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    @objc func joinButtonTapped(_ sender: UIButton) {
+    @objc func joinListButtonTapped(_ sender: UIButton) {
         // 대기 리스트
     }
     
@@ -657,7 +683,7 @@ class GatheringDetailBoardViewController: UIViewController {
 //        guard let boardId = boardId else { return }
         guard let boardId = boardWithMode.boardId else { return }
         
-        self.bulletinManager.dismissBulletin(animated: true)
+        self.joinBulletinManager.dismissBulletin(animated: true)
         
         ProgressHUD.colorAnimation = ServiceColor.primaryColor
         ProgressHUD.animationType = .circleStrokeSpin
@@ -675,7 +701,7 @@ class GatheringDetailBoardViewController: UIViewController {
                             ProgressHUD.dismiss()
                         }
                         if value.httpCode == 200 || value.httpCode == 201 {
-                            self.getBoardDetail(interaction: true)
+                            self.getBoardDetail(state: .join)
                         } else if value.httpCode == 400, value.errorCode == "B003" {
                             // 경고창 띄우고 리프레시 해야함 (멤버 꽉차면, 조인 버튼 disable, 텍스트 마감), 보드 리프레시
                             let alert = UIAlertController(title: "MEMBER_FULL_ALERT_TITLE".localized(), message: "MEMBER_FULL_ALERT_MESSAGE".localized(), preferredStyle: .alert)
@@ -686,13 +712,12 @@ class GatheringDetailBoardViewController: UIViewController {
                             DispatchQueue.main.async {
                                 self.present(alert, animated: true)
                             }
-                            self.getBoardDetail(interaction: false)
                         }
                     }
                 case let .failure(error):
                     print(error)
                     DispatchQueue.main.async {
-                        self.bulletinManager.dismissBulletin(animated: true)
+                        self.joinBulletinManager.dismissBulletin(animated: true)
                         ProgressHUD.dismiss()
                     }
                 }
@@ -718,7 +743,7 @@ class GatheringDetailBoardViewController: UIViewController {
                         DispatchQueue.main.async {
                             ProgressHUD.dismiss()
                         }
-                        self.getBoardDetail(interaction: true)
+                        self.getBoardDetail(state: .withdrawl)
                     } else {
                         print("취소 실패")
                     }
@@ -1088,7 +1113,7 @@ class GatheringDetailBoardViewController: UIViewController {
 //        _applyButton = !data.isJoinedUser
     }
     
-    private func getBoardDetail(interaction: Bool) {
+    private func getBoardDetail(state: GatheringUserState) {
 
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = boardWithMode.boardId else {
@@ -1112,7 +1137,8 @@ class GatheringDetailBoardViewController: UIViewController {
                     DispatchQueue.global().async(qos: .userInitiated) { [weak self] in
                         self?.bindBoardDetail(data: data)
                         DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
-//                            if interaction { ProgressHUD.showSucceed(interaction: true) }
+                            if state == .join { self?.joinedBulletinManager.showBulletin(above: self!) }
+                            else if state == .withdrawl { self?.withDrawedBulletinManager.showBulletin(above: self!) }
                             self?.viewBinding(data: self!.boardWithMode)
                         }
                     }

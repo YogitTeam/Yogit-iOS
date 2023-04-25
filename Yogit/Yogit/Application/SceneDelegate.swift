@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
-     
+        
         SessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState
             switch AuthState {

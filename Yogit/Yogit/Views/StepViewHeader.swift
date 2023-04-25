@@ -21,7 +21,6 @@ class StepHeaderView: UIView {
 
     let titleLabel: UILabel = {
         let label = UILabel()
-//        label.backgroundColor = .s
         label.font = UIFont.systemFont(ofSize: 24, weight: UIFont.Weight.semibold)
         label.sizeToFit()
         label.numberOfLines = 1
@@ -35,14 +34,6 @@ class StepHeaderView: UIView {
         addSubview(titleLabel)
         initProgress(step: step)
     }
-
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-////        addSubview(stateDefaultView)
-//        progressView.progress = step
-//        addSubview(progressView)
-//        addSubview(titleLabel)
-//    }
     
     override func layoutSubviews() {
         progressView.snp.makeConstraints {
