@@ -1059,16 +1059,15 @@ class GatheringDetailBoardViewController: UIViewController {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         
         clipBoardButton.snp.removeConstraints()
-        
         if boardWithMode.hostId == userItem.userId {
-            clipBoardButton.snp.makeConstraints {
+            clipBoardButton.snp.updateConstraints {
                 $0.leading.trailing.equalToSuperview().inset(20)
                 $0.bottom.equalToSuperview().inset(30)
                 $0.height.equalTo(50)
             }
 //            joinListButton.isHidden = !joinBoardButton.isHidden
         } else {
-            clipBoardButton.snp.makeConstraints {
+            clipBoardButton.snp.updateConstraints() {
                 $0.trailing.equalToSuperview().inset(20)
                 $0.bottom.equalToSuperview().inset(30)
                 $0.height.equalTo(50)

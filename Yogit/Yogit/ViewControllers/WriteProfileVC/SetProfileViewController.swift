@@ -199,8 +199,6 @@ class SetProfileViewController: UIViewController {
             str = nil
         }
         return str?.localized().lowercased()
-//        let isTrue = (userProfileImage != nil) && (userProfile.userName != nil) && (userProfile.userAge != nil) && (userProfile.languageCodes?.count ?? 0 > 0) && (userProfile.languageLevels?.count ?? 0 > 0) && (userProfile.nationality != nil) && (userProfile.gender != nil)
-//        return isTrue
     }
     
     override func viewDidLoad() {

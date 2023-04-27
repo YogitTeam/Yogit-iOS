@@ -187,7 +187,9 @@ class MyClubViewController: UIViewController {
                 
                 if !isFirstPage {
                     let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                    myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    await MainActor.run {
+                        myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    }
                 }
                 
                 let totalPage = getData.totalPage

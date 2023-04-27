@@ -446,7 +446,9 @@ class  MainViewController: UIViewController {
                 
                 if !isFirstPage {
                     let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                    gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    await MainActor.run {
+                        gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    }
                 }
                 
                 let totalPage = getData.totalPage
