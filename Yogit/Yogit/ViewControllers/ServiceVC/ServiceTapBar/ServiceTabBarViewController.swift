@@ -23,6 +23,7 @@ class ServiceTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureNav()
         configureTapBarVC()
         configureInstanceVC()
         configureNotification()
@@ -41,6 +42,14 @@ class ServiceTabBarViewController: UITabBarController {
     private func configureView() {
         view.backgroundColor = .systemBackground
         view.addSubview(line)
+    }
+    
+    private func configureNav() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = UIColor.label
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = .systemBackground
+        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
     }
     
     private func configureNotification() {
@@ -80,21 +89,23 @@ class ServiceTabBarViewController: UITabBarController {
     }
     
     private func configureInstanceVC() {
-        let homeVC = MainViewController()// SearchGatheringBoardController()
-        let profileVC = GetProfileViewController()
-        let myClubVC = MyClubViewController()
-        let notiVC = PushNotificationViewController()
-        
-        homeVC.tabBarItem.image = UIImage.init(named: TabBarKind.home.rawValue)?.withTintColor(.systemGray5)
-        homeVC.tabBarItem.title = TabBarKind.home.rawValue.localized()
-        myClubVC.tabBarItem.image = UIImage.init(named: TabBarKind.myClub.rawValue)?.withTintColor(.systemGray5)
-        myClubVC.tabBarItem.title = TabBarKind.myClub.rawValue.localized()
-        profileVC.tabBarItem.image = UIImage.init(named: TabBarKind.profile.rawValue)?.withTintColor(.systemGray5)
-        profileVC.tabBarItem.title = TabBarKind.profile.rawValue.localized()
-        notiVC.tabBarItem.image = UIImage.init(named: TabBarKind.notification.rawValue)?.withTintColor(.systemGray5)
-        notiVC.tabBarItem.title = TabBarKind.notification.rawValue.localized()
-        
-        setViewControllers([homeVC, myClubVC, profileVC, notiVC], animated: true)
+        DispatchQueue.main.async {
+            let homeVC = MainViewController()// SearchGatheringBoardController()
+            let profileVC = GetProfileViewController()
+            let myClubVC = MyClubViewController()
+            let notiVC = PushNotificationViewController()
+            
+            homeVC.tabBarItem.image = UIImage.init(named: TabBarKind.home.rawValue)?.withTintColor(.systemGray5)
+            homeVC.tabBarItem.title = TabBarKind.home.rawValue.localized()
+            myClubVC.tabBarItem.image = UIImage.init(named: TabBarKind.myClub.rawValue)?.withTintColor(.systemGray5)
+            myClubVC.tabBarItem.title = TabBarKind.myClub.rawValue.localized()
+            profileVC.tabBarItem.image = UIImage.init(named: TabBarKind.profile.rawValue)?.withTintColor(.systemGray5)
+            profileVC.tabBarItem.title = TabBarKind.profile.rawValue.localized()
+            notiVC.tabBarItem.image = UIImage.init(named: TabBarKind.notification.rawValue)?.withTintColor(.systemGray5)
+            notiVC.tabBarItem.title = TabBarKind.notification.rawValue.localized()
+            
+            self.setViewControllers([homeVC, myClubVC, profileVC, notiVC], animated: true)
+        }
     }
 }
 

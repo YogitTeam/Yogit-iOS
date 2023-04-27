@@ -20,6 +20,7 @@ import UIKit
 //}
 
 extension UIViewController {
+
     func setAuthAlertAction(_ type: String) {
         // Access to the 'Photos' app is required.
         // Access to the '%@' app is required.

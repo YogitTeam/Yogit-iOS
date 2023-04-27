@@ -289,6 +289,7 @@ class  MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureNav()
         configureCollectionView()
         initAPICall()
     }
@@ -311,6 +312,14 @@ class  MainViewController: UIViewController {
         view.addSubview(lineView)
         view.addSubview(createGatheringBoardButton)
         view.backgroundColor = .systemBackground
+    }
+    
+    private func configureNav() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = UIColor.label
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = .systemBackground
+        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
     }
     
     private func initNavigationBar() {
