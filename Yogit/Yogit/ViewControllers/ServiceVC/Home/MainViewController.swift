@@ -10,199 +10,8 @@ import SnapKit
 import CoreLocation
 import SkeletonView
 
-//enum GatheringBoardLocationFilter{
-////    var localityD
-//    case none
-//    case locality(parameter: String)
-//    case distance(parameter: CLLocationCoordinate2D)
-//
-//    // 로컬 디비에 저장, 좌표는 소수점 세자리까지만 (보안)
-//    var localityName: String? { // 로컬라이징으로 변경해야함
-//        get {
-//            guard let userItem = try? KeychainManager.getUserItem(),
-//                  let localityName = userItem.account.localtiy
-//            else { return nil }
-//            return userItem.account.localtiy
-//        } set (value) {
-//            do {
-//                // userStatus 정보 업데이트 (LOGIN)
-//                // status만 업데이트
-//                if let userItem = try? KeychainManager.getUserItem() {
-//                    userItem.account.localtiy = value
-//                    try KeychainManager.updateUserItem(userItem: userItem)
-//                }
-//            } catch {
-//                print("KeychainManager.saveUserItem \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//    var coordindate: CLLocationCoordinate2D? {
-//        get {
-//            guard let userItem = try? KeychainManager.getUserItem(),
-//                  let latitude = userItem.account.latitude,
-//                  let longitude = userItem.account.longitude
-//            else { return nil }
-//            return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//        } set (value) {
-//            do {
-//
-//                let number = 3.141592
-//                let roundedNumber = String(format: "%.3f", number)
-//                print(roundedNumber) // "3.142"
-//                // userStatus 정보 업데이트 (LOGIN)
-//                // status만 업데이트
-//                if let userItem = try? KeychainManager.getUserItem() {
-//                    userItem.account.localtiy = value
-//                    try KeychainManager.updateUserItem(userItem: userItem)
-//                }
-//            } catch {
-//                print("KeychainManager.saveUserItem \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//
-//    func calculateDistance(startLatitude: Double, endLongitude: Double) -> Double {
-//        let stDigitLatitude = String(format: "%.3f", startLatitude)
-//        let enDigitLongitude = String(format: "%.3f", enDigitLongitude)
-//        let startCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//        let endCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//
-//        let startLocation = CLLocation(latitude: startCoordinate.latitude, longitude: startCoordinate.longitude)
-//        let endLocation = CLLocation(latitude: endCoordinate.latitude, longitude: endCoordinate.longitude)
-//
-//        let distanceInMeters = startLocation.distance(from: endLocation)
-//        let distanceInKilometers = distanceInMeters / 1000
-//        return distanceInKilometers
-//    }
-//}
-//
-//enum FilterType {
-//    case city, distance, none
-//}
-//
-//enum Location {
-//    case locality(name: String)
-//    case coordinates(latitude: Double, longitude: Double)
-//
-//    var latitude: Double? {
-//        switch self {
-//        case .coordinates(let lat, _):
-//            return lat
-//        default:
-//            return nil
-//        }
-//    }
-//
-//    var longitude: Double? {
-//        switch self {
-//        case .coordinates(_, let long):
-//            return long
-//        default:
-//            return nil
-//        }
-//    }
-//
-//    var name: String? {
-//        switch self {
-//        case .locality(let name):
-//            return name
-//        default:
-//            return nil
-//        }
-//    }
-//}
-//
-//
-//
-//struct Filter {
-////    var isFiltered: Bool
-//    private var fillterType: FilterType //
-//    private var distance: Double
-//    private var cityName: String // 로컬에 저장
-////    private var address: String {
-////        get {
-////            return cityName
-////        }
-////        set (value) {
-////            forwardGeocoding(address: value) { ()
-////
-////            }
-////        }
-////    }
-//
-//    init(fillterType: FilterType) { // 로컬 디비에 저자
-////        self.isFiltered = isFiltered
-//        self.fillterType = .none
-//    }
-//
-//    mutating func setCityFilter(address: String) -> String {
-//        self.fillterType = .city
-//        forwardGeocoding(address: address) { (cityName, countryCode) in
-//            self.cityName = cityName
-//        }
-////        self.fillterType = fillterType
-//
-////        switch self.fillterType {
-////        case .city: break
-//////            forwardGeocoding(address: <#T##String#>) { ()
-//////
-//////            }
-////        case .distance: break
-////        case .none: break
-////        }
-//    }
-//
-//    func calculateDistance(latitude: Double, longitude: Double) -> Double {
-//        let startCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//        let endCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//
-//        let startLocation = CLLocation(latitude: startCoordinate.latitude, longitude: startCoordinate.longitude)
-//        let endLocation = CLLocation(latitude: endCoordinate.latitude, longitude: endCoordinate.longitude)
-//
-//        let distanceInMeters = startLocation.distance(from: endLocation)
-//        let distanceInKilometers = distanceInMeters / 1000
-//        return distanceInKilometers
-//    }
-//
-//    mutating func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
-//        print("forwardGeocoding locality", address)
-//        let geocoder = CLGeocoder()
-////        let locale = Locale(identifier: "en_US")
-//        guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
-//        let region = Locale.current.region?.identifier // KR
-//        let locale = Locale(identifier: identifier)
-//
-//        // 주소 다됨 (country, locality, "KR" >> South Korea)
-//        geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: { (placemarks, error) in
-//            if error != nil {
-//                print("Failed to geocodeAddressString location")
-//                return
-//            }
-//
-//            guard let pm = placemarks?.last else { return }
-//            guard let locality = pm.locality else { return }
-//            guard let countryCodeName = pm.country else { return }
-//            print("forwardGeocoding locality and county", locality, countryCodeName)
-//            self.cityName = locality
-//            completion(locality, countryCodeName)
-//        })
-//    }
-//}
-
-// 테이블뷰 헤더 콜렉션뷰 카테고리
-// 각 카테고리마다 페이지네이션 필요
 class  MainViewController: UIViewController {
 
-//    func ddd() {
-//        // Example usage
-//        let selectedLocality = Location.locality(name: "New York City")
-//        print("Selected locality name: \(selectedLocality.name ?? "N/A")")
-//
-//        let selectedCoordinates = Location.coordinates(latitude: 40.7128, longitude: -74.0060)
-//        print("Selected coordinates: (\(selectedCoordinates.latitude ?? 0), \(selectedCoordinates.longitude ?? 0))")
-//    }
-        
-//    private var filteredGatheringBoards = [[Board]]()
     private var gatheringBoards = [Board]()
     private var pageCursor = 0
     private var pageListCnt = 0
@@ -391,41 +200,8 @@ class  MainViewController: UIViewController {
             throw FetchError.failureResponse
         }
     }
-
-//    func fetchGatheringBoardsByCategory(category: Int, page: Int) async -> GetBoardsByCategoryRes? {
-//        guard let userItem = try? KeychainManager.getUserItem() else { return nil }
-//        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
-//        let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
-//        let response = await dataTask.response
-//        let value = response.value
-//        return value?.data
-//    }
-
-//    // category 1부터 시작
-//    private func pagingBoardsByCategory(categoryId: Int, isPaging: Bool) async {
-//        if isPaging { return }
-//        else { self.isPaging = true }
-//        let page = pagesCursor[categoryId-1]
-//        let getData = await fetchGatheringBoardsByCategory(category: categoryId, page: page)
-//        guard let totalPage = getData?.totalPage else { return }
-//        if page < totalPage {
-//            guard let getAllBoardResList = getData?.getAllBoardResList else { return }
-//            let getBoardCnt = getAllBoardResList.count
-//            let pageListCnt = pagesListCount[categoryId-1]
-//            for i in pageListCnt..<getBoardCnt {
-//                gatheringBoards[categoryId-1].append(getAllBoardResList[i])
-//                gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards[categoryId-1].count-1, section: 0)])
-//            }
-//            pagesListCount[categoryId-1] = getBoardCnt%modular // 0
-//            if pagesListCount[categoryId-1] == 0 {
-//                pagesCursor[categoryId-1] += 1
-//            }
-//        }
-//        self.isPaging = false
-//    }
     
     // category 1부터 시작
-    
     private func pagingBoardsByCategory(categoryId: Int, isFirstPage: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if isFirstPage {
@@ -490,62 +266,6 @@ class  MainViewController: UIViewController {
         tasks.append(task)
     }
     
-//    private func pagingBoardsByCategory(categoryId: Int) {
-//        guard let userItem = try? KeychainManager.getUserItem() else { return }
-//        let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: pageCursor, refreshToken: userItem.refresh_token, userId: userItem.userId)
-//        AlamofireManager.shared.session
-//            .request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq))
-//            .validate(statusCode: 200..<501)
-//            .responseDecodable(of: APIResponse<GetBoardsByCategoryRes>.self) { response in
-//                switch response.result {
-//                case .success:
-//                if let value = response.value, value.httpCode == 200, let data = value.data {
-//                    let totalPage = data.totalPage
-//
-//                    if self.pageCursor < totalPage {
-//                        let getAllBoardResList = data.getAllBoardResList
-//                        let getBoardCnt = getAllBoardResList.count
-//                        print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
-//                        for i in self.pageListCnt..<getBoardCnt {
-//                            gatheringBoards.append(getAllBoardResList[i])
-//                            gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
-//                        }
-//                        self.pageListCnt = getBoardCnt%self.modular // 0
-//                        if self.pageListCnt == 0 {
-//                            self.pageCursor += 1
-//                        }
-//                    }
-//                }
-//                case let .failure(error):
-//                    print("fetchGatheringBoardsByCategory", error)
-//                }
-//            }
-//
-//
-//
-//
-//        do {
-//            let getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
-//            let totalPage = getData.totalPage
-//            if pageCursor < totalPage {
-//                let getAllBoardResList = getData.getAllBoardResList
-//                let getBoardCnt = getAllBoardResList.count
-//                print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
-//                for i in pageListCnt..<getBoardCnt {
-//                    gatheringBoards.append(getAllBoardResList[i])
-//                    gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
-//                }
-//                pageListCnt = getBoardCnt%modular // 0
-//                if pageListCnt == 0 {
-//                    pageCursor += 1
-//                }
-//            }
-//        } catch {
-//            print("fetchGatheringBoardsByCategory error \(error.localizedDescription)")
-//        }
-//        isPaging = false
-//    }
-    
     @objc private func refreshGatheringBoards() {
         if !isPaging {
             isPaging = true
@@ -565,7 +285,6 @@ class  MainViewController: UIViewController {
 }
 
 extension  MainViewController: UIScrollViewDelegate {
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == gatheringBoardCollectionView && !isPaging {
             if scrollView.contentOffset.y > 86 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
@@ -623,7 +342,6 @@ extension MainViewController: SkeletonCollectionViewDataSource {
             return footerView!
         }
         return UICollectionReusableView()
-//        fatalError("Unexpected element kind or section")
     }
 
     func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {

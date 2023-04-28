@@ -42,6 +42,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureNav()
         initProgressHUD()
         addNotiCenter()
         setServiceCountry()
@@ -74,6 +75,14 @@ class LoginViewController: UIViewController {
         view.addSubview(setCountryTitleLabel)
         view.addSubview(signInWithAppleButton)
         view.backgroundColor = .systemBackground
+    }
+    
+    private func configureNav() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = UIColor.label
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = .systemBackground
+        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
     }
     
     private func initProgressHUD() {

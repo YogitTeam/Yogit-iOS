@@ -23,7 +23,6 @@ class ServiceTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        configureNav()
         configureTapBarVC()
         configureInstanceVC()
         configureNotification()
@@ -42,14 +41,6 @@ class ServiceTabBarViewController: UITabBarController {
     private func configureView() {
         view.backgroundColor = .systemBackground
         view.addSubview(line)
-    }
-    
-    private func configureNav() {
-        navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        navigationController?.navigationBar.tintColor = UIColor.label
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.backgroundColor = .systemBackground
-        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
     }
     
     private func configureNotification() {

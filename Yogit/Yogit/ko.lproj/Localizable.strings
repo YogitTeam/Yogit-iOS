@@ -282,6 +282,7 @@
 "CLIPBOARD_SERVICE_NOTICE" = "실시간 채팅이 아닙니다.\n업데이트하려면 아래에서 위로 스크롤해주세요.";
 "CLIPBOARD_TEXT_OVER_ALERT_TITLE" = "글자수를 초과";
 "CLIPBOARD_TEXT_OVER_ALERT_MESSAGE" = "글자수는 500자 까지 보낼수있습니다.";
+"UNKNOWN" = "알수없음";
 
 // MyClubViewController
 "JOINED" = "참여";

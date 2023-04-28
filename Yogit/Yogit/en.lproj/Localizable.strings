@@ -284,6 +284,7 @@
 "MESSAGE_SENDING" = "Sending...";
 "CLIPBOARD_TEXT_OVER_ALERT_TITLE" = "Too many characters";
 "CLIPBOARD_TEXT_OVER_ALERT_MESSAGE" = "You can send up to 500 characters.";
+"UNKNOWN" = "Unknown";
 
 // MyClubViewController
 "JOINED" = "Joined";

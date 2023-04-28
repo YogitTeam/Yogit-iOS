@@ -38,11 +38,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     break
                 }
                 let rootVC = UINavigationController(rootViewController: currentVC)
-                rootVC.navigationBar.tintColor = UIColor.label
-                rootVC.navigationBar.topItem?.backButtonTitle = ""
-                let navigationBarAppearance = UINavigationBarAppearance()
-                navigationBarAppearance.backgroundColor = .systemBackground
-                rootVC.navigationBar.standardAppearance = navigationBarAppearance
                 self.window = UIWindow(windowScene: scene)
                 self.window?.rootViewController = rootVC
                 self.window?.makeKeyAndVisible()

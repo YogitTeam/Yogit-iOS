@@ -263,19 +263,18 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 //        return value?.data
 //    }
     
-    func createClipBoardData2(boardData: CreateClipBoardReq) async throws -> GetAllClipBoardsRes {
+    func createClipBoardData(boardData: CreateClipBoardReq) async throws -> GetAllClipBoardsRes {
         let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
         let response = await dataTask.response
         switch response.result {
         case .success:
-            print("createClipBoardData2 success")
-        if let value = response.value, (value.httpCode == 200 || value.httpCode == 201), let data = value.data {
-            return data
-        } else {
-            throw CreateError.badResponse
-        }
+            if let value = response.value, (value.httpCode == 200 || value.httpCode == 201), let data = value.data {
+                return data
+            } else {
+                throw CreateError.badResponse
+            }
         case let .failure(error):
-            print("createClipBoardData2 error", error)
+            print("createClipBoardData error", error)
             throw CreateError.failureResponse
         }
     }
@@ -620,27 +619,20 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
 //        }
 //    }
     
-    func fetchClipBoardData2(getAllClipBoardsReq: GetAllClipBoardsReq) async throws -> ClipBoardResInfo {
-//        guard let userItem = try? KeychainManager.getUserItem() else { throw FetchError.notFoundKeyChain }
-//        guard let boardId = self.boardId else { throw FetchError.notFoundBoardId }
-//        let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
+    func fetchClipBoardData(getAllClipBoardsReq: GetAllClipBoardsReq) async throws -> ClipBoardResInfo {
         let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
         let response = await dataTask.response
         switch response.result {
         case .success:
-            print("fetchClipBoardData2 success")
-        if let value = response.value, value.httpCode == 200, let data = value.data {
-            return data
-        } else {
-            throw FetchError.badResponse
-        }
+            if let value = response.value, value.httpCode == 200, let data = value.data {
+                return data
+            } else {
+                throw FetchError.badResponse
+            }
         case let .failure(error):
-            print("fetchClipBoardData2 error", error)
+            print("fetchClipBoardData error", error)
             throw FetchError.failureResponse
         }
-//        let value = response.value
-//        guard let data = value?.data else { throw FetchError.notFoundBoardId }
-//        return value?.data
     }
 
     private func insertMessages(_ data: [Any]) {
@@ -651,24 +643,24 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                 if let str = component as? String {
                     do {
                         let createClipBoardReq = CreateClipBoardReq(boardID: boardId, content: str, refreshToken: userItem.refresh_token, title: "", userID: userItem.userId)
-                        let createClipBoardRes = try await createClipBoardData2(boardData: createClipBoardReq) // 등록
+                        let createClipBoardRes = try await createClipBoardData(boardData: createClipBoardReq) // 등록
                         var totalPage = 0
                         repeat {
                             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
                             do {
-                                let getData = try await fetchClipBoardData2(getAllClipBoardsReq: getAllClipBoardsReq)
+                                let getData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
                                 totalPage = getData.totalPage
                                 if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함
                                     let clipBoardList = getData.getClipBoardResList
                                     var clipBoardListCount = clipBoardList.count
                                     for i in upPageListCount..<clipBoardListCount { // 9  10
-                                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "")
+                                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
                                         if avatarImages[sender.senderId] == nil {
-                                            if clipBoardList[i].profileImgURL.contains("null") {
-                                                self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
-                                            } else {
+                                            if !clipBoardList[i].profileImgURL.contains("null") {
                                                 let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
                                                 self.avatarImages[sender.senderId] = profileImage
+                                            } else {
+                                                self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
                                             }
                                         }
                                         guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
@@ -682,11 +674,11 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                         }
                                         if createClipBoardRes.clipBoardID == clipBoardList[i].clipBoardID { // 보낸 메시지와 동일하면
                                             print("clipBoardListCount, i", clipBoardListCount, i) // 10 9
-                                            clipBoardListCount = i + 1
+                                            clipBoardListCount = i + 1 // i로 모듈러 맞춰줌
                                             break
                                         }
                                     }
-                                    upPageListCount = clipBoardListCount%modular // 0
+                                    upPageListCount = clipBoardListCount%modular // 0 1 2
                                     if upPageListCount == 0 {
                                         upPageCusor += 1
                                     }
@@ -696,7 +688,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                     }
                                 }
                             } catch {
-                                print("fetchClipBoardData2 error \(error.localizedDescription)")
+                                print("fetchClipBoardData error \(error.localizedDescription)")
                                 break
                             }
                         } while upPageCusor < totalPage && upPageListCount == 0

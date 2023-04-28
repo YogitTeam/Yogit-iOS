@@ -102,7 +102,7 @@ class GatheringDetailBoardViewController: UIViewController {
     private lazy var withDrawedBulletinManager: BLTNItemManager = {
         
         let page = BLTNPageItem(title: "WITHDRAWAL_GATHERING_TITLE".localized())
-        page.image = UIImage(named: "COMPLETION")?.withTintColor(ServiceColor.primaryColor)
+        page.image = UIImage(named: "COMPLETION")?.withTintColor(.systemGray)
         page.descriptionText = "WITHDRAWAL_GATHERING_DESCRIPTION".localized()
 
         return BLTNItemManager(rootItem: page)
@@ -931,63 +931,28 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-//    private func configureScrollView() {
-////        self.boardImagesScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(boardImages.count)
-//        // CGSize(width: UIScreen.main.bounds.width * CGFloat(boardImages.count))
-//        DispatchQueue.main.async(qos: .userInteractive, execute: {
-//            self.boardImagesScrollView.isPagingEnabled = true
-//            for x in 0..<self.boardImages.count {
-//                print("configure")
-//                let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.bounds.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width*2/3))
-//    //            self.boardImagesScrollView.bounds.minY
-//                self.boardImagesScrollView.contentSize.width = imageView.frame.width * CGFloat(self.boardImages.count)
-//                    imageView.backgroundColor = .systemGray
-//                print(self.boardImages[x].size)
-//                imageView.clipsToBounds = true
-//                imageView.contentMode = .scaleAspectFill
-////                imageView.image = self.boardImages[x]
-//                imageView.setImage(with: self.boardImages[x])
-//                self.boardImagesScrollView.addSubview(imageView)
-//            }
-//        })
-//    }
-    
-    private func configureAsyncImageScrollView() {
-        Task {
-//            let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
-            let imageViews = await withTaskGroup(of: (UIImageView, Int).self, returning: [UIImageView].self, body: { taskGroup in
-                for x in 0..<boardImages.count {
-                    taskGroup.addTask {
-                        let imageView = await UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.frame.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width))
-                        await MainActor.run {
-                            imageView.clipsToBounds = true
-                            imageView.contentMode = .scaleAspectFill
-                            imageView.backgroundColor = .systemGray
-                            imageView.isSkeletonable = true
-//                            imageView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
-                            imageView.setImage(with: self.boardImages[x])
-                        }
-                        return (imageView, x)
+    private func configureAsyncImageScrollView() async {
+        boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
+        boardImagesScrollView.isPagingEnabled = true
+        await withTaskGroup(of: Void.self, body: { taskGroup in
+            for x in 0..<boardImages.count {
+                taskGroup.addTask {
+                    let imageURL = await self.boardImages[x]
+                    let imageView = await UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.frame.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width))
+                    await MainActor.run {
+                        imageView.clipsToBounds = true
+                        imageView.contentMode = .scaleAspectFill
+                        imageView.backgroundColor = .systemGray
                     }
-                    
-                }
-                var childTaskResult = [UIImageView?](repeating: nil, count: boardImages.count)
-                for await result in taskGroup {
-                    childTaskResult[result.1] = result.0
-                }
-                return childTaskResult as! [UIImageView]
-            })
-            for imageView in imageViews {
-                await MainActor.run {
-                    boardImagesScrollView.addSubview(imageView)
+                    await imageView.setImage(with: imageURL)
+                    await MainActor.run {
+                        self.boardImagesScrollView.insertSubview(imageView, at: x)
+                    }
                 }
             }
-//            await MainActor.run {
-//                boardImagesScrollView.stopSkeletonAnimation()
-//                boardImagesScrollView.hideSkeleton(reloadDataAfter: true)
-//            }
-        }
+        })
     }
+    
     
     private func configureImagesScrollView() {
         boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
@@ -998,6 +963,20 @@ class GatheringDetailBoardViewController: UIViewController {
             imageView.contentMode = .scaleAspectFill
             imageView.backgroundColor = .systemGray
             imageView.setImage(with: boardImages[x])
+            boardImagesScrollView.addSubview(imageView)
+        }
+    }
+    
+    private func configureImagesScrollView2() {
+        boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
+        boardImagesScrollView.isPagingEnabled = true
+        for x in 0..<boardImages.count {
+            let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * boardImagesScrollView.frame.width, y: boardImagesScrollView.frame.minY, width: boardImagesScrollView.frame.width, height: boardImagesScrollView.frame.width))
+            imageView.clipsToBounds = true
+            imageView.contentMode = .scaleAspectFill
+            imageView.backgroundColor = .systemGray
+            let image = boardImages[x].loadImageAsync()
+            imageView.image = image
             boardImagesScrollView.addSubview(imageView)
         }
     }
@@ -1042,6 +1021,11 @@ class GatheringDetailBoardViewController: UIViewController {
             } else {
                 hostImageView.setImage(with: imageString)
             }
+        }
+        
+    
+        Task.detached(priority: .high) { [weak self] in
+            await self?.configureAsyncImageScrollView()
         }
         
         introductionContentTextView.text = data.introduction
@@ -1097,8 +1081,6 @@ class GatheringDetailBoardViewController: UIViewController {
             withdrawalButton.backgroundColor = .systemBackground
         }
         
-        configureImagesScrollView()
-        
         view.layoutIfNeeded()
         view.stopSkeletonAnimation()
         view.hideSkeleton(reloadDataAfter: true)
@@ -1110,6 +1092,30 @@ class GatheringDetailBoardViewController: UIViewController {
         
         // 신청 버튼 (신청 / 취소)
 //        _applyButton = !data.isJoinedUser
+    }
+    
+    func measureExecutionTime(block: () -> Void) {
+        let startTime = DispatchTime.now()
+        block()
+        let endTime = DispatchTime.now()
+        let timeInterval = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000
+        print("걸린 시간", timeInterval)
+    }
+    
+    func someTimeConsumingTask() {
+        // 시간이 오래 걸리는 작업 수행
+        Task.detached(priority: .high) { [weak self] in
+            let startTime = DispatchTime.now()
+            await self?.configureAsyncImageScrollView()
+            let endTime = DispatchTime.now()
+            let timeInterval = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000
+            print("걸린 시간", timeInterval)
+        }
+//        let startTime = DispatchTime.now()
+//        configureImagesScrollView()
+//        let endTime = DispatchTime.now()
+//        let timeInterval = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000
+//        print("걸린 시간", timeInterval)
     }
     
     private func getBoardDetail(state: GatheringUserState) {
@@ -1180,11 +1186,15 @@ extension GatheringDetailBoardViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == boardContentScrollView {
             if scrollView.contentOffset.y <= 0 {
-                self.navigationController?.navigationBar.tintColor = .white // scroll down: change back button color to red
-                self.rightButton.tintColor = .white
+                DispatchQueue.main.async {
+                    self.navigationController?.navigationBar.tintColor = .white // scroll down: change back button color to red
+                    self.rightButton.tintColor = .white
+                }
             } else {
-                self.navigationController?.navigationBar.tintColor = UIColor.label // scroll up: change back button color to blue
-                self.rightButton.tintColor = .label
+                DispatchQueue.main.async {
+                    self.navigationController?.navigationBar.tintColor = UIColor.label // scroll up: change back button color to blue
+                    self.rightButton.tintColor = .label
+                }
             }
         } else if scrollView == boardImagesScrollView {
             boardImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
