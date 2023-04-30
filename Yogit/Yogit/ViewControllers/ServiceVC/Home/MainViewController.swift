@@ -173,6 +173,7 @@ class MainViewController: UIViewController {
             self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
             self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
             self?.tabBarController?.navigationItem.rightBarButtonItems = [self!.searchCityNameButton]
+            self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
         }
     }
     
