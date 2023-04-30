@@ -417,9 +417,9 @@ class GetProfileViewController: UIViewController {
             self.navigationItem.title = "MY_PROFILE".localized()
         } else {
             self.navigationItem.title = "PROFILE".localized()
-            self.navigationItem.leftBarButtonItem = leftButton
-            self.navigationItem.rightBarButtonItem = rightButton
         }
+        self.navigationItem.leftBarButtonItem = leftButton
+        self.navigationItem.rightBarButtonItem = rightButton
     }
 
     private func configureView() {

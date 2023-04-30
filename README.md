@@ -85,6 +85,16 @@
 
 <br/>
 
+#### Update gathering board
+
+
+<br/>
+
+#### Delete gathering board
+
+
+<br/>
+
 #### Read my gathering
 
 * Read user's joned gathering
