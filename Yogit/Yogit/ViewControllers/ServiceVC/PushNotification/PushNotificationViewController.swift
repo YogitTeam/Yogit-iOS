@@ -46,6 +46,7 @@ class PushNotificationViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         initNavigationBar()
     }
    
@@ -78,6 +79,18 @@ class PushNotificationViewController: UIViewController {
         notiTableView.delegate = self
     }
     
+    private func initNavigationBar() {
+        DispatchQueue.main.async { [weak self] in
+            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue.localized())
+            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+        }
+//        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
+//        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
+//        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+//        spacer.width = 15
+//        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
+    }
+    
     private func initGetNotiData() {
         DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
             self?.refreshNotiData(notiType: PushNotificationManager.NotiType.clipBoard.toKey())
@@ -98,16 +111,6 @@ class PushNotificationViewController: UIViewController {
     @objc func didRecieveNotification(_ notification: Notification) {
         guard let notiType = notification.object as? String else { return }
         refreshNotiData(notiType: notiType)
-    }
-    
-    private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue.localized())
-        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
-//        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
-//        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
-//        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-//        spacer.width = 15
-//        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
     }
     
     private func refreshNotiData(notiType: String) {

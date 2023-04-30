@@ -199,6 +199,7 @@
 
 // HomeViewController
 "NATIONWIDE" = "전국";
+"GATHERING_BOARD_NONE_GUIDE_TITLE" = "아직 모임이 없습니다.\n첫 모임을 개설하고 주변 사람들과 함께 활동해보세요!";
 
 // GatheringBoardCategoryViewController
 "GATHERING_CATEGORY" = "모임 카테고리";

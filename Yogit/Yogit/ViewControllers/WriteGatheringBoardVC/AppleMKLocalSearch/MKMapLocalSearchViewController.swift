@@ -257,8 +257,8 @@ class MKMapLocalSearchViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(20)
         }
         activityIndicator.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(22)
-            make.width.height.equalTo(20)
+            make.leading.equalToSuperview().inset(20)
+            make.width.height.equalTo(24)
             make.centerY.equalToSuperview()
         }
         noticeView.snp.makeConstraints { make in

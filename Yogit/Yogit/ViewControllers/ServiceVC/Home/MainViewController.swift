@@ -28,6 +28,9 @@ class MainViewController: UIViewController {
     // to server
     private var cityNameEng: String = ""
     
+    
+    let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
+    
     private var selectedCell: CategoryImageViewCollectionViewCell? {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -45,6 +48,17 @@ class MainViewController: UIViewController {
             }
         }
     }
+    
+    private let guideLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 20, weight: UIFont.Weight.medium)
+        label.sizeToFit()
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
 
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
@@ -66,7 +80,7 @@ class MainViewController: UIViewController {
     }()
 
     
-    private let gatheringBoardCollectionView: UICollectionView = {
+    private lazy var gatheringBoardCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
@@ -76,6 +90,7 @@ class MainViewController: UIViewController {
         collectionView.backgroundColor = .systemBackground
         collectionView.showsVerticalScrollIndicator = true
         collectionView.isSkeletonable = true
+        collectionView.addSubview(guideLabel)
         return collectionView
     }()
 
@@ -96,13 +111,16 @@ class MainViewController: UIViewController {
         let buttonTitle = cityNameLocalized.localized()
         let buttonImage = UIImage(systemName: "chevron.down")?.withTintColor(.label, renderingMode: .alwaysOriginal)
         let button = UIButton(type: .custom)
-        button.semanticContentAttribute = .forceRightToLeft
+//        button.semanticContentAttribute = .forceRightToLeft
+        button.contentMode = .scaleAspectFit
         button.setTitle(buttonTitle, for: .normal)
+        button.contentHorizontalAlignment = .right
         button.setImage(buttonImage, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.label, for: .normal)
         button.addTarget(self, action: #selector(searchCityNameButtonTapped), for: .touchUpInside)
         let barButtonItem = UIBarButtonItem(customView: button)
+        barButtonItem.customView?.semanticContentAttribute = .forceRightToLeft
         return barButtonItem
     }()
 
@@ -151,9 +169,11 @@ class MainViewController: UIViewController {
     }
     
     private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
-        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
-        self.tabBarController?.navigationItem.rightBarButtonItems = [searchCityNameButton]
+        DispatchQueue.main.async { [weak self] in
+            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
+            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+            self?.tabBarController?.navigationItem.rightBarButtonItems = [self!.searchCityNameButton]
+        }
     }
     
     @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
@@ -183,9 +203,13 @@ class MainViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        createGatheringBoardButton.snp.makeConstraints { make in
-            make.width.height.equalTo(54)
-            make.bottom.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+        createGatheringBoardButton.snp.makeConstraints {
+            $0.width.height.equalTo(54)
+            $0.bottom.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
+        }
+        guideLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
         }
         createGatheringBoardButton.layoutIfNeeded()
         createGatheringBoardButton.layer.cornerRadius = createGatheringBoardButton.frame.size.width/2
@@ -254,8 +278,10 @@ class MainViewController: UIViewController {
     // category 1부터 시작
     private func pagingBoardsByCategory(categoryId: Int, isFirstPage: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        DispatchQueue.main.async {
+            self.guideLabel.text = ""
+        }
         if isFirstPage {
-            let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
             gatheringBoardCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
         isLoading = false
@@ -276,11 +302,19 @@ class MainViewController: UIViewController {
                 
                 let endTime = DispatchTime.now().uptimeNanoseconds
                 let elapsedTime = endTime - startTime
-                if elapsedTime <= 400_000_000 {
+                if elapsedTime <= 500_000_000 {
                     do {
-                        try await Task.sleep(nanoseconds: 400_000_000 - elapsedTime)
+                        try await Task.sleep(nanoseconds: 500_000_000 - elapsedTime)
                     } catch {
                         print("sleep nanoseconds error \(error.localizedDescription)")
+                    }
+                }
+                
+                await MainActor.run {
+                    if getData.getAllBoardResList.count == 0 {
+                        guideLabel.text = "GATHERING_BOARD_NONE_GUIDE_TITLE".localized()
+                    } else {
+                        guideLabel.text = ""
                     }
                 }
                 
@@ -420,8 +454,8 @@ extension MainViewController: SkeletonCollectionViewDataSource {
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
+            let data = gatheringBoards[indexPath.row]
             Task {
-                let data = gatheringBoards[indexPath.row]
                 await cell.configure(with: data)
             }
             return cell
@@ -453,7 +487,10 @@ extension MainViewController: SearchCityNameProtocol {
         isPaging = true
         self.cityNameLocalized = cityNameLocalized // localized 전 (defaultCityName포함)
         guard let button = searchCityNameButton.customView as? UIButton else { return }
-        button.setTitle(cityNameLocalized.localized(), for: .normal) // localized 되서 보여준다.
+        DispatchQueue.main.async { [weak self] in
+            button.setTitle(cityNameLocalized.localized(), for: .normal) // localized 되서 보여준다.
+            self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
+        }
         if defaulltCityName == self.cityNameLocalized {
             resetBoardsData(categoryId: categoryId)
             pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)

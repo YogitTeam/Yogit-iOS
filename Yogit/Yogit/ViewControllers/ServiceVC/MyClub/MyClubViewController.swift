@@ -101,6 +101,7 @@ class MyClubViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         initNavigationBar()
     }
 
@@ -132,8 +133,10 @@ class MyClubViewController: UIViewController {
 
     
     private func initNavigationBar() {
-        self.tabBarController?.makeNaviTopLabel(title: TabBarKind.myClub.rawValue.localized())
-        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+        DispatchQueue.main.async { [weak self] in
+            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.myClub.rawValue.localized())
+            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+        }
 //        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
 //        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
 //        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
@@ -283,10 +286,10 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
-        Task(priority: .userInitiated, operation: {
-            let data = gatheringBoards[indexPath.row]
+        let data = gatheringBoards[indexPath.row]
+        Task {
             await cell.configure(with: data)
-        })
+        }
         return cell
     }
 }

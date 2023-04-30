@@ -111,7 +111,7 @@ class SearchCityNameViewController: UIViewController {
 //            make.leading.trailing.equalToSuperview().inset(20)
 //        }
         activityIndicator.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(22)
+            make.leading.equalToSuperview().inset(24)
             make.width.height.equalTo(20)
             make.bottom.equalToSuperview().inset(22)
         }

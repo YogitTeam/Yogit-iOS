@@ -334,7 +334,7 @@ extension ClipBoardViewController {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = self.boardId else { return }
-        Task {
+        Task(priority: .high) {
             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
             let checkGetData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
             let totalPage = checkGetData.totalPage
@@ -343,17 +343,17 @@ extension ClipBoardViewController {
             if upPageCusor < totalPage {
                 upPageCusor = totalPage-1 // 0 부터 시작
                 downPageCursor = upPageCusor-1
-                Task(priority: .high) {
+                Task {
                     if totalPage == 1 { // 한페이지만 존재
                         await loadClipBoardBottom(isInit: true, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
                     } else {
                         await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
                         await loadClipBoardBottom(isInit: true,userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
                     }
-                    await MainActor.run {
-                        ProgressHUD.dismiss()
-                    }
                 }
+            }
+            await MainActor.run {
+                ProgressHUD.dismiss()
             }
         }
     }

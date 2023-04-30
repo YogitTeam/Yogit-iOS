@@ -201,6 +201,7 @@
 
 // HomeViewController
 "NATIONWIDE" = "Nationwide";
+"GATHERING_BOARD_NONE_GUIDE_TITLE" = "There is no gathering yet.\nOpen your first gathering join activities with people around you!";
 
 
 // GatheringBoardCategoryViewController

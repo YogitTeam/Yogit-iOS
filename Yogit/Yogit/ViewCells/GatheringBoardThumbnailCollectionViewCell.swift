@@ -87,23 +87,23 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
 
     private let dateLabel: UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.sizeToFit()
         label.textColor = .white//.systemBrown
         label.numberOfLines = 1
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     private let localityLabel: UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.sizeToFit()
         label.numberOfLines = 1
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -199,6 +199,12 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
             $0.height.equalTo(0.6)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(bottomStackView.snp.top).offset(-4)
+        }
+        dateLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+        }
+        localityLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
         }
         backView.snp.makeConstraints {
             $0.edges.equalToSuperview()
