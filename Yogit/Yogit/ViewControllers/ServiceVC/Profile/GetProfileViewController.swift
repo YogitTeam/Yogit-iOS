@@ -514,9 +514,10 @@ class GetProfileViewController: UIViewController {
             switch response.result {
             case .success:
                 if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
+                    GatheringBoardManager.saveBlockedUser(blockedUser: BlockedUser(id: userIdToBlock))
                     DispatchQueue.main.async(qos: .userInteractive) { [self] in
                         dismiss(animated: true)
-                        NotificationCenter.default.post(name: .moveToHome, object: nil)
+                        NotificationCenter.default.post(name: .baordDetailRefreshForBlock, object: nil)
                     }
                 }
             case let .failure(error):

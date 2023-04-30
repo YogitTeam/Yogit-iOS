@@ -632,7 +632,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     private func configureNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(didlMoveToHomeNotification(_:)), name: .moveToHome, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didlBaordDetailRefreshForBlock(_:)), name: .baordDetailRefreshForBlock, object: nil)
     }
     
     private func setViewWithMode(mode: Mode?) {
@@ -659,10 +659,8 @@ class GatheringDetailBoardViewController: UIViewController {
         self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
     }
     
-    @objc private func didlMoveToHomeNotification(_ notification: Notification) {
-        DispatchQueue.main.async(qos: .userInteractive) {
-            self.navigationController?.popViewController(animated: true)
-        }
+    @objc private func didlBaordDetailRefreshForBlock(_ notification: Notification) {
+        getBoardDetail(state: .none)
     }
     
     @objc func joinBoardButtonTapped(_ sender: UIButton) {
@@ -952,6 +950,7 @@ class GatheringDetailBoardViewController: UIViewController {
                     let imageView = await UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.frame.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width))
                     await MainActor.run {
                         imageView.clipsToBounds = true
+                        imageView.isSkeletonable = true
                         imageView.contentMode = .scaleAspectFill
                         imageView.backgroundColor = .systemGray
                     }
@@ -1090,6 +1089,23 @@ class GatheringDetailBoardViewController: UIViewController {
             joinBoardButton.isEnabled = true
             joinBoardButton.backgroundColor = ServiceColor.primaryColor
             withdrawalButton.backgroundColor = .systemBackground
+        }
+        
+        guard let hostId = boardWithMode.hostId else { return }
+        
+        if GatheringBoardManager.isHostBlocked(userId: hostId) {
+            // 차단된 호스트의 게시글 입니다.
+            let alert = UIAlertController(title: "BLOCKED_HOST_ALERT_TITLE".localized(), message: "", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK".localized(), style: .default) { _ in
+                DispatchQueue.main.async {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+            alert.addAction(ok)
+            DispatchQueue.main.async {
+                self.present(alert, animated: true, completion: nil)
+            }
+            return
         }
         
         view.layoutIfNeeded()

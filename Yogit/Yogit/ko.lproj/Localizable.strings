@@ -282,6 +282,7 @@
 "APPLE_MAP" = "애플 지도";
 "GOOGLE_MAP" = "구글 지도";
 "KAKAO_MAP" = "카카오 지도";
+"BLOCKED_HOST_ALERT_TITLE" = "차단된 호스트의 모임글 입니다.";
 
 // ClipboardViewController
 "CLIPBOARD_SERVICE_NOTICE" = "실시간 채팅이 아닙니다.\n업데이트하려면 아래에서 위로 스크롤해주세요.";

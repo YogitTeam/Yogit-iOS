@@ -284,6 +284,7 @@
 "APPLE_MAP" = "애플 지도";
 "GOOGLE_MAP" = "구글 지도";
 "KAKAO_MAP" = "카카오 지도";
+"BLOCKED_HOST_ALERT_TITLE" = "Gathering post of blocked host.";
 
 // ClipboardViewController
 "CLIPBOARD_SERVICE_NOTICE" = "This is not a real-time chat.\nPlease scroll from bottom to top to update.";
