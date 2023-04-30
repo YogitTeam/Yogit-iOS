@@ -96,6 +96,8 @@
 
 * Read user's clipboard notifications
 * Read user's activity notifications
+    - Joined member notification
+    - Canceled member notification
 
 <br/>
 
