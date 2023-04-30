@@ -1,5 +1,6 @@
 # Yogit-iOS
 ## 📱 로컬기반 관심사별 글로벌 모임 iOS앱
+#### 앱 스토어 <https://apps.apple.com/app/yogit-%EC%9A%94%EA%B9%83/id644736114>
 
 ### Development achievement
 
