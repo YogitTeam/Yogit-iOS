@@ -21,7 +21,7 @@
 - Parallel, asynchronous code scheduling
     - Concurrency control `asyn, await / semaphore` >>  Race condition troubleshooting
     - Asynchronous image list parallel caching  `asyn, await` >> Performance improvement
-    - Run after canceling the previous 'Tasks' before running the current 'Tasks' >> Cancel unnecessary asynchronous tasks to speed up the response
+    - Run after canceling the previous `Tasks` before running the current `Tasks` >> Cancel unnecessary asynchronous tasks to speed up the response
 - Realm CRUD (Local DB)
 - Chat-type bulletin boards (for rapid MVP development, the bulletin board is implemented as a chat UI)
 - Infinte scroll (paging)
