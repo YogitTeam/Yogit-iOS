@@ -2,6 +2,9 @@
 ## 📱 Global Gathering by Locally Based Interest
 #### App store <https://apps.apple.com/app/yogit-%EC%9A%94%EA%B9%83/id6447361140>
 
+<br/>
+<br/>
+
 ### Development achievement
 ---
 - Session Management
@@ -30,8 +33,10 @@
 - Localizing
     - Select address, region, date, nationality, language - All languages
     - Push notification, user permission statement, service statement - Korean, English
-    
-    
+   
+<br/>
+<br/>
+
 ### App Key Feature Video
 ---
 #### Sign Up
@@ -65,7 +70,7 @@
 * Open gathering Location with apple/google/kakao app or web map
 * Join gathering board
 * Cancel gathering board
-* Clipboard(Chat UI type board)
+* Clipboard (Chat UI type board)
 * Report user
 * Report gathering board
 * Block user
