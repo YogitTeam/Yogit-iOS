@@ -769,7 +769,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     @objc func hostImageViewTapped(_ sender: UITapGestureRecognizer) {
-        guard let userIdToRead = userIds.first else { return }
+        guard let userIdToRead = boardWithMode.hostId else { return }
         readProfile(userIdToRead: userIdToRead)
     }
     // https://www.google.com/maps/place/서울특별시+광진구+능동로+209+세종대학교/@37.5518018,127.0736345,17z/data=!4m6!3m5!1s0x357ca4d0720eecc1:0x1a7ad975c6b5e4eb!8m2!3d37.5518018!4d127.0736345!16s%2Fm%2F0ddhhlj?hl=ko

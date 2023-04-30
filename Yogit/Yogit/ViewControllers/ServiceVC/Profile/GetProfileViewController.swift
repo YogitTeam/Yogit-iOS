@@ -15,11 +15,7 @@ class GetProfileViewController: UIViewController {
     // profile
     // profile image >> pagecontrol
     
-    var getUserId: Int64? {
-        didSet {
-            leftButton.isHidden = false
-        }
-    }
+    var getUserId: Int64?
     
 //    private lazy var footerViews: [UIView] = {
 //        let views = [UIView](repeating: UIView(), count: 4)
@@ -35,10 +31,6 @@ class GetProfileViewController: UIViewController {
             if isBlockedUser == 1 {
                 isBlockedUserAlert()
             }
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-            if getUserId != userItem.userId {
-                rightButton.isHidden = false
-            }
         }
     }
     
@@ -51,14 +43,12 @@ class GetProfileViewController: UIViewController {
     private lazy var leftButton: UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(leftButtonPressed(_:)))
         button.tintColor = .label
-        button.isHidden = true
         return button
     }()
     
     private lazy var rightButton: UIBarButtonItem = {
         let button =  UIBarButtonItem(image: UIImage(systemName: "ellipsis")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(rightButtonPressed(_:)))
         button.tintColor = .label
-        button.isHidden = true
         return button
     }()
     
@@ -413,13 +403,16 @@ class GetProfileViewController: UIViewController {
     
     private func configureNavItem() {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        if getUserId == userItem.userId {
-            self.navigationItem.title = "MY_PROFILE".localized()
-        } else {
-            self.navigationItem.title = "PROFILE".localized()
+        
+        if let userId = getUserId {
+            if userId == userItem.userId {
+                self.navigationItem.title = "MY_PROFILE".localized()
+            } else {
+                self.navigationItem.title = "PROFILE".localized()
+                self.navigationItem.rightBarButtonItem = rightButton
+            }
+            self.navigationItem.leftBarButtonItem = leftButton
         }
-        self.navigationItem.leftBarButtonItem = leftButton
-        self.navigationItem.rightBarButtonItem = rightButton
     }
 
     private func configureView() {
@@ -573,6 +566,7 @@ class GetProfileViewController: UIViewController {
         self.setUserProfile.job = data.job
         self.setUserProfile.aboutMe = data.aboutMe
         self.setUserProfile.interests = data.interests
+        self.isBlockedUser = data.isBlockingUser
     }
     
     private func configureStackView(stackView: UIStackView, footerView: UIView) {
@@ -647,7 +641,6 @@ class GetProfileViewController: UIViewController {
                 profileContentStackView.addArrangedSubview(profileInterestsStackView)
                 configureStackView(stackView: profileInterestsStackView, footerView: footerView4)
             }
-            isBlockedUser = data.isBlockingUser
         }
     }
     
