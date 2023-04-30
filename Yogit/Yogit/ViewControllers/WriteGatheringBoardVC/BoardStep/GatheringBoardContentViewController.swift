@@ -298,15 +298,14 @@ class GatheringBoardContentViewController: UIViewController {
                         print("Success - Upload Board")
                         DispatchQueue.main.async(qos: .userInteractive) { [self] in
                             navigationController?.popToRootViewController(animated: true)
-                            ProgressHUD.dismiss()
                             NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
                         }
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.dismiss()
-                    }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         }

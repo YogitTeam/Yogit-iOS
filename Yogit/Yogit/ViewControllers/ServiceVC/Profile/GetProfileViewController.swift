@@ -514,8 +514,9 @@ class GetProfileViewController: UIViewController {
             switch response.result {
             case .success:
                 if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
-                    DispatchQueue.main.async {
-                        self.dismiss(animated: true) // 프로필 화면
+                    DispatchQueue.main.async(qos: .userInteractive) { [self] in
+                        dismiss(animated: true)
+                        NotificationCenter.default.post(name: .moveToHome, object: nil)
                     }
                 }
             case let .failure(error):

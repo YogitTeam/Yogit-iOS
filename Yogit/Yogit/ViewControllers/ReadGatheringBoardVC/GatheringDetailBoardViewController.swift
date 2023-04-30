@@ -467,6 +467,7 @@ class GatheringDetailBoardViewController: UIViewController {
         configureMap()
         initProgressHUD()
         setViewWithMode(mode: boardWithMode.mode)
+        configureNotification()
 //        joinBulletinManager.backgroundViewStyle = .blurred(style: .systemUltraThinMaterialLight, isDark: true)
     }
     
@@ -478,55 +479,6 @@ class GatheringDetailBoardViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.tintColor = .label
-    }
-    
-    private func configureMap() {
-        mapView.delegate = self
-    }
-    
-    private func configureScrollView() {
-        boardContentScrollView.delegate = self
-        boardImagesScrollView.delegate = self
-    }
-    
-    private func configureCollectionView() {
-        imagesCollectionView.delegate = self
-        imagesCollectionView.dataSource = self
-    }
-    
-    private func configureView() {
-        view.addSubview(boardContentScrollView)
-        view.addSubview(boardBottomView)
-        view.backgroundColor = .systemBackground
-    }
-    
-    private func configureNav() {
-        navigationItem.rightBarButtonItem = self.rightButton
-        navigationItem.backButtonTitle = "" // remove back button title
-    }
-    
-    private func setViewWithMode(mode: Mode?) {
-        if mode == .refresh {
-            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-                viewBinding(data: boardWithMode)
-            })
-        } else {
-            getBoardDetail(state: .none)
-        }
-    }
-    
-    private func initProgressHUD() {
-        ProgressHUD.colorAnimation = ServiceColor.primaryColor
-    }
-    
-    private func configureInteractionInfoComponent() {
-        self.placeBoardInfoView.leftImageView.image = UIImage(named: "Place")?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
-        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
-        self.placeBoardInfoView.rightImageView.image = image
-        self.dateBoardInfoView.leftImageView.image = UIImage(named: "Date")?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
-        self.placeBoardInfoView.isUserInteractionEnabled = true
-        self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
     }
     
     override func viewDidLayoutSubviews() {
@@ -652,6 +604,65 @@ class GatheringDetailBoardViewController: UIViewController {
         placeBoardInfoView.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 0)
         memberLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
         kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 15)
+    }
+    
+    private func configureMap() {
+        mapView.delegate = self
+    }
+    
+    private func configureScrollView() {
+        boardContentScrollView.delegate = self
+        boardImagesScrollView.delegate = self
+    }
+    
+    private func configureCollectionView() {
+        imagesCollectionView.delegate = self
+        imagesCollectionView.dataSource = self
+    }
+    
+    private func configureView() {
+        view.addSubview(boardContentScrollView)
+        view.addSubview(boardBottomView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureNav() {
+        navigationItem.rightBarButtonItem = self.rightButton
+        navigationItem.backButtonTitle = "" // remove back button title
+    }
+    
+    private func configureNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(didlMoveToHomeNotification(_:)), name: .moveToHome, object: nil)
+    }
+    
+    private func setViewWithMode(mode: Mode?) {
+        if mode == .refresh {
+            DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                viewBinding(data: boardWithMode)
+            })
+        } else {
+            getBoardDetail(state: .none)
+        }
+    }
+    
+    private func initProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+    }
+    
+    private func configureInteractionInfoComponent() {
+        self.placeBoardInfoView.leftImageView.image = UIImage(named: "Place")?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
+        self.placeBoardInfoView.rightImageView.image = image
+        self.dateBoardInfoView.leftImageView.image = UIImage(named: "Date")?.withTintColor(.systemGray4, renderingMode: .alwaysOriginal)
+        self.placeBoardInfoView.isUserInteractionEnabled = true
+        self.placeBoardInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.copyAddressTapped(_:))))
+    }
+    
+    @objc private func didlMoveToHomeNotification(_ notification: Notification) {
+        DispatchQueue.main.async(qos: .userInteractive) {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
     
     @objc func joinBoardButtonTapped(_ sender: UIButton) {
@@ -1093,30 +1104,7 @@ class GatheringDetailBoardViewController: UIViewController {
         // 신청 버튼 (신청 / 취소)
 //        _applyButton = !data.isJoinedUser
     }
-    
-    func measureExecutionTime(block: () -> Void) {
-        let startTime = DispatchTime.now()
-        block()
-        let endTime = DispatchTime.now()
-        let timeInterval = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000
-        print("걸린 시간", timeInterval)
-    }
-    
-    func someTimeConsumingTask() {
-        // 시간이 오래 걸리는 작업 수행
-        Task.detached(priority: .high) { [weak self] in
-            let startTime = DispatchTime.now()
-            await self?.configureAsyncImageScrollView()
-            let endTime = DispatchTime.now()
-            let timeInterval = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000
-            print("걸린 시간", timeInterval)
-        }
-//        let startTime = DispatchTime.now()
-//        configureImagesScrollView()
-//        let endTime = DispatchTime.now()
-//        let timeInterval = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000
-//        print("걸린 시간", timeInterval)
-    }
+
     
     private func getBoardDetail(state: GatheringUserState) {
 

@@ -191,7 +191,7 @@ class ReportViewController: UIViewController {
         ])
         
         NSLayoutConstraint.activate([
-            reportContentTextView.topAnchor.constraint(equalTo: reportReasonLabel.bottomAnchor, constant: 0),
+            reportContentTextView.topAnchor.constraint(equalTo: reportReasonLabel.bottomAnchor, constant: 20),
             reportContentTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             reportContentTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             reportContentTextView.heightAnchor.constraint(equalToConstant: 150),
@@ -269,18 +269,21 @@ class ReportViewController: UIViewController {
                 .request(reportRouter)
                 .validate(statusCode: 200..<501)
                 .responseDecodable(of: APIResponse<[String:Int64]>.self) { response in
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
+                }
                 switch response.result {
                 case .success:
                     if let value = response.value, value.httpCode == 201 || value.httpCode == 200 {
                         DispatchQueue.main.async {
                             self.dismiss(animated: true) // 프로필 화면
-                            ProgressHUD.dismiss()
+                            ProgressHUD.showSucceed()
                         }
                     }
                 case let .failure(error):
                     print(error)
                     DispatchQueue.main.async {
-                        ProgressHUD.dismiss()
+                        ProgressHUD.showFailed()
                     }
                 }
             }
