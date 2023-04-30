@@ -15,6 +15,7 @@ enum BoardRouter: URLRequestConvertible {
     case readAllBoards(parameters: GetAllBoardsReq)
     case deleteBoard(parameters: DeleteBoardReq)
     case readCategoryBoards(parameters: GetBoardsByCategoryReq)
+    case readCategoryBoardsByCity(parameters: GetBoardsByCategoryCityReq)
     case readMyBoards(parameters: GetMyClub)
 
     var baseURL: URL {
@@ -23,13 +24,13 @@ enum BoardRouter: URLRequestConvertible {
 
     var method: HTTPMethod {
         switch self {
-        case .createBoard, .readBoardDetail, .readAllBoards, .readCategoryBoards, .readMyBoards:
+        case .createBoard, .readBoardDetail, .readAllBoards, .readCategoryBoards, .readMyBoards, .readCategoryBoardsByCity:
             return .post
         case .updateBoard, .deleteBoard:
             return .patch
         }
     }
-
+    
     var endPoint: String {
         switch self {
         case .createBoard, .updateBoard:
@@ -40,6 +41,8 @@ enum BoardRouter: URLRequestConvertible {
             return "get/categories"
         case .readCategoryBoards:
             return "get/category"
+        case .readCategoryBoardsByCity:
+            return "get/category/city"
         case .readMyBoards:
             return "get/myclub"
         case .deleteBoard:
@@ -73,6 +76,8 @@ enum BoardRouter: URLRequestConvertible {
         case let .readAllBoards(parameters):
             request = try JSONParameterEncoder().encode(parameters, into: request)
         case let .readCategoryBoards(parameters):
+            request = try JSONParameterEncoder().encode(parameters, into: request)
+        case let .readCategoryBoardsByCity(parameters):
             request = try JSONParameterEncoder().encode(parameters, into: request)
         case let .readMyBoards(parameters):
             request = try JSONParameterEncoder().encode(parameters, into: request)

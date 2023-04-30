@@ -364,15 +364,6 @@ class MKMapLocalSearchViewController: UIViewController {
 //    }
 
     
-//    func setupSearchController() {
-//        let searchController = UISearchController(searchResultsController: nil)
-//        searchController.searchBar.placeholder = "Search Language"
-//        searchController.hidesNavigationBarDuringPresentation = false
-//        searchController.searchResultsUpdater = self
-//        self.navigationItem.searchController = searchController
-//        self.navigationItem.hidesSearchBarWhenScrolling = false
-//    }
-    
 //    // reset runtimeinerval
 //    func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
 //        geoRunTimeInterval = Date().timeIntervalSinceReferenceDate
@@ -419,16 +410,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
     func configureLocationManager() {
         locationManager.delegate = self
     }
-    
-//    func configureLocationManager() {
-//        locationManager.delegate = self
-//        // 정확도 설정 - 최고로 높은 정확도
-//        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-//        // 위치 데이터 승인 요구
-//        locationManager.requestWhenInUseAuthorization()
-//        // 위치 업데이트 시작
-//        locationManager.startUpdatingLocation()
-//    }
     
     private func configureMap() {
         mapView.delegate = self
@@ -502,7 +483,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
         
         print("timer interval 통과")
         
-        guard let text = self.searchVC.searchBar.text?.lowercased(), let resultsVC = self.searchVC.searchResultsController as? MKResultsLocalSearchTableViewController else {
+        guard let text = searchVC.searchBar.text?.lowercased(), let resultsVC = searchVC.searchResultsController as? MKResultsLocalSearchTableViewController else {
             return
         }
         
@@ -520,14 +501,14 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
         
         resultsVC.delegate = self
        
-        search.start { (response, error) in
+        search.start { [weak self] (response, error) in
             guard let response = response, error == nil else {
-                if self.searchVC.searchBar.text != nil && self.searchVC.searchBar.text != "" {
+                if self?.searchVC.searchBar.text != nil && self?.searchVC.searchBar.text != "" {
                     resultsVC.notFound()
-                    DispatchQueue.main.async(qos: .userInteractive, execute: {
-                        self.activityIndicator.stopAnimating()
-                        self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
-                    })
+                    DispatchQueue.main.async(qos: .userInteractive) {
+                        self?.activityIndicator.stopAnimating()
+                        self?.searchVC.searchBar.searchTextField.leftView?.isHidden = false
+                    }
                 }
             return
             }
@@ -543,16 +524,14 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             }
             if mapItems.count == 0 {
                 resultsVC.notFound()
-                DispatchQueue.main.async(qos: .userInteractive, execute: {
-                    self.activityIndicator.stopAnimating()
-                    self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
-                })
             } else {
-                DispatchQueue.main.async {
+                DispatchQueue.main.async(qos: .userInteractive) {
                     resultsVC.updateMK(with: mapItems)
-                    self.activityIndicator.stopAnimating()
-                    self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
                 }
+            }
+            DispatchQueue.main.async(qos: .userInteractive) {
+                self?.activityIndicator.stopAnimating()
+                self?.searchVC.searchBar.searchTextField.leftView?.isHidden = false
             }
         }
         
@@ -578,7 +557,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             guard let pm = placemarks?.last else { return }
             guard let locality = pm.locality else { return }
             guard let countryCodeName = pm.country else { return }
-            
+        
             completion(locality, countryCodeName)
         })
     }
@@ -605,11 +584,19 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             
             let centerAddress = "\(locality) \(pm.thoroughfare ?? "") \(pm.subThoroughfare ?? "")"
             
-            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: locality.uppercased())
-            
-            self.forwardGeocoding(address: locality) { (cityName, countryCodeName) in
-                print("forwardGeocoding res", cityName, countryCodeName)
+            // apple api 가끔 서울만 영어로 되는 경우가 있음
+            let cityName: String
+            if locality == "서울특별시" { // english로 locale해도 서울만 영어로 안될때가 생겼음 (애플 API 문제)
+                cityName = "Seoul"
+            } else {
+                cityName = locality
             }
+            
+            let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: cityName.uppercased())
+            
+//            self.forwardGeocoding(address: locality) { (cityName, countryCodeName) in
+//                print("forwardGeocoding res", cityName, countryCodeName)
+//            }
             completion(reverseGeoData)
         })
 
@@ -619,93 +606,8 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
 extension MKMapLocalSearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         
-        print("updateSearchResults")
-        // text 값 없을때
-//
-//        if searchController.searchBar.text == nil {
-//            print("searchBar nill")
-//        } else if searchController.searchBar.text == "" {
-//            print("searchBar ")
-//        }
-//        else { // text 값있을때
-//            self.searchGuideView.isHidden = true
-//            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
-//        }
-//        if searchController.searchBar.text == nil || searchController.searchBar.text == "" {
-//            self.searchGuideView.isHidden = false
-//        } else { // text 값있을때
-//            self.searchGuideView.isHidden = true
-//            if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
-//        }
-        
-//        if !self.activityIndicator.isAnimating { self.activityIndicator.startAnimating() }
-       
         searchRunTimeInterval = Date().timeIntervalSinceReferenceDate // 마지막 변경 시간
-        
-        
-        // 인터벌 지날시
-//        if searchController.searchBar.tag == 0 { return }
-        
-        
-        
-//        if searchController.searchBar.text != "" { searchGuideView.isHidden = true }
-//        Search_Tick_TimeConsole()
-//        if isCanRequest == false { return }
-        
-        // 마지막 변경후 1.00 이후 검색 요청 들어가야함
-        // 검색바에 텍스트 업데이트 후 체크 하면 마지막 텍스트 입력후 업데이트 함수 요청 안된다.
-        // 따라서 이 함수 밖에서 요청 들어가댜함
-        // text, searchrequest 전역 변수로 저장
-        
-        
-//
-//        guard let text = searchController.searchBar.text?.lowercased(), let resultsVC = searchController.searchResultsController as? MKResultsLocalSearchTableViewController else {
-//            return
-//        }
-        
-//        let searchRequest = MKLocalSearch.Request()
-//        searchRequest.naturalLanguageQuery = text
-//        searchRequest.resultTypes = [.address, .pointOfInterest]
-//        searchRequest.region = searchRegion
-//
-//
-//        let search = MKLocalSearch(request: searchRequest)
-//        resultsVC.delegate = self
-//        search.start { (response, error) in
-//            guard let response = response else {
-//                if searchController.searchBar.text != nil && searchController.searchBar.text != "" {
-//                    resultsVC.notFound()
-//                    self.activityIndicator.stopAnimating()
-//                    self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
-//                    print("\(searchController.searchBar.text) 죄송합니다 값을 찾을수 없습니다.")
-//                }
-//            return }
-//            // let placeMarkSubtitle = item.placemark.subtitle
-//            for item in response.mapItems {
-//                if let name = item.name,
-//                   let location = item.placemark.location,
-//                   let placeMarkName = item.placemark.name,
-//                   let placeMarkTitle = item.placemark.title,
-//                   let placeMarkPhoneNumber = item.phoneNumber
-//                {
-//                    print("\(name)")
-//                    print("\(location.coordinate.latitude),\(location.coordinate.longitude)")
-//                    print("\(placeMarkName)")
-//                    print("\(placeMarkTitle)")
-////                    print("\(placeMarkSubtitle)")
-//                    print("\(placeMarkPhoneNumber)")
-//                }
-//            }
-//            DispatchQueue.main.async {
-//                resultsVC.updateMK(with: response.mapItems)
-//                self.activityIndicator.stopAnimating()
-//                self.searchVC.searchBar.searchTextField.leftView?.isHidden = false
-//            }
-//        }
-        
-        
-
-        
+    
 //        GooglePlacesManager.shaerd.findPlaces(query: query) { result in
 //            switch result {
 //            case .success(let places):
@@ -756,8 +658,6 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        print("search bar 취소 버튼 클릭")
-        
         DispatchQueue.main.async(qos: .userInteractive) { [self] in
             searchGuideView.isHidden = true
             if activityIndicator.isAnimating {
@@ -768,18 +668,6 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
         }
     }
     
-//    func searchBarTextDidEndEditing(_ searchBar:UISearchBar) {
-//        print("검색완료")
-//    }
-//
-//    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-//        print("searchBarShouldDidBeginEditing")
-//        return true
-//    }
-    
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        print("change text")
-//    }
 }
 
 extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControllerDelegate {

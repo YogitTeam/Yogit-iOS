@@ -152,7 +152,7 @@ class GatheringBoardContentViewController: UIViewController {
         textViews[1].snp.makeConstraints { make in
             make.top.equalTo(headerView[2].snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(200)
+            make.height.equalTo(300)
         }
         headerView[3].snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(10)
@@ -162,7 +162,7 @@ class GatheringBoardContentViewController: UIViewController {
         textViews[2].snp.makeConstraints { make in
             make.top.equalTo(headerView[3].snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(200)
+            make.height.equalTo(300)
             make.bottom.equalToSuperview().inset(30)
         }
     }

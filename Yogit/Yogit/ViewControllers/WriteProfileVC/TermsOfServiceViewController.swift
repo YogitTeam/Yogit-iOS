@@ -60,11 +60,10 @@ class TermsOfServiceViewController: UIViewController {
     private lazy var totalButton: UIButton = {
         let button = UIButton()
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        let imageNormal = UIImage(systemName: "checkmark.circle", withConfiguration: imageConfig)
-        let imageSelect = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)
+        let imageNormal = UIImage(systemName: "checkmark.circle", withConfiguration: imageConfig)?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
+        let imageSelect = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)?.withTintColor(ServiceColor.primaryColor, renderingMode: .alwaysOriginal)
         button.setImage(imageNormal, for: .normal)
         button.setImage(imageSelect, for: .selected)
-        button.tintColor = ServiceColor.primaryColor
         button.isHidden = false
         button.isEnabled = true
         button.setTitleColor(.label, for: .normal)
@@ -87,11 +86,10 @@ class TermsOfServiceViewController: UIViewController {
     private lazy var termOfUseButton: UIButton = {
         let button = UIButton()
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        let imageNormal = UIImage(systemName: "checkmark.circle", withConfiguration: imageConfig)
-        let imageSelect = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)
+        let imageNormal = UIImage(systemName: "checkmark.circle", withConfiguration: imageConfig)?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
+        let imageSelect = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)?.withTintColor(ServiceColor.primaryColor, renderingMode: .alwaysOriginal)
         button.setImage(imageNormal, for: .normal)
         button.setImage(imageSelect, for: .selected)
-        button.tintColor = ServiceColor.primaryColor
         button.isHidden = false
         button.isEnabled = true
         button.setTitleColor(.label, for: .normal)
@@ -115,12 +113,11 @@ class TermsOfServiceViewController: UIViewController {
     private lazy var personalInfoButton: UIButton = {
         let button = UIButton()
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        let imageNormal = UIImage(systemName: "checkmark.circle", withConfiguration: imageConfig)
-        let imageSelect = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)
+        let imageNormal = UIImage(systemName: "checkmark.circle", withConfiguration: imageConfig)?.withTintColor(.placeholderText, renderingMode: .alwaysOriginal)
+        let imageSelect = UIImage(systemName: "checkmark.circle.fill", withConfiguration: imageConfig)?.withTintColor(ServiceColor.primaryColor, renderingMode: .alwaysOriginal)
         button.setImage(imageNormal, for: .normal)
         button.setImage(imageSelect, for: .selected)
         button.setTitleColor(.label, for: .normal)
-        button.tintColor = ServiceColor.primaryColor
         button.isHidden = false
         button.isEnabled = true
         button.addTarget(self, action: #selector(self.personalInfoTapped(_:)), for: .touchUpInside)
@@ -307,8 +304,8 @@ class TermsOfServiceViewController: UIViewController {
     }
     
     private func isMissingData() {
-        let alert = UIAlertController(title: "", message: "Please consent to the mandatory items", preferredStyle: UIAlertController.Style.alert)
-        let okAction = UIAlertAction(title: "OK", style: .default)
+        let alert = UIAlertController(title: "", message: "TERMS_OF_SERVICE_MISSING_DATA".localized(), preferredStyle: UIAlertController.Style.alert)
+        let okAction = UIAlertAction(title: "OK".localized(), style: .default)
         alert.addAction(okAction)
         DispatchQueue.main.async {
             self.present(alert, animated: false, completion: nil)

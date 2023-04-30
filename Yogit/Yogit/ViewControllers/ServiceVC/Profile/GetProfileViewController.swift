@@ -407,11 +407,8 @@ class GetProfileViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         initNavigationBar()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
     }
     
     private func configureNavItem() {
@@ -420,9 +417,9 @@ class GetProfileViewController: UIViewController {
             self.navigationItem.title = "MY_PROFILE".localized()
         } else {
             self.navigationItem.title = "PROFILE".localized()
+            self.navigationItem.leftBarButtonItem = leftButton
+            self.navigationItem.rightBarButtonItem = rightButton
         }
-        self.navigationItem.leftBarButtonItem = leftButton
-        self.navigationItem.rightBarButtonItem = rightButton
     }
 
     private func configureView() {
@@ -437,6 +434,7 @@ class GetProfileViewController: UIViewController {
     
     private func initNavigationBar() {
         self.tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue.localized())
+        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
         if getUserId == nil { // 상대방 조회 없을때
             let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
             let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "SETTING")

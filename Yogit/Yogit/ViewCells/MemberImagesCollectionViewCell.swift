@@ -30,7 +30,6 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("Member images layoutSubviews")
         imageView.frame = contentView.bounds
         imageView.layer.cornerRadius = contentView.frame.height/2
     }

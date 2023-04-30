@@ -318,7 +318,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         let option = PHImageRequestOptions()
         option.deliveryMode = .highQualityFormat
         option.resizeMode = .exact
-        option.isSynchronous = true
+        option.isSynchronous = false
         option.isNetworkAccessAllowed = true
         for i in 0..<asstes.count {
             imageManager.requestImage(for: asstes[i],

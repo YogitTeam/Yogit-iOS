@@ -26,7 +26,6 @@ protocol NationalityProtocol: AnyObject {
 class NationalityViewController: UIViewController {
     // MARK: - TableView
     // 이미지도 같이
-//    let nationalityData: [String] = ["Korea", "USA"]
     
     private var countries = [Country]()
     private var filteredCountries = [Country]()

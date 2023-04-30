@@ -58,7 +58,6 @@ class CategoryImageViewCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print("Member images layoutSubviews")
         contentStackView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }

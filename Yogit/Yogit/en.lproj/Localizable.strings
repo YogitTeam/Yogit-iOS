@@ -169,7 +169,8 @@
 "TERMS_OF_SERVICE_CONSENT_TOTAL" = "I consent to all of the below.";
 "TERMS_OF_SERVICE_CONSENT_TERMOFSERVICE" = "(mandatory) I consent to the Terms of Use.";
 "TERMS_OF_SERVICE_CONSENT_PRIVACY_POLICY" = "(mandatory) I consent to the collection and user of my personal.";
-
+"TERMS_OF_SERVICE_MISSING_DATA" = "Please consent to the mandatory items";
+ 
 // GetProfileViewController
 "GET_PROFILE_BLOCK_ALERT_MESSAGE" = "Are you sure to block this user?\n\nYou can't change it after blocking it, so please use it carefully.\n\nIf you block a user, the gathering posts and clipboards created by those users will become invisible.";
 "GET_PROFILE_DELETED_USER_ALERT_TITLE" = "Deleted user";
@@ -191,11 +192,15 @@
 "CUSTOMER_SERVICE_MAIL_TRANSFER_FAIL_ALERT_TITLE" = "Mail transfer failed";
 "CUSTOMER_SERVICE_MAIL_TRANSFER_FAIL_ALERT_MESSAGE" = "Please check your iPhone email settings and try again.";
 
-// tabbar
+// Tabbar
 "HOME" = "Home";
 "MY_GATHERING" = "My gathering";
 "MY_PROFILE" = "My profile";
 "NOTIFICATION" = "Notification";
+
+
+// HomeViewController
+"NATIONWIDE" = "Nationwide";
 
 
 // GatheringBoardCategoryViewController
@@ -215,11 +220,11 @@
 "GATHERING_MEMBER_NUMBER_PLACEHOLDER" = "Number of member including host";
 "GATHERING_DATE_TIME_PLACEHOLDER" = "Select gathering date & time";
 "GATHERING_PLACE_PLACEHOLDER" = "Set meet up address(place)";
-"GATHERING_PLACE_DETAIL_PLACEHOLDER" = "ex) Gangnam station 3 exit (option)";
+"GATHERING_PLACE_DETAIL_PLACEHOLDER" = "EX) Gangnam station 3 exit (option)";
 "GATHERING_PHOTOS_PLACEHOLDER" = "";
-"GATHERING_TITLE_PLACEHOLDER" = "ex) Hongdae rooftop BBQ party";
-"GATHERING_INTRODUCTION_PLACEHOLDER" = "ex) Hello buddies!\nI wanted to enjoy a BBQ party with global friends, so I held a gathering.\nLet's have a BBQ party at Hongdae Rooftop Bar on a nice weekend.\nBBQ is unlimited.\nThe participation fee is 30,000 won per person.\n3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\nNon-alcoholic drinks are also available.\nBBQ equipment is available at the bar, so just your body needs to come.\n";
-"GATHERING_KINDOFPERSON_PLACEHOLDER" = "ex) Someone who can get along well with global friends.\nWelcome to active people.\nYou can drink as much as you want and you don't have to!\n";
+"GATHERING_TITLE_PLACEHOLDER" = "EX) Hongdae rooftop BBQ party";
+"GATHERING_INTRODUCTION_PLACEHOLDER" = "EX) Hello buddies!\nI wanted to enjoy a BBQ party with global friends, so I held a gathering.\nLet's have a BBQ party at Hongdae Rooftop Bar on a nice weekend.\nBBQ is unlimited.\nThe participation fee is 30,000 won per person.\n3 glasses of alcohol (wine and beer) are included, and an additional fee will be incurred for additional use.\nNon-alcoholic drinks are also available.\nBBQ equipment is available at the bar, so just your body needs to come.\n";
+"GATHERING_KINDOFPERSON_PLACEHOLDER" = "EX) Someone who can get along well with global friends.\nWelcome to active people.\nYou can drink as much as you want and you don't have to!\n";
 
 //GATHERING_INTRODUCTION_PLACEHOLDER
 //Someone who can get along well with global friends.\n
@@ -291,3 +296,6 @@
 "OPENED" = "Opened";
 "ACTIVITY" = "Activity";
 
+// SearchCityNameTableViewController
+"SEARCH_CITY_NAME_NAVIGATIONITEM_TITLE" = "Search for city name";
+"SEARCH_CITY_NAME_SEARCHBAR_PLACEHOLDER" = "EX) Seoul";

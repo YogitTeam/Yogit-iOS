@@ -10,8 +10,7 @@ import SnapKit
 import CoreLocation
 import SkeletonView
 
-class  MainViewController: UIViewController {
-
+class MainViewController: UIViewController {
     private var gatheringBoards = [Board]()
     private var pageCursor = 0
     private var pageListCnt = 0
@@ -21,9 +20,16 @@ class  MainViewController: UIViewController {
     private var tasks = [Task<(), Never>]()
     private var categoryId: Int = 1
     
+    private let defaulltCityName = "NATIONWIDE"
+    
+    // to user
+    private lazy var cityNameLocalized: String = defaulltCityName
+    
+    // to server
+    private var cityNameEng: String = ""
+    
     private var selectedCell: CategoryImageViewCollectionViewCell? {
         didSet {
-            print("변경후")
             DispatchQueue.main.async { [weak self] in
                 oldValue?.imageView.tintColor = .label
                 oldValue?.titleLabel.textColor = .label
@@ -49,7 +55,6 @@ class  MainViewController: UIViewController {
     
     private lazy var createGatheringBoardButton: UIButton = {
         let button = UIButton()
-//        button.setImage(UIImage(named: "Edit")?.withTintColor(.label, renderingMode: .alwaysOriginal), for: .normal)
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
         let image = UIImage(systemName: "plus", withConfiguration: imageConfig)
         button.setImage(image, for: .normal)
@@ -86,6 +91,20 @@ class  MainViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
+    
+    private lazy var searchCityNameButton: UIBarButtonItem = {
+        let buttonTitle = cityNameLocalized.localized()
+        let buttonImage = UIImage(systemName: "chevron.down")?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        let button = UIButton(type: .custom)
+        button.semanticContentAttribute = .forceRightToLeft
+        button.setTitle(buttonTitle, for: .normal)
+        button.setImage(buttonImage, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(.label, for: .normal)
+        button.addTarget(self, action: #selector(searchCityNameButtonTapped), for: .touchUpInside)
+        let barButtonItem = UIBarButtonItem(customView: button)
+        return barButtonItem
+    }()
 
     private let lineView: UIView = {
         let view = UIView()
@@ -107,7 +126,7 @@ class  MainViewController: UIViewController {
         super.viewWillAppear(animated)
         initNavigationBar()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: categoryId-1, section: 0)) as? CategoryImageViewCollectionViewCell {
@@ -133,6 +152,18 @@ class  MainViewController: UIViewController {
     
     private func initNavigationBar() {
         self.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
+        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+        self.tabBarController?.navigationItem.rightBarButtonItems = [searchCityNameButton]
+    }
+    
+    @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
+        DispatchQueue.main.async(execute: {
+            let SCNTVC = SearchCityNameViewController()
+            SCNTVC.delegate = self
+            let NC = UINavigationController(rootViewController: SCNTVC)
+            NC.modalPresentationStyle = .fullScreen
+            self.present(NC, animated: true, completion: nil)
+        })
     }
     
     override func viewDidLayoutSubviews() {
@@ -184,17 +215,36 @@ class  MainViewController: UIViewController {
         }
     }
     
+    // cityNameEng가 default면 기존 api, 다르면 다른 api 요청
     private func fetchGatheringBoardsByCategory(category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
         let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
         let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
         let response = await dataTask.response
         switch response.result {
         case .success:
-        if let value = response.value, value.httpCode == 200, let data = value.data {
-            return data
-        } else {
-            throw FetchError.badResponse
+            if let value = response.value, value.httpCode == 200, let data = value.data {
+                return data
+            } else {
+                throw FetchError.badResponse
+            }
+        case let .failure(error):
+            print("fetchGatheringBoardsByCategory", error)
+            throw FetchError.failureResponse
         }
+    }
+    
+    // cityNameEng가 default면 기존 api, 다르면 다른 api 요청
+    private func fetchGatheringBoardsByCategoryCity(cityName: String, category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
+        let getBoardsByCategoryCityReq = GetBoardsByCategoryCityReq(cityName: cityName, categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
+        let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoardsByCity(parameters: getBoardsByCategoryCityReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
+        let response = await dataTask.response
+        switch response.result {
+        case .success:
+            if let value = response.value, value.httpCode == 200, let data = value.data {
+                return data
+            } else {
+                throw FetchError.badResponse
+            }
         case let .failure(error):
             print("fetchGatheringBoardsByCategory", error)
             throw FetchError.failureResponse
@@ -212,7 +262,12 @@ class  MainViewController: UIViewController {
         let startTime = DispatchTime.now().uptimeNanoseconds
         let task = Task {
             do {
-                let getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                let getData: GetBoardsByCategoryRes
+                if defaulltCityName == cityNameLocalized {
+                    getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                } else {
+                    getData = try await fetchGatheringBoardsByCategoryCity(cityName: cityNameEng, category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                }
                 
                 if isFirstPage {
                     gatheringBoardCollectionView.stopSkeletonAnimation()
@@ -240,7 +295,6 @@ class  MainViewController: UIViewController {
                 if pageCursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
-                    print("pageListCnt, getBoardCnt", pageListCnt, getBoardCnt)
                     if Task.isCancelled {
                        return
                     }
@@ -289,14 +343,11 @@ extension  MainViewController: UIScrollViewDelegate {
         if scrollView == gatheringBoardCollectionView && !isPaging {
             if scrollView.contentOffset.y > 86 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
                 .height)) { // -500
-                print("하단 스크롤링")
-                print("😀Upload for up scroling", categoryId)
                 isPaging = true
                 isLoading = true
                 let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
                 gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
                 pagingBoardsByCategory(categoryId: categoryId, isFirstPage: false)
-                print("End Bottom Load")
             }
         }
     }
@@ -318,7 +369,6 @@ extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionVie
                     }
                 }
                 categoryId = indexPath.row + 1
-                print("🎃", categoryId)
                 resetBoardsData(categoryId: categoryId)
                 pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
             }
@@ -398,3 +448,59 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension MainViewController: SearchCityNameProtocol {
+    func cityNameSend(cityNameLocalized: String) {
+        isPaging = true
+        self.cityNameLocalized = cityNameLocalized // localized 전 (defaultCityName포함)
+        guard let button = searchCityNameButton.customView as? UIButton else { return }
+        button.setTitle(cityNameLocalized.localized(), for: .normal) // localized 되서 보여준다.
+        if defaulltCityName == self.cityNameLocalized {
+            resetBoardsData(categoryId: categoryId)
+            pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
+        } else {
+            forwardGeocodingToServer(address: cityNameLocalized) { [weak self] (cityNameEng, countyCode) in
+                self?.cityNameEng = cityNameEng
+                self?.resetBoardsData(categoryId: self!.categoryId)
+                self?.pagingBoardsByCategory(categoryId: self!.categoryId, isFirstPage: true)
+            }
+        }
+    }
+}
+
+
+extension MainViewController {
+    private func forwardGeocodingToServer(address: String,completion: @escaping (String, String) -> Void) {
+        
+        let geocoder = CLGeocoder()
+       
+        guard let serviceCountryCode = SessionManager.getSavedCountryCode() else { return }
+        
+        let locale = Locale(identifier: "en_US") // 서버로 넘길 데이터
+
+        // 주소 다됨 (country, locality, "KR" >> South Korea)
+        geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: {
+            (placemarks, error) in
+            if error != nil {
+                return
+            }
+
+            guard let pm = placemarks?.last,
+                  let locality = pm.locality,
+                  let countryCode = pm.isoCountryCode,
+                  serviceCountryCode == countryCode
+            else {
+                return
+            }
+            
+            // apple api 가끔 서울만 영어로 되는 경우가 있음
+            let cityName: String
+            if locality == "서울특별시" { // english로 locale해도 서울만 영어로 안될때가 생겼음 (애플 API 문제)
+                cityName = "Seoul"
+            } else {
+                cityName = locality
+            }
+            
+            completion(cityName.uppercased(), countryCode)
+        })
+    }
+}

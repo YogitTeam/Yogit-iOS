@@ -21,6 +21,22 @@ struct GetBoardsByCategoryReq: Encodable {
     }
 }
 
+struct GetBoardsByCategoryCityReq: Encodable {
+    let cityName: String
+    let categoryId: Int
+    let cursor: Int
+    let refreshToken: String
+    let userId: Int64
+    
+    init(cityName: String, categoryId: Int, cursor: Int, refreshToken: String, userId: Int64) {
+        self.cityName = cityName
+        self.categoryId = categoryId
+        self.cursor = cursor
+        self.refreshToken = refreshToken
+        self.userId = userId
+    }
+}
+
 
 
 struct GetAllBoardsReq: Encodable {

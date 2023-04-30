@@ -39,7 +39,6 @@ class MyTextView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        print("MyTextViewTableViewCell init")
         self.translatesAutoresizingMaskIntoConstraints = false
         addSubview(myTextView)
         addSubview(textCountLabel)
@@ -69,15 +68,4 @@ class MyTextView: UIView {
         }
 
     }
-    
-//    override func prepareForReuse() {
-//        super.prepareForReuse()
-//        print("MyTextViewTableViewCell")
-//        myTextView.text = nil
-//    }
-
-//    // cell content update
-//    func configure(text: String?, section: Int) {
-//
-//    }
 }

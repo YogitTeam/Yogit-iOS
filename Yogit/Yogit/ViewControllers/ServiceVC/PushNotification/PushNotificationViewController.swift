@@ -102,6 +102,7 @@ class PushNotificationViewController: UIViewController {
     
     private func initNavigationBar() {
         self.tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue.localized())
+        self.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
 //        let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
 //        let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "Setting")
 //        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)

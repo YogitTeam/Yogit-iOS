@@ -251,11 +251,9 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     
     
     func configure(with board: Board) async {
-        let memberImageUrls = board.profileImgUrls//[String](repeating: board.profileImgURL, count: 6)
+        let memberImageUrls = board.profileImgUrls
+        boardImageView.setImage(with: board.imageURL)
         await withTaskGroup(of: (Void).self) { taskGroup in
-            taskGroup.addTask {
-                await self.boardImageView.setImage(with: board.imageURL)
-            }
             for i in 0..<6 {
                 taskGroup.addTask {
                     if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {

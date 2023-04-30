@@ -104,7 +104,9 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
         guard let placeName = place.placemark.name else { return }
         guard let placeTitle = place.placemark.title else { return } // 주소, 우편번호
         self.delegate?.didTapPlace(coordinate: coordinate, placeName: placeName, placeTitle: placeTitle)
-        self.dismiss(animated: true)
+        DispatchQueue.main.async {
+            self.dismiss(animated: true)
+        }
     }
     /*
     // MARK: - Navigation
