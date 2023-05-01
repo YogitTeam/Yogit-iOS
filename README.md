@@ -3,7 +3,6 @@
 #### App store <https://apps.apple.com/app/yogit-%EC%9A%94%EA%B9%83/id6447361140>
 
 <br/>
-<br/>
 
 ### Development achievement
 ---
@@ -37,7 +36,7 @@
 <br/>
 <br/>
 
-### App Key Feature Video
+### App Key Feature Video (1.3.1 Version)
 ---
 #### Sign Up
 
@@ -60,6 +59,8 @@
 * Read gathering boards by (category, city name)
 * Refresh gathering boards 
 * Infinte scroll UICollectionViewCell (pagenation)
+
+https://user-images.githubusercontent.com/109328441/235416454-f6cdee06-271a-4b05-998e-fb0577645183.MP4
 
 <br/>
 
@@ -129,6 +130,11 @@
 * Log out
 * Delete account
 * Customer service center
+
+<br/>
+
+#### Support dark mode
+
 
 <br/>
 

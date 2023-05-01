@@ -279,7 +279,7 @@
 "MEMBER_FULL_ALERT_TITLE" = "Can't join";
 "MEMBER_FULL_ALERT_MESSAGE" = "The gathering is full.";
 "DELETE_GATHERING_ALERT_MESSAGE" = "Would you want to delete a gathering board?";
-"BOARD_DELETED_ALERT_TITLE" = "Gathering board is deleted";
+"BOARD_DELETED_ALERT_TITLE" = "Deleted gathering board";
 "BOARD_DELETED_ALERT_MESSAGE" = "The gathering board is deleted";
 "APPLE_MAP" = "애플 지도";
 "GOOGLE_MAP" = "구글 지도";

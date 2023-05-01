@@ -856,7 +856,7 @@ class GatheringDetailBoardViewController: UIViewController {
             alert.addAction(report)
         } else {
             let edit = UIAlertAction(title: "EDIT".localized(), style: .default) { (action) in self.editBoard() }
-            let delete = UIAlertAction(title: "DELETE".localized(), style: .default) { (action) in self.deleteAlert() }
+            let delete = UIAlertAction(title: "DELETE".localized(), style: .destructive) { (action) in self.deleteAlert() }
             alert.addAction(edit)
             alert.addAction(delete)
         }
