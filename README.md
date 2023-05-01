@@ -36,7 +36,7 @@
 <br/>
 <br/>
 
-### App Key Feature Video (1.3.1 Version)
+### App Key Feature GIF (1.3.1 Version)
 ---
 #### Sign Up
 
@@ -79,6 +79,7 @@
 * Clipboard (Chat UI type board)
 * Report user
 * Report gathering board
+* Report clipboard
 * Block user
 
 ![ReadBoardDetail](https://user-images.githubusercontent.com/109328441/235424041-55f4a587-d877-4372-95c7-acd57a91ebd3.gif)
