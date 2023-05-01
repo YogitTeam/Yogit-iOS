@@ -60,7 +60,8 @@
 * Refresh gathering boards 
 * Infinte scroll UICollectionViewCell (pagenation)
 
-https://user-images.githubusercontent.com/109328441/235416454-f6cdee06-271a-4b05-998e-fb0577645183.MP4
+https://user-images.githubusercontent.com/109328441/235416680-a72c6d7a-784b-495e-bc7f-9a28fbf74951.MP4
+https://user-images.githubusercontent.com/109328441/235417044-368249a7-feb1-46ed-856a-3fd3259955b9.MOV
 
 <br/>
 
