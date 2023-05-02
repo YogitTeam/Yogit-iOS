@@ -105,7 +105,7 @@
 	Cancel joined gathering 
 	Report post
 
-|<img src="https://user-images.githubusercontent.com/109328441/235426398-3f5c0696-986e-44fe-a30f-d0ee400ad76c.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235578566-11341d46-ea80-4491-ada8-c29ce31344e2.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235424164-828ddba2-3e2f-49b9-a5cb-fcf5cdb93935.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235594306-a6dd6622-af9d-4692-8a6b-58d78880521d.gif" wwidth="200" height="430"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235426398-3f5c0696-986e-44fe-a30f-d0ee400ad76c.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235578566-11341d46-ea80-4491-ada8-c29ce31344e2.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235424164-828ddba2-3e2f-49b9-a5cb-fcf5cdb93935.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235594306-a6dd6622-af9d-4692-8a6b-58d78880521d.gif" width="200" height="430"/>|
 |:---:|:---:|:---:|:---:|
 |Create post|Read post|Update post|Delete post|
 
