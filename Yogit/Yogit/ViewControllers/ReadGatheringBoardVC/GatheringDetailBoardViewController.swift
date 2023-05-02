@@ -881,7 +881,7 @@ class GatheringDetailBoardViewController: UIViewController {
     private func deleteAlert() {
         let alert = UIAlertController(title: "DELETE".localized(), message: "DELETE_GATHERING_ALERT_MESSAGE".localized(), preferredStyle: .alert)
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
-        let ok = UIAlertAction(title: "OK".localized(), style: .default) { (ok) in
+        let ok = UIAlertAction(title: "OK".localized(), style: .destructive) { (ok) in
             self.deleteBoard()
         }
         alert.addAction(cancel)

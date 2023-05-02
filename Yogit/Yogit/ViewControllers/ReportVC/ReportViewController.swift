@@ -289,7 +289,7 @@ class ReportViewController: UIViewController {
             }
         } else {
             let alert = UIAlertController(title: "", message: "REPORT_CONTENT_ALERT".localized(), preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK".localized(), style: .default)
+            let okAction = UIAlertAction(title: "OK".localized(), style: .destructive)
             alert.addAction(okAction)
             present(alert, animated: false, completion: nil)
         }
