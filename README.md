@@ -110,7 +110,7 @@
 * Joned gathering
 * Opend gathering
 
-|<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="200" height="380"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="200" height="430"/>|
 |:---:|
 |Read joined/opend post|
 
