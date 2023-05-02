@@ -261,6 +261,7 @@
 
 // GatheringBoardContentViewController
 "GATHERING_CONTENT_ALERT_MESSAGE" = "Please input the %@ according to the condition.";
+"GATHERING_IMAGES_LOADING_LABEL" = "Downloading images...";
 
 // GatheringDetailBoardViewController
 "JOIN_GATHERING_TITLE" = "Join the gathering";

@@ -44,16 +44,42 @@ class GatheringBoardContentViewController: UIViewController {
         return button
     }()
     
-//    private let textDetailTableView: UITableView = {
-//        let tableView = UITableView(frame: .zero, style: .grouped)
-//        tableView.separatorStyle = .none
-//        tableView.backgroundColor = .systemBackground
-//        tableView.isScrollEnabled = false
-//        tableView.sectionHeaderTopPadding = 10
-//        tableView.register(MyTextViewTableViewCell.self, forCellReuseIdentifier: MyTextViewTableViewCell.identifier)
-//        tableView.register(RequirementTableViewHeader.self, forHeaderFooterViewReuseIdentifier: RequirementTableViewHeader.identifier)
-//        return tableView
-//    }()
+ 
+    private let loadingGuideLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 18, weight: UIFont.Weight.medium)
+        label.sizeToFit()
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        label.textColor = .systemGray
+        label.adjustsFontSizeToFitWidth = true
+        label.text = "GATHERING_IMAGES_LOADING_LABEL".localized()
+        return label
+    }()
+    
+    private lazy var imageLoadingView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.2
+        view.layer.shadowOffset = CGSize(width: 2, height: 2)
+        view.layer.shadowRadius = 4
+        view.layer.masksToBounds = false
+        view.layer.cornerRadius = 10
+        view.alpha = 0.0
+        view.isHidden = true
+        view.addSubview(activityIndicator)
+        view.addSubview(loadingGuideLabel)
+        return view
+    }()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
     
     private let imagesCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -112,18 +138,18 @@ class GatheringBoardContentViewController: UIViewController {
             make.leading.right.equalToSuperview()
             make.height.equalTo(70)
         }
-
+        
         contentScrollView.snp.makeConstraints { make in
             make.top.equalTo(stepHeaderView.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
-
+        
         contentView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.width.equalToSuperview()
             $0.centerX.bottom.equalToSuperview()
         }
-
+        
         headerView[0].snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(10)
@@ -165,10 +191,24 @@ class GatheringBoardContentViewController: UIViewController {
             make.height.equalTo(300)
             make.bottom.equalToSuperview().inset(30)
         }
+        imageLoadingView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(56)
+        }
+        activityIndicator.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
+        }
+        loadingGuideLabel.snp.makeConstraints {
+            $0.leading.equalTo(activityIndicator.snp.trailing).offset(10)
+            $0.top.bottom.trailing.equalToSuperview().inset(10)
+        }
     }
     
     private func configureView() {
         view.addSubview(stepHeaderView)
+        view.addSubview(imageLoadingView)
         view.addSubview(contentScrollView)
         view.backgroundColor = .systemBackground
         self.hideKeyboardWhenTappedAround()
@@ -362,33 +402,89 @@ extension GatheringBoardContentViewController: UICollectionViewDelegateFlowLayou
 
 extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    private func convertAssetsToImages(asstes: [PHAsset]) -> [UIImage] {
-        var images = [UIImage]()
+//    private func convertAssetsToImages(asstes: [PHAsset]) -> [UIImage] {
+//        var images = [UIImage]()
+//        let imageManager = PHImageManager.default()
+//        let option = PHImageRequestOptions()
+////        option.deliveryMode = .fastFormat//.highQualityFormat
+////        option.resizeMode = .exact
+//        option.isSynchronous = true
+//        option.isNetworkAccessAllowed = true
+//
+//        // CGSize(width: view.frame.size.width, height: view.frame.size.height)
+//        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
+//        for i in 0..<asstes.count {
+//
+//            imageManager.requestImage(for: asstes[i],
+//                                      targetSize: newSize,
+//                                      contentMode: .aspectFit,
+//                                      options: option) { (result, info) in
+//                if let image = result {
+//                    images.append(image)
+//                    print("image and image size", image, image.size)
+////                    print("이미지 크기", image.toFile(format: .jpeg(1.0))!)
+////                    let resized = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height))
+////                    print("resized and resized size", resized, resized.size)
+////                    print("이미지 크기", resized.toFile(format: .jpeg(1.0))!)
+//                }
+//            }
+//        }
+//        return images
+//    }
+    
+    private func showImageLoading() {
+        imageLoadingView.isHidden = false
+        self.activityIndicator.startAnimating()
+        UIView.animate(withDuration: 1.0, animations: {
+            // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
+            self.imageLoadingView.alpha = 1.0
+        })
+    }
+    
+    private func dismissImageLoading() {
+        UIView.animate(withDuration: 1.0, animations: {
+            // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
+            self.imageLoadingView.alpha = 0.0
+        }) { (completed) in
+            self.imageLoadingView.isHidden = true
+        }
+        activityIndicator.stopAnimating()
+    }
+    
+    private func convertAssetsToImages(asstes: [PHAsset]) async -> [UIImage] {
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
 //        option.deliveryMode = .fastFormat//.highQualityFormat
 //        option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
-        // CGSize(width: view.frame.size.width, height: view.frame.size.height)
+        
+        showImageLoading()
+        
         let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
-        for i in 0..<asstes.count {
 
-            imageManager.requestImage(for: asstes[i],
-                                      targetSize: newSize,
-                                      contentMode: .aspectFit,
-                                      options: option) { (result, info) in
-                if let image = result {
-                    images.append(image)
-//                    print("image and image size", image, image.size)
-//                    print("이미지 크기", image.toFile(format: .jpeg(1.0))!)
-//                    let resized = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height))
-//                    print("resized and resized size", resized, resized.size)
-//                    print("이미지 크기", resized.toFile(format: .jpeg(1.0))!)
+        var images = [UIImage?](repeating: nil, count: asstes.count)
+        await withTaskGroup(of: Void.self, body: { taskGroup in
+            for i in 0..<asstes.count {
+                taskGroup.addTask { [i] in
+                    imageManager.requestImage(for: asstes[i],
+                                              targetSize: newSize,
+                                              contentMode: .aspectFit,
+                                              options: option) { (result, info) in
+                        if let image = result {
+                            DispatchQueue.main.sync {
+                                images[i] = image
+                            }
+                        }
+                    }
                 }
             }
-        }
-        return images
+        })
+        let orderedImages = images.compactMap { $0 } // nil을 제거하고 순서를 보장한 배열을 생성
+        
+        dismissImageLoading()
+        
+        return orderedImages
     }
     
     private func openLibrary() {
@@ -405,10 +501,13 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                 }, cancel: { (assets) in
                     print("Canceled with selections: \(assets)")
                 }, finish: { (assets) in
-                    print("Finished with selections: \(assets)")
-                    let appendImages = self.convertAssetsToImages(asstes: assets)
-                    self.boardWithMode.uploadImages.append(contentsOf: appendImages)
-                    self.imagesCollectionView.reloadData()
+                    Task.detached(priority: .background) {
+                        let appendImages = await self.convertAssetsToImages(asstes: assets)
+                        await MainActor.run {
+                            self.boardWithMode.uploadImages.append(contentsOf: appendImages)
+                            self.imagesCollectionView.reloadData()
+                        }
+                    }
                 }, completion: {
                     
                 })

@@ -142,6 +142,7 @@ class ReportViewController: UIViewController {
         configureReportTypeView()
         configureNavItem()
         configureTextView()
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
     }
     
     override func viewDidLayoutSubviews() {

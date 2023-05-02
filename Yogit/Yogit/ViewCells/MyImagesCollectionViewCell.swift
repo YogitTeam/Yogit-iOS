@@ -15,7 +15,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.backgroundColor = UIColor(rgb: 0xCDCCCC, alpha: 1)
-        imageView.tintColor = UIColor(rgb: 0xEBEBEB, alpha: 1)// .systemGray.withAlphaComponent(0.5) // image color
+        imageView.tintColor = UIColor(rgb: 0xEBEBEB, alpha: 1)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
         return imageView
@@ -29,7 +29,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 10
         label.numberOfLines = 1
-        label.backgroundColor = UIColor(rgb: 0xEBEBEB, alpha: 0.5)//.systemGray.withAlphaComponent(0.5)
+        label.backgroundColor = UIColor(rgb: 0xEBEBEB, alpha: 0.5)
         return label
     }()
 
@@ -43,7 +43,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         label.numberOfLines = 1
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 10
-        label.backgroundColor = .black.withAlphaComponent(0.5) //UIColor(rgb: 0x3246FF, alpha: 1.0)
+        label.backgroundColor = .black.withAlphaComponent(0.5)
         label.isHidden = true
         return label
     }()
@@ -80,14 +80,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         mainImageLabel.isHidden = true
     }
     
-    func configureDownload(imageString: String, sequence: Int, kind: Kind) { // imageString: String,
-//        guard let url = URL(string: imageString) else { return }
-//        self.imageView.kf.setImage(
-//            with: url,
-//            placeholder: nil,
-//            options: [.transition(.flipFromRight(1.2))],
-//            completionHandler: nil
-//        )
+    func configureDownload(imageString: String, sequence: Int, kind: Kind) {
         self.imageView.setImage(with: imageString)
         self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
@@ -97,14 +90,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configureUpload(image: UIImage, sequence: Int, kind: Kind) { // imageString: String,
-//        guard let url = URL(string: imageString) else { return }
-//        self.imageView.kf.setImage(
-//            with: url,
-//            placeholder: nil,
-//            options: [.transition(.fade(1.2))],
-//            completionHandler: nil
-//          )
+    func configureUpload(image: UIImage, sequence: Int, kind: Kind) {
         self.imageView.image = image
         self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
@@ -116,13 +102,6 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
 
     func configureNull(image: UIImage?, sequence: Int, kind: Kind) { // imageString: String,
-//        guard let url = URL(string: imageString) else { return }
-//        self.imageView.kf.setImage(
-//            with: url,
-//            placeholder: nil,
-//            options: [.transition(.fade(1.2))],
-//            completionHandler: nil
-//          )
         self.imageView.image = image
         self.imageSequenceLabel.text = "\(sequence)"
         switch kind {
@@ -131,8 +110,4 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         default: fatalError("Not exist kind of imageview")
         }
     }
-    
-//    func getImageID() -> Int64? {
-//        return imageId
-//    }
 }
