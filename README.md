@@ -47,7 +47,7 @@
 * Customer service center
 
 
-|<img src="https://user-images.githubusercontent.com/109328441/235420878-23cdf78c-f2f3-4b5f-851a-58978484b268.gif" width="300" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235583452-c677588c-487a-4709-9649-7371ca8a9b66.gif" width="300" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235425554-f8f01e45-c1da-4cfc-8c1c-04966fc41742.gif" width="300" height="300"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235420878-23cdf78c-f2f3-4b5f-851a-58978484b268.gif" width="200" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235583452-c677588c-487a-4709-9649-7371ca8a9b66.gif" width="200" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235425554-f8f01e45-c1da-4cfc-8c1c-04966fc41742.gif" width="200" height="300"/>|
 |:---:|:---:|:---:|
 |Sign Up|Log In/out|Delete account|
 
@@ -60,7 +60,7 @@
 * Refresh gathering boards 
 * Infinte scroll (pagenation)
 
-|<img src="https://user-images.githubusercontent.com/109328441/235421445-dca4e839-1643-425f-9f88-30d97816661b.gif" width="300" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235421686-a30d810a-83db-4ed4-a2e2-e3382cfff1b2.gif" width="300" height="300"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235421445-dca4e839-1643-425f-9f88-30d97816661b.gif" width="200" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235421686-a30d810a-83db-4ed4-a2e2-e3382cfff1b2.gif" width="200" height="300"/>|
 |:---:|:---:|
 |Read posts|Infinte scroll|
 
@@ -110,7 +110,7 @@
 * Joned gathering
 * Opend gathering
 
-|<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="200" height="300"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="200" height="350"/>|
 |:---:|
 |Read joined/opend post|
 
