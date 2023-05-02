@@ -75,7 +75,7 @@
 * Cancel joined gathering 
 * Report post
 
-|<img src="https://user-images.githubusercontent.com/109328441/235426398-3f5c0696-986e-44fe-a30f-d0ee400ad76c.gif" width="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235578566-11341d46-ea80-4491-ada8-c29ce31344e2.gif" width="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235424164-828ddba2-3e2f-49b9-a5cb-fcf5cdb93935.gif" width="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235423141-7f734d7f-6f53-4a2b-ad76-404cad90ca12.gif" wwidth="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235579977-4d7d0d7f-8755-43c7-a8be-307c156936cf.gif" width="187.5" height="406"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235426398-3f5c0696-986e-44fe-a30f-d0ee400ad76c.gif" width="200" height="300"/>|<img src="https://user-images.githubusercontent.com/109328441/235578566-11341d46-ea80-4491-ada8-c29ce31344e2.gif" width="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235424164-828ddba2-3e2f-49b9-a5cb-fcf5cdb93935.gif" width="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235423141-7f734d7f-6f53-4a2b-ad76-404cad90ca12.gif" wwidth="187.5" height="406"/>|<img src="https://user-images.githubusercontent.com/109328441/235579977-4d7d0d7f-8755-43c7-a8be-307c156936cf.gif" width="187.5" height="406"/>|
 |:---:|:---:|:---:|:---:|:---:|
 |Create post|Read post|Update post|Delete post|Join/Cancel|
 
@@ -110,7 +110,7 @@
 * Joned gathering
 * Opend gathering
 
-|<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="300" height="300"/>|
+|<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="200" height="300"/>|
 |:---:|
 |Read joined/opend post|
 
