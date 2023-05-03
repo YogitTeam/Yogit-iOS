@@ -176,16 +176,7 @@ class MainViewController: UIViewController {
             self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
         }
     }
-    
-    @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
-        DispatchQueue.main.async(execute: {
-            let SCNTVC = SearchCityNameViewController()
-            SCNTVC.delegate = self
-            let NC = UINavigationController(rootViewController: SCNTVC)
-            NC.modalPresentationStyle = .fullScreen
-            self.present(NC, animated: true, completion: nil)
-        })
-    }
+
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -353,6 +344,16 @@ class MainViewController: UIViewController {
             isPaging = false
         }
         tasks.append(task)
+    }
+    
+    @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
+        DispatchQueue.main.async(execute: {
+            let SCNTVC = SearchCityNameViewController()
+            SCNTVC.delegate = self
+            let NC = UINavigationController(rootViewController: SCNTVC)
+            NC.modalPresentationStyle = .fullScreen
+            self.present(NC, animated: true, completion: nil)
+        })
     }
     
     @objc private func refreshGatheringBoards() {

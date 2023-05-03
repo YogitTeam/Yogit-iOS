@@ -258,7 +258,7 @@
 
 // GatheringBoardContentViewController
 "GATHERING_CONTENT_ALERT_MESSAGE" = "%@를 조건에 맞게 입력해주세요.";
-"GATHERING_IMAGES_LOADING_LABEL" = "이미지 다운로드중...";
+"GATHERING_IMAGES_LOADING_LABEL" = "이미지 불러오는중...";
 
 // GatheringDetailBoardViewController
 "JOIN_GATHERING_TITLE" = "모임 참여";

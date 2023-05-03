@@ -29,11 +29,11 @@
 
     Concurrency control, Race condition troubleshooting
     Asynchronous image list parallel caching 
-     Effect → Performance improvement
+    → Performance improvement
     Run after canceling the previous tasks before running the current task 
-     Effect → Cancel unnecessary asynchronous tasks to speed up the response
+    → Cancel unnecessary asynchronous tasks to speed up the response
     iCloud brings up a list of images that have not yet been downloaded in parallel to a background thread 
-     Effect → Users can immediately perform other UI interactions without waiting for that action to take place.
+    → Users can immediately perform other UI interactions without waiting for that action to take place.
   
 <br/>
 

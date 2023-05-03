@@ -40,8 +40,9 @@ extension UIViewController {
 
         authAlertController.addAction(cancel)
         authAlertController.addAction(getAuthAction)
-
-        self.present(authAlertController, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(authAlertController, animated: true, completion: nil)
+        }
     }
 }
 

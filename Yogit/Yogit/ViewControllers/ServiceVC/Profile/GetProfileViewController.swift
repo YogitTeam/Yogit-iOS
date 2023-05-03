@@ -36,6 +36,10 @@ class GetProfileViewController: UIViewController {
     
     private var setUserProfile = UserProfile()
     
+    private var canEdit: Bool {
+        return setUserProfile.userName == nil ? false : true
+    }
+    
     private var profileImages = [String]()
     
     private var languagesInfo: String = ""
@@ -85,6 +89,7 @@ class GetProfileViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isScrollEnabled = true
         scrollView.showsVerticalScrollIndicator = true
+        scrollView.refreshControl = refreshControl
         scrollView.addSubview(profileContentView)
         scrollView.isSkeletonable = true
         return scrollView
@@ -348,6 +353,13 @@ class GetProfileViewController: UIViewController {
         return view
     }()
     
+    private(set) lazy var refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.addTarget(self, action: #selector(refreshProfile), for: .valueChanged)
+//        control.transform = CGAffineTransformMakeScale(0.5, 0.5)
+        return control
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -439,6 +451,11 @@ class GetProfileViewController: UIViewController {
                 self?.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
             }
         }
+    }
+    
+    @objc private func refreshProfile() {
+        getUserProfile()
+        refreshControl.endRefreshing()
     }
     
     @objc private func leftButtonPressed(_ sender: Any) {
@@ -541,6 +558,7 @@ class GetProfileViewController: UIViewController {
     }
     
     @objc private func editButtonTapped(_ sender: UIButton) {
+        if !canEdit { return }
         DispatchQueue.main.async(qos: .userInteractive) {
             let SPVC = SetProfileViewController()
             SPVC.mode = .edit

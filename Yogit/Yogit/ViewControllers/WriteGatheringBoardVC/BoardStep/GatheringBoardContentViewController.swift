@@ -21,6 +21,8 @@ class GatheringBoardContentViewController: UIViewController {
         }
     }
     
+    private var isDownloading = false
+    
     private var deletedImageIds: [Int64] = []
     private var newImagesIdx: Int = 0 // 기존 이미지 개수 저장, 삭제한 이미지 개수저장 >> 기존이미지(3개) - 삭제한 이미지(2개) >> post(patch) req: 1번 인덱스 부터 끝지점
     private let step: Float = 2.0
@@ -355,6 +357,7 @@ class GatheringBoardContentViewController: UIViewController {
 
 extension GatheringBoardContentViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if isDownloading { return }
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
         if indexPath.row < boardWithMode.downloadImages.count + boardWithMode.uploadImages.count {
@@ -444,7 +447,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
     }
     
     private func dismissImageLoading() {
-        DispatchQueue.main.async { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             UIView.animate(withDuration: 1.0, animations: {
                 // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
                 self?.imageLoadingView.alpha = 0.0
@@ -459,8 +462,8 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
-//        option.deliveryMode = .fastFormat//.highQualityFormat
-//        option.resizeMode = .exact
+        option.deliveryMode = .highQualityFormat
+        option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
         
@@ -496,8 +499,8 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
-//        option.deliveryMode = .fastFormat//.highQualityFormat
-//        option.resizeMode = .exact
+        option.deliveryMode = .highQualityFormat
+        option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
         
@@ -536,39 +539,30 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         imagePicker.settings.selection.max = 5 - boardWithMode.downloadImages.count - boardWithMode.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
+        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
+        ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
             if Auth {
-                self.presentImagePicker(imagePicker, select: { (asset) in
+                self?.presentImagePicker(imagePicker, select: { (asset) in
                     print("Selected: \(asset)")
                 }, deselect: { (asset) in
                     print("Deselected: \(asset)")
                 }, cancel: { (assets) in
                     print("Canceled with selections: \(assets)")
                 }, finish: { (assets) in
-//                    Task.detached(priority: .background) {
-//                        let appendImages = await self.convertAssetsToImages(asstes: assets)
-//                        await MainActor.run {
-//                            self.boardWithMode.uploadImages.append(contentsOf: appendImages)
-//                            self.imagesCollectionView.reloadData()
-//                        }
-//                    }
-                    let newSize = CGSize(width: self.view.frame.size.width*2, height: self.view.frame.size.height*2)
+                    self?.isDownloading = true
                     DispatchQueue.global().async { [weak self] in
                         guard let appendImages = self?.convertAssetsToImagesGCD(asstes: assets, newSize: newSize) else { return }
                         DispatchQueue.main.async {
                             self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
                             self?.imagesCollectionView.reloadData()
+                            self?.isDownloading = false
                         }
                     }
-                    
-                    
                 }, completion: {
                     
                 })
             } else {
-                DispatchQueue.main.async {
-                    self.setAuthAlertAction("PHOTO".localized())
-                }
+                self?.setAuthAlertAction("PHOTO".localized())
             }
         }
     }

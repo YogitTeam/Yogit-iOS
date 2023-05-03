@@ -18,6 +18,8 @@ protocol ImagesProtocol: AnyObject {
 class SetProfileImagesViewController: UIViewController {
     weak var delegate: ImagesProtocol?
     
+    private var isDownloading = false
+    
     private var userImagesData = UserImagesData() {
         didSet {
             print("userImagesData", userImagesData)
@@ -321,6 +323,9 @@ class SetProfileImagesViewController: UIViewController {
 
 extension SetProfileImagesViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if isDownloading { return }
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 //        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
@@ -383,22 +388,26 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
 //    }
     
     private func showImageLoading() {
-        imageLoadingView.isHidden = false
-        self.activityIndicator.startAnimating()
-        UIView.animate(withDuration: 1.0, animations: {
-            // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
-            self.imageLoadingView.alpha = 1.0
-        })
+        DispatchQueue.main.async { [weak self] in
+            self?.imageLoadingView.isHidden = false
+            self?.activityIndicator.startAnimating()
+            UIView.animate(withDuration: 1.0, animations: {
+                // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
+                self?.imageLoadingView.alpha = 1.0
+            })
+        }
     }
     
     private func dismissImageLoading() {
-        UIView.animate(withDuration: 1.0, animations: {
-            // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
-            self.imageLoadingView.alpha = 0.0
-        }) { (completed) in
-            self.imageLoadingView.isHidden = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            UIView.animate(withDuration: 1.0, animations: {
+                // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
+                self?.imageLoadingView.alpha = 0.0
+            }) { (completed) in
+                self?.imageLoadingView.isHidden = true
+            }
+            self?.activityIndicator.stopAnimating()
         }
-        activityIndicator.stopAnimating()
     }
     
     private func convertAssetsToImages(asstes: [PHAsset]) async -> [UIImage] {
@@ -442,30 +451,30 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         imagePicker.settings.selection.max = 6 - userImagesData.downloadImages.count - userImagesData.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        ImageManager.shared.requestPHPhotoLibraryAuthorization { (Auth) in
-            DispatchQueue.main.async(qos: .userInteractive) {
-                if Auth {
-                    self.presentImagePicker(imagePicker, select: { (asset) in
-                        print("Selected: \(asset)")
-                    }, deselect: { (asset) in
-                        print("Deselected: \(asset)")
-                    }, cancel: { (assets) in
-                        print("Canceled with selections: \(assets)")
-                    }, finish: { (assets) in
-                        print("Finished with selections: \(assets)")
-                        Task.detached(priority: .background) {
-                            let appendImages = await self.convertAssetsToImages(asstes: assets)
-                            await MainActor.run {
-                                self.userImagesData.uploadImages.append(contentsOf: appendImages)
-                                self.imagesCollectionView.reloadData()
-                            }
+        ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
+            if Auth {
+                self?.presentImagePicker(imagePicker, select: { (asset) in
+                    print("Selected: \(asset)")
+                }, deselect: { (asset) in
+                    print("Deselected: \(asset)")
+                }, cancel: { (assets) in
+                    print("Canceled with selections: \(assets)")
+                }, finish: { (assets) in
+                    print("Finished with selections: \(assets)")
+                    self?.isDownloading = true
+                    Task.detached(priority: .high) { [weak self] in
+                        guard let appendImages = await self?.convertAssetsToImages(asstes: assets) else { return }
+                        await MainActor.run { [weak self] in
+                            self?.userImagesData.uploadImages.append(contentsOf: appendImages)
+                            self?.imagesCollectionView.reloadData()
+                            self?.isDownloading = false
                         }
-                    }, completion: {
-                        
-                    })
-                } else {
-                    self.setAuthAlertAction("PHOTO".localized())
-                }
+                    }
+                }, completion: {
+                    
+                })
+            } else {
+                self?.setAuthAlertAction("PHOTO".localized())
             }
         }
     }
