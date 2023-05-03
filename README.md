@@ -39,8 +39,7 @@
 
 <br/>
 
-#### Chat-type bulletin boards
-	For rapid MVP development, bulletin board API is implemented similar to chat UI/UX
+#### UI/UX implementation similar to chatting with REST API communication (quick MVP development)
 
 <br/>
 
