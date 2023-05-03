@@ -25,10 +25,20 @@
 <br/>
     
 #### Parallel, asynchronous code scheduling
-    Asyn, await/Semaphore → Concurrency control, Race condition troubleshooting
-    Asynchronous image list parallel caching  `asyn, await` → Performance improvement
-    Run after canceling the previous `Tasks` before running the current `Tasks` → Cancel unnecessary asynchronous tasks to speed up the response
+`Async await` `GCD` `Semaphore`
+
+    Concurrency control, Race condition troubleshooting
+    Asynchronous image list parallel caching 
+     Effect → Performance improvement
+    Run after canceling the previous tasks before running the current task 
+     Effect → Cancel unnecessary asynchronous tasks to speed up the response
+    iCloud brings up a list of images that have not yet been downloaded in parallel to a background thread 
+     Effect → Users can immediately perform other UI interactions without waiting for that action to take place.
   
+<br/>
+
+#### UI/UX implementation similar to chatting with REST API communication (quick MVP development)  
+
 <br/>
     
 #### Post CRUD (Rest API server communication)
@@ -36,10 +46,6 @@
 <br/>
     
 #### Realm CRUD (Local DB)
-
-<br/>
-
-#### UI/UX implementation similar to chatting with REST API communication (quick MVP development)
 
 <br/>
 
@@ -167,8 +173,8 @@
 
 	Clipboard notifications
 	Activity notifications
-   		* Joined member notification
-   		* Canceled member notification
+   	 * Joined member notification
+   	 * Canceled member notification
 
 |<img src="https://user-images.githubusercontent.com/109328441/235421939-942585f4-fda7-4efe-a2a9-65986dff9814.gif" width="200" height="430"/>|
 |:---:|

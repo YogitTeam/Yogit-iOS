@@ -433,25 +433,30 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
 //    }
     
     private func showImageLoading() {
-        imageLoadingView.isHidden = false
-        self.activityIndicator.startAnimating()
-        UIView.animate(withDuration: 1.0, animations: {
-            // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
-            self.imageLoadingView.alpha = 1.0
-        })
+        DispatchQueue.main.async { [weak self] in
+            self?.imageLoadingView.isHidden = false
+            self?.activityIndicator.startAnimating()
+            UIView.animate(withDuration: 1.0, animations: {
+                // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
+                self?.imageLoadingView.alpha = 1.0
+            })
+        }
     }
     
     private func dismissImageLoading() {
-        UIView.animate(withDuration: 1.0, animations: {
-            // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
-            self.imageLoadingView.alpha = 0.0
-        }) { (completed) in
-            self.imageLoadingView.isHidden = true
+        DispatchQueue.main.async { [weak self] in
+            UIView.animate(withDuration: 1.0, animations: {
+                // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
+                self?.imageLoadingView.alpha = 0.0
+            }) { (completed) in
+                self?.imageLoadingView.isHidden = true
+            }
+            self?.activityIndicator.stopAnimating()
         }
-        activityIndicator.stopAnimating()
     }
     
     private func convertAssetsToImages(asstes: [PHAsset]) async -> [UIImage] {
+        
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
 //        option.deliveryMode = .fastFormat//.highQualityFormat
@@ -487,6 +492,45 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         return orderedImages
     }
     
+    private func convertAssetsToImagesGCD(asstes: [PHAsset], newSize: CGSize) -> [UIImage] {
+        
+        let imageManager = PHImageManager.default()
+        let option = PHImageRequestOptions()
+//        option.deliveryMode = .fastFormat//.highQualityFormat
+//        option.resizeMode = .exact
+        option.isSynchronous = true
+        option.isNetworkAccessAllowed = true
+        
+        showImageLoading()
+        
+        let dispatchGroup = DispatchGroup()
+        let dispatchQueue = DispatchQueue(label: "Downloading_Image")
+
+        var images = [UIImage?](repeating: nil, count: asstes.count)
+        for i in 0..<asstes.count {
+            dispatchGroup.enter()
+            dispatchQueue.async { [i] in
+                imageManager.requestImage(for: asstes[i],
+                                          targetSize: newSize,
+                                          contentMode: .aspectFit,
+                                          options: option) { (result, info) in
+                    if let image = result {
+                        images[i] = image
+                    }
+                    dispatchGroup.leave()
+                }
+            }
+        }
+        
+        dispatchGroup.wait()
+           
+        let orderedImages = images.compactMap { $0 } // nil을 제거하고 순서를 보장한 배열을 생성
+        
+        dismissImageLoading()
+     
+        return orderedImages
+    }
+    
     private func openLibrary() {
         let imagePicker = ImagePickerController()
         imagePicker.settings.selection.max = 5 - boardWithMode.downloadImages.count - boardWithMode.uploadImages.count
@@ -501,13 +545,23 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                 }, cancel: { (assets) in
                     print("Canceled with selections: \(assets)")
                 }, finish: { (assets) in
-                    Task.detached(priority: .background) {
-                        let appendImages = await self.convertAssetsToImages(asstes: assets)
-                        await MainActor.run {
-                            self.boardWithMode.uploadImages.append(contentsOf: appendImages)
-                            self.imagesCollectionView.reloadData()
+//                    Task.detached(priority: .background) {
+//                        let appendImages = await self.convertAssetsToImages(asstes: assets)
+//                        await MainActor.run {
+//                            self.boardWithMode.uploadImages.append(contentsOf: appendImages)
+//                            self.imagesCollectionView.reloadData()
+//                        }
+//                    }
+                    let newSize = CGSize(width: self.view.frame.size.width*2, height: self.view.frame.size.height*2)
+                    DispatchQueue.global().async { [weak self] in
+                        guard let appendImages = self?.convertAssetsToImagesGCD(asstes: assets, newSize: newSize) else { return }
+                        DispatchQueue.main.async {
+                            self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
+                            self?.imagesCollectionView.reloadData()
                         }
                     }
+                    
+                    
                 }, completion: {
                     
                 })
