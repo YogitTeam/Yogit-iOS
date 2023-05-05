@@ -34,7 +34,6 @@
     → 1800% ~ 4500% increase in download speed (Serial)
     → 750% ~ 1900% increase in download speed (Parallel)
     The image list being downloaded from iCloud is asynchronously processed and loaded in a background thread.
-    Don't wait for iCloud image to download
     → Immediately enable next UI interaction
   
 <br/>
