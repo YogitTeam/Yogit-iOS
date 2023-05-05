@@ -481,6 +481,72 @@ class GatheringDetailBoardViewController: UIViewController {
         self.navigationController?.navigationBar.tintColor = .label
     }
     
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//
+//        boardImages = [
+//            "https://ifh.cc/g/jBRFxv.jpg",
+//            "https://ifh.cc/g/svaOYx.jpg",
+//            "https://ifh.cc/g/V0r4dT.jpg",
+//            "https://ifh.cc/g/zTdH3C.jpg",
+//            "https://ifh.cc/g/vsJ3o9.jpg",
+//            "https://ifh.cc/g/Gaokkg.jpg",
+//            "https://ifh.cc/g/QmBDd2.jpg",
+//            "https://ifh.cc/g/cMxKJA.jpg",
+//            "https://ifh.cc/g/33B1qd.jpg",
+//            "https://ifh.cc/g/VQnP46.jpg",
+//            "https://ifh.cc/g/MD6CZ8.jpg",
+//            "https://ifh.cc/g/satNdk.jpg",
+//            "https://ifh.cc/g/b3lS5q.jpg",
+//            "https://ifh.cc/g/KGvgrz.jpg",
+//            "https://ifh.cc/g/3aXd7B.jpg",
+//            "https://ifh.cc/g/TN0VYF.jpg",
+//            "https://ifh.cc/g/yG5yAh.jpg",
+//            "https://ifh.cc/g/w4BOAZ.jpg",
+//            "https://ifh.cc/g/tqjt4f.jpg",
+//            "https://ifh.cc/g/MvFBNr.jpg",
+//            "https://ifh.cc/g/dRd3lN.jpg",
+//            "https://ifh.cc/g/HoBswY.jpg",
+//            "https://ifh.cc/g/Wn0m6C.jpg",
+//            "https://ifh.cc/g/T6spVR.jpg",
+//            "https://ifh.cc/g/M9AhLQ.jpg",
+//            "https://ifh.cc/g/cWzA8d.jpg",
+//            "https://ifh.cc/g/8pl0xn.jpg",
+//            "https://ifh.cc/g/v6R9nD.jpg",
+//            "https://ifh.cc/g/Bx4Xgl.jpg",
+//            "https://ifh.cc/g/f0WJ7Y.jpg",
+//            "https://ifh.cc/g/fC0XSs.jpg",
+//            "https://ifh.cc/g/bKHlQO.jpg",
+//            "https://ifh.cc/g/5ZotWd.jpg",
+//            "https://ifh.cc/g/vA6sP8.jpg",
+//            "https://ifh.cc/g/oBOHGg.jpg",
+//            "https://ifh.cc/g/yJKPsR.jpg",
+//            "https://ifh.cc/g/p40nK0.jpg",
+//            "https://ifh.cc/g/1JbP8s.jpg",
+//            "https://ifh.cc/g/tSfQ5c.jpg",
+//            "https://ifh.cc/g/zpr854.jpg",
+//            "https://ifh.cc/g/bcO4Qa.jpg",
+//            "https://ifh.cc/g/vgJCH9.jpg",
+//            "https://ifh.cc/g/TF5Wyo.jpg",
+//            "https://ifh.cc/g/TSGNGX.jpg",
+//            "https://ifh.cc/g/nQwBlZ.jpg",
+//            "https://ifh.cc/g/4xSlpw.jpg",
+//            "https://ifh.cc/g/62vWLk.jpg",
+//            "https://ifh.cc/g/VDNSXP.jpg",
+//            "https://ifh.cc/g/Y9kvfm.jpg",
+//            "https://ifh.cc/g/r5p3By.jpg",
+//            "https://ifh.cc/g/rcDQAj.jpg",
+//            "https://ifh.cc/g/mgC140.jpg",
+//            "https://ifh.cc/g/OXDgXf.jpg",
+//            "https://ifh.cc/g/HhMkl6.jpg",
+//            "https://ifh.cc/g/6GkN6j.jpg",
+//            "https://ifh.cc/g/hMdDnc.jpg",
+//            "https://ifh.cc/g/RhFzVz.jpg",
+//            "https://ifh.cc/g/baL0yd.jpg",
+//            "https://ifh.cc/g/358bql.jpg"
+//        ]
+//    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         boardContentScrollView.snp.makeConstraints {
@@ -940,7 +1006,8 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    private func configureAsyncImageScrollView() async {
+    
+    private func configureParallelCachingImageScrollView() async {
         boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
         boardImagesScrollView.isPagingEnabled = true
         await withTaskGroup(of: Void.self, body: { taskGroup in
@@ -964,12 +1031,13 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     
-    private func configureImagesScrollView() {
+    private func configureSerialCachingImagesScrollView() {
         boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
         boardImagesScrollView.isPagingEnabled = true
         for x in 0..<boardImages.count {
             let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * boardImagesScrollView.frame.width, y: boardImagesScrollView.frame.minY, width: boardImagesScrollView.frame.width, height: boardImagesScrollView.frame.width))
             imageView.clipsToBounds = true
+            imageView.isSkeletonable = true
             imageView.contentMode = .scaleAspectFill
             imageView.backgroundColor = .systemGray
             imageView.setImage(with: boardImages[x])
@@ -977,7 +1045,30 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
     
-    private func configureImagesScrollView2() {
+    private func configureParallelImagesScrollView() async {
+        boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
+        boardImagesScrollView.isPagingEnabled = true
+        await withTaskGroup(of: Void.self, body: { taskGroup in
+            for x in 0..<boardImages.count {
+                taskGroup.addTask {
+                    let imageURL = await self.boardImages[x]
+                    let imageView = await UIImageView(frame: CGRect(x: CGFloat(x) * self.boardImagesScrollView.frame.width, y: self.boardImagesScrollView.frame.minY, width: self.boardImagesScrollView.frame.width, height: self.boardImagesScrollView.frame.width))
+                    await MainActor.run {
+                        imageView.clipsToBounds = true
+                        imageView.isSkeletonable = true
+                        imageView.contentMode = .scaleAspectFill
+                        imageView.backgroundColor = .systemGray
+                        imageView.image = imageURL.loadImageAsync()
+                    }
+                    await MainActor.run {
+                        self.boardImagesScrollView.insertSubview(imageView, at: x)
+                    }
+                }
+            }
+        })
+    }
+    
+    private func configureSerialImagesScrollView() {
         boardImagesScrollView.contentSize.width = view.frame.width * CGFloat(boardImages.count)
         boardImagesScrollView.isPagingEnabled = true
         for x in 0..<boardImages.count {
@@ -985,6 +1076,7 @@ class GatheringDetailBoardViewController: UIViewController {
             imageView.clipsToBounds = true
             imageView.contentMode = .scaleAspectFill
             imageView.backgroundColor = .systemGray
+            imageView.isSkeletonable = true
             let image = boardImages[x].loadImageAsync()
             imageView.image = image
             boardImagesScrollView.addSubview(imageView)
@@ -1032,11 +1124,11 @@ class GatheringDetailBoardViewController: UIViewController {
                 hostImageView.setImage(with: imageString)
             }
         }
-        
-    
+
         Task.detached(priority: .high) { [weak self] in
-            await self?.configureAsyncImageScrollView()
+            await self?.configureParallelCachingImageScrollView()
         }
+//        configureSerialCachingImagesScrollView()
         
         introductionContentTextView.text = data.introduction
         kindOfPersonContentTextView.text = data.kindOfPerson

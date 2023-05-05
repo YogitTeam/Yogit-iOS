@@ -17,7 +17,7 @@ class MainViewController: UIViewController {
     private var isPaging: Bool = false
     private var isLoading: Bool = false
     private let modular = 10
-    private var tasks = [Task<(), Never>]()
+    private var priorTask: Task<(), Never>?
     private var categoryId: Int = 1
     
     private let defaulltCityName = "NATIONWIDE"
@@ -292,21 +292,26 @@ class MainViewController: UIViewController {
                     gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
                 }
                 
+                await MainActor.run {
+                    if getData.getAllBoardResList.count == 0 && gatheringBoards.count == 0 {
+                        guideLabel.text = "GATHERING_BOARD_NONE_GUIDE_TITLE".localized()
+                    } else {
+                        guideLabel.text = ""
+                    }
+                }
+
                 let endTime = DispatchTime.now().uptimeNanoseconds
                 let elapsedTime = endTime - startTime
+                
+                if Task.isCancelled {
+                   return
+                }
+                
                 if elapsedTime <= 500_000_000 {
                     do {
                         try await Task.sleep(nanoseconds: 500_000_000 - elapsedTime)
                     } catch {
                         print("sleep nanoseconds error \(error.localizedDescription)")
-                    }
-                }
-                
-                await MainActor.run {
-                    if getData.getAllBoardResList.count == 0 {
-                        guideLabel.text = "GATHERING_BOARD_NONE_GUIDE_TITLE".localized()
-                    } else {
-                        guideLabel.text = ""
                     }
                 }
                 
@@ -343,7 +348,7 @@ class MainViewController: UIViewController {
             }
             isPaging = false
         }
-        tasks.append(task)
+        priorTask = task
     }
     
     @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
@@ -395,9 +400,7 @@ extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == categoryImageViewCollectionView {
             if categoryId != indexPath.row + 1 {
-                for task in tasks {
-                    task.cancel()
-                }
+                priorTask?.cancel()
                 isPaging = true
                 DispatchQueue.main.async { [weak self] in
                     if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {

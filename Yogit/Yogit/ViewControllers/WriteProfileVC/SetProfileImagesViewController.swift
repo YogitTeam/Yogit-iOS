@@ -420,7 +420,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         
         showImageLoading()
         
-        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
+        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
 
         var images = [UIImage?](repeating: nil, count: asstes.count)
         await withTaskGroup(of: Void.self, body: { taskGroup in
@@ -510,7 +510,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.width))
+            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*1.5, height: self.view.frame.size.width*1.5))
             userImagesData.uploadImages.append(resizeImage)
         }
         DispatchQueue.main.async {

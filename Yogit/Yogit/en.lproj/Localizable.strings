@@ -17,7 +17,7 @@
 "BLOCK" = "Block";
 "REPORT" = "Report";
 "EDIT" = "Edit";
-"COPY" = "복사";
+"COPY" = "Copy";
 
 "SET_AUTHORIZATION_SETTING" = "Setting";
 "PHOTO" = "Photos";

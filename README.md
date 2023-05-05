@@ -27,18 +27,26 @@
 #### Parallel, asynchronous code scheduling
 `Async await` `GCD` `Semaphore`
 
-    Concurrency control, Race condition troubleshooting
-    Asynchronous image list parallel caching 
-    → Performance improvement
-    Run after canceling the previous tasks before running the current task 
-    → Cancel unnecessary asynchronous tasks to speed up the response
-    iCloud brings up a list of images that have not yet been downloaded in parallel to a background thread 
-    → Users can immediately perform other UI interactions without waiting for that action to take place.
+    Concurrency control, race condition problem solving
+    Created just before the current task is created, after canceling the previous task
+    → UI update reduced by about 0.25 to 0.75 seconds
+    Asynchronous image list caching
+    → 1800% ~ 4500% increase in download speed (Serial)
+    → 750% ~ 1900% increase in download speed (Parallel)
+    The image list being downloaded from iCloud is asynchronously processed and loaded in a background thread.
+    Don't wait for iCloud image to download
+    → Immediately enable next UI interaction
   
 <br/>
 
-#### UI/UX implementation similar to chatting with REST API communication (quick MVP development)  
+#### Implement UI/UX similar to chatting with REST API communication
+	→ Fast MVP Development
 
+<br/>
+
+#### Image Resize & JPEG Compression
+	→ 95% reduction in capacity compared to the original
+     
 <br/>
     
 #### Post CRUD (Rest API server communication)

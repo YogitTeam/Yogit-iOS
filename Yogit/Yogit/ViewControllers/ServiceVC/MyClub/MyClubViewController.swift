@@ -30,7 +30,8 @@ private struct SmallGatheringPage {
 }
 
 class MyClubViewController: UIViewController {
-    private var tasks = [Task<(), Never>]()
+//    private var tasks = [Task<(), Never>]()
+    private var priorTask: Task<(), Never>?
     private var gatheringBoards = [Board]()
     private var pageCursor = 0
     private var pageListCnt = 0
@@ -181,6 +182,11 @@ class MyClubViewController: UIViewController {
         
                 let endTime = DispatchTime.now().uptimeNanoseconds
                 let elapsedTime = endTime - startTime
+                
+                if Task.isCancelled {
+                   return
+                }
+                
                 if elapsedTime <= 400_000_000 {
                     do {
                         try await Task.sleep(nanoseconds: 400_000_000 - elapsedTime)
@@ -222,7 +228,8 @@ class MyClubViewController: UIViewController {
             }
             isPaging = false
         }
-        tasks.append(task)
+        priorTask = task
+//        tasks.append(task)
     }
     
     private func resetBoardsData() {
@@ -235,9 +242,10 @@ class MyClubViewController: UIViewController {
     }
     
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
-        for task in tasks {
-            task.cancel()
-        }
+//        for task in tasks {
+//            task.cancel()
+//        }
+        priorTask?.cancel()
         isPaging = true
         resetBoardsData()
         if sender.selectedSegmentIndex == 0 {
