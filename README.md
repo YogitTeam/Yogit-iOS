@@ -44,7 +44,7 @@
 <br/>
 
 #### Image Resize & JPEG Compression
-	→ 95% reduction in capacity compared to the original
+	→ 85% reduction in capacity compared to the original
      
 <br/>
     
