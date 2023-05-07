@@ -30,8 +30,7 @@ private struct SmallGatheringPage {
 }
 
 class MyClubViewController: UIViewController {
-//    private var tasks = [Task<(), Never>]()
-    private var priorTask: Task<(), Never>?
+    private var tasks = [Task<(), Never>]()
     private var gatheringBoards = [Board]()
     private var pageCursor = 0
     private var pageListCnt = 0
@@ -39,6 +38,7 @@ class MyClubViewController: UIViewController {
     private var isPaging: Bool = false
     private var isLoading: Bool = false
     private let modular = 10
+    private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
     
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
@@ -166,7 +166,6 @@ class MyClubViewController: UIViewController {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if isFirstPage {
-            let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
             myBoardsCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
         isLoading = false
@@ -202,20 +201,23 @@ class MyClubViewController: UIViewController {
                     }
                 }
                 
+                if Task.isCancelled {
+                   return
+                }
+                
                 let totalPage = getData.totalPage
                 if pageCursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
-                    if Task.isCancelled {
-                       return
-                    }
-                    for i in pageListCnt..<getBoardCnt { // 2 < 3
-                        if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
-                            break
-                        } // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
-                        gatheringBoards.append(getAllBoardResList[i])
-                        await MainActor.run {
-                            myBoardsCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                    if pageListCnt <= getBoardCnt {
+                        for i in pageListCnt..<getBoardCnt { // 2 < 3
+                            if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
+                                break
+                            } // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
+                            gatheringBoards.append(getAllBoardResList[i])
+                            await MainActor.run {
+                                myBoardsCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                            }
                         }
                     }
                     pageListCnt = getBoardCnt%modular
@@ -228,8 +230,7 @@ class MyClubViewController: UIViewController {
             }
             isPaging = false
         }
-        priorTask = task
-//        tasks.append(task)
+        tasks.append(task)
     }
     
     private func resetBoardsData() {
@@ -242,10 +243,9 @@ class MyClubViewController: UIViewController {
     }
     
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
-//        for task in tasks {
-//            task.cancel()
-//        }
-        priorTask?.cancel()
+        for task in tasks {
+            task.cancel()
+        }
         isPaging = true
         resetBoardsData()
         if sender.selectedSegmentIndex == 0 {

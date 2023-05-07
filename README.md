@@ -28,7 +28,7 @@
 `Async await` `GCD` `Semaphore`
 
     Concurrency control, race condition problem solving
-    Created just before the current task is created, after canceling the previous task
+    Created just before the current task is created, after canceling the previous tasks
     → UI update reduced by about 0.25 to 0.75 seconds
     Asynchronous image list caching
     → 1800% ~ 4500% increase in download speed (Serial)

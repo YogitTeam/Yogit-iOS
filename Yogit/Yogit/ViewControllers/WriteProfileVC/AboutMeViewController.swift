@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import IQKeyboardManagerSwift
 
 protocol AboutMeProtocol: AnyObject {
     func aboutMeSend(aboutMe: String)
@@ -35,6 +36,7 @@ class AboutMeViewController: UIViewController {
         let button = UIButton()
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
         let image = UIImage(systemName: "chevron.right", withConfiguration: imageConfig)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(image, for: .normal)
         button.tintColor = .white
         button.isHidden = false
@@ -73,12 +75,19 @@ class AboutMeViewController: UIViewController {
         super.viewDidLoad()
         configureView()
         configureAboutMeTextView()
+        configureNotification()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureNav()
+        IQKeyboardManager.shared.enable = false
+    }
+   
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        IQKeyboardManager.shared.enable = true
     }
     
     override func viewDidLayoutSubviews() {
@@ -94,14 +103,30 @@ class AboutMeViewController: UIViewController {
         }
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide.snp.bottom)
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.width.height.equalTo(60)
         }
+        nextButton.layoutIfNeeded()
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+    }
+    
+    private func configureNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func removeNotification() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    deinit {
+        removeNotification()
     }
     
     private func configureNav() {
@@ -142,6 +167,28 @@ class AboutMeViewController: UIViewController {
         alert.addAction(okAction)
         DispatchQueue.main.async {
             self.present(alert, animated: false, completion: nil)
+        }
+    }
+    
+    @objc func keyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        
+        nextButton.snp.remakeConstraints { (make) in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-keyboardFrame.height)
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: Notification) {
+        nextButton.snp.remakeConstraints { (make) in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
         }
     }
     

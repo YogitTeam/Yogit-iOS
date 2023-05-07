@@ -410,7 +410,8 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                         let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
                                         if avatarImages[sender.senderId] == nil {
                                             if !clipBoardList[i].profileImgURL.contains("null") {
-                                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+//                                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
+                                                let profileImage = ImageManager.downloadImageWait(with: clipBoardList[i].profileImgURL)
                                                 self.avatarImages[sender.senderId] = profileImage
                                             } else {
                                                 self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")

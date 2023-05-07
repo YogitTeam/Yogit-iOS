@@ -51,6 +51,15 @@ class ServiceTabBarViewController: UITabBarController {
         NotificationCenter.default.addObserver(self, selector: #selector(didlMoveToVCNotification(_:)), name: .moveToNotiTabVC, object: nil)
     }
     
+    private func removeNotification() {
+        NotificationCenter.default.removeObserver(self, name: .baordDetailRefresh, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .moveToNotiTabVC, object: nil)
+    }
+    
+    deinit {
+        removeNotification()
+    }
+    
     @objc private func didBoardDetailNotification(_ notification: Notification) {
         print("보드 알림 발생")
         guard let boardDetail = notification.object as? BoardDetail else { return }

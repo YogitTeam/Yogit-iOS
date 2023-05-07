@@ -240,7 +240,7 @@ class SetProfileViewController: UIViewController {
         }
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.width.height.equalTo(60)
         }
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2

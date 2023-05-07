@@ -7,6 +7,7 @@
 
 import Foundation
 import Kingfisher
+import SkeletonView
 
 extension UIImageView {
     func setImage(with urlString: String) {

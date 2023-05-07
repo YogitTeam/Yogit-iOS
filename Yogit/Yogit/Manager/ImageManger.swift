@@ -31,6 +31,44 @@ final class ImageManager {
         }
     }
     
+    // let profileImage = try? await ImageManager.shared.downloadImageConcurrency(with: clipBoardList[i].profileImgURL)
+    // withUnsafeThrowingContinuation 현재 실행 컨텍스트를 캡처하고 나중에 다시 시작하는 방법인 연속을 만드는 데 사용
+//    func downloadImageConcurrency(with urlString: String) async -> UIImage? {
+//        guard let url = URL(string: urlString) else { return nil }
+//        let resource = ImageResource(downloadURL: url)
+//        let image = try await withUnsafeThrowingContinuation { continuation in
+//                KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
+//                    switch result {
+//                    case .success(let value):
+//                        continuation.resume(returning: value.image)
+//                    case .failure(let error):
+//                        continuation.resume(throwing: error)
+//                    }
+//                }
+//            }
+//        return image
+//    }
+    
+    static func downloadImageWait(with urlString: String) -> UIImage? {
+        guard let url = URL(string: urlString) else { return nil }
+        let semaphore = DispatchSemaphore(value: 0)
+        let resource = ImageResource(downloadURL: url)
+        var image: UIImage?
+        KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
+            switch result {
+            case .success(let value):
+                print("Success - Downloaded Image", value.image)
+                image = value.image
+            case .failure(let error):
+                print("Error - Downloaded Image:", error)
+                image = nil
+            }
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return image
+    }
+    
     func requestPHPhotoLibraryAuthorization(completion: @escaping(Bool) -> Void) {
         if #available(iOS 14, *) {
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { authorizationStatus in

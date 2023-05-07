@@ -74,6 +74,14 @@ class PushNotificationViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(didRecieveNotification(_:)), name: .notiRefresh, object: nil)
     }
     
+    private func removeNotification() {
+        NotificationCenter.default.removeObserver(self, name: .notiRefresh, object: nil)
+    }
+    
+    deinit {
+        removeNotification()
+    }
+    
     private func configureTableView() {
         notiTableView.dataSource = self
         notiTableView.delegate = self

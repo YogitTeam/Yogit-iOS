@@ -17,7 +17,7 @@ class MainViewController: UIViewController {
     private var isPaging: Bool = false
     private var isLoading: Bool = false
     private let modular = 10
-    private var priorTask: Task<(), Never>?
+    private var tasks = [Task<(), Never>]()
     private var categoryId: Int = 1
     
     private let defaulltCityName = "NATIONWIDE"
@@ -29,7 +29,7 @@ class MainViewController: UIViewController {
     private var cityNameEng: String = ""
     
     
-    let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
+    private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
     
     private var selectedCell: CategoryImageViewCollectionViewCell? {
         didSet {
@@ -226,7 +226,7 @@ class MainViewController: UIViewController {
         gatheringBoards.removeAll() //[categoryId-1].removeAll()
         pageCursor = 0
         pageListCnt = 0
-        DispatchQueue.main.async {
+        DispatchQueue.main.async(qos: .userInteractive) {
             self.gatheringBoardCollectionView.reloadData()
         }
     }
@@ -322,20 +322,23 @@ class MainViewController: UIViewController {
                     }
                 }
                 
+                if Task.isCancelled {
+                   return
+                }
+                
                 let totalPage = getData.totalPage
                 if pageCursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
-                    if Task.isCancelled {
-                       return
-                    }
-                    for i in pageListCnt..<getBoardCnt { // 2 < 3
-                        if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
-                            break
-                        } // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
-                        gatheringBoards.append(getAllBoardResList[i])
-                        await MainActor.run {
-                            gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                    if pageListCnt <= getBoardCnt {
+                        for i in pageListCnt..<getBoardCnt { // 2 < 3
+                            if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
+                                break
+                            } // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
+                            gatheringBoards.append(getAllBoardResList[i])
+                            await MainActor.run {
+                                gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                            }
                         }
                     }
                     pageListCnt = getBoardCnt%modular
@@ -348,7 +351,7 @@ class MainViewController: UIViewController {
             }
             isPaging = false
         }
-        priorTask = task
+        tasks.append(task)
     }
     
     @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
@@ -400,7 +403,9 @@ extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == categoryImageViewCollectionView {
             if categoryId != indexPath.row + 1 {
-                priorTask?.cancel()
+                for task in tasks {
+                    task.cancel()
+                }
                 isPaging = true
                 DispatchQueue.main.async { [weak self] in
                     if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {

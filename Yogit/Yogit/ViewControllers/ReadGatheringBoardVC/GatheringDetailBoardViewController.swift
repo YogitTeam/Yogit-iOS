@@ -491,59 +491,59 @@ class GatheringDetailBoardViewController: UIViewController {
 //            "https://ifh.cc/g/zTdH3C.jpg",
 //            "https://ifh.cc/g/vsJ3o9.jpg",
 //            "https://ifh.cc/g/Gaokkg.jpg",
-//            "https://ifh.cc/g/QmBDd2.jpg",
-//            "https://ifh.cc/g/cMxKJA.jpg",
-//            "https://ifh.cc/g/33B1qd.jpg",
-//            "https://ifh.cc/g/VQnP46.jpg",
-//            "https://ifh.cc/g/MD6CZ8.jpg",
-//            "https://ifh.cc/g/satNdk.jpg",
-//            "https://ifh.cc/g/b3lS5q.jpg",
-//            "https://ifh.cc/g/KGvgrz.jpg",
-//            "https://ifh.cc/g/3aXd7B.jpg",
-//            "https://ifh.cc/g/TN0VYF.jpg",
-//            "https://ifh.cc/g/yG5yAh.jpg",
-//            "https://ifh.cc/g/w4BOAZ.jpg",
-//            "https://ifh.cc/g/tqjt4f.jpg",
-//            "https://ifh.cc/g/MvFBNr.jpg",
-//            "https://ifh.cc/g/dRd3lN.jpg",
-//            "https://ifh.cc/g/HoBswY.jpg",
-//            "https://ifh.cc/g/Wn0m6C.jpg",
-//            "https://ifh.cc/g/T6spVR.jpg",
-//            "https://ifh.cc/g/M9AhLQ.jpg",
-//            "https://ifh.cc/g/cWzA8d.jpg",
-//            "https://ifh.cc/g/8pl0xn.jpg",
-//            "https://ifh.cc/g/v6R9nD.jpg",
-//            "https://ifh.cc/g/Bx4Xgl.jpg",
-//            "https://ifh.cc/g/f0WJ7Y.jpg",
-//            "https://ifh.cc/g/fC0XSs.jpg",
-//            "https://ifh.cc/g/bKHlQO.jpg",
-//            "https://ifh.cc/g/5ZotWd.jpg",
-//            "https://ifh.cc/g/vA6sP8.jpg",
-//            "https://ifh.cc/g/oBOHGg.jpg",
-//            "https://ifh.cc/g/yJKPsR.jpg",
-//            "https://ifh.cc/g/p40nK0.jpg",
-//            "https://ifh.cc/g/1JbP8s.jpg",
-//            "https://ifh.cc/g/tSfQ5c.jpg",
-//            "https://ifh.cc/g/zpr854.jpg",
-//            "https://ifh.cc/g/bcO4Qa.jpg",
-//            "https://ifh.cc/g/vgJCH9.jpg",
-//            "https://ifh.cc/g/TF5Wyo.jpg",
-//            "https://ifh.cc/g/TSGNGX.jpg",
-//            "https://ifh.cc/g/nQwBlZ.jpg",
-//            "https://ifh.cc/g/4xSlpw.jpg",
-//            "https://ifh.cc/g/62vWLk.jpg",
-//            "https://ifh.cc/g/VDNSXP.jpg",
-//            "https://ifh.cc/g/Y9kvfm.jpg",
-//            "https://ifh.cc/g/r5p3By.jpg",
-//            "https://ifh.cc/g/rcDQAj.jpg",
-//            "https://ifh.cc/g/mgC140.jpg",
-//            "https://ifh.cc/g/OXDgXf.jpg",
-//            "https://ifh.cc/g/HhMkl6.jpg",
-//            "https://ifh.cc/g/6GkN6j.jpg",
-//            "https://ifh.cc/g/hMdDnc.jpg",
-//            "https://ifh.cc/g/RhFzVz.jpg",
-//            "https://ifh.cc/g/baL0yd.jpg",
-//            "https://ifh.cc/g/358bql.jpg"
+//            "https://ifh.cc/g/QmBDd2.jpg"
+////            "https://ifh.cc/g/cMxKJA.jpg",
+////            "https://ifh.cc/g/33B1qd.jpg",
+////            "https://ifh.cc/g/VQnP46.jpg",
+////            "https://ifh.cc/g/MD6CZ8.jpg",
+////            "https://ifh.cc/g/satNdk.jpg",
+////            "https://ifh.cc/g/b3lS5q.jpg",
+////            "https://ifh.cc/g/KGvgrz.jpg",
+////            "https://ifh.cc/g/3aXd7B.jpg",
+////            "https://ifh.cc/g/TN0VYF.jpg",
+////            "https://ifh.cc/g/yG5yAh.jpg",
+////            "https://ifh.cc/g/w4BOAZ.jpg",
+////            "https://ifh.cc/g/tqjt4f.jpg",
+////            "https://ifh.cc/g/MvFBNr.jpg",
+////            "https://ifh.cc/g/dRd3lN.jpg",
+////            "https://ifh.cc/g/HoBswY.jpg",
+////            "https://ifh.cc/g/Wn0m6C.jpg",
+////            "https://ifh.cc/g/T6spVR.jpg",
+////            "https://ifh.cc/g/M9AhLQ.jpg",
+////            "https://ifh.cc/g/cWzA8d.jpg",
+////            "https://ifh.cc/g/8pl0xn.jpg",
+////            "https://ifh.cc/g/v6R9nD.jpg",
+////            "https://ifh.cc/g/Bx4Xgl.jpg",
+////            "https://ifh.cc/g/f0WJ7Y.jpg",
+////            "https://ifh.cc/g/fC0XSs.jpg",
+////            "https://ifh.cc/g/bKHlQO.jpg",
+////            "https://ifh.cc/g/5ZotWd.jpg",
+////            "https://ifh.cc/g/vA6sP8.jpg",
+////            "https://ifh.cc/g/oBOHGg.jpg",
+////            "https://ifh.cc/g/yJKPsR.jpg",
+////            "https://ifh.cc/g/p40nK0.jpg",
+////            "https://ifh.cc/g/1JbP8s.jpg",
+////            "https://ifh.cc/g/tSfQ5c.jpg",
+////            "https://ifh.cc/g/zpr854.jpg",
+////            "https://ifh.cc/g/bcO4Qa.jpg",
+////            "https://ifh.cc/g/vgJCH9.jpg",
+////            "https://ifh.cc/g/TF5Wyo.jpg",
+////            "https://ifh.cc/g/TSGNGX.jpg",
+////            "https://ifh.cc/g/nQwBlZ.jpg",
+////            "https://ifh.cc/g/4xSlpw.jpg",
+////            "https://ifh.cc/g/62vWLk.jpg",
+////            "https://ifh.cc/g/VDNSXP.jpg",
+////            "https://ifh.cc/g/Y9kvfm.jpg",
+////            "https://ifh.cc/g/r5p3By.jpg",
+////            "https://ifh.cc/g/rcDQAj.jpg",
+////            "https://ifh.cc/g/mgC140.jpg",
+////            "https://ifh.cc/g/OXDgXf.jpg",
+////            "https://ifh.cc/g/HhMkl6.jpg",
+////            "https://ifh.cc/g/6GkN6j.jpg",
+////            "https://ifh.cc/g/hMdDnc.jpg",
+////            "https://ifh.cc/g/RhFzVz.jpg",
+////            "https://ifh.cc/g/baL0yd.jpg",
+////            "https://ifh.cc/g/358bql.jpg"
 //        ]
 //    }
     
@@ -699,6 +699,14 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private func configureNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(didlBaordDetailRefreshForBlock(_:)), name: .baordDetailRefreshForBlock, object: nil)
+    }
+    
+    private func removeNotification() {
+        NotificationCenter.default.removeObserver(self, name: .baordDetailRefreshForBlock, object: nil)
+    }
+    
+    deinit {
+        removeNotification()
     }
     
     private func setViewWithMode(mode: Mode?) {
@@ -1037,12 +1045,13 @@ class GatheringDetailBoardViewController: UIViewController {
         for x in 0..<boardImages.count {
             let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * boardImagesScrollView.frame.width, y: boardImagesScrollView.frame.minY, width: boardImagesScrollView.frame.width, height: boardImagesScrollView.frame.width))
             imageView.clipsToBounds = true
-            imageView.isSkeletonable = true
             imageView.contentMode = .scaleAspectFill
             imageView.backgroundColor = .systemGray
             imageView.setImage(with: boardImages[x])
-            boardImagesScrollView.addSubview(imageView)
+            boardImagesScrollView.insertSubview(imageView, at: x)
         }
+        boardImagesScrollView.stopSkeletonAnimation()
+        boardImagesScrollView.hideSkeleton()
     }
     
     private func configureParallelImagesScrollView() async {
@@ -1125,10 +1134,10 @@ class GatheringDetailBoardViewController: UIViewController {
             }
         }
 
-        Task.detached(priority: .high) { [weak self] in
-            await self?.configureParallelCachingImageScrollView()
-        }
-//        configureSerialCachingImagesScrollView()
+//        Task.detached(priority: .high) { [weak self] in
+//            await self?.configureParallelCachingImageScrollView()
+//        }
+        configureSerialCachingImagesScrollView()
         
         introductionContentTextView.text = data.introduction
         kindOfPersonContentTextView.text = data.kindOfPerson
