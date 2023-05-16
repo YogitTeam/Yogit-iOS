@@ -38,8 +38,8 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        addSubview(requirementView)
-        addSubview(contentNameLabel)
+        configureView()
+        configureLayout()
 //        configureViewComponent()
     }
     
@@ -52,9 +52,12 @@ class RequirementTableViewHeader: UITableViewHeaderFooterView {
     }
      
     
-    // MARK: - Layout
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    private func configureView() {
+        addSubview(requirementView)
+        addSubview(contentNameLabel)
+    }
+    
+    private func configureLayout() {
         requirementView.snp.makeConstraints { make in
             make.width.height.equalTo(6)
             make.top.equalToSuperview().inset(0)

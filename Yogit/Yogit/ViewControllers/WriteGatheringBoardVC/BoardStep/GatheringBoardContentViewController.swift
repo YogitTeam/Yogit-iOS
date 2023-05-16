@@ -122,6 +122,7 @@ class GatheringBoardContentViewController: UIViewController {
         super.viewDidLoad()
         configureNav()
         configureView()
+        configureLayout()
         configureCollectionView()
         configureTextView()
         configureHeader()
@@ -132,9 +133,15 @@ class GatheringBoardContentViewController: UIViewController {
         stepHeaderView.fillProgress(step: step + 1)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+    private func configureView() {
+        view.addSubview(stepHeaderView)
+        view.addSubview(imageLoadingView)
+        view.addSubview(contentScrollView)
+        view.backgroundColor = .systemBackground
+        self.hideKeyboardWhenTappedAround()
+    }
+    
+    private func configureLayout() {
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.right.equalToSuperview()
@@ -208,14 +215,6 @@ class GatheringBoardContentViewController: UIViewController {
         }
     }
     
-    private func configureView() {
-        view.addSubview(stepHeaderView)
-        view.addSubview(imageLoadingView)
-        view.addSubview(contentScrollView)
-        view.backgroundColor = .systemBackground
-        self.hideKeyboardWhenTappedAround()
-    }
-    
     private func configureNav() {
         self.navigationItem.rightBarButtonItem = self.rightButton
     }
@@ -263,7 +262,6 @@ class GatheringBoardContentViewController: UIViewController {
     @objc func buttonPressed(_ sender: UIButton) {
         
         guard hasMssingData == nil else {
-            print("Not has all value")
             let message = String(format: "GATHERING_CONTENT_ALERT_MESSAGE".localized(), "\(hasMssingData!)")
             let alert = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
             let okAction = UIAlertAction(title: "OK".localized(), style: .default)
@@ -275,7 +273,6 @@ class GatheringBoardContentViewController: UIViewController {
         // 통신완료 후 pop root까지
         // hostId 등록시 필요? >> userId와 hostId 같기때문 (나중에 한 클럽 모임당 host가 많을수도 있다.)
         // hostId 받아올때만 필요하다.
-        print("buttonPressed buttonPressed", boardWithMode)
         
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
               let title = boardWithMode.title,
@@ -289,7 +286,6 @@ class GatheringBoardContentViewController: UIViewController {
               let totoalMember = boardWithMode.totalMember,
               let categoryId = boardWithMode.categoryId
         else {
-            print("edit gurad 실패")
             return
         }
         
@@ -305,14 +301,8 @@ class GatheringBoardContentViewController: UIViewController {
         } else {
             urlRequestConvertible = BoardRouter.createBoard(parameters: updateBoard)
         }
-
-        if let data = boardWithMode.introduction!.data(using: .utf8) {
-            let bytes = [UInt8](data)
-            print("소개글 바이트수", bytes)
-        }
         
         if let parameters = urlRequestConvertible.toDictionary {
-            print("Upload parameters", parameters)
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
                 for (key, value) in parameters {
                     if let arrayValue = value as? [Any]  {
@@ -336,8 +326,8 @@ class GatheringBoardContentViewController: UIViewController {
             }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<BoardDetail>.self) { response in
                 switch response.result {
                 case .success:
-                    if let value = response.value, value.httpCode == 201 || value.httpCode == 200, let data = value.data {
-                        print("Success - Upload Board")
+                    if let value = response.value, value.httpCode == 201 || value.httpCode == 200 {
+                        guard let data = value.data else { return }
                         DispatchQueue.main.async(qos: .userInteractive) { [self] in
                             navigationController?.popToRootViewController(animated: true)
                             NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장

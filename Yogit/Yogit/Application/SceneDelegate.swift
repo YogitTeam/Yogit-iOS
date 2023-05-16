@@ -18,6 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
+//        let currentVC = TermsOfServiceViewController()
+//        let rootVC = UINavigationController(rootViewController: currentVC)
+//        self.window = UIWindow(windowScene: scene)
+//        self.window?.rootViewController = rootVC
+//        self.window?.makeKeyAndVisible()
+        
         SessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState
             switch AuthState {

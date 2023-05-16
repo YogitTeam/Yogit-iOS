@@ -27,11 +27,9 @@ class SettingProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(settingTableView)
-        settingTableView.dataSource = self
-        settingTableView.delegate = self
-        ProgressHUD.colorAnimation = ServiceColor.primaryColor
-        ProgressHUD.animationType = .circleStrokeSpin
+        configureView()
+        configureTableView()
+        configureProgressHUD()
     }
     
     override func viewDidLayoutSubviews() {
@@ -40,6 +38,20 @@ class SettingProfileViewController: UIViewController {
         settingTableView.frame = view.bounds
     }
 
+    private func configureView() {
+        view.addSubview(settingTableView)
+    }
+    
+    private func configureTableView() {
+        settingTableView.dataSource = self
+        settingTableView.delegate = self
+    }
+    
+    private func configureProgressHUD() {
+        ProgressHUD.colorAnimation = ServiceColor.primaryColor
+        ProgressHUD.animationType = .circleStrokeSpin
+    }
+    
     private func logOutButtonTapped() {
         let alert = UIAlertController(title: "LOGOUT_TITLE".localized(), message: "LOGOUT_ALERT_MESSAGE".localized(), preferredStyle: .alert)
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)

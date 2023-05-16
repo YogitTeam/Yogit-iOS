@@ -29,59 +29,8 @@ protocol MeetUpPlaceProtocol: AnyObject {
 // google map version
 class MKMapLocalSearchViewController: UIViewController {
     
-    // 좌표 초기값
-    // defualt 현재 국가로 표시
-    // 권한 받기
-    // 권한 잇으면 현재 위치로 이동
-    // 권한 없으면 유저가 수동적으로 이동
-    // 카메라 줌인 높이 설정
-    
-    // 마커 중앙값 고정
-    
-    // 주소 검색 창
-    // 해당 주소로 맵 이동
-    
-    // 맵에서 중앙좌표 읽어 오는 함수
-    // 좌표 주소로 변환 함수 (Full address, adminstieview 저장)
-    
-    // 주소 결과값
-    // 기본 주소
-    // 상세주소 텍스트 필드 (강남역 2번 출구)
-    
-    // 1.0초지 났는지 확인 (지도 범위 이동후)
-    // 1.0초지 났는지 확인 (텍스트 입력했는지 확인)
-    // 지났으면 확인후 updateSearch 요청
-
-    // 마지막 글자 입력후 요청해야함
-    // 글자 업데이트마다 현재시간으로 시간으로 리셋
-    // 글자 업데이트시 특정 인터벌 시간 지났는지 확인
-    
-    
-    // 초기값
-    // 메인: 지도에서 장소 및 주소 검색창
-    // 서브: 지도를 움직이면서 위치 지정 (Switch button)
-    // 화면 초기값: 검색 유도 후, 검색창 dimiss후 서브 버튼 보여지게 (inactive)
-    // 검색 리스트 선택시: 서브 버튼 inactive
-    // 서브 버튼 active시 검색 output anotation 제거후, 핀 view 중앙값 고정
-    
-    
-    // 검색시: 검색 리스트 탭 >> 기존 anotioon 제거 및 서브 버튼 inactive
-    // 검색 리스트 탭시 >> anotation 생성 및 title, subtitle 제공
-    // 서브 버튼: 초기값 inactive & hide=true / 검색창 한번 들리면 hide=false, active시 기존 anotation 제거
-    // 서브 버튼 Inactive하면 화면 중앙 핀 hide=true, active 하면 핀 hide false
-    
-    
-    // new logic
-    //. button hide=true
-    // search location >> tap >> button hide = false
-    // success search location >> add 상세주소
-    // if don't represent location >> 상세주소 직접입력으로 변경
-    
-//    private var searchCompleter = MKLocalSearchCompleter()
-    
-    
     private var searchRegion: MKCoordinateRegion = MKCoordinateRegion(MKMapRect.world)
-//   private var searchResults = [MKLocalSearchCompletion]()
+
     weak var timer: Timer?
 
     private let searchVC = UISearchController(searchResultsController: MKResultsLocalSearchTableViewController())
@@ -120,22 +69,6 @@ class MKMapLocalSearchViewController: UIViewController {
     }
     
     weak var delegate: MeetUpPlaceProtocol?
-
-//    private var latitude: Double?   // 위도
-//    private var longitude: Double? // 경도
-//    private var address: String?
-//    private var locality: String? {
-//        didSet {
-//            print("locality \(locality ?? "")")
-//            self.saveButton.isHidden = false
-//        }
-//    }
-    
-//    private var address: String? {
-//        didSet {
-//            addressLabel.text = address
-//        }
-//    }
     
     private var searchText: String?
     private var searchRequest = MKLocalSearch.Request()
@@ -232,18 +165,30 @@ class MKMapLocalSearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureNav()
         configureView()
+        configureNav()
         configureSearchController()
         configureLocationManager()
+        configureLayout()
 //        configureGuideLabel()
         timerRun()
         searhBarNoticeView(noticeView: noticeView)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        self.mapView.frame = view.bounds
+    override func viewWillDisappear(_ animated: Bool) {
+        timerQuit()
+    }
+    
+    private func configureView() {
+        view.addSubview(mapView)
+        view.addSubview(saveButton)
+        view.addSubview(searchGuideView)
+        view.addSubview(noticeView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
+        mapView.frame = view.bounds
         saveButton.snp.makeConstraints { make in
             make.leading.trailing.equalTo(view).inset(20)
             make.bottom.equalTo(view.snp.bottom).inset(30)
@@ -271,20 +216,16 @@ class MKMapLocalSearchViewController: UIViewController {
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        timerQuit()
-    }
-    
-    private func configureView() {
-        view.addSubview(mapView)
-        view.addSubview(saveButton)
-        view.addSubview(searchGuideView)
-        view.addSubview(noticeView)
-        view.backgroundColor = .systemBackground
-    }
-    
     private func configureNav() {
         navigationController?.navigationBar.topItem?.backButtonTitle = ""
+    }
+    
+    private func configureSearchController() {
+        navigationItem.searchController = searchVC
+        searchVC.searchResultsUpdater = self
+        searchVC.searchBar.delegate = self
+        searchVC.searchBar.placeholder = "SEARCHBAR_PLACEHOLDER".localized()
+        searchVC.searchBar.addSubview(activityIndicator)
     }
     
     
@@ -315,14 +256,6 @@ class MKMapLocalSearchViewController: UIViewController {
                 self.timer = nil
             }
         }
-    }
-    
-    private func configureSearchController() {
-        navigationItem.searchController = searchVC
-        searchVC.searchResultsUpdater = self
-        searchVC.searchBar.delegate = self
-        searchVC.searchBar.placeholder = "SEARCHBAR_PLACEHOLDER".localized()
-        searchVC.searchBar.addSubview(activityIndicator)
     }
     
 //    private func configureGuideLabel() {
@@ -399,7 +332,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Start")
         let pLocation = locations.last // 최근 위치
         guard let lat = pLocation?.coordinate.latitude else { return }
         guard let lng = pLocation?.coordinate.longitude else { return }
@@ -472,7 +404,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
     }
 
     @objc func Search_Tick_TimeConsole() {
-        print("실행중")
 //        searchVC.searchBar.tag = 0
         
         guard let timeInterval = searchRunTimeInterval else { return }
@@ -480,8 +411,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
         let interval = Date().timeIntervalSinceReferenceDate - timeInterval
 
         if interval <  0.30 { return }
-        
-        print("timer interval 통과")
         
         guard let text = searchVC.searchBar.text?.lowercased(), let resultsVC = searchVC.searchResultsController as? MKResultsLocalSearchTableViewController else {
             return
@@ -518,7 +447,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
                 if let postCode = item.placemark.postalCode,
                    let countryCode = item.placemark.countryCode,
                    serviceCountryCode == countryCode { // 로컬 디비에 저장 해서 변경
-                    print("countrycode, postCode", countryCode, postCode)
                     mapItems.append(item) // 우편번호만 있는 주소 값만 저장 (도, 시 제외)
                 }
             }
@@ -541,7 +469,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
     }
     
     func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
-        print("forwardGeocoding locality", address)
         let geocoder = CLGeocoder()
         guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
 //        let region = Locale.current.region?.identifier // KR
@@ -625,7 +552,6 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
     // 초기 텍스트필드 포커스
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         // 설명 뷰 띄우고, 검색 데이터 없데이트 완료후 view hide
-        print("시작 searchBar")
         DispatchQueue.main.async(qos: .userInteractive) { [self] in
             searchGuideView.isHidden = false // 가이드뷰 숨김
             if !noticeView.isHidden { noticeView.isHidden = true }
@@ -638,8 +564,6 @@ extension MKMapLocalSearchViewController: UISearchBarDelegate {
 
     // 입력하다 지웠을때나, 값 변경
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print("변경 searchBar")
-        
         DispatchQueue.main.async(qos: .userInteractive) { [self] in
             if searchText == "" { // 값 없을때
                 if activityIndicator.isAnimating {
@@ -686,7 +610,6 @@ extension MKMapLocalSearchViewController: MKResultsLocalSearchTableViewControlle
         findAddress(lat: coordinate.latitude, long: coordinate.longitude) { (centerAddress) in
             self.meetUpPlace.locality = centerAddress?.locality
             self.saveButton.isEnabled = true
-            print("meetUpPlace = \(self.meetUpPlace)")
         }
     }
 }

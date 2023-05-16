@@ -39,13 +39,14 @@ class MyTextView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(myTextView)
-        addSubview(textCountLabel)
         configureViewComponent()
+        configureLayout()
     }
     
     private func configureViewComponent() {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(myTextView)
+        addSubview(textCountLabel)
         backgroundColor = .systemBackground
     }
     
@@ -53,19 +54,15 @@ class MyTextView: UIView {
          fatalError("init(coder:) has not implement")
     }
      
-    // MARK: - Layout
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
+    private func configureLayout() {
         myTextView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.top.bottom.equalToSuperview()
         }
         
         textCountLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview() 
+            make.trailing.equalToSuperview()
             make.top.equalTo(myTextView.snp.bottom).offset(4)
         }
-
     }
 }

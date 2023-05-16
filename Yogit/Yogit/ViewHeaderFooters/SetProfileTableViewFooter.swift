@@ -32,28 +32,29 @@ class SetProfileTableViewFooter: UITableViewHeaderFooterView {
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(footerLabel)
-        contentView.backgroundColor = .systemBackground
+        configureView()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
          fatalError("init(coder:) has not implement")
     }
-     
-    // MARK: - Layout
-   
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        footerLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView).inset(4)
-            make.leading.trailing.equalTo(contentView).inset(20)
-        }
-    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         footerLabel.text = nil
+    }
+    
+    private func configureView() {
+        contentView.addSubview(footerLabel)
+        contentView.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
+        footerLabel.snp.makeConstraints { make in
+            make.top.equalTo(contentView).inset(4)
+            make.leading.trailing.equalTo(contentView).inset(20)
+        }
     }
     
     public func configure(text: String, kind: Int) {

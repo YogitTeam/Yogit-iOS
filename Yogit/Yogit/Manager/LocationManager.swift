@@ -18,7 +18,9 @@ import UIKit
 import CoreLocation
 
 // Location Model Controller
-class LocationManager {
+final class LocationManager {
+    static let shared = LocationManager()
+    
     // 권한 없으면 권한 설정 화면으로
 //    func setAuthAlertAction() {
 //
@@ -55,6 +57,42 @@ class LocationManager {
 
             completion(resultAddress)
 
+        })
+    }
+    
+    
+    func cityNameGeocodingToServer(address: String, completion: @escaping (String, String) -> Void) {
+        
+        let geocoder = CLGeocoder()
+       
+        guard let serviceCountryCode = SessionManager.getSavedCountryCode() else { return }
+        
+        let locale = Locale(identifier: "en_US") // 서버로 넘길 데이터
+
+        // 주소 다됨 (country, locality, "KR" >> South Korea)
+        geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: {
+            (placemarks, error) in
+            if error != nil {
+                return
+            }
+
+            guard let pm = placemarks?.last,
+                  let locality = pm.locality,
+                  let countryCode = pm.isoCountryCode,
+                  serviceCountryCode == countryCode
+            else {
+                return
+            }
+            
+            // apple api 가끔 서울만 영어로 되는 경우가 있음
+            let cityName: String
+            if locality == "서울특별시" { // english로 locale해도 서울만 영어로 안될때가 생겼음 (애플 API 문제)
+                cityName = "Seoul"
+            } else {
+                cityName = locality
+            }
+            
+            completion(cityName.uppercased(), countryCode)
         })
     }
 }

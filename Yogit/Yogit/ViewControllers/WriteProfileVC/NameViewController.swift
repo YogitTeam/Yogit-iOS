@@ -70,23 +70,7 @@ class NameViewController: UIViewController {
         super.viewDidLoad()
         configureNav()
         configureView()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        nameTextField.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(50)
-        }
-        textCountLabel.snp.makeConstraints {
-            $0.top.equalTo(nameTextField.snp.bottom).offset(4)
-            $0.trailing.equalToSuperview().inset(20)
-        }
+        configureLayout()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -103,6 +87,22 @@ class NameViewController: UIViewController {
         [titleLabel,
          nameTextField,
          textCountLabel].forEach { view.addSubview($0) }
+    }
+    
+    private func configureLayout() {
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(20)
+        }
+        nameTextField.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(50)
+        }
+        textCountLabel.snp.makeConstraints {
+            $0.top.equalTo(nameTextField.snp.bottom).offset(4)
+            $0.trailing.equalToSuperview().inset(20)
+        }
     }
     
     @objc private func rightButtonPressed(_ sender: Any) {

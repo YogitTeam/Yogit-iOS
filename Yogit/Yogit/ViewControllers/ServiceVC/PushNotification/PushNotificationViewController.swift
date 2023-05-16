@@ -40,8 +40,9 @@ class PushNotificationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        configureNotification()
+        configureLayout()
         configureTableView()
+        configureNotification()
         initGetNotiData()
     }
     
@@ -49,9 +50,14 @@ class PushNotificationViewController: UIViewController {
         super.viewWillAppear(animated)
         initNavigationBar()
     }
-   
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    
+    private func configureView() {
+        view.addSubview(segmentedControl)
+        view.addSubview(notiTableView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         segmentedControl.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.trailing.equalToSuperview().inset(20)
@@ -64,10 +70,9 @@ class PushNotificationViewController: UIViewController {
         }
     }
     
-    private func configureView() {
-        view.addSubview(segmentedControl)
-        view.addSubview(notiTableView)
-        view.backgroundColor = .systemBackground
+    private func configureTableView() {
+        notiTableView.dataSource = self
+        notiTableView.delegate = self
     }
     
     private func configureNotification() {
@@ -80,11 +85,6 @@ class PushNotificationViewController: UIViewController {
     
     deinit {
         removeNotification()
-    }
-    
-    private func configureTableView() {
-        notiTableView.dataSource = self
-        notiTableView.delegate = self
     }
     
     private func initNavigationBar() {
@@ -107,7 +107,6 @@ class PushNotificationViewController: UIViewController {
     
     // User touch event
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
-        print("didChangeValue")
         if sender.selectedSegmentIndex == 0 {
             refreshNotiData(notiType: PushNotificationManager.NotiType.clipBoard.toKey())
         } else {

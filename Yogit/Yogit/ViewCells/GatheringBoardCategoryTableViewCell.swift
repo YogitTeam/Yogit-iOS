@@ -89,18 +89,20 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .systemBackground
-        contentView.addSubview(categoryContentView)
+        configureView()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
          fatalError("init(coder:) has not implement")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        print("gathering layoutSubviews")
+    private func configureView() {
+        contentView.backgroundColor = .systemBackground
+        contentView.addSubview(categoryContentView)
+    }
+    
+    private func configureLayout() {
         categoryImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
@@ -120,7 +122,6 @@ class GatheringBoardCategoryTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        print("category cell prepareForReuse")
         categoryImageView.image = nil
         categoryTitleLabel.text = nil
         categoryDescriptionLabel.text = nil

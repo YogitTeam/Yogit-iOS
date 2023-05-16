@@ -42,6 +42,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureNav()
         initProgressHUD()
         addNotiCenter()
@@ -53,8 +54,14 @@ class LoginViewController: UIViewController {
         removeNotiCenter()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureView() {
+        view.addSubview(iconImageView)
+        view.addSubview(setCountryTitleLabel)
+        view.addSubview(signInWithAppleButton)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         signInWithAppleButton.snp.makeConstraints { make in
             make.bottom.equalToSuperview().inset(100)
             make.height.equalTo(50)
@@ -68,13 +75,6 @@ class LoginViewController: UIViewController {
         setCountryTitleLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-    }
-    
-    private func configureView() {
-        view.addSubview(iconImageView)
-        view.addSubview(setCountryTitleLabel)
-        view.addSubview(signInWithAppleButton)
-        view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {

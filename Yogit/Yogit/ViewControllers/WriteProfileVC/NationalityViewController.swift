@@ -54,17 +54,11 @@ class NationalityViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureNav()
         configureSearchController()
         configureNationalityTableView()
         configureCountries()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        // frame: the view’s location and size in its superview’s coordinate system.
-        // bound: the view’s location and size in its own coordinate system.
-        nationalityTableView.frame = view.bounds
     }
     
     private func configureCountries() {
@@ -97,6 +91,10 @@ class NationalityViewController: UIViewController {
     private func configureView() {
         view.addSubview(nationalityTableView)
         view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
+        nationalityTableView.frame = view.bounds
     }
     
     private func configureNav() {

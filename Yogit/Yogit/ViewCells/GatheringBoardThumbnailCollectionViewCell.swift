@@ -175,9 +175,8 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isSkeletonable = true
-        [boardImageView,
-         backView,
-         blurView].forEach { contentView.addSubview($0) }
+        configureView()
+        configureLayout()
         layer.shadowColor = UIColor.darkGray.cgColor
         layer.shadowOpacity = 0.25
         layer.shadowRadius = 6
@@ -186,8 +185,13 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         contentView.layer.masksToBounds = true
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    private func configureView() {
+        [boardImageView,
+         backView,
+         blurView].forEach { contentView.addSubview($0) }
+    }
+    
+    private func configureLayout() {
         boardImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

@@ -72,7 +72,8 @@ class BoardInfoView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(contentView)
+        configureView()
+        configureLayout()
     }
     
     private func configureViewComponent() {
@@ -83,10 +84,11 @@ class BoardInfoView: UIView {
          fatalError("init(coder:) has not implement")
     }
      
+    private func configureView() {
+        addSubview(contentView)
+    }
     
-    // MARK: - Layout
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    private func configureLayout() {
         contentView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview().inset(10)
             $0.leading.trailing.equalToSuperview()

@@ -25,13 +25,21 @@ class MemberImagesCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isSkeletonable = true
-        contentView.addSubview(imageView)
+        configureView()
+        configureLayout()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        imageView.frame = contentView.bounds
         imageView.layer.cornerRadius = contentView.frame.height/2
+    }
+    
+    private func configureView() {
+        contentView.addSubview(imageView)
+    }
+    
+    private func configureLayout() {
+        imageView.frame = contentView.bounds
     }
     
     required init?(coder: NSCoder) {

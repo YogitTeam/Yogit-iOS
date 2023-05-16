@@ -200,6 +200,7 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
         super.viewDidLoad()
         configureNav()
         configureView()
+        configureLayout()
         configureScrollView()
         configurePickerView()
         configureHeaderView()
@@ -215,6 +216,23 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
+        
+        memberTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+        dateTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+        placeTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+        placeDetailTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
+    }
+    
+    private func configureView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(stepHeaderView)
+        view.addSubview(settingContentScrollView)
+        view.addSubview(nextButton)
+    }
+    
+    private func configureLayout() {
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.right.equalToSuperview()
@@ -266,23 +284,10 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
             $0.width.height.equalTo(60)
         }
-        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
-        
         textCountLabel.snp.makeConstraints {
             $0.top.equalTo(placeDetailTextField.snp.bottom).offset(4)
             $0.trailing.equalToSuperview().inset(20)
         }
-        memberTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
-        dateTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
-        placeTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
-        placeDetailTextField.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .placeholderText, width: 0.5, marginTop: 0)
-    }
-    
-    private func configureView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(stepHeaderView)
-        view.addSubview(settingContentScrollView)
-        view.addSubview(nextButton)
     }
     
     private func configureNav() {

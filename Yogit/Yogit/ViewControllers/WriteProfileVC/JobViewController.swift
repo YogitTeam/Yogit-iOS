@@ -98,6 +98,7 @@ class JobViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureJobTextField()
         configureNotification()
     }
@@ -115,6 +116,14 @@ class JobViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    private func configureLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -130,16 +139,9 @@ class JobViewController: UIViewController {
         }
         nextButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide.snp.bottom)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.width.height.equalTo(60)
         }
-        nextButton.layoutIfNeeded()
-        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
     }
     
     private func configureNotification() {
@@ -195,7 +197,7 @@ class JobViewController: UIViewController {
     @objc func keyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         
-        nextButton.snp.remakeConstraints { (make) in
+        nextButton.snp.updateConstraints { (make) in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-keyboardFrame.height)
         }
 
@@ -205,7 +207,8 @@ class JobViewController: UIViewController {
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
-        nextButton.snp.remakeConstraints { (make) in
+        
+        nextButton.snp.updateConstraints { (make) in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         

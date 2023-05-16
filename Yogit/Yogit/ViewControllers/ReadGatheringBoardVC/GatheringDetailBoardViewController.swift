@@ -1343,7 +1343,6 @@ extension GatheringDetailBoardViewController: UICollectionViewDelegateFlowLayout
 
 extension GatheringDetailBoardViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        print("annotation st")
         if !(annotation is MKPointAnnotation) {
             print("annotationfafadfasdf")
             return nil

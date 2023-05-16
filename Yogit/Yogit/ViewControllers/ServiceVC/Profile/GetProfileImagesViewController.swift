@@ -29,7 +29,6 @@ class GetProfileImagesViewController: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 self?.configureScrollView()
             }
-            print("Profile images update")
         }
     }
     
@@ -71,20 +70,20 @@ class GetProfileImagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureViewComponent()
+        configureLayout()
+//        getProfileImages()
+    }
+    
+    private func configureViewComponent() {
         view.backgroundColor = .systemBackground
         view.addSubview(profileImagesScrollView)
         view.addSubview(profileImagesPageControl)
         view.addSubview(leftButton)
-        profileImagesScrollView.delegate = self
-//        getProfileImages()
+        view.backgroundColor = .systemBackground
     }
     
-    func configureViewComponent() {
-        self.view.backgroundColor = .systemBackground
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureLayout() {
         profileImagesScrollView.frame = view.bounds
         profileImagesPageControl.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-30)
@@ -94,10 +93,6 @@ class GetProfileImagesViewController: UIViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.height.width.equalTo(44)
         }
-//        configureScrollView()
-//        if profileImagesScrollView.subviews.count == 2 {
-//            configureScrollView()
-//        }
     }
     
     @objc private func pageControlDidChange(_ sender: UIPageControl) {
@@ -112,6 +107,7 @@ class GetProfileImagesViewController: UIViewController {
     }
     
     private func configureScrollView() {
+        profileImagesScrollView.delegate = self
         profileImagesScrollView.contentSize = CGSize(width: view.frame.size.width * CGFloat(profileImages.count), height: profileImagesScrollView.frame.size.height)
         profileImagesScrollView.isPagingEnabled = true
         for x in 0..<profileImages.count {

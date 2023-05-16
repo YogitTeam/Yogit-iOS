@@ -10,11 +10,8 @@ import UIKit
 
 class JoinListViewController: UIViewController {
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        
+    override func viewDidLoad() {
+        super.viewDidLoad()
     }
-
 }
 

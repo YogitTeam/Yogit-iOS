@@ -136,6 +136,7 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureCategoryTagView()
     }
     
@@ -146,6 +147,17 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
+    }
+    
+    private func configureView() {
+        view.addSubview(noticeLabelStackView)
+        view.addSubview(categoryTagContentScrollView)
+        view.addSubview(nextButton)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         noticeLabelStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -164,14 +176,6 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.width.height.equalTo(60)
         }
-        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
-    }
-    
-    private func configureView() {
-        view.addSubview(noticeLabelStackView)
-        view.addSubview(categoryTagContentScrollView)
-        view.addSubview(nextButton)
-        view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {
@@ -181,7 +185,6 @@ class InterestsViewController: UIViewController, TTGTextTagCollectionViewDelegat
     }
     
     private func configureCategoryTagView() {
-        noticeLabelStackView.layoutIfNeeded()
         let categoryCnt = InterestsCategoryId.allCases.count
         var stackViewAccumulatedY: CGFloat = 0
         for i in 0..<categoryCnt {

@@ -31,16 +31,21 @@ class MyHeaderView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(requirementView)
-        addSubview(contentNameLabel)
-        backgroundColor = .systemBackground
+        configureView()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
+    private func configureView() {
+        addSubview(requirementView)
+        addSubview(contentNameLabel)
+        backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         requirementView.snp.makeConstraints { make in
             make.width.height.equalTo(6)
             make.top.equalToSuperview().inset(0)

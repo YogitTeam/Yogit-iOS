@@ -68,6 +68,7 @@ class GatheringBoardCategoryViewController: UIViewController {
         super.viewDidLoad()
         configureNav()
         configureView()
+        configureLayout()
         configureTableView()
     }
     
@@ -78,6 +79,17 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
+    }
+    
+    private func configureView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(stepHeaderView)
+        view.addSubview(categoryTableView)
+        view.addSubview(nextButton)
+    }
+    
+    private func configureLayout() {
         stepHeaderView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.right.equalToSuperview()
@@ -93,14 +105,6 @@ class GatheringBoardCategoryViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
             $0.width.height.equalTo(60)
         }
-        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
-    }
-    
-    private func configureView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(stepHeaderView)
-        view.addSubview(categoryTableView)
-        view.addSubview(nextButton)
     }
     
     private func configureTableView() {

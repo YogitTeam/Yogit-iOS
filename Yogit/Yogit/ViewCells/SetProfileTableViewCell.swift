@@ -19,8 +19,6 @@ class SetProfileTableViewCell: UITableViewCell {
         stackView.axis = .vertical
         stackView.spacing = 2
         stackView.alignment = .leading
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.red.cgColor
         [commonTextField,
          subLabel].forEach { stackView.addArrangedSubview($0) }
         return stackView
@@ -35,8 +33,6 @@ class SetProfileTableViewCell: UITableViewCell {
         textField.tintColor = .clear
         textField.leftView = nil
         textField.backgroundColor = .clear
-//        textField.layer.borderWidth = 1
-//        textField.layer.borderColor = UIColor.black.cgColor
         return textField
     }()
     
@@ -49,8 +45,6 @@ class SetProfileTableViewCell: UITableViewCell {
         label.sizeToFit()
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
-//        label.layer.borderColor = UIColor.systemBlue.cgColor
-//        label.layer.borderWidth = 1
         return label
     }()
     
@@ -67,44 +61,23 @@ class SetProfileTableViewCell: UITableViewCell {
         return button
     }()
     
-
-
-    // 국기 Textfield leftView에 넣는다.
-//    private let leftImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.clipsToBounds = true
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.image = nil
-////        imageView.contentMode =
-//        imageView.isHidden = true
-////        imageView.sizeToFit()
-//        return imageView
-//    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        print("SetUpProfileTableViewCell init")
-        contentView.addSubview(textStackView)
-//        contentView.addSubview(commonTextField)
-        contentView.addSubview(rightButton)
-//        contentView.addSubview(subLabel)
+        configureView()
+        configureLayout()
         configureViewComponent()
-//        contentView.addSubview(leftImageView)
     }
     
     private func configureViewComponent() {
         contentView.backgroundColor = .systemBackground
     }
     
-    required init?(coder: NSCoder) {
-         fatalError("init(coder:) has not implement")
+    private func configureView() {
+        contentView.addSubview(textStackView)
+        contentView.addSubview(rightButton)
     }
-     
-    // MARK: - Layout
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        
+    
+    private func configureLayout() {
         textStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(20)
             $0.trailing.equalTo(rightButton.snp.leading)
@@ -124,9 +97,12 @@ class SetProfileTableViewCell: UITableViewCell {
         }
     }
     
+    required init?(coder: NSCoder) {
+         fatalError("init(coder:) has not implement")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-        print("PrepareForReuse SetUpProfileTableViewCell")
         removeBorder() // remove bottom border
         prepareForReuseTextField()
         prepareForReuseButton()

@@ -30,12 +30,17 @@ class StepHeaderView: UIView {
 
     init(frame: CGRect, step: Float) {
         super.init(frame: frame)
-        addSubview(progressView)
-        addSubview(titleLabel)
+        configureView()
         initProgress(step: step)
+        configureLayout()
     }
     
-    override func layoutSubviews() {
+    private func configureView() {
+        addSubview(progressView)
+        addSubview(titleLabel)
+    }
+    
+    private func configureLayout() {
         progressView.snp.makeConstraints {
             $0.height.equalTo(5)
             $0.leading.trailing.equalToSuperview().inset(100)

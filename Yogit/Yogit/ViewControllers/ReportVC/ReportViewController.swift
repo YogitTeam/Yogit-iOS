@@ -139,13 +139,29 @@ class ReportViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewComponent()
+        configureLayout()
         configureReportTypeView()
         configureNavItem()
         configureTextView()
-        ProgressHUD.colorAnimation = ServiceColor.primaryColor
     }
     
-    override func viewDidLayoutSubviews() {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    private func configureViewComponent() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(precautionsNoteLabel)
+        view.addSubview(precautionsContentLabel)
+        view.addSubview(lineView1)
+        view.addSubview(reportTypeLabel)
+        view.addSubview(reportTypeContentView)
+        view.addSubview(lineView2)
+        view.addSubview(reportReasonLabel)
+        view.addSubview(reportContentTextView)
+    }
+    
+    private func configureLayout() {
         NSLayoutConstraint.activate([
             precautionsNoteLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             precautionsNoteLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -200,22 +216,6 @@ class ReportViewController: UIViewController {
         ])
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    private func configureViewComponent() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(precautionsNoteLabel)
-        view.addSubview(precautionsContentLabel)
-        view.addSubview(lineView1)
-        view.addSubview(reportTypeLabel)
-        view.addSubview(reportTypeContentView)
-        view.addSubview(lineView2)
-        view.addSubview(reportReasonLabel)
-        view.addSubview(reportContentTextView)
-    }
-    
     private func configureNavItem() {
         self.navigationItem.title = "REPORT".localized()
         self.navigationItem.leftBarButtonItem = leftButton
@@ -266,13 +266,13 @@ class ReportViewController: UIViewController {
                 reportRouter = .reportUser(parameters: ReportUserReq(content: content, refreshToken: refreshToken, reportType: reportType, reportedUserId: reportedUserId, reportingUserId: reportingUserId))
             case .none: return
             }
+            
+            ProgressHUD.colorAnimation = ServiceColor.primaryColor
+            
             AlamofireManager.shared.session
                 .request(reportRouter)
                 .validate(statusCode: 200..<501)
                 .responseDecodable(of: APIResponse<[String:Int64]>.self) { response in
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
-                }
                 switch response.result {
                 case .success:
                     if let value = response.value, value.httpCode == 201 || value.httpCode == 200 {

@@ -363,6 +363,7 @@ class GetProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureNavItem()
         initProgressHUD()
         getUserProfile()
@@ -370,41 +371,7 @@ class GetProfileViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        profileContentScrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        profileContentView.snp.makeConstraints {
-            $0.width.equalToSuperview()
-            $0.centerX.bottom.top.equalToSuperview()
-//            $0.top.equalTo(boardContentScrollView.bounds.minY)
-        }
-        profileImageView.layoutIfNeeded()
         profileImageView.layer.cornerRadius = profileImageView.frame.size.width/2
-        profileNameLabel.snp.makeConstraints {
-            $0.trailing.equalTo(view).inset(20)
-        }
-        profileLanguagesStackView.snp.makeConstraints {
-            $0.width.equalToSuperview()
-        }
-        profileLanguagesTitleLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-        }
-        profileLanguagesLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-        }
-        profileImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(100)
-        }
-        profileContentStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview().inset(20)
-        }
-        footerView1.snp.makeConstraints {
-            $0.width.equalToSuperview()
-            $0.height.equalTo(30)
-        }
-        profileLanguagesStackView.layoutIfNeeded()
         profileLanguagesStackView.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 15)
     }
     
@@ -430,6 +397,40 @@ class GetProfileViewController: UIViewController {
     private func configureView() {
         view.backgroundColor = .systemBackground
         view.addSubview(profileContentScrollView)
+    }
+    
+    private func configureLayout() {
+        profileContentScrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        profileContentView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.centerX.bottom.top.equalToSuperview()
+        }
+        profileNameLabel.snp.makeConstraints {
+            $0.trailing.equalTo(view).inset(20)
+        }
+        profileLanguagesStackView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+        }
+        profileLanguagesTitleLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+        }
+        profileLanguagesLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+        }
+        profileImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(100)
+        }
+        profileContentStackView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(20)
+        }
+        footerView1.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.height.equalTo(30)
+        }
     }
     
     private func initProgressHUD() {

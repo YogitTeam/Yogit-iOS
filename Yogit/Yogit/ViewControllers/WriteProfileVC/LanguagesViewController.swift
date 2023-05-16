@@ -84,14 +84,19 @@ class LanguagesViewController: UIViewController {
         super.viewDidLoad()
         configureNav()
         configureView()
+        configureLayout()
         configureSearchController()
         configureLanguagesTableView()
         configureLanguages()
         duplicateRemove(userLanuages: userLangs)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureView() {
+        self.view.addSubview(languagesTableView)
+        self.view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         languagesTableView.frame = view.bounds
 //        languagesTableView.tableHeaderView = titleView
 //        languagesTableView.tableHeaderView?.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 16, marginRight: 0, color: .systemGray3, width: 0.7, marginTop: 0)
@@ -99,11 +104,6 @@ class LanguagesViewController: UIViewController {
 //            make.leading.trailing.equalToSuperview().inset(20)
 //            make.top.equalToSuperview().inset(0)
 //        }
-    }
-    
-    private func configureView() {
-        self.view.addSubview(languagesTableView)
-        self.view.backgroundColor = .systemBackground
     }
     
     private func configureSearchController() {
@@ -193,30 +193,25 @@ extension LanguagesViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             if isFiltering { // 열린와중에 검색여 선택시 에러
                 // 검색시 그전에 열린 섹션은 인덱스에 벗어남 따라서 검색시에는 그전에 열렸던 섹션 닫아줘야한다.
-                if oldFilterSection != nil && oldFilterSection != indexPath.section && filteredSections[oldFilterSection!].opened == true  { // 처음 아니고, 그전 섹션이랑 다르고, 열려있으면
+                if let oldFilterSection = oldFilterSection, oldFilterSection != indexPath.section, filteredSections[oldFilterSection].opened == true  { // 처음 아니고, 그전 섹션이랑 다르고, 열려있으면
                     // 섹션 벗어남 filter 0 까지 인데 1 연거임
-                    filteredSections[oldFilterSection!].opened = false // 닫아줌
-                    tableView.reloadSections([oldFilterSection!], with: .automatic) // 업데이트
-                    print("old fitler sections reload")
+                    filteredSections[oldFilterSection].opened = false // 닫아줌
+                    tableView.reloadSections([oldFilterSection], with: .automatic) // 업데이트
                 }
                 filteredSections[indexPath.section].opened = !filteredSections[indexPath.section].opened // 현재 오픈 토글
                 tableView.reloadSections([indexPath.section], with: .automatic) // 업데이트
                 oldFilterSection = indexPath.section // 현재 필터 인덱스로 업데이트 1
-                print("now fitler sections reload")
             } else {
-                if oldSection != nil && oldSection != indexPath.section && sections[oldSection!].opened == true { // 그전 섹션이랑 다르면
-                    sections[oldSection!].opened = false
-                    tableView.reloadSections([oldSection!], with: .automatic)
-                    print("now sections reload  old")
+                if let oldSection = oldSection, oldSection != indexPath.section,sections[oldSection].opened == true { // 그전 섹션이랑 다르면
+                    sections[oldSection].opened = false
+                    tableView.reloadSections([oldSection], with: .automatic)
                 }
                 sections[indexPath.section].opened = !sections[indexPath.section].opened
                 tableView.reloadSections([indexPath.section], with: .automatic)
                 oldSection = indexPath.section
-                print("now sections reload  old")
             }
         }
         else {
-            print([indexPath.section], [indexPath.row])
             guard let cell = languagesTableView.cellForRow(at: indexPath) as? LanguagesTableViewCell else { return }
             cell.cellLeftButton.tintColor = ServiceColor.primaryColor
             if isFiltering {

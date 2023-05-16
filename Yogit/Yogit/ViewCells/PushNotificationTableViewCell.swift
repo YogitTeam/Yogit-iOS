@@ -104,15 +104,26 @@ class PushNotificationTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(notiContenView)
+        configureView()
+        configureLayout()
     }
 
     required init?(coder: NSCoder) {
          fatalError("init(coder:) has not implement")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        notiTitleLabel.text = nil
+        notiBodyLabel.text = nil
+        notiTimeLabel.text = nil
+    }
+    
+    private func configureView() {
+        contentView.addSubview(notiContenView)
+    }
+    
+    private func configureLayout() {
         notiImageView.snp.makeConstraints {
             $0.width.height.equalTo(36)
         }
@@ -123,13 +134,6 @@ class PushNotificationTableViewCell: UITableViewCell {
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.top.bottom.equalToSuperview().inset(10)
         }
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        notiTitleLabel.text = nil
-        notiBodyLabel.text = nil
-        notiTimeLabel.text = nil
     }
     
     func configure(data: PushNotification) {

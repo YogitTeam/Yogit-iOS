@@ -204,6 +204,7 @@ class SetProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         initProgressHUD()
         configureTableView()
         configurePickerVew()
@@ -218,9 +219,20 @@ class SetProfileViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         dismissKeyboard()
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
+    }
+    
+    private func configureView() {
+        view.addSubview(infoTableView)
+        view.addSubview(pendingView)
+        view.addSubview(nextButton)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         infoTableView.frame = view.bounds
         infoTableView.tableHeaderView = profileImageContentView
         profileImageContentView.frame = CGRect(origin: .zero, size: CGSize(width: view.frame.size.width, height: 180))
@@ -243,14 +255,6 @@ class SetProfileViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.width.height.equalTo(60)
         }
-        nextButton.layer.cornerRadius = nextButton.frame.size.width/2
-    }
-    
-    private func configureView() {
-        view.addSubview(infoTableView)
-        view.addSubview(pendingView)
-        view.addSubview(nextButton)
-        view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {

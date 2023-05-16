@@ -90,6 +90,7 @@ class SetProfileImagesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         initProgressHUD()
         configureCollectionView()
         getUserImages()
@@ -100,8 +101,14 @@ class SetProfileImagesViewController: UIViewController {
         configureNav()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureView() {
+        view.addSubview(noticeLabel)
+        view.addSubview(imageLoadingView)
+        view.addSubview(imagesCollectionView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         noticeLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.trailing.equalToSuperview().inset(20)
@@ -123,13 +130,6 @@ class SetProfileImagesViewController: UIViewController {
             $0.leading.equalTo(activityIndicator.snp.trailing).offset(10)
             $0.top.bottom.trailing.equalToSuperview().inset(10)
         }
-    }
-    
-    private func configureView() {
-        view.addSubview(noticeLabel)
-        view.addSubview(imageLoadingView)
-        view.addSubview(imagesCollectionView)
-        view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {
@@ -165,14 +165,12 @@ class SetProfileImagesViewController: UIViewController {
                 case .success:
                     if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
                         guard let data = value.data else { return }
-                        print("Success - Download User Images")
                         DispatchQueue.global(qos: .userInitiated).async { [self] in
                             userImagesData.imageIds = data.userImageIds
                             userImagesData.downloadImages = data.imageUrls
                             userImagesData.downloadProfileImage = data.profileImageUrl
                             DispatchQueue.main.async(qos: .userInteractive) {
                                 self.imagesCollectionView.reloadData()
-                                ProgressHUD.dismiss()
                             }
                         }
 //                        print(progressTime {
@@ -221,9 +219,9 @@ class SetProfileImagesViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - downLoad response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.dismiss()
-                    }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         
@@ -253,12 +251,10 @@ class SetProfileImagesViewController: UIViewController {
         ProgressHUD.show(interaction: false)
         
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        print("userImagesData", userImagesData)
         let patchUserImages = PatchUserImages(userId: userItem.userId, refreshToken: userItem.refresh_token, deleteUserImageIds: userImagesData.deleteUserImageIds, uploadImages: userImagesData.uploadImages, uploadProfileImage: profileImage)
         let urlRequestConvertible = ProfileRouter.uploadImages(parameters: patchUserImages)
         
         if let parameters = urlRequestConvertible.toDictionary {
-            print("Upload parameters", parameters)
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
                 for (key, value) in parameters {
                     if let arrayValue = value as? [Any]  {
@@ -282,28 +278,25 @@ class SetProfileImagesViewController: UIViewController {
             }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
                 switch response.result {
                 case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 {
-                        print("Success - Upload User Images")
+                    if let value = response.value, value.httpCode == 200 {
                         guard let data = value.data else { return }
                         DispatchQueue.global(qos: .userInitiated).async { [self] in
                             userImagesData.imageIds = data.userImageIds
                             userImagesData.downloadImages = data.imageUrls
                             userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive) { [self] in
-                                imagesCollectionView.reloadData()
-                                guard let profileImage = userImagesData.downloadProfileImage else { return }
-                                delegate?.imagesSend(profileImage: profileImage)
-                                navigationController?.popViewController(animated: true)
-                                ProgressHUD.dismiss()
+                            DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
+                                guard let profileImage = self?.userImagesData.downloadProfileImage else { return }
+                                self?.imagesCollectionView.reloadData()
+                                self?.delegate?.imagesSend(profileImage: profileImage)
+                                self?.navigationController?.popViewController(animated: true)
                             }
                         }
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.dismiss()
-                    }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         }

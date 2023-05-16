@@ -51,13 +51,25 @@ class CategoryImageViewCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(contentStackView)
-//        contentView.addSubview(imageView)
-//        contentView.addSubview(titleLabel)
+        configureView()
+        configureLayout()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        titleLabel.text = nil
+    }
+    
+    private func configureView() {
+        contentView.addSubview(contentStackView)
+    }
+    
+    private func configureLayout() {
         contentStackView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
@@ -70,16 +82,6 @@ class CategoryImageViewCollectionViewCell: UICollectionViewCell {
         }
         backView.layoutIfNeeded()
         backView.layer.cornerRadius = backView.frame.size.width/2
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        imageView.image = nil
-        titleLabel.text = nil
     }
 
     func configure(at: Int) {

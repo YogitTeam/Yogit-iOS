@@ -83,13 +83,29 @@ class MyClubViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureCollectionView()
         initAPICall()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        initNavigationBar()
+    }
 
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureView() {
+        view.addSubview(segmentedControl)
+        view.addSubview(myBoardsCollectionView)
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureCollectionView() {
+        myBoardsCollectionView.delegate = self
+        myBoardsCollectionView.dataSource = self
+        myBoardsCollectionView.refreshControl = refreshControl
+    }
+    
+    private func configureLayout() {
         segmentedControl.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.trailing.equalToSuperview().inset(20)
@@ -99,23 +115,6 @@ class MyClubViewController: UIViewController {
             make.top.equalTo(segmentedControl.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        initNavigationBar()
-    }
-
-    private func configureView() {
-        self.view.addSubview(segmentedControl)
-        self.view.addSubview(myBoardsCollectionView)
-        view.backgroundColor = .systemBackground
-    }
-    
-    private func configureCollectionView() {
-        myBoardsCollectionView.delegate = self
-        myBoardsCollectionView.dataSource = self
-        myBoardsCollectionView.refreshControl = refreshControl
     }
     
     private func initAPICall() {

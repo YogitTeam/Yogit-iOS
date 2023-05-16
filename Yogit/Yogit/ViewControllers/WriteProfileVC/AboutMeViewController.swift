@@ -74,6 +74,7 @@ class AboutMeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureAboutMeTextView()
         configureNotification()
         // Do any additional setup after loading the view.
@@ -92,22 +93,6 @@ class AboutMeViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        aboutMeTextView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(200)
-        }
-        nextButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(20)
-            $0.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide.snp.bottom)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            $0.width.height.equalTo(60)
-        }
-        nextButton.layoutIfNeeded()
         nextButton.layer.cornerRadius = nextButton.frame.size.width/2
     }
     
@@ -142,6 +127,23 @@ class AboutMeViewController: UIViewController {
         view.backgroundColor = .systemBackground
     }
     
+    private func configureLayout() {
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(20)
+        }
+        aboutMeTextView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(200)
+        }
+        nextButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            $0.width.height.equalTo(60)
+        }
+    }
+    
     private func configureAboutMeTextView() {
         aboutMeTextView.myTextView.delegate = self
         aboutMeTextView.textCountLabel.text = "\(aboutMeTextView.myTextView.text.count) / \(textMax)"
@@ -173,7 +175,7 @@ class AboutMeViewController: UIViewController {
     @objc func keyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         
-        nextButton.snp.remakeConstraints { (make) in
+        nextButton.snp.updateConstraints { (make) in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-keyboardFrame.height)
         }
 
@@ -183,7 +185,7 @@ class AboutMeViewController: UIViewController {
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
-        nextButton.snp.remakeConstraints { (make) in
+        nextButton.snp.updateConstraints { (make) in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         

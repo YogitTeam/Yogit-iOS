@@ -50,23 +50,8 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(imageView)
-        contentView.addSubview(imageSequenceLabel)
-        contentView.addSubview(mainImageLabel)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        imageView.frame = contentView.bounds
-        imageSequenceLabel.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
-            make.top.leading.equalToSuperview().inset(6)
-        }
-        mainImageLabel.snp.makeConstraints { make in
-            make.width.equalTo(80)
-            make.height.equalTo(20)
-            make.bottom.trailing.equalToSuperview().inset(6)
-        }
+        configureView()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -78,6 +63,25 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
         imageSequenceLabel.text = nil
         mainImageLabel.isHidden = true
+    }
+    
+    private func configureView() {
+        contentView.addSubview(imageView)
+        contentView.addSubview(imageSequenceLabel)
+        contentView.addSubview(mainImageLabel)
+    }
+    
+    private func configureLayout() {
+        imageView.frame = contentView.bounds
+        imageSequenceLabel.snp.makeConstraints { make in
+            make.width.height.equalTo(20)
+            make.top.leading.equalToSuperview().inset(6)
+        }
+        mainImageLabel.snp.makeConstraints { make in
+            make.width.equalTo(80)
+            make.height.equalTo(20)
+            make.bottom.trailing.equalToSuperview().inset(6)
+        }
     }
     
     func configureDownload(imageString: String, sequence: Int, kind: Kind) {

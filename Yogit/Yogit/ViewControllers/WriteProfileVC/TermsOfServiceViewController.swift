@@ -133,6 +133,7 @@ class TermsOfServiceViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureLabel(label: termOfUseButtonLabel, text: "TERMS_OF_SERVICE_CONSENT_TERMOFSERVICE".localized(), hyperText: "Term of Service".localized())
         configureLabel(label: personalInfoButtonLabel, text: "TERMS_OF_SERVICE_CONSENT_PRIVACY_POLICY".localized(), hyperText: "Privacy Policy".localized())
         initProgressHUD()
@@ -144,8 +145,25 @@ class TermsOfServiceViewController: UIViewController {
         configureNav()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureNav() {
+        navigationItem.title = ""
+        navigationItem.backButtonTitle = "" // remove back button title
+        navigationItem.rightBarButtonItem = rightButton
+    }
+    
+    private func configureView() {
+        [titleLabel,
+         subTitleLabel,
+        totalButton,
+        totalButtonLabel,
+        termOfUseButton,
+        termOfUseButtonLabel,
+        personalInfoButton,
+        personalInfoButtonLabel].forEach { view.addSubview($0) }
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
         titleLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
@@ -184,24 +202,6 @@ class TermsOfServiceViewController: UIViewController {
             $0.leading.equalTo(personalInfoButton.snp.trailing)
             $0.trailing.equalToSuperview().inset(20)
         }
-    }
-    
-    private func configureNav() {
-        navigationItem.title = ""
-        navigationItem.backButtonTitle = "" // remove back button title
-        navigationItem.rightBarButtonItem = rightButton
-    }
-    
-    private func configureView() {
-        [titleLabel,
-         subTitleLabel,
-        totalButton,
-        totalButtonLabel,
-        termOfUseButton,
-        termOfUseButtonLabel,
-        personalInfoButton,
-        personalInfoButtonLabel].forEach { view.addSubview($0) }
-        view.backgroundColor = .systemBackground
     }
     
     private func initProgressHUD() {

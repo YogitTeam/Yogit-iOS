@@ -25,22 +25,22 @@ class ServiceTabBarViewController: UITabBarController {
         configureView()
         configureTapBarVC()
         configureInstanceVC()
+        configureLayout()
         configureNotification()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(line)
+    }
+    
+    private func configureLayout() {
         line.snp.makeConstraints {
             $0.width.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(0.5)
             $0.bottom.equalTo(self.tabBar.snp.top)
         }
-    }
-    
-    private func configureView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(line)
     }
     
     private func configureNotification() {
@@ -61,7 +61,6 @@ class ServiceTabBarViewController: UITabBarController {
     }
     
     @objc private func didBoardDetailNotification(_ notification: Notification) {
-        print("보드 알림 발생")
         guard let boardDetail = notification.object as? BoardDetail else { return }
         DispatchQueue.main.async(qos: .userInteractive) {
             let GDBVC = GatheringDetailBoardViewController()
@@ -112,15 +111,12 @@ class ServiceTabBarViewController: UITabBarController {
 extension ServiceTabBarViewController { // UNUserNotificationCenterDelegate
     
     func registerForPushNotifications() {
-        print("푸쉬 알림 등록")
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, error in
             // 3 - 완료 핸들러는 인증이 성공했는지 여부를 나타내는 Bool을 수신합니다. 인증 결과를 표시합니다.
             if let error = error {
                 print("ERROR|Request Notificattion Authorization : \(error)")
             }
-            guard granted else {
-                print("권한 없음")
-                return }
+            guard granted else { return }
             self?.getNotificationSettings()
         }
     }
@@ -134,89 +130,5 @@ extension ServiceTabBarViewController { // UNUserNotificationCenterDelegate
             }
         }
     }
-    
-//     // 앱 열린 상태일때
-//    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-//        // 원격으로 들어오면, 열린 상태 함수 실행안됨
-//        print("WillPresent userNotificationCenter")
-//
-//        debugPrint(notification.request.content.userInfo)
-//
-//        let content = notification.request.content
-//        let title: String = content.title // 현재 title-loc-key로 키값 설정됨
-//        let body: String = content.body // 현재 loc-key로 키값 걸정됨
-//
-//        var args: [String] = []
-//        if let aps = content.userInfo["aps"] as? [String: Any],
-//            let alert = aps["alert"] as? [String: Any],
-//            let locArgs = alert["loc-args"] as? [String] {
-//            for arg in locArgs {
-//                args.append(arg)
-//            }
-//            print("WillPresent args, locArgs", args, locArgs)
-//        }
-//
-//
-//        guard let id = content.userInfo["boardId"] as? Int64 else { return }
-//        guard let type = content.userInfo["pushType"] as? String else { return }
-//        let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-//
-//        receivePushNotificationData(alarm: alarmData)
-//
-//        // foreground 앱 알리는 형태
-//        if type != AlarmManager.AlarmType.clipBoard.toKey() { // 신청, 취소 알림은 포어그라운드 알림
-//            completionHandler([.list, .banner, .badge, .sound]) // 리스트, 배너, 뱃지, 사운드를 모두 사용하는 형태
-//        }
-//    }
-//
-//    // 앱 원격 상태일때
-//    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-//
-//        print("DidReceive userNotificationCenter")
-//
-//        debugPrint(response.notification.request.content.userInfo)
-//
-//        let content = response.notification.request.content
-//        let title: String = content.title
-//        let body: String = content.body
-//
-//        var args: [String] = []
-//        if let aps = content.userInfo["aps"] as? [String: Any],
-//            let alert = aps["alert"] as? [String: Any],
-//            let locArgs = alert["loc-args"] as? [String] {
-//            for arg in locArgs {
-//                args.append(arg)
-//            }
-//            print("DidReceive  args, locArgs", args, locArgs)
-//        }
-//
-//        guard let id = content.userInfo["boardId"] as? Int64 else { return }
-//        guard let type = content.userInfo["pushType"] as? String else { return }
-//        let alarmData = Alarm(type: type, title: title, body: body, args: args, id: id)
-//
-//        receivePushNotificationData(alarm: alarmData)
-//
-//        DispatchQueue.main.async {
-//            self.navigationController?.popToRootViewController(animated: true)
-//            self.selectedIndex = 3
-//        }
-//
-//        completionHandler()
-//    }
-//
-//    func receivePushNotificationData(alarm: Alarm) {
-//
-//        print("receivePushNotificationData")
-//
-//        guard var alarms = AlarmManager.loadAlarms(type: alarm.type) else { return }
-//        print("기존 알림 리스트", alarms)
-//        print("새로운 알림", alarm)
-//        if alarms.last != alarm {
-//            print("알림 더함")
-//            alarms.append(alarm)
-//            AlarmManager.saveAlarms(alarms: alarms)
-//            NotificationCenter.default.post(name: .alarmRefresh, object: alarm.type)
-//        }
-//    }
 }
 

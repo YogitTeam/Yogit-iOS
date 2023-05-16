@@ -39,25 +39,29 @@ class BoardOptionsTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        print("SetUpProfileTableViewCell init")
-        contentView.addSubview(commonTextField)
-        contentView.addSubview(rightButton)
         configureViewComponent()
+        configureLayout()
 //        contentView.addSubview(leftImageView)
     }
     
     private func configureViewComponent() {
+        contentView.addSubview(commonTextField)
+        contentView.addSubview(rightButton)
         contentView.backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {
          fatalError("init(coder:) has not implement")
     }
-     
-    // MARK: - Layout
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.removeBorder() // remove bottom border
+        prepareForReuseTextField()
+        prepareForReuseButton()
+    }
+    
+    private func configureLayout() {
         commonTextField.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -70,14 +74,6 @@ class BoardOptionsTableViewCell: UITableViewCell {
             make.width.equalTo(44)
             make.trailing.equalToSuperview().inset(20)
         }
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        print("PrepareForReuse SetUpProfileTableViewCell")
-        self.removeBorder() // remove bottom border
-        prepareForReuseTextField()
-        prepareForReuseButton()
     }
     
     func prepareForReuseTextField() {

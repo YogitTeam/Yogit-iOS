@@ -42,6 +42,7 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureTableView()
         // Do any additional setup after loading the view.
     }
@@ -51,17 +52,17 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
         placeTableView.isHidden = true
     }
     
-    override func viewDidLayoutSubviews() {
-        guideLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.leading.equalToSuperview().inset(20)
-        }
-    }
-    
     private func configureView() {
         view.addSubview(placeTableView)
         view.addSubview(guideLabel)
         view.backgroundColor = .systemBackground
+    }
+    
+    private func configureLayout() {
+        guideLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.leading.equalToSuperview().inset(20)
+        }
     }
     
     private func configureTableView() {
@@ -97,7 +98,6 @@ class MKResultsLocalSearchTableViewController: UIViewController, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Didselect")
         tableView.isHidden = true
         let place = places[indexPath.row]
         guard let coordinate = place.placemark.location?.coordinate else { return }

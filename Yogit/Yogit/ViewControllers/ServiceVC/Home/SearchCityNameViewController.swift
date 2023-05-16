@@ -88,6 +88,7 @@ class SearchCityNameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureNav()
         configureSearchController()
         configureCitiesTableView()
@@ -99,9 +100,13 @@ class SearchCityNameViewController: UIViewController {
         timerQuit()
     }
     
+    private func configureView() {
+        view.addSubview(citiesTableView)
+//        view.addSubview(searchGuideView)
+        view.backgroundColor = .systemBackground
+    }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureLayout() {
         citiesTableView.frame = view.bounds
 //        searchGuideView.snp.makeConstraints { make in
 //            make.top.leading.trailing.bottom.equalToSuperview()
@@ -115,12 +120,6 @@ class SearchCityNameViewController: UIViewController {
             make.width.height.equalTo(20)
             make.bottom.equalToSuperview().inset(22)
         }
-    }
-    
-    private func configureView() {
-        view.addSubview(citiesTableView)
-//        view.addSubview(searchGuideView)
-        view.backgroundColor = .systemBackground
     }
     
     private func configureNav() {

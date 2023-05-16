@@ -135,6 +135,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        configureLayout()
         configureNav()
         configureCollectionView()
         initAPICall()
@@ -160,26 +161,7 @@ class MainViewController: UIViewController {
         view.backgroundColor = .systemBackground
     }
     
-    private func configureNav() {
-        navigationController?.navigationBar.topItem?.backButtonTitle = ""
-        navigationController?.navigationBar.tintColor = UIColor.label
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.backgroundColor = .systemBackground
-        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
-    }
-    
-    private func initNavigationBar() {
-        DispatchQueue.main.async { [weak self] in
-            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
-            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
-            self?.tabBarController?.navigationItem.rightBarButtonItems = [self!.searchCityNameButton]
-            self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
-        }
-    }
-
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func configureLayout() {
         categoryImageViewCollectionView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
@@ -203,7 +185,28 @@ class MainViewController: UIViewController {
             $0.center.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-        createGatheringBoardButton.layoutIfNeeded()
+    }
+    
+    private func configureNav() {
+        navigationController?.navigationBar.topItem?.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = UIColor.label
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backgroundColor = .systemBackground
+        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+    }
+    
+    private func initNavigationBar() {
+        DispatchQueue.main.async { [weak self] in
+            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
+            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+            self?.tabBarController?.navigationItem.rightBarButtonItems = [self!.searchCityNameButton]
+            self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
+        }
+    }
+
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         createGatheringBoardButton.layer.cornerRadius = createGatheringBoardButton.frame.size.width/2
     }
     
@@ -505,49 +508,11 @@ extension MainViewController: SearchCityNameProtocol {
             resetBoardsData(categoryId: categoryId)
             pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
         } else {
-            forwardGeocodingToServer(address: cityNameLocalized) { [weak self] (cityNameEng, countyCode) in
+            LocationManager.shared.cityNameGeocodingToServer(address: cityNameLocalized) { [weak self] (cityNameEng, countyCode) in
                 self?.cityNameEng = cityNameEng
                 self?.resetBoardsData(categoryId: self!.categoryId)
                 self?.pagingBoardsByCategory(categoryId: self!.categoryId, isFirstPage: true)
             }
         }
-    }
-}
-
-
-extension MainViewController {
-    private func forwardGeocodingToServer(address: String,completion: @escaping (String, String) -> Void) {
-        
-        let geocoder = CLGeocoder()
-       
-        guard let serviceCountryCode = SessionManager.getSavedCountryCode() else { return }
-        
-        let locale = Locale(identifier: "en_US") // 서버로 넘길 데이터
-
-        // 주소 다됨 (country, locality, "KR" >> South Korea)
-        geocoder.geocodeAddressString(address, in: nil, preferredLocale: locale, completionHandler: {
-            (placemarks, error) in
-            if error != nil {
-                return
-            }
-
-            guard let pm = placemarks?.last,
-                  let locality = pm.locality,
-                  let countryCode = pm.isoCountryCode,
-                  serviceCountryCode == countryCode
-            else {
-                return
-            }
-            
-            // apple api 가끔 서울만 영어로 되는 경우가 있음
-            let cityName: String
-            if locality == "서울특별시" { // english로 locale해도 서울만 영어로 안될때가 생겼음 (애플 API 문제)
-                cityName = "Seoul"
-            } else {
-                cityName = locality
-            }
-            
-            completion(cityName.uppercased(), countryCode)
-        })
     }
 }
