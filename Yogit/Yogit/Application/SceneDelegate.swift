@@ -17,13 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
-        
-//        let currentVC = TermsOfServiceViewController()
-//        let rootVC = UINavigationController(rootViewController: currentVC)
-//        self.window = UIWindow(windowScene: scene)
-//        self.window?.rootViewController = rootVC
-//        self.window?.makeKeyAndVisible()
-        
+
         SessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState
             switch AuthState {
@@ -64,7 +58,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         SessionManager.checkUserAuth { (AuthState) in
             if AuthState == .deleteAccout { // 앱 foreground active 상태일때, 노티 날려서 회원 탈퇴 처리
-                print("AuthState == .deleteAccout")
                 DispatchQueue.main.async { [self] in
                     let rootVC = UINavigationController(rootViewController: LoginViewController())
                     window = UIWindow(windowScene: scene)
