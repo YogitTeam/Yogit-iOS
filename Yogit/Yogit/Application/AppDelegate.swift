@@ -116,7 +116,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     // 앱 열린 상태일때
    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
        // 원격으로 들어오면, 열린 상태 함수 실행안됨
-       print("WillPresent userNotificationCenter")
 
        debugPrint(notification.request.content.userInfo)
 
@@ -154,8 +153,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
    // 앱 원격 상태일때
    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
-       print("DidReceive userNotificationCenter")
-
        debugPrint(response.notification.request.content.userInfo)
 
        let content = response.notification.request.content
@@ -170,7 +167,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
            for arg in locArgs {
                args.append(arg)
            }
-           print("DidReceive  args, locArgs", args, locArgs)
        }
        
        guard let boardId = content.userInfo["boardId"] as? Int64 else { return }
