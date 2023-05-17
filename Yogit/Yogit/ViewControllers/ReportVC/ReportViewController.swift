@@ -268,6 +268,7 @@ class ReportViewController: UIViewController {
             }
             
             ProgressHUD.colorAnimation = ServiceColor.primaryColor
+            ProgressHUD.show(interaction: false)
             
             AlamofireManager.shared.session
                 .request(reportRouter)
@@ -284,8 +285,11 @@ class ReportViewController: UIViewController {
                 case let .failure(error):
                     print(error)
                     DispatchQueue.main.async {
-                        ProgressHUD.showFailed()
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         } else {

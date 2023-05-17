@@ -294,10 +294,13 @@ class TermsOfServiceViewController: UIViewController {
                         print("Error - KeychainManager.update \(error.localizedDescription)")
                     }
                 case let .failure(error):
-                    print("SetProfileVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
+                    print("TermsOfServiceVC - upload response result Not return", error)
+                    DispatchQueue.main.async { // 변경
                         ProgressHUD.dismiss()
                     }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         }

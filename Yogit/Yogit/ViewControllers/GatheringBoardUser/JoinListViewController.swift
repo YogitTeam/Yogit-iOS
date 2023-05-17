@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 class JoinListViewController: UIViewController {
     
     override func viewDidLoad() {

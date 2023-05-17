@@ -302,3 +302,5 @@
 // SearchCityNameTableViewController
 "SEARCH_CITY_NAME_NAVIGATIONITEM_TITLE" = "Search for city name";
 "SEARCH_CITY_NAME_SEARCHBAR_PLACEHOLDER" = "EX) Seoul";
+
+"NETWORKING_FAIL" = "Networking failed";

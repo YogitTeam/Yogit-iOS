@@ -359,9 +359,12 @@ class SetProfileViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileVC - upload response result Not return", error)
-                    DispatchQueue.main.async { // 변경
-                        ProgressHUD.dismiss()
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         }

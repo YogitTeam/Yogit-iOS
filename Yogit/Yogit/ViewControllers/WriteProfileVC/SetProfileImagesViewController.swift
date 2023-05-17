@@ -219,6 +219,10 @@ class SetProfileImagesViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - downLoad response result Not return", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                        self.navigationController?.popViewController(animated: true)
+                    }
                 }
                 DispatchQueue.main.async {
                     ProgressHUD.dismiss()
@@ -294,6 +298,9 @@ class SetProfileImagesViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                    }
                 }
                 DispatchQueue.main.async {
                     ProgressHUD.dismiss()

@@ -122,6 +122,7 @@ class GetProfileViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true
+        imageView.skeletonCornerRadius = 50
         imageView.isSkeletonable = true
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.profileImageViewTapped(_:))))
         return imageView

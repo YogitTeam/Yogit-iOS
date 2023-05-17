@@ -13,6 +13,7 @@ import UIKit
 import InputBarAccessoryView
 import IQKeyboardManagerSwift
 import MessageKit
+import ProgressHUD
 
 struct Sender: SenderType {
     var senderId: String
@@ -221,6 +222,9 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
             }
         case let .failure(error):
             print("createClipBoardData error", error)
+            DispatchQueue.main.async {
+                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+            }
             throw CreateError.failureResponse
         }
     }
@@ -384,6 +388,9 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             }
         case let .failure(error):
             print("fetchClipBoardData error", error)
+            DispatchQueue.main.async {
+                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+            }
             throw FetchError.failureResponse
         }
     }
