@@ -537,14 +537,20 @@ class GetProfileViewController: UIViewController {
                     DispatchQueue.main.async(qos: .userInteractive) { [self] in
                         dismiss(animated: true)
                         NotificationCenter.default.post(name: .baordDetailRefreshForBlock, object: nil)
+                        ProgressHUD.dismiss()
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
                     }
                 }
             case let .failure(error):
-                print(error)
+                print("Block user", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                }
             }
-            DispatchQueue.main.async {
-                ProgressHUD.dismiss()
-            }
+
         }
     }
     
@@ -735,7 +741,6 @@ class GetProfileViewController: UIViewController {
                 case .success:
                     if let value = response.value, (value.httpCode == 200 || value.httpCode == 201), let data = value.data {
                         if data.userStatus == "DELETE" {
-                            print("탈퇴한 유저")
                             self.deleteAlert()
                         } else {
                             DispatchQueue.global(qos: .userInteractive).async { [weak self] in
@@ -745,6 +750,9 @@ class GetProfileViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("GetProfileVC - upload response result Not return", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                    }
                 }
             }
     }

@@ -331,6 +331,11 @@ class GatheringBoardContentViewController: UIViewController {
                         DispatchQueue.main.async(qos: .userInteractive) { [self] in
                             navigationController?.popToRootViewController(animated: true)
                             NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
+                            ProgressHUD.dismiss()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
                         }
                     }
                 case let .failure(error):
@@ -338,9 +343,6 @@ class GatheringBoardContentViewController: UIViewController {
                     DispatchQueue.main.async {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
                 }
             }
         }

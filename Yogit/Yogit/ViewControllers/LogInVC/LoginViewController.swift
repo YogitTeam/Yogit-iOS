@@ -219,7 +219,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 let userData: User
                 if let user = try? KeychainManager.getUser(userType: SessionManager.Service.User.APPLE) {
                     userData = user
-                    print("기존 User", userData.name, userData.email)
                 } else {
                     // 처음 애플 서버 인증시에만 나옴
                     guard let givenName = appleIDCredential.fullName?.givenName,
@@ -237,8 +236,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                     } catch {
                         print("KeychainManager.saveUser \(error.localizedDescription)")
                     }
-                    
-                    print("새로운 User name, email", userData.name, userData.email)
                 }
                 
                 let state = "SIGNIN" // state 사용안함, UserItem의 userStatus로 상태관리
@@ -274,11 +271,16 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                 } catch {
                                     print("KeychainManager saveUserItem error \(error.localizedDescription)")
                                 }
+                            } else {
+                                DispatchQueue.main.async {
+                                    ProgressHUD.dismiss()
+                                }
                             }
                         case let .failure(error):
                             print(error)
-                            DispatchQueue.main.async { // 변경
-                                ProgressHUD.dismiss()
+                            // 응답실패시 다시 요청해도 userItem 반환하게 해야된다.
+                            DispatchQueue.main.async {
+                                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                             }
                         }
                     }

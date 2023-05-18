@@ -171,51 +171,56 @@ class SetProfileImagesViewController: UIViewController {
                             userImagesData.downloadProfileImage = data.profileImageUrl
                             DispatchQueue.main.async(qos: .userInteractive) {
                                 self.imagesCollectionView.reloadData()
+                                ProgressHUD.dismiss()
                             }
                         }
-//                        print(progressTime {
-////                             0.0019310712814331055 (async let 5개) 0.0017060041427612305 0.0016030073165893555
-////                             0.0015599727630615234 (withTaskGroup) 0.0017729997634887695 0.0015230178833007812
-////                             0.0019550323486328125 (for문 작업) 0.0018080472946166992
-//                            let imageUrls = data.imageUrls
-//                            var userImages = [UIImage]()
-//                            let profileUrl = data.profileImageUrl
-//                            Task(priority: .high) {
-//                                let userImages = await withTaskGroup(of: (UIImage, Int).self, returning: [UIImage].self, body: { taskGroup in
-//                                    for i in 0..<imageUrls.count {
-//                                        taskGroup.addTask {
-//                                            await (imageUrls[i].urlToImage()!, i)
-//                                        }
-//                                    }
-//                                    var childTaskResult = [UIImage?](repeating: nil, count: imageUrls.count)
-//                                    for await result in taskGroup {
-//                                        childTaskResult[result.1] = result.0
-//                                    }
-//                                    return childTaskResult as! [UIImage]
-//                               })
-//
-//                                async let image1 = imageUrls[0].urlToImage()!
-//                                async let image2 = imageUrls[1].urlToImage()!
-//                                async let image3 = imageUrls[2].urlToImage()!
-//                                async let image4 = imageUrls[3].urlToImage()!
-//                                async let image5 = imageUrls[4].urlToImage()!
-//                                async let image6 = imageUrls[5].urlToImage()!
-//                                userImages = await [image1, image2, image3, image4, image5, image6]
-//
-//                                for imageUrl in imageUrls {
-//                                    let image = await imageUrl.urlToImage()!
-//                                    userImages.append(image)
-//                                }
-//
-//                                self.userImagesData.imageIds = data.userImageIds
-//                                self.userImagesData.newImagesIdx = userImages.count
-//                                await MainActor.run {
-//                                    self.userImagesData.uploadImages = userImages
-//                                    self.imagesCollectionView.reloadData()
-//                                }
-//                            }
-//
-//                        })
+                        //                        print(progressTime {
+                        ////                             0.0019310712814331055 (async let 5개) 0.0017060041427612305 0.0016030073165893555
+                        ////                             0.0015599727630615234 (withTaskGroup) 0.0017729997634887695 0.0015230178833007812
+                        ////                             0.0019550323486328125 (for문 작업) 0.0018080472946166992
+                        //                            let imageUrls = data.imageUrls
+                        //                            var userImages = [UIImage]()
+                        //                            let profileUrl = data.profileImageUrl
+                        //                            Task(priority: .high) {
+                        //                                let userImages = await withTaskGroup(of: (UIImage, Int).self, returning: [UIImage].self, body: { taskGroup in
+                        //                                    for i in 0..<imageUrls.count {
+                        //                                        taskGroup.addTask {
+                        //                                            await (imageUrls[i].urlToImage()!, i)
+                        //                                        }
+                        //                                    }
+                        //                                    var childTaskResult = [UIImage?](repeating: nil, count: imageUrls.count)
+                        //                                    for await result in taskGroup {
+                        //                                        childTaskResult[result.1] = result.0
+                        //                                    }
+                        //                                    return childTaskResult as! [UIImage]
+                        //                               })
+                        //
+                        //                                async let image1 = imageUrls[0].urlToImage()!
+                        //                                async let image2 = imageUrls[1].urlToImage()!
+                        //                                async let image3 = imageUrls[2].urlToImage()!
+                        //                                async let image4 = imageUrls[3].urlToImage()!
+                        //                                async let image5 = imageUrls[4].urlToImage()!
+                        //                                async let image6 = imageUrls[5].urlToImage()!
+                        //                                userImages = await [image1, image2, image3, image4, image5, image6]
+                        //
+                        //                                for imageUrl in imageUrls {
+                        //                                    let image = await imageUrl.urlToImage()!
+                        //                                    userImages.append(image)
+                        //                                }
+                        //
+                        //                                self.userImagesData.imageIds = data.userImageIds
+                        //                                self.userImagesData.newImagesIdx = userImages.count
+                        //                                await MainActor.run {
+                        //                                    self.userImagesData.uploadImages = userImages
+                        //                                    self.imagesCollectionView.reloadData()
+                        //                                }
+                        //                            }
+                        //
+                        //                        })
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - downLoad response result Not return", error)
@@ -223,9 +228,6 @@ class SetProfileImagesViewController: UIViewController {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                         self.navigationController?.popViewController(animated: true)
                     }
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
                 }
             }
         
@@ -293,7 +295,12 @@ class SetProfileImagesViewController: UIViewController {
                                 self?.imagesCollectionView.reloadData()
                                 self?.delegate?.imagesSend(profileImage: profileImage)
                                 self?.navigationController?.popViewController(animated: true)
+                                ProgressHUD.dismiss()
                             }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
                         }
                     }
                 case let .failure(error):
@@ -301,9 +308,6 @@ class SetProfileImagesViewController: UIViewController {
                     DispatchQueue.main.async {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
                 }
             }
         }

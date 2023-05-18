@@ -114,9 +114,16 @@ class SettingProfileViewController: UIViewController {
                         } catch {
                             print("KeychainManager.deleteUserItem \(error.localizedDescription)")
                         }
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 case let .failure(error):
                     print("Delete account decoding error", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                    }
                 }
             }
     }
@@ -145,9 +152,16 @@ class SettingProfileViewController: UIViewController {
                         } catch {
                             print("KeychainManager.deleteUserItem \(error.localizedDescription)")
                         }
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 case let .failure(error):
-                    print(error)
+                    print("Logout error", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                    }
                 }
             }
     }

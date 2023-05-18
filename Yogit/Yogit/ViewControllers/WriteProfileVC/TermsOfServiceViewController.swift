@@ -289,6 +289,10 @@ class TermsOfServiceViewController: UIViewController {
                                 view.window?.makeKeyAndVisible()
                                 ProgressHUD.dismiss()
                             }
+                        } else {
+                            DispatchQueue.main.async {
+                                ProgressHUD.dismiss()
+                            }
                         }
                     } catch {
                         print("Error - KeychainManager.update \(error.localizedDescription)")
@@ -298,9 +302,6 @@ class TermsOfServiceViewController: UIViewController {
                     DispatchQueue.main.async { // 변경
                         ProgressHUD.dismiss()
                     }
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
                 }
             }
         }

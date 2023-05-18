@@ -779,10 +779,10 @@ class GatheringDetailBoardViewController: UIViewController {
             .responseDecodable(of: APIResponse<BoardUserRes>.self) { response in // 서버 반영 필요
                 switch response.result {
                 case .success:
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
+                    }
                     if let value = response.value {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
                         if value.httpCode == 200 || value.httpCode == 201 {
                             self.getBoardDetail(state: .join)
                         } else if value.httpCode == 400, value.errorCode == "B003" {
@@ -800,8 +800,7 @@ class GatheringDetailBoardViewController: UIViewController {
                 case let .failure(error):
                     print(error)
                     DispatchQueue.main.async {
-                        self.joinBulletinManager.dismissBulletin(animated: true)
-                        ProgressHUD.dismiss()
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
                 }
             }
@@ -821,19 +820,16 @@ class GatheringDetailBoardViewController: UIViewController {
             .responseDecodable(of: APIResponse<BoardUserRes>.self) { response in // 서버 반영 필요
                 switch response.result {
                 case .success:
-                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
-                        print("취소 성공")
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
-                        self.getBoardDetail(state: .withdrawl)
-                    } else {
-                        print("취소 실패")
-                    }
-                case let .failure(error):
-                    print(error)
                     DispatchQueue.main.async {
                         ProgressHUD.dismiss()
+                    }
+                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
+                        self.getBoardDetail(state: .withdrawl)
+                    }
+                case let .failure(error):
+                    print("Withdrawal", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
                 }
             }
@@ -981,6 +977,7 @@ class GatheringDetailBoardViewController: UIViewController {
 //        guard let boardId = boardId else { return }
         guard let hostId = boardWithMode.hostId else { return }
         guard let boardId = boardWithMode.boardId else { return }
+        ProgressHUD.show(interaction: false)
         let deleteBoardReq = DeleteBoardReq(boardId: boardId, refreshToken: userItem.refresh_token, hostId: hostId) // hostId
         AlamofireManager.shared.session
             .request(BoardRouter.deleteBoard(parameters: deleteBoardReq))
@@ -992,10 +989,18 @@ class GatheringDetailBoardViewController: UIViewController {
                     if value.httpCode == 200 {
                         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
                             navigationController?.popViewController(animated: true)
+                            ProgressHUD.dismiss()
                         })
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 case let .failure(error):
-                    print(error)
+                    print("DeleteBoard", error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                    }
                 }
             }
     }
@@ -1271,7 +1276,10 @@ class GatheringDetailBoardViewController: UIViewController {
                     self.isDeletedAlert()
                 }
             case let .failure(error):
-                print(error)
+                print("GetBoardDetail fail", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                }
             }
         }
     }

@@ -281,15 +281,16 @@ class ReportViewController: UIViewController {
                             self.dismiss(animated: true) // 프로필 화면
                             ProgressHUD.showSucceed()
                         }
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 case let .failure(error):
                     print(error)
                     DispatchQueue.main.async {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
                 }
             }
         } else {

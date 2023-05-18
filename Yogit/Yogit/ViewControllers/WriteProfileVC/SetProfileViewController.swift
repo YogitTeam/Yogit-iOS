@@ -356,15 +356,16 @@ class SetProfileViewController: UIViewController {
                             self?.navigationController?.popViewController(animated: true)
                             ProgressHUD.dismiss()
                         }
+                    } else {
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
                     }
                 case let .failure(error):
                     print("SetProfileVC - upload response result Not return", error)
                     DispatchQueue.main.async {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
                 }
             }
         }

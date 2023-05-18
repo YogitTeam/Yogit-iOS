@@ -111,9 +111,7 @@ class GetProfileImagesViewController: UIViewController {
         profileImagesScrollView.contentSize = CGSize(width: view.frame.size.width * CGFloat(profileImages.count), height: profileImagesScrollView.frame.size.height)
         profileImagesScrollView.isPagingEnabled = true
         for x in 0..<profileImages.count {
-            print("configure")
             let imageView = UIImageView(frame: CGRect(x: CGFloat(x) * view.frame.size.width, y: view.safeAreaInsets.top + leftButton.frame.size.height/2, width: view.frame.size.width, height: view.safeAreaLayoutGuide.layoutFrame.size.height - leftButton.frame.size.height))
-            print(profileImages[x].size)
             imageView.clipsToBounds = true
             imageView.contentMode = .scaleAspectFit
 //                imageView.image = profileImages[x]
@@ -228,7 +226,6 @@ class GetProfileImagesViewController: UIViewController {
 extension GetProfileImagesViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         profileImagesPageControl.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
-        print("scrollViewDidScroll")
     }
 }
 

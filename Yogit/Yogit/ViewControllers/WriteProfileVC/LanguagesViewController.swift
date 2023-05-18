@@ -281,8 +281,6 @@ extension LanguagesViewController: UISearchResultsUpdating {
 
     func updateSearchResults(for searchController: UISearchController) {
         // 검색시 그전에 열린 섹션은 인덱스에 벗어남 따라서 검색시에는 그전에 열렸던 섹션 닫아줘야한다.
-        print("필터링")
-        
         
         if isFiltering {
             if oldFilterSection != nil {
@@ -303,8 +301,6 @@ extension LanguagesViewController: UISearchResultsUpdating {
         let duplicatedArray = localizedSections + originLangSections
         self.filteredSections = Array(Set(duplicatedArray))
         
-        print("filter = \(filteredSections)")
-        print("filter count = \(filteredSections.count)")
         DispatchQueue.main.async(qos: .userInteractive, execute: {
             self.languagesTableView.reloadData()
         })
