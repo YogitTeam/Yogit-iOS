@@ -10,6 +10,7 @@ import SnapKit
 import BSImagePicker
 import Photos
 import ProgressHUD
+import SkeletonView
 
 protocol ImagesProtocol: AnyObject {
     func imagesSend(profileImage: String)
@@ -84,6 +85,7 @@ class SetProfileImagesViewController: UIViewController {
         collectionView.register(MyImagesCollectionViewCell.self, forCellWithReuseIdentifier: MyImagesCollectionViewCell.identifier)
         collectionView.backgroundColor = .systemBackground
         collectionView.isScrollEnabled = false
+        collectionView.isSkeletonable = true
         return collectionView
     }()
 
@@ -152,7 +154,12 @@ class SetProfileImagesViewController: UIViewController {
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let getUserImages = GetUserImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
         let urlRequestConvertible = ProfileRouter.downLoadImages(parameters: getUserImages)
-        ProgressHUD.show(interaction: false)
+//        ProgressHUD.show(interaction: false)
+        
+        let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
+//
+        imagesCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
+        
         if let parameters = urlRequestConvertible.toDictionary {
             AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
                 for (key, value) in parameters {
@@ -169,68 +176,64 @@ class SetProfileImagesViewController: UIViewController {
                             userImagesData.imageIds = data.userImageIds
                             userImagesData.downloadImages = data.imageUrls
                             userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive) {
-                                self.imagesCollectionView.reloadData()
-                                ProgressHUD.dismiss()
+                            DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
+                                self?.imagesCollectionView.stopSkeletonAnimation()
+                                self?.imagesCollectionView.hideSkeleton(reloadDataAfter: false)
+                                self?.imagesCollectionView.reloadData()
                             }
                         }
-                        //                        print(progressTime {
-                        ////                             0.0019310712814331055 (async let 5개) 0.0017060041427612305 0.0016030073165893555
-                        ////                             0.0015599727630615234 (withTaskGroup) 0.0017729997634887695 0.0015230178833007812
-                        ////                             0.0019550323486328125 (for문 작업) 0.0018080472946166992
-                        //                            let imageUrls = data.imageUrls
-                        //                            var userImages = [UIImage]()
-                        //                            let profileUrl = data.profileImageUrl
-                        //                            Task(priority: .high) {
-                        //                                let userImages = await withTaskGroup(of: (UIImage, Int).self, returning: [UIImage].self, body: { taskGroup in
-                        //                                    for i in 0..<imageUrls.count {
-                        //                                        taskGroup.addTask {
-                        //                                            await (imageUrls[i].urlToImage()!, i)
-                        //                                        }
-                        //                                    }
-                        //                                    var childTaskResult = [UIImage?](repeating: nil, count: imageUrls.count)
-                        //                                    for await result in taskGroup {
-                        //                                        childTaskResult[result.1] = result.0
-                        //                                    }
-                        //                                    return childTaskResult as! [UIImage]
-                        //                               })
-                        //
-                        //                                async let image1 = imageUrls[0].urlToImage()!
-                        //                                async let image2 = imageUrls[1].urlToImage()!
-                        //                                async let image3 = imageUrls[2].urlToImage()!
-                        //                                async let image4 = imageUrls[3].urlToImage()!
-                        //                                async let image5 = imageUrls[4].urlToImage()!
-                        //                                async let image6 = imageUrls[5].urlToImage()!
-                        //                                userImages = await [image1, image2, image3, image4, image5, image6]
-                        //
-                        //                                for imageUrl in imageUrls {
-                        //                                    let image = await imageUrl.urlToImage()!
-                        //                                    userImages.append(image)
-                        //                                }
-                        //
-                        //                                self.userImagesData.imageIds = data.userImageIds
-                        //                                self.userImagesData.newImagesIdx = userImages.count
-                        //                                await MainActor.run {
-                        //                                    self.userImagesData.uploadImages = userImages
-                        //                                    self.imagesCollectionView.reloadData()
-                        //                                }
-                        //                            }
-                        //
-                        //                        })
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
+//                        print(progressTime {
+////                             0.0019310712814331055 (async let 5개) 0.0017060041427612305 0.0016030073165893555
+////                             0.0015599727630615234 (withTaskGroup) 0.0017729997634887695 0.0015230178833007812
+////                             0.0019550323486328125 (for문 작업) 0.0018080472946166992
+//                            let imageUrls = data.imageUrls
+//                            var userImages = [UIImage]()
+//                            let profileUrl = data.profileImageUrl
+//                            Task(priority: .high) {
+//                                let userImages = await withTaskGroup(of: (UIImage, Int).self, returning: [UIImage].self, body: { taskGroup in
+//                                    for i in 0..<imageUrls.count {
+//                                        taskGroup.addTask {
+//                                            await (imageUrls[i].urlToImage()!, i)
+//                                        }
+//                                    }
+//                                    var childTaskResult = [UIImage?](repeating: nil, count: imageUrls.count)
+//                                    for await result in taskGroup {
+//                                        childTaskResult[result.1] = result.0
+//                                    }
+//                                    return childTaskResult as! [UIImage]
+//                               })
+//
+//                                async let image1 = imageUrls[0].urlToImage()!
+//                                async let image2 = imageUrls[1].urlToImage()!
+//                                async let image3 = imageUrls[2].urlToImage()!
+//                                async let image4 = imageUrls[3].urlToImage()!
+//                                async let image5 = imageUrls[4].urlToImage()!
+//                                async let image6 = imageUrls[5].urlToImage()!
+//                                userImages = await [image1, image2, image3, image4, image5, image6]
+//
+//                                for imageUrl in imageUrls {
+//                                    let image = await imageUrl.urlToImage()!
+//                                    userImages.append(image)
+//                                }
+//
+//                                self.userImagesData.imageIds = data.userImageIds
+//                                self.userImagesData.newImagesIdx = userImages.count
+//                                await MainActor.run {
+//                                    self.userImagesData.uploadImages = userImages
+//                                    self.imagesCollectionView.reloadData()
+//                                }
+//                            }
+//
+//                        })
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - downLoad response result Not return", error)
                     DispatchQueue.main.async {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                        self.navigationController?.popViewController(animated: true)
                     }
                 }
             }
-        
+
         }
     }
     
@@ -295,19 +298,14 @@ class SetProfileImagesViewController: UIViewController {
                                 self?.imagesCollectionView.reloadData()
                                 self?.delegate?.imagesSend(profileImage: profileImage)
                                 self?.navigationController?.popViewController(animated: true)
-                                ProgressHUD.dismiss()
                             }
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
                         }
                     }
                 case let .failure(error):
                     print("SetProfileImagesVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+                }
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
                 }
             }
         }
@@ -325,7 +323,7 @@ class SetProfileImagesViewController: UIViewController {
 
 }
 
-extension SetProfileImagesViewController: UICollectionViewDelegate {
+extension SetProfileImagesViewController: SkeletonCollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if isDownloading { return }
@@ -349,7 +347,15 @@ extension SetProfileImagesViewController: UICollectionViewDelegate {
     }
 }
 
-extension SetProfileImagesViewController: UICollectionViewDataSource {
+extension SetProfileImagesViewController: SkeletonCollectionViewDataSource {
+    func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {
+        return MyImagesCollectionViewCell.identifier
+    }
+    
+    func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 6 //UICollectionView.automaticNumberOfSkeletonItems
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 6
     }

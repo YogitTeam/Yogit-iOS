@@ -666,7 +666,6 @@ class GatheringDetailBoardViewController: UIViewController {
 //            $0.bottom.equalToSuperview().inset(30)
 //            $0.height.equalTo(50)
 //        }
-        
         placeBoardInfoView.layer.addBorderWithMargin(arr_edge: [.bottom], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 0)
         memberLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 10)
         kindOfPersonLabel.layer.addBorderWithMargin(arr_edge: [.top], marginLeft: 0, marginRight: 0, color: .systemGray6, width: 1, marginTop: 15)
@@ -988,8 +987,8 @@ class GatheringDetailBoardViewController: UIViewController {
                     guard let value = response.value else { return }
                     if value.httpCode == 200 {
                         DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
+                            ProgressHUD.showSucceed()
                             navigationController?.popViewController(animated: true)
-                            ProgressHUD.dismiss()
                         })
                     } else {
                         DispatchQueue.main.async {

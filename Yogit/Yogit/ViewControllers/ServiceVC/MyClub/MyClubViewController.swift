@@ -236,9 +236,7 @@ class MyClubViewController: UIViewController {
         gatheringBoards.removeAll() //[categoryId-1].removeAll()
         pageCursor = 0
         pageListCnt = 0
-        DispatchQueue.main.async { [weak self] in
-            self?.myBoardsCollectionView.reloadData()
-        }
+        myBoardsCollectionView.reloadData()
     }
     
     @objc private func didChangeValue(_ sender: UISegmentedControl) {

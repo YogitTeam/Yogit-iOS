@@ -229,9 +229,7 @@ class MainViewController: UIViewController {
         gatheringBoards.removeAll() //[categoryId-1].removeAll()
         pageCursor = 0
         pageListCnt = 0
-        DispatchQueue.main.async(qos: .userInteractive) {
-            self.gatheringBoardCollectionView.reloadData()
-        }
+        gatheringBoardCollectionView.reloadData()
     }
     
     // cityNameEng가 default면 기존 api, 다르면 다른 api 요청

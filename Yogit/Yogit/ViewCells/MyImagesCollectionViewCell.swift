@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import SkeletonView
 
 class MyImagesCollectionViewCell: UICollectionViewCell {
     static let identifier = "MyImagesCollectionViewCell"
@@ -18,6 +19,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         imageView.tintColor = UIColor(rgb: 0xEBEBEB, alpha: 1)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6
+        imageView.isSkeletonable = true
         return imageView
     }()
     
@@ -30,6 +32,7 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         label.layer.cornerRadius = 10
         label.numberOfLines = 1
         label.backgroundColor = UIColor(rgb: 0xEBEBEB, alpha: 0.5)
+        label.isSkeletonable = true
         return label
     }()
 
@@ -50,8 +53,8 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        isSkeletonable = true
         configureView()
-        configureLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -65,13 +68,8 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
         mainImageLabel.isHidden = true
     }
     
-    private func configureView() {
-        contentView.addSubview(imageView)
-        contentView.addSubview(imageSequenceLabel)
-        contentView.addSubview(mainImageLabel)
-    }
-    
-    private func configureLayout() {
+    override func layoutSubviews() {
+        super.layoutSubviews()
         imageView.frame = contentView.bounds
         imageSequenceLabel.snp.makeConstraints { make in
             make.width.height.equalTo(20)
@@ -82,6 +80,12 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
             make.height.equalTo(20)
             make.bottom.trailing.equalToSuperview().inset(6)
         }
+    }
+    
+    private func configureView() {
+        contentView.addSubview(imageView)
+        contentView.addSubview(imageSequenceLabel)
+        contentView.addSubview(mainImageLabel)
     }
     
     func configureDownload(imageString: String, sequence: Int, kind: Kind) {

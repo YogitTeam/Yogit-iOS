@@ -110,7 +110,6 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func revokeTokenRefreshNotification(_ notification: Notification) {
-        print("LoginVC - revokeTokenRefreshNotification")
         guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         ProgressHUD.show(interaction: false)
@@ -156,7 +155,6 @@ class LoginViewController: UIViewController {
 extension LoginViewController: ASAuthorizationControllerDelegate {
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        print("Run authorizationController")
         
         ProgressHUD.show(interaction: false)
 
@@ -191,24 +189,26 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                             } catch {
                                 print("KeychainManager.updateUserItem \(error.localizedDescription)")
                             }
+                        } else {
+                            DispatchQueue.main.async {
+                                ProgressHUD.dismiss()
+                            }
                         }
                     case let .failure(error):
                         print(error)
                         DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
+                            ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                         }
                     }
                 }
         } else {
             switch authorization.credential {
             case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                print("appleIDCredential")
                 
                 let identifier = appleIDCredential.user // apple id
                 
                 // Real user indicator
                 let realUserStatus = appleIDCredential.realUserStatus// not nil
-                print("realUserStatus", realUserStatus)
                 
                 guard let identityTokenData = appleIDCredential.identityToken,
                       let identityToken = String(data: identityTokenData, encoding: .utf8),
@@ -285,13 +285,12 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                         }
                     }
             case let passwordCredential as ASPasswordCredential:
-                print("passwordCredential")
                 // Sign in using an existing iCloud Keychain credential.
                 let userName = passwordCredential.user
                 let password = passwordCredential.password
-                
-                print("User name \(userName)")
-                print("Password \(password)")
+                print("userName", userName)
+                print("password", password)
+               
             default:
                 break
             }

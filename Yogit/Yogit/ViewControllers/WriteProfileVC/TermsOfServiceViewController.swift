@@ -299,8 +299,8 @@ class TermsOfServiceViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("TermsOfServiceVC - upload response result Not return", error)
-                    DispatchQueue.main.async { // 변경
-                        ProgressHUD.dismiss()
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
                 }
             }

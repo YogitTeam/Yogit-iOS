@@ -88,9 +88,9 @@ class SearchCityNameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        configureLayout()
         configureNav()
         configureSearchController()
+        configureLayout()
         configureCitiesTableView()
         timerRun()
 //        configureCountries()

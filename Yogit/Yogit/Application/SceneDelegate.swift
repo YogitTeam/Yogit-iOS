@@ -18,36 +18,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        let currentVC = JoinListViewController()
-        let rootVC = UINavigationController(rootViewController: currentVC)
-        self.window = UIWindow(windowScene: scene)
-        self.window?.rootViewController = rootVC
-        self.window?.makeKeyAndVisible()
-        
-//        SessionManager.checkUserAuth { (AuthState) in
-//            var rootViewState: RootViewState
-//            switch AuthState {
-//            case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
-//            case .signInService: rootViewState = .homeView
-//            }
-//            DispatchQueue.main.async {
-//                let currentVC: UIViewController
-//                switch rootViewState {
-//                case .loginView:
-//                    let loginVC = LoginViewController()
-//                    currentVC = loginVC
-//                    break
-//                case .homeView: // 필수 데이터 있으면
-//                    let homeVC = ServiceTabBarViewController()
-//                    currentVC = homeVC
-//                    break
-//                }
-//                let rootVC = UINavigationController(rootViewController: currentVC)
-//                self.window = UIWindow(windowScene: scene)
-//                self.window?.rootViewController = rootVC
-//                self.window?.makeKeyAndVisible()
-//            }
-//        }
+        SessionManager.checkUserAuth { (AuthState) in
+            var rootViewState: RootViewState
+            switch AuthState {
+            case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
+            case .signInService: rootViewState = .homeView
+            }
+            DispatchQueue.main.async {
+                let currentVC: UIViewController
+                switch rootViewState {
+                case .loginView:
+                    let loginVC = LoginViewController()
+                    currentVC = loginVC
+                    break
+                case .homeView: // 필수 데이터 있으면
+                    let homeVC = ServiceTabBarViewController()
+                    currentVC = homeVC
+                    break
+                }
+                let rootVC = UINavigationController(rootViewController: currentVC)
+                self.window = UIWindow(windowScene: scene)
+                self.window?.rootViewController = rootVC
+                self.window?.makeKeyAndVisible()
+            }
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

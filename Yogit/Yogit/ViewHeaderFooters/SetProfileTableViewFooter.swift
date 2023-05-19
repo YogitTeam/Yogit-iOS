@@ -46,14 +46,13 @@ class SetProfileTableViewFooter: UITableViewHeaderFooterView {
     }
     
     private func configureView() {
-        contentView.addSubview(footerLabel)
-        contentView.backgroundColor = .systemBackground
+        addSubview(footerLabel)
     }
     
     private func configureLayout() {
         footerLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView).inset(4)
-            make.leading.trailing.equalTo(contentView).inset(20)
+            make.top.equalToSuperview().inset(4)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
     }
     
