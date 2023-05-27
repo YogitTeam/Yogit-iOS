@@ -347,8 +347,6 @@ extension ClipBoardViewController {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffSetY = scrollView.contentOffset.y
         let contentInsetTop = scrollView.contentInset.top
-        let contentSizeHeight = scrollView.contentSize.height
-        let frameSizeHeight = scrollView.frame.size.height
         if scrollView == messagesCollectionView && !isPaging {
             guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String,
                   let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
@@ -365,7 +363,6 @@ extension ClipBoardViewController {
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         let contentOffSetY = scrollView.contentOffset.y
-        let contentInsetTop = scrollView.contentInset.top
         let contentSizeHeight = scrollView.contentSize.height
         let frameSizeHeight = scrollView.frame.size.height
         if scrollView == messagesCollectionView && !isPaging {

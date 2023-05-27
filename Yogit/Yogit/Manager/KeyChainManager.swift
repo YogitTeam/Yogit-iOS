@@ -22,7 +22,7 @@ final class KeychainManager {
         guard let data = try? JSONEncoder().encode(user) else { return }
 
         let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
+            kSecClass as String: kSecClassKey,
             kSecAttrService as String: userType,
             kSecValueData as String: data
         ]
@@ -39,7 +39,7 @@ final class KeychainManager {
     // 사용자 (이메일, 이름) 삭제
     static func deleteUser(userType: String) throws {
         let query: NSDictionary = [
-                kSecClass as String: kSecClassGenericPassword,
+                kSecClass as String: kSecClassKey,
                 kSecAttrService as String: userType
             ]
         let status = SecItemDelete(query)
@@ -53,7 +53,7 @@ final class KeychainManager {
         // service, account, return-data, class, matchlimit
         
         let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
+            kSecClass as String: kSecClassKey,
             kSecAttrService as String: userType, // 현재 서비스 타입인지 체크
             kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 아이템 반환
             kSecReturnAttributes as String: true,
