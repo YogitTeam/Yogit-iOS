@@ -326,7 +326,7 @@ class SetProfileViewController: UIViewController {
         
         userProfile.userId = userItem.userId
         userProfile.refreshToken = userItem.refresh_token
-
+        
         let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
         if let parameters = urlRequestConvertible.toDictionary {
             print("parameters", parameters)

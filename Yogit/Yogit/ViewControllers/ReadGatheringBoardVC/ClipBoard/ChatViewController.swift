@@ -199,17 +199,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         for: .highlighted)
     }
     
-    
-    func fetchClipBoardData(page: Int) async -> ClipBoardResInfo? {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return nil }
-        guard let boardId = self.boardId else { return nil }
-        let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: page, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
-        let response = await dataTask.response
-        let value = response.value
-        return value?.data
-    }
-    
     func createClipBoardData(boardData: CreateClipBoardReq) async throws -> GetAllClipBoardsRes {
         let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
         let response = await dataTask.response
@@ -377,7 +366,10 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     }
     
     func fetchClipBoardData(getAllClipBoardsReq: GetAllClipBoardsReq) async throws -> ClipBoardResInfo {
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<ClipBoardResInfo>.self)
+        let dataTask = AlamofireManager.shared.session
+            .request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq))
+            .validate(statusCode: 200..<501)
+            .serializingDecodable(APIResponse<ClipBoardResInfo>.self)
         let response = await dataTask.response
         switch response.result {
         case .success:
@@ -388,10 +380,20 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             }
         case let .failure(error):
             print("fetchClipBoardData error", error)
-            DispatchQueue.main.async {
-                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-            }
             throw FetchError.failureResponse
+        }
+    }
+    
+    func setProfileImage(senderId: String, profileImgURL: String) {
+        if avatarImages[senderId] == nil { // 유저 프로필 이미지 딕션너리로 저장되어 있음
+            if profileImgURL.contains("null") {
+                // 탈퇴한 유저 이미지
+                self.avatarImages[senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
+            } else {
+                // 유저 프로필 이미지 캐싱 (동기)
+                let profileImage = ImageManager.downloadImageWait(with: profileImgURL)
+                self.avatarImages[senderId] = profileImage
+            }
         }
     }
 
@@ -415,15 +417,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                     var clipBoardListCount = clipBoardList.count
                                     for i in upPageListCount..<clipBoardListCount { // 9  10
                                         let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
-                                        if avatarImages[sender.senderId] == nil {
-                                            if !clipBoardList[i].profileImgURL.contains("null") {
-//                                                let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
-                                                let profileImage = ImageManager.downloadImageWait(with: clipBoardList[i].profileImgURL)
-                                                self.avatarImages[sender.senderId] = profileImage
-                                            } else {
-                                                self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
-                                            }
-                                        }
+                                        setProfileImage(senderId: sender.senderId, profileImgURL: clipBoardList[i].profileImgURL)
                                         guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                                         let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
                                         await MainActor.run {

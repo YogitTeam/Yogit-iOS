@@ -55,7 +55,7 @@ final class KeychainManager {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: userType, // 현재 서비스 타입인지 체크
-            kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
+            kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 아이템 반환
             kSecReturnAttributes as String: true,
             kSecReturnData as String: true
         ]
@@ -107,7 +107,7 @@ final class KeychainManager {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: serviceType, // 현재 서비스 타입인지 체크
-            kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 가
+            kSecMatchLimit as String: kSecMatchLimitOne, // 중복시 한개의 아이템 반환
             kSecReturnAttributes as String: true,
             kSecReturnData as String: true
         ]

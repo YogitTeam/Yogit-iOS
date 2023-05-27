@@ -12,7 +12,7 @@ import Network
 final class ApiStatusLogger: EventMonitor {
     
     let queue = DispatchQueue(label: "ApiStatussMonitor")
-    //    let queue = DispatchQueue.global(qos: .background)
+
     let monitor = NWPathMonitor()
     
     init() {
@@ -23,8 +23,8 @@ final class ApiStatusLogger: EventMonitor {
         if monitor.currentPath.status == .unsatisfied {
             request.cancel()
             DispatchQueue.main.async {
-                let alert = UIAlertController(title: "No Internet Connection", message: "Please connect to the internet and try again.", preferredStyle: .alert)
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let alert = UIAlertController(title: "NETWORKING_NOT_CONNECTION_TITLE".localized(), message: "NETWORKING_NOT_CONNECTION_MESSAGE".localized(), preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "OK".localized(), style: .default, handler: nil)
                 alert.addAction(okAction)
                 
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
@@ -32,6 +32,9 @@ final class ApiStatusLogger: EventMonitor {
                 }
             }
         }
-        //        monitor.cancel()
+    }
+    
+    deinit {
+        monitor.cancel()
     }
 }

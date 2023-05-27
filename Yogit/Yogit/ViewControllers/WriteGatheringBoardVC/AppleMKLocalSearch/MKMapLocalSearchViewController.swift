@@ -1,10 +1,10 @@
+//
+//  MKMapLocalSearchViewController.swift
+//  Yogit
+//
+//  Created by Junseo Park on 2022/11/14.
+//
 
-//
-//  SearchViewController.swift
-//  AppleWeather_Clone
-//
-//  Created by Thisisme Hi on 2021/08/02.
-//
 import UIKit
 import CoreLocation
 import MapKit

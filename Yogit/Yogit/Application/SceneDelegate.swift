@@ -19,27 +19,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         
         SessionManager.checkUserAuth { (AuthState) in
-            var rootViewState: RootViewState
+            var rootViewState: RootViewState // 루트뷰 상태
             switch AuthState {
-            case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
-            case .signInService: rootViewState = .homeView
+                case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
+                case .signInService: rootViewState = .homeView
             }
             DispatchQueue.main.async {
                 let currentVC: UIViewController
                 switch rootViewState {
-                case .loginView:
-                    let loginVC = LoginViewController()
-                    currentVC = loginVC
-                    break
-                case .homeView: // 필수 데이터 있으면
-                    let homeVC = ServiceTabBarViewController()
-                    currentVC = homeVC
-                    break
+                    case .loginView: // 로그인 화면
+                        let loginVC = LoginViewController()
+                        currentVC = loginVC
+                    case .homeView: // 홈 화면
+                        let homeVC = ServiceTabBarViewController()
+                        currentVC = homeVC
                 }
                 let rootVC = UINavigationController(rootViewController: currentVC)
                 self.window = UIWindow(windowScene: scene)
                 self.window?.rootViewController = rootVC
-                self.window?.makeKeyAndVisible()
+                self.window?.makeKeyAndVisible() 
             }
         }
     }

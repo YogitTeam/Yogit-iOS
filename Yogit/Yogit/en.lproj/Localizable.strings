@@ -304,3 +304,5 @@
 "SEARCH_CITY_NAME_SEARCHBAR_PLACEHOLDER" = "EX) Seoul";
 
 "NETWORKING_FAIL" = "Networking failed";
+"NETWORKING_NOT_CONNECTION_TITLE" = "No Internet Connection";
+"NETWORKING_NOT_CONNECTION_MESSAGE" = "Please connect to the internet and try again.";

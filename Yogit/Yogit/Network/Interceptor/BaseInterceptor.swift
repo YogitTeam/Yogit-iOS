@@ -13,7 +13,6 @@ class BaseInterceptor: RequestInterceptor {
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         print("BaseInterceptor adapt() called")
         let request = urlRequest
-        
         // Add header
 //        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Content-Type")
 //        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Accept")

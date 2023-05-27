@@ -291,7 +291,7 @@ class MainViewController: UIViewController {
                 if isFirstPage {
                     gatheringBoardCollectionView.stopSkeletonAnimation()
                     gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
-                }
+                } 
                 
                 await MainActor.run {
                     if getData.getAllBoardResList.count == 0 && gatheringBoards.count == 0 {

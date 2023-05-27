@@ -249,15 +249,7 @@ extension ClipBoardViewController {
             var insertMessages: [Message] = []
             for i in 0..<clipBoardListCount { // 8
                 let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
-                if avatarImages[sender.senderId] == nil {
-                    if !clipBoardList[i].profileImgURL.contains("null") {
-//                        let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
-                        let profileImage = ImageManager.downloadImageWait(with: clipBoardList[i].profileImgURL)
-                        self.avatarImages[sender.senderId] = profileImage
-                    } else {
-                        self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
-                    }
-                }
+                setProfileImage(senderId: sender.senderId, profileImgURL: clipBoardList[i].profileImgURL)
                 guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                 let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
                 insertMessages.append(message)
@@ -292,15 +284,7 @@ extension ClipBoardViewController {
                 let clipBoardListCount = clipBoardList.count
                 for i in upPageListCount..<clipBoardListCount { // 8
                     let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
-                    if avatarImages[sender.senderId] == nil {
-                        if !clipBoardList[i].profileImgURL.contains("null") {
-//                            let profileImage = clipBoardList[i].profileImgURL.loadImageAsync()
-                            let profileImage = ImageManager.downloadImageWait(with: clipBoardList[i].profileImgURL)
-                            self.avatarImages[sender.senderId] = profileImage
-                        } else {
-                            self.avatarImages[sender.senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
-                        }
-                    }
+                    setProfileImage(senderId: sender.senderId, profileImgURL: clipBoardList[i].profileImgURL)
                     guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
                     let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
                     await MainActor.run {
@@ -360,6 +344,25 @@ extension ClipBoardViewController {
         }
     }
     
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffSetY = scrollView.contentOffset.y
+        let contentInsetTop = scrollView.contentInset.top
+        let contentSizeHeight = scrollView.contentSize.height
+        let frameSizeHeight = scrollView.frame.size.height
+        if scrollView == messagesCollectionView && !isPaging {
+            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String,
+                  let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
+                  let boardId = self.boardId
+            else { return }
+            if contentOffSetY <= -contentInsetTop && downPageCursor >= 0 { // top scroll
+                isPaging = true
+                Task(priority: .low) {
+                    await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
+                }
+            }
+        }
+    }
+    
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         let contentOffSetY = scrollView.contentOffset.y
         let contentInsetTop = scrollView.contentInset.top
@@ -370,20 +373,13 @@ extension ClipBoardViewController {
                   let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
                   let boardId = self.boardId
             else { return }
-            isPaging = true
-            if contentOffSetY <= -contentInsetTop && downPageCursor >= 0 { // top scroll
-                Task(priority: .low) {
-                    await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
-                }
-            }
-            else if (contentOffSetY > (contentSizeHeight-frameSizeHeight)) { // bottom scroll
+            if (contentOffSetY > (contentSizeHeight-frameSizeHeight)) { // bottom scroll
+                isPaging = true
                 isLoading = true
                 messagesCollectionView.reloadSections([messages.count-1])
                 Task(priority: .medium) {
                     await loadClipBoardBottom(isInit: false, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
                 }
-            } else {
-                isPaging = false
             }
         }
     }

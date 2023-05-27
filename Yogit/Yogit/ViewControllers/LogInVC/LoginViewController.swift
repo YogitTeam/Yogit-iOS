@@ -49,11 +49,6 @@ class LoginViewController: UIViewController {
         setServiceCountry()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        removeNotiCenter()
-    }
-    
     private func configureView() {
         view.addSubview(iconImageView)
         view.addSubview(setCountryTitleLabel)
@@ -98,6 +93,10 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: .revokeTokenRefresh, object: nil)
     }
     
+    deinit {
+        removeNotiCenter()
+    }
+    
     private func setServiceCountry() {
         let code = ServiceCountry.kr
         let rawCode = code.rawValue
@@ -118,25 +117,26 @@ class LoginViewController: UIViewController {
             .request(SessionRouter.deleteApple(parameters: deleteApple))
             .validate(statusCode: 200..<501)
             .responseDecodable(of: APIResponse<String>.self) { response in
-                switch response.result {
-                case .success:
-                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
-                        do {
-                            try KeychainManager.deleteUserItem(userItem: userItem)
-                            DispatchQueue.main.async {
-                                ProgressHUD.dismiss()
-                            }
-                        } catch {
-                            print("KeychainManager.deleteUserItem \(error.localizedDescription)")
+            switch response.result {
+            case .success:
+                if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
+                    do {
+                        try KeychainManager.deleteUserItem(userItem: userItem)
+                        // 애플 회원 탈퇴후, 애플 서버에서 반영 시간 소요됨
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
                         }
-                    }
-                case let .failure(error):
-                    print("Delete account decoding error", error)
-                    DispatchQueue.main.async { // 변경
-                        ProgressHUD.dismiss()
+                    } catch {
+                        print("KeychainManager.deleteUserItem \(error.localizedDescription)")
                     }
                 }
+            case let .failure(error):
+                print("Delete account", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
+                }
             }
+        }
     }
     
     
@@ -166,41 +166,41 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 .request(SessionRouter.logInApple(parameters: logInApple))
                 .validate(statusCode: 200..<501)
                 .responseDecodable(of: APIResponse<UserItem>.self) { response in
-                    switch response.result {
-                    case .success:
-                        if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
-                            do {
-                                // userStatus 정보 업데이트 (LOGIN)
-                                // status만 업데이트
-                                userItem.userStatus = data.userStatus
-                                try KeychainManager.updateUserItem(userItem: userItem)
-                                
-                                DispatchQueue.main.async(qos: .userInteractive){ [self] in
-                                    if userItem.account.hasRequirementInfo {
-                                        let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
-                                        view.window?.rootViewController = rootVC
-                                        view.window?.makeKeyAndVisible()
-                                    } else {
-                                        let SPVC = SetProfileViewController()
-                                        navigationController?.pushViewController(SPVC, animated: true)
-                                    }
-                                    ProgressHUD.dismiss()
+                switch response.result {
+                case .success:
+                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
+                        do {
+                            // userStatus 정보 업데이트 (LOGIN)
+                            // status만 업데이트
+                            userItem.userStatus = data.userStatus
+                            try KeychainManager.updateUserItem(userItem: userItem)
+                            
+                            DispatchQueue.main.async(qos: .userInteractive){ [self] in
+                                if userItem.account.hasRequirementInfo {
+                                    let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
+                                    view.window?.rootViewController = rootVC
+                                    view.window?.makeKeyAndVisible()
+                                } else {
+                                    let SPVC = SetProfileViewController()
+                                    navigationController?.pushViewController(SPVC, animated: true)
                                 }
-                            } catch {
-                                print("KeychainManager.updateUserItem \(error.localizedDescription)")
-                            }
-                        } else {
-                            DispatchQueue.main.async {
                                 ProgressHUD.dismiss()
                             }
+                        } catch {
+                            print("KeychainManager.updateUserItem \(error.localizedDescription)")
                         }
-                    case let .failure(error):
-                        print(error)
+                    } else {
                         DispatchQueue.main.async {
-                            ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                            ProgressHUD.dismiss()
                         }
                     }
+                case let .failure(error):
+                    print(error)
+                    DispatchQueue.main.async {
+                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+                    }
                 }
+            }
         } else {
             switch authorization.credential {
             case let appleIDCredential as ASAuthorizationAppleIDCredential:
@@ -217,7 +217,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 else { return }
                 
                 let userData: User
-                if let user = try? KeychainManager.getUser(userType: SessionManager.Service.User.APPLE) {
+                if let user = try? KeychainManager.getUser(userType: SessionManager.Service.UserInit.APPLE) {
                     userData = user
                 } else {
                     // 처음 애플 서버 인증시에만 나옴
@@ -232,7 +232,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                     
                     do {
                         // 처음 애플 서버 인증시에만 한번 제공 (email, name)
-                        try KeychainManager.saveUser(user: userData, userType: SessionManager.Service.User.APPLE)
+                        try KeychainManager.saveUser(user: userData, userType: SessionManager.Service.UserInit.APPLE)
                     } catch {
                         print("KeychainManager.saveUser \(error.localizedDescription)")
                     }
@@ -253,9 +253,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                                 guard let data = value.data else { return }
                                 do {
                                     // 신규 가입
-                                    // hasRequirementInfo false로 반환되는지 확인
                                     do {
-                                        try KeychainManager.deleteUser(userType: SessionManager.Service.User.APPLE)
+                                        try KeychainManager.deleteUser(userType: SessionManager.Service.UserInit.APPLE)
                                     } catch {
                                         print("KeychainManager deleteUser error \(error.localizedDescription)")
                                     }

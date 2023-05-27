@@ -21,7 +21,5 @@ final class Logger: EventMonitor {
         print("Logger - request.didParseResponse()")
         debugPrint(response)
     }
-    
-    
 }
 
