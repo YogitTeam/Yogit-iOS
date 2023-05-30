@@ -51,7 +51,8 @@ final class LocationManager {
     func findAddress(lat: CLLocationDegrees, long: CLLocationDegrees, completion: @escaping (String?) -> Void) {
         let findLocation = CLLocation(latitude: lat, longitude: long)
         let geocoder = CLGeocoder()
-        let locale = Locale(identifier: "Ko-kr")
+        guard let identifier = Locale.preferredLanguages.first else { return }// en-KR
+        let locale = Locale(identifier: identifier)
 
         geocoder.reverseGeocodeLocation(findLocation, preferredLocale: locale, completionHandler: { (placemarks, error) in
 

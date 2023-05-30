@@ -12,22 +12,8 @@ final class AlamofireManager {
     // singleton 
     static let shared = AlamofireManager()
     
-//    // interceptor: Call api >> intercept >> input common parameter / check auth / add header
-//    let interceptors = Interceptor(interceptors: [BaseInterceptor()])
-//
-//    // setup logger: event monitor
-//    let monitors = [Logger(), ApiStatusLogger()] as [EventMonitor]
-    
-   
-    // setup sesstion
-//    var session: Session
-//    private init() {
-//        session = Session(
-//                    interceptor: interceptors,
-//                    eventMonitors: monitors
-//                )
-//    }
-    
+    // interceptor: Call api >> intercept >> input common parameter / check auth / add header
+    // Setup logger: event monitor
     let session: Session = {
         let configuration = URLSessionConfiguration.af.default
         configuration.timeoutIntervalForRequest = 30

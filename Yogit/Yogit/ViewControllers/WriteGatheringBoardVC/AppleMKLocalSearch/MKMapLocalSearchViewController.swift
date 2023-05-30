@@ -521,9 +521,6 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
             
             let reverseGeoData = ReverGedoData(centerAddress: centerAddress, locality: cityName.uppercased())
             
-//            self.forwardGeocoding(address: locality) { (cityName, countryCodeName) in
-//                print("forwardGeocoding res", cityName, countryCodeName)
-//            }
             completion(reverseGeoData)
         })
 
