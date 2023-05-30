@@ -561,7 +561,6 @@ class GatheringDetailBoardViewController: UIViewController {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(view.frame.size.width)
         }
-        
         boardImagesPageControl.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(boardImagesScrollView.snp.bottom).inset(10)
@@ -741,7 +740,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     @objc func withdrawalButtonTapped(_ sender: UIButton) {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if userItem.userId != boardWithMode.hostId { // hostId
             let alert = UIAlertController(title: "WITHDRAWAL".localized(), message: "WITHDRAWAL_ALERT".localized(), preferredStyle: .alert)
             let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel)
@@ -761,7 +760,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     private func joinBoardRequest() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
 //        guard let boardId = boardId else { return }
         guard let boardId = boardWithMode.boardId else { return }
         
@@ -806,7 +805,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     func withdrawalBoardRequest() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = boardWithMode.boardId else { return }
         
         ProgressHUD.colorAnimation = ServiceColor.primaryColor
@@ -915,7 +914,7 @@ class GatheringDetailBoardViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 //        alert.view.tintColor = UIColor.label
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if userItem.userId != boardWithMode.hostId { // hostId
             let report = UIAlertAction(title: "REPORT".localized(), style: .destructive) { (action) in
                 guard let reportBoardId = self.boardWithMode.boardId else { return }
@@ -972,7 +971,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     private func deleteBoard() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
 //        guard let boardId = boardId else { return }
         guard let hostId = boardWithMode.hostId else { return }
         guard let boardId = boardWithMode.boardId else { return }
@@ -1155,7 +1154,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
         joinBoardButton.isHidden = data.isJoinedUser
         
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         
         clipBoardButton.snp.removeConstraints()
         if boardWithMode.hostId == userItem.userId {
@@ -1229,7 +1228,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
     private func getBoardDetail(state: GatheringUserState) {
 
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = boardWithMode.boardId else {
             print("getBoardDetail - boardId is nil")
             return

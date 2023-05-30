@@ -162,7 +162,7 @@ class MyClubViewController: UIViewController {
     }
     
     private func pagingMyBoards(type: String, isFirstPage: Bool) {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         if isFirstPage {
             myBoardsCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)

@@ -8,11 +8,7 @@
 import Foundation
 import Alamofire
 
-//public typealias ClipBoard = CreateClipBoardReq & GetAllClipBoardsReq
-
 enum ClipBoardRouter: URLRequestConvertible {
-//    typealias ClipBoard = CreateClipBoardReq & CreateClipBoardReq
-    
     case createBoard(parameters: CreateClipBoardReq)
     case readBoard(parameters: GetAllClipBoardsReq) // another
     

@@ -158,7 +158,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     }
     
     func configureCurrentUser() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let displayName = userItem.userName else { return }
         currentUser = Sender(senderId: "\(userItem.userId)", displayName: displayName)
     }
@@ -173,7 +173,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
 
     func configureMessageInputBar() {
         messageInputBar.delegate = self
-        
         messageInputBar.inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
         messageInputBar.inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
 
@@ -241,16 +240,8 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     
     
     func insertMessage(_ message: Message) {
-
         messages.append(message)
         messagesCollectionView.insertSections([messages.count - 1])
-//        if messages.count >= 2 {
-//          messagesCollectionView.reloadSections([messages.count - 2])
-//        }
-//        if isLastSectionVisible() == true {
-//          messagesCollectionView.scrollToLastItem(animated: true)
-//        }
-//        print("삽입후 개수", messages.count)
     }
     
     func insertFirst(_ message: Message) {
@@ -260,22 +251,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
             messages.append(message)
             messagesCollectionView.insertSections([messages.count - 1])
         })
-//        messagesCollectionView.performBatchUpdates({
-//            // service data 삭제
-//            messages.removeLast()
-//            messagesCollectionView.deleteSections([messages.count - 1])
-//
-//            // insert first message
-//            messages.append(message)
-//            messagesCollectionView.insertSections([messages.count - 1])
-//          if messages.count >= 2 {
-//            messagesCollectionView.reloadSections([messages.count - 2])
-//          }
-//        }, completion: { [weak self] _ in
-//          if self?.isLastSectionVisible() == true {
-//            self?.messagesCollectionView.scrollToLastItem(animated: true)
-//          }
-//        })
     }
     
     
@@ -398,9 +373,9 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     }
 
     private func insertMessages(_ data: [Any]) {
+        guard let boardId = self.boardId else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         for component in data {
-            guard let boardId = self.boardId else { return }
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
             Task(priority: .high) {
                 if let str = component as? String {
                     do {

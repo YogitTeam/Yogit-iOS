@@ -274,7 +274,7 @@ class GatheringBoardContentViewController: UIViewController {
         // hostId 등록시 필요? >> userId와 hostId 같기때문 (나중에 한 클럽 모임당 host가 많을수도 있다.)
         // hostId 받아올때만 필요하다.
         
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
               let title = boardWithMode.title,
               let address = boardWithMode.address,
               let longitute = boardWithMode.longitute,
@@ -434,7 +434,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         DispatchQueue.main.async { [weak self] in
             self?.imageLoadingView.isHidden = false
             self?.activityIndicator.startAnimating()
-            UIView.animate(withDuration: 1.0, animations: {
+            UIView.animate(withDuration: 0.5, animations: {
                 // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
                 self?.imageLoadingView.alpha = 1.0
             })
@@ -442,8 +442,8 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
     }
     
     private func dismissImageLoading() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            UIView.animate(withDuration: 1.0, animations: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            UIView.animate(withDuration: 0.5, animations: {
                 // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
                 self?.imageLoadingView.alpha = 0.0
             }) { (completed) in
@@ -453,7 +453,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         }
     }
     
-    private func convertAssetsToImages(asstes: [PHAsset]) async -> [UIImage] {
+    private func convertAssetsToImagesConcurrency(asstes: [PHAsset]) async -> [UIImage] {
         
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
@@ -488,6 +488,33 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         dismissImageLoading()
         
         return orderedImages
+    }
+    
+    private func convertAssetsToImages(asstes: [PHAsset], resize: CGSize) -> [UIImage] {
+        var images = [UIImage]()
+        let imageManager = PHImageManager.default()
+        let option = PHImageRequestOptions()
+        option.deliveryMode = .highQualityFormat
+        option.resizeMode = .exact
+        option.isSynchronous = true
+        option.isNetworkAccessAllowed = true
+        
+        showImageLoading()
+        
+        for i in 0..<asstes.count {
+            imageManager.requestImage(for: asstes[i],
+                                      targetSize: resize,
+                                      contentMode: .aspectFit,
+                                      options: option) { (result, info) in
+                if let image = result {
+                    images.append(image)
+                }
+            }
+        }
+        
+        dismissImageLoading()
+        
+        return images
     }
     
     private func convertAssetsToImagesGCD(asstes: [PHAsset], newSize: CGSize) -> [UIImage] {
@@ -545,8 +572,8 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                     print("Canceled with selections: \(assets)")
                 }, finish: { (assets) in
                     self?.isDownloading = true
-                    DispatchQueue.global().async { [weak self] in
-                        guard let appendImages = self?.convertAssetsToImagesGCD(asstes: assets, newSize: newSize) else { return }
+                    DispatchQueue.global(qos: .background).async { [weak self] in
+                        guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: newSize) else { return }
                         DispatchQueue.main.async {
                             self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
                             self?.imagesCollectionView.reloadData()

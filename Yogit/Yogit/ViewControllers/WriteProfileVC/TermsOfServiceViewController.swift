@@ -250,7 +250,7 @@ class TermsOfServiceViewController: UIViewController {
     }
     
     private func registerProfile() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         
         ProgressHUD.show(interaction: false)
         

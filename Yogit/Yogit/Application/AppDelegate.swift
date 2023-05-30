@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //    }
     
     private func sendDeviceToken(deviceToken: String) {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let sendDeviceTokenReq = SendDeviceTokenReq(deviceToken: deviceToken, refreshToken: userItem.refresh_token, userId: userItem.userId)
         AlamofireManager.shared.session

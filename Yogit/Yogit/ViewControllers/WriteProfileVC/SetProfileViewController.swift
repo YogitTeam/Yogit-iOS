@@ -276,7 +276,7 @@ class SetProfileViewController: UIViewController {
     
     private func configureUserName() {
         if mode == .create {
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+            guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
             userProfile.userName = userItem.account.user.name.firstName + " " + userItem.account.user.name.lastName
             infoTableView.reloadData()
         }
@@ -322,7 +322,7 @@ class SetProfileViewController: UIViewController {
         
         ProgressHUD.show(interaction: false)
         
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         
         userProfile.userId = userItem.userId
         userProfile.refreshToken = userItem.refresh_token

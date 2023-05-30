@@ -247,7 +247,7 @@ class ReportViewController: UIViewController {
         // 클립보드일경우 텍스트뷰 없음
         if (reportContentTextView.myTextView.text != placeholder && reportContentTextView.myTextView.text != "") || reportKind == .clipboardReport {
             print("첫")
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+            guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String else { return }
             guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
             guard let content = reportContentString else { return }
             guard let reportType = reportTypeIdx else { return }

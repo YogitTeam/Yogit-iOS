@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        SessionManager.checkUserAuth { (AuthState) in
+        UserSessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState // 루트뷰 상태
             switch AuthState {
                 case .undefine, .signOut, .deleteAccout, .signInSNS: rootViewState = .loginView
@@ -54,7 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        SessionManager.checkUserAuth { (AuthState) in
+        UserSessionManager.checkUserAuth { (AuthState) in
             if AuthState == .deleteAccout { // 앱 foreground active 상태일때, 노티 날려서 회원 탈퇴 처리
                 DispatchQueue.main.async { [self] in
                     let rootVC = UINavigationController(rootViewController: LoginViewController())

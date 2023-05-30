@@ -270,7 +270,7 @@ class MainViewController: UIViewController {
     
     // category 1부터 시작
     private func pagingBoardsByCategory(categoryId: Int, isFirstPage: Bool) {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         DispatchQueue.main.async {
             self.guideLabel.text = ""
         }
@@ -291,7 +291,7 @@ class MainViewController: UIViewController {
                 if isFirstPage {
                     gatheringBoardCollectionView.stopSkeletonAnimation()
                     gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
-                } 
+                }
                 
                 await MainActor.run {
                     if getData.getAllBoardResList.count == 0 && gatheringBoards.count == 0 {
@@ -377,7 +377,7 @@ class MainViewController: UIViewController {
     @objc func createBoardButtonTapped(_ sender: UIButton) {
         DispatchQueue.main.async {
             let GBCVC = GatheringBoardCategoryViewController()
-            GBCVC.boardWithMode.mode = .create //.post
+            GBCVC.boardWithMode.mode = .create 
             self.navigationController?.pushViewController(GBCVC, animated: true)
         }
     }
@@ -398,9 +398,8 @@ extension  MainViewController: UIScrollViewDelegate {
     }
 }
 
-extension MainViewController: SkeletonCollectionViewDelegate { //UICollectionViewDelegate
+extension MainViewController: SkeletonCollectionViewDelegate {
     
-    // 카테고리 누른 후
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == categoryImageViewCollectionView {
             if categoryId != indexPath.row + 1 {
@@ -433,7 +432,6 @@ extension MainViewController: SkeletonCollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if collectionView == gatheringBoardCollectionView && kind == UICollectionView.elementKindSectionFooter && indexPath.section == 0 {
             let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoadingFooterView.identifier, for: indexPath) as? LoadingFooterView
-            // Customize the footer view as needed
             return footerView!
         }
         return UICollectionReusableView()
@@ -447,7 +445,6 @@ extension MainViewController: SkeletonCollectionViewDataSource {
         return 6 //UICollectionView.automaticNumberOfSkeletonItems
     }
     
-    //UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == categoryImageViewCollectionView {
             return CategoryId.allCases.count

@@ -382,7 +382,7 @@ class GetProfileViewController: UIViewController {
     }
     
     private func configureNavItem() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         
         if let userId = getUserId {
             if userId == userItem.userId {
@@ -523,7 +523,7 @@ class GetProfileViewController: UIViewController {
     }
     
     private func blockUser(userIdToBlock: Int64) {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let userBlockReq  = UserBlockReq(blockedUserID: userIdToBlock, blockingUserID: userItem.userId, refreshToken: userItem.refresh_token)
         ProgressHUD.show(interaction: false)
         AlamofireManager.shared.session
@@ -723,7 +723,7 @@ class GetProfileViewController: UIViewController {
 //    }
 //
     private func getUserProfile() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let userId: Int64
         if let getUserId = getUserId {
             userId = getUserId

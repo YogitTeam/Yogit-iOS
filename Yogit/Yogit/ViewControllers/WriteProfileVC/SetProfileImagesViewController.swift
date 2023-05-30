@@ -151,7 +151,7 @@ class SetProfileImagesViewController: UIViewController {
     }
 
     private func getUserImages() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let getUserImages = GetUserImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
         let urlRequestConvertible = ProfileRouter.downLoadImages(parameters: getUserImages)
 //        ProgressHUD.show(interaction: false)
@@ -259,7 +259,7 @@ class SetProfileImagesViewController: UIViewController {
         
         ProgressHUD.show(interaction: false)
         
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let patchUserImages = PatchUserImages(userId: userItem.userId, refreshToken: userItem.refresh_token, deleteUserImageIds: userImagesData.deleteUserImageIds, uploadImages: userImagesData.uploadImages, uploadProfileImage: profileImage)
         let urlRequestConvertible = ProfileRouter.uploadImages(parameters: patchUserImages)
         
@@ -376,32 +376,38 @@ extension SetProfileImagesViewController: SkeletonCollectionViewDataSource {
 
 extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-//    private func convertAssetsToImages(asstes: [PHAsset]) -> [UIImage] {
-//        var images = [UIImage]()
-//        let imageManager = PHImageManager.default()
-//        let option = PHImageRequestOptions()
-//        option.deliveryMode = .highQualityFormat
-//        option.resizeMode = .exact
-//        option.isSynchronous = true
-//        option.isNetworkAccessAllowed = true
-//        for i in 0..<asstes.count {
-//            imageManager.requestImage(for: asstes[i],
-//                                      targetSize: CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2),
-//                                      contentMode: .aspectFit,
-//                                      options: option) { (result, info) in
-//                if let image = result {
-//                    images.append(image)
-//                }
-//            }
-//        }
-//        return images
-//    }
+    private func convertAssetsToImages(asstes: [PHAsset], resize: CGSize) -> [UIImage] {
+        var images = [UIImage]()
+        let imageManager = PHImageManager.default()
+        let option = PHImageRequestOptions()
+        option.deliveryMode = .highQualityFormat
+        option.resizeMode = .exact
+        option.isSynchronous = true
+        option.isNetworkAccessAllowed = true
+        
+        showImageLoading()
+        
+        for i in 0..<asstes.count {
+            imageManager.requestImage(for: asstes[i],
+                                      targetSize: resize,
+                                      contentMode: .aspectFit,
+                                      options: option) { (result, info) in
+                if let image = result {
+                    images.append(image)
+                }
+            }
+        }
+        
+        dismissImageLoading()
+        
+        return images
+    }
     
     private func showImageLoading() {
         DispatchQueue.main.async { [weak self] in
             self?.imageLoadingView.isHidden = false
             self?.activityIndicator.startAnimating()
-            UIView.animate(withDuration: 1.0, animations: {
+            UIView.animate(withDuration: 0.5, animations: {
                 // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
                 self?.imageLoadingView.alpha = 1.0
             })
@@ -409,8 +415,8 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
     }
     
     private func dismissImageLoading() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            UIView.animate(withDuration: 1.0, animations: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            UIView.animate(withDuration: 0.5, animations: {
                 // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
                 self?.imageLoadingView.alpha = 0.0
             }) { (completed) in
@@ -461,6 +467,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         imagePicker.settings.selection.max = 6 - userImagesData.downloadImages.count - userImagesData.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
+        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
         ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
             if Auth {
                 self?.presentImagePicker(imagePicker, select: { (asset) in
@@ -472,14 +479,22 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
                 }, finish: { (assets) in
                     print("Finished with selections: \(assets)")
                     self?.isDownloading = true
-                    Task.detached(priority: .high) { [weak self] in
-                        guard let appendImages = await self?.convertAssetsToImages(asstes: assets) else { return }
-                        await MainActor.run { [weak self] in
+                    DispatchQueue.global(qos:.userInteractive).async { [weak self] in
+                        guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: newSize) else { return }
+                        DispatchQueue.main.async {
                             self?.userImagesData.uploadImages.append(contentsOf: appendImages)
                             self?.imagesCollectionView.reloadData()
                             self?.isDownloading = false
                         }
                     }
+//                    Task.detached(priority: .high) { [weak self] in
+//                        guard let appendImages = await self?.convertAssetsToImages(asstes: assets) else { return }
+//                        await MainActor.run { [weak self] in
+//                            self?.userImagesData.uploadImages.append(contentsOf: appendImages)
+//                            self?.imagesCollectionView.reloadData()
+//                            self?.isDownloading = false
+//                        }
+//                    }
                 }, completion: {
                     
                 })

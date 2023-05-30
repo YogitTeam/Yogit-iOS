@@ -11,10 +11,11 @@ import AuthenticationServices
 import Alamofire
 import ProgressHUD
 
+
 class LoginViewController: UIViewController {
     
     private lazy var signInWithAppleButton: ASAuthorizationAppleIDButton = {
-//        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black)
+        //        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black)
         let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .whiteOutline)
         button.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         return button
@@ -105,36 +106,25 @@ class LoginViewController: UIViewController {
         let countryName = NSLocale(localeIdentifier: localeIdentifier).displayName(forKey: NSLocale.Key.identifier, value: identifier) ?? "" // localize
         let countryInfo = Country(countryCode: rawCode, countryName: countryName, countryEmoji: rawCode.emojiFlag)
         setCountryTitleLabel.text = "\(countryInfo.countryEmoji) \(countryInfo.countryName)"
-        SessionManager.saveCountryCode(code: code)
+        LocationManager.shared.saveCountryCode(code: code)
     }
     
     @objc private func revokeTokenRefreshNotification(_ notification: Notification) {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager .currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         ProgressHUD.show(interaction: false)
+       
         let deleteApple = DeleteAppleAccountReq(identityToken: userItem.id_token, refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AlamofireManager.shared.session
-            .request(SessionRouter.deleteApple(parameters: deleteApple))
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<String>.self) { response in
-            switch response.result {
+        ProgressHUD.show(interaction: false)
+        UserSessionManager.shared.deleteAccount(deleteAccountReq: deleteApple, userItem: userItem) { (response) in
+            switch response {
             case .success:
-                if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
-                    do {
-                        try KeychainManager.deleteUserItem(userItem: userItem)
-                        // 애플 회원 탈퇴후, 애플 서버에서 반영 시간 소요됨
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
-                    } catch {
-                        print("KeychainManager.deleteUserItem \(error.localizedDescription)")
-                    }
-                }
-            case let .failure(error):
-                print("Delete account", error)
+                // 애플 회원탈퇴 후, 애플 계정 ID 사용 중단까지 실제 시간 추가 소요 (2~3초) >> 탈퇴 이후 바로 회원가입시 문제 안생김
                 DispatchQueue.main.async {
                     ProgressHUD.dismiss()
                 }
+            default: // 네트워크 요청 실패시, 사용자 앱 강제 종료 유도 >> 다음번 앱 진입시 다시 재요청됨
+                break
             }
         }
     }
@@ -149,7 +139,6 @@ class LoginViewController: UIViewController {
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
     }
-    
 }
 
 extension LoginViewController: ASAuthorizationControllerDelegate {
@@ -159,56 +148,78 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
         ProgressHUD.show(interaction: false)
 
         // 로그 아웃시 처리 (이미 키체인에 저장되어있고 서비스 타입은 삭제되어있는 경우)
-        if let userItem = try? KeychainManager.getUserItem(serviceType: SessionManager.Service.APPLE_SIGNIN) { // SignInManager.service.
+        if let userItem = try? KeychainManager.getUserItem(serviceType: UserSessionManager .Service.APPLE_SIGNIN.rawValue) { // SignInManager.service.
             // 로그인 api 요청후, 키체인 userstatus 업데이트 후 루트뷰 service화면으로 변경
             let logInApple = LogInAppleReq(refreshToken: userItem.refresh_token, servicesResponse: userItem.account)
-            AlamofireManager.shared.session
-                .request(SessionRouter.logInApple(parameters: logInApple))
-                .validate(statusCode: 200..<501)
-                .responseDecodable(of: APIResponse<UserItem>.self) { response in
-                switch response.result {
+            UserSessionManager .shared.logIn(logInReq: logInApple, userItem: userItem) { (response) in
+                switch response {
                 case .success:
-                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
-                        do {
-                            // userStatus 정보 업데이트 (LOGIN)
-                            // status만 업데이트
-                            userItem.userStatus = data.userStatus
-                            try KeychainManager.updateUserItem(userItem: userItem)
-                            
-                            DispatchQueue.main.async(qos: .userInteractive){ [self] in
-                                if userItem.account.hasRequirementInfo {
-                                    let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
-                                    view.window?.rootViewController = rootVC
-                                    view.window?.makeKeyAndVisible()
-                                } else {
-                                    let SPVC = SetProfileViewController()
-                                    navigationController?.pushViewController(SPVC, animated: true)
-                                }
-                                ProgressHUD.dismiss()
-                            }
-                        } catch {
-                            print("KeychainManager.updateUserItem \(error.localizedDescription)")
+                    DispatchQueue.main.async(qos: .userInteractive){ [self] in
+                        if userItem.account.hasRequirementInfo {
+                            let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
+                            view.window?.rootViewController = rootVC
+                            view.window?.makeKeyAndVisible()
+                        } else {
+                            let SPVC = SetProfileViewController()
+                            navigationController?.pushViewController(SPVC, animated: true)
                         }
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
+                        ProgressHUD.dismiss()
                     }
-                case let .failure(error):
-                    print(error)
+                case .badResponse:
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
+                    }
+                case .failureResponse:
                     DispatchQueue.main.async {
                         ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                     }
                 }
             }
+//            AlamofireManager.shared.session
+//                .request(SessionRouter.logInApple(parameters: logInApple))
+//                .validate(statusCode: 200..<501)
+//                .responseDecodable(of: APIResponse<UserItem>.self) { response in
+//                switch response.result {
+//                case .success:
+//                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
+//                        do {
+//                            // userStatus 정보 업데이트 (LOGIN)
+//                            // status만 업데이트
+//                            userItem.userStatus = data.userStatus
+//                            try KeychainManager.updateUserItem(userItem: userItem)
+//
+//                            DispatchQueue.main.async(qos: .userInteractive){ [self] in
+//                                if userItem.account.hasRequirementInfo {
+//                                    let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
+//                                    view.window?.rootViewController = rootVC
+//                                    view.window?.makeKeyAndVisible()
+//                                } else {
+//                                    let SPVC = SetProfileViewController()
+//                                    navigationController?.pushViewController(SPVC, animated: true)
+//                                }
+//                                ProgressHUD.dismiss()
+//                            }
+//                        } catch {
+//                            print("KeychainManager.updateUserItem \(error.localizedDescription)")
+//                        }
+//                    } else {
+//                        DispatchQueue.main.async {
+//                            ProgressHUD.dismiss()
+//                        }
+//                    }
+//                case let .failure(error):
+//                    print("LogInAppleReq", error)
+//                    DispatchQueue.main.async {
+//                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+//                    }
+//                }
+//            }
         } else {
-            switch authorization.credential {
-            case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                
+            if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
                 let identifier = appleIDCredential.user // apple id
                 
                 // Real user indicator
-                let realUserStatus = appleIDCredential.realUserStatus// not nil
+//                let realUserStatus = appleIDCredential.realUserStatus// not nil
                 
                 guard let identityTokenData = appleIDCredential.identityToken,
                       let identityToken = String(data: identityTokenData, encoding: .utf8),
@@ -217,10 +228,10 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 else { return }
                 
                 let userData: User
-                if let user = try? KeychainManager.getUser(userType: SessionManager.Service.UserInit.APPLE) {
+                if let user = try? KeychainManager.shared.getUser(userType: UserSessionManager .Service.UserInit.APPLE) {
                     userData = user
                 } else {
-                    // 처음 애플 서버 인증시에만 나옴
+                    // 초기 애플 서버 인증시에만 나옴
                     guard let givenName = appleIDCredential.fullName?.givenName,
                           let familyName = appleIDCredential.fullName?.familyName,
                           let userEmail = appleIDCredential.email
@@ -231,8 +242,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                     userData = User(name: name, email: userEmail)
                     
                     do {
-                        // 처음 애플 서버 인증시에만 한번 제공 (email, name)
-                        try KeychainManager.saveUser(user: userData, userType: SessionManager.Service.UserInit.APPLE)
+                        // 초기 애플 서버 인증시에만 한번 제공 (email, name)
+                        try KeychainManager.shared.saveUser(user: userData, userType: UserSessionManager .Service.UserInit.APPLE)
                     } catch {
                         print("KeychainManager.saveUser \(error.localizedDescription)")
                     }
@@ -243,58 +254,32 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                 let account = Account(state: state, code: authorizationCode, id_token: identityToken, user: userData, identifier: identifier, hasRequirementInfo: false) // state 사용안함, UserItem의 userStatus로 상태관리
                 
                 // 회원가입
-                AlamofireManager.shared.session
-                    .request(SessionRouter.signUpApple(parameters: account))
-                    .validate(statusCode: 200..<501)
-                    .responseDecodable(of: APIResponse<UserItem>.self) { response in
-                        switch response.result {
-                        case .success:
-                            if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
-                                guard let data = value.data else { return }
-                                do {
-                                    // 신규 가입
-                                    do {
-                                        try KeychainManager.deleteUser(userType: SessionManager.Service.UserInit.APPLE)
-                                    } catch {
-                                        print("KeychainManager deleteUser error \(error.localizedDescription)")
-                                    }
-                                    
-                                    try KeychainManager.saveUserItem(userItem: data)
-                                    
-                                    DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-                                        let SPVC = SetProfileViewController()
-                                        navigationController?.pushViewController(SPVC, animated: true)
-                                        ProgressHUD.dismiss()
-                                    })
-                                    
-                                } catch {
-                                    print("KeychainManager saveUserItem error \(error.localizedDescription)")
-                                }
-                            } else {
-                                DispatchQueue.main.async {
-                                    ProgressHUD.dismiss()
-                                }
-                            }
-                        case let .failure(error):
-                            print(error)
-                            // 응답실패시 다시 요청해도 userItem 반환하게 해야된다.
-                            DispatchQueue.main.async {
-                                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                            }
+                UserSessionManager.shared.signUp(signUpReq: account) { (response) in
+                    switch response {
+                    case .success:
+                        do {
+                            // 이전에 초기 애플 서버 인증시에만 한번 제공한 (이메일, 이름) 삭제
+                            try KeychainManager.shared.deleteUser(userType: UserSessionManager .Service.UserInit.APPLE)
+                        } catch {
+                            print("KeychainManager deleteUser error \(error.localizedDescription)")
+                        }
+                        DispatchQueue.main.async {
+                            let SPVC = SetProfileViewController()
+                            self.navigationController?.pushViewController(SPVC, animated: true)
+                            ProgressHUD.dismiss()
+                        }
+                    case .badResponse:
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
+                        }
+                    case .failureResponse:
+                        DispatchQueue.main.async {
+                            ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                         }
                     }
-            case let passwordCredential as ASPasswordCredential:
-                // Sign in using an existing iCloud Keychain credential.
-                let userName = passwordCredential.user
-                let password = passwordCredential.password
-                print("userName", userName)
-                print("password", password)
-               
-            default:
-                break
+                }
             }
         }
-    
     }
     
     // 애플 자격 증명 확인 실패
@@ -309,3 +294,48 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
         return self.view.window!
     }
 }
+
+//extension LoginViewController: SignUp {
+//    func signInWithApple(account: Account) {
+//        AlamofireManager.shared.session
+//            .request(SessionRouter.signUpApple(parameters: account))
+//            .validate(statusCode: 200..<501)
+//            .responseDecodable(of: APIResponse<UserItem>.self) { response in
+//            switch response.result {
+//            case .success:
+//                if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
+//                    guard let data = value.data else { return }
+//                    do {
+//                        // 신규 가입
+//                        do {
+//                            try KeychainManager.deleteUser(userType: UserSessionManager .Service.UserInit.APPLE)
+//                        } catch {
+//                            print("KeychainManager deleteUser error \(error.localizedDescription)")
+//                        }
+//
+//                        try KeychainManager.saveUserItem(userItem: data)
+//
+//                        DispatchQueue.main.async(qos: .userInteractive) {
+//                            let SPVC = SetProfileViewController()
+//                            self.navigationController?.pushViewController(SPVC, animated: true)
+//                            ProgressHUD.dismiss()
+//                        }
+//
+//                    } catch {
+//                        print("KeychainManager saveUserItem error \(error.localizedDescription)")
+//                    }
+//                } else {
+//                    DispatchQueue.main.async {
+//                        ProgressHUD.dismiss()
+//                    }
+//                }
+//            case let .failure(error):
+//                print("signUpApple", error)
+//                // 응답실패시 다시 요청해도 userItem 반환하게 해야된다.
+//                DispatchQueue.main.async {
+//                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+//                }
+//            }
+//        }
+//    }
+//}

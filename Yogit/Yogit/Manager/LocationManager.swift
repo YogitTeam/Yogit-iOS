@@ -36,6 +36,15 @@ final class LocationManager {
 //
 //        self.present(authAlertController, animated: true, completion: nil)
 //    }
+    
+    func saveCountryCode(code: ServiceCountry) { // country save (server country)
+        UserDefaults.standard.set(code.rawValue, forKey: ServiceCountry.identifier)
+    }
+    
+    func getSavedCountryCode() -> String? {
+        guard let code = UserDefaults.standard.object(forKey: ServiceCountry.identifier) as? ServiceCountry.RawValue else { return nil }
+        return code
+    }
 
 
     // 좌표 주소 반환
@@ -65,7 +74,7 @@ final class LocationManager {
         
         let geocoder = CLGeocoder()
        
-        guard let serviceCountryCode = SessionManager.getSavedCountryCode() else { return }
+        guard let serviceCountryCode = getSavedCountryCode() else { return }
         
         let locale = Locale(identifier: "en_US") // 서버로 넘길 데이터
 

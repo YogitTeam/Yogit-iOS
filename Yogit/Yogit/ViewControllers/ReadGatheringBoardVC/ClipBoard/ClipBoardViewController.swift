@@ -317,26 +317,30 @@ extension ClipBoardViewController {
     }
     
     func loadFirstMessages() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String else { return }
         guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         guard let boardId = self.boardId else { return }
         Task(priority: .high) {
             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
-            let checkGetData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
-            let totalPage = checkGetData.totalPage
-            // totalpage == 1이면 그대로 사용
-            // totalpage > 1이상이면 마지막 두개 페이지 로드
-            if upPageCusor < totalPage {
-                upPageCusor = totalPage-1 // 0 부터 시작
-                downPageCursor = upPageCusor-1
-                Task {
-                    if totalPage == 1 { // 한페이지만 존재
-                        await loadClipBoardBottom(isInit: true, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
-                    } else {
-                        await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
-                        await loadClipBoardBottom(isInit: true,userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
+            do {
+                let checkGetData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
+                let totalPage = checkGetData.totalPage
+                // totalpage == 1이면 그대로 사용
+                // totalpage > 1이상이면 마지막 두개 페이지 로드
+                if upPageCusor < totalPage {
+                    upPageCusor = totalPage-1 // 0 부터 시작
+                    downPageCursor = upPageCusor-1
+                    Task {
+                        if totalPage == 1 { // 한페이지만 존재
+                            await loadClipBoardBottom(isInit: true, userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
+                        } else {
+                            await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
+                            await loadClipBoardBottom(isInit: true,userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
+                        }
                     }
                 }
+            } catch {
+                print("Init fetchClipBoardData error \(error.localizedDescription)")
             }
             await MainActor.run {
                 ProgressHUD.dismiss()
@@ -345,14 +349,13 @@ extension ClipBoardViewController {
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffSetY = scrollView.contentOffset.y
-        let contentInsetTop = scrollView.contentInset.top
         if scrollView == messagesCollectionView && !isPaging {
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String,
-                  let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
-                  let boardId = self.boardId
-            else { return }
-            if contentOffSetY <= -contentInsetTop && downPageCursor >= 0 { // top scroll
+            let contentOffSetY = scrollView.contentOffset.y
+            if contentOffSetY <= 0 && downPageCursor >= 0 { 
+                guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String,
+                      let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
+                      let boardId = self.boardId
+                else { return }
                 isPaging = true
                 Task(priority: .low) {
                     await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
@@ -362,15 +365,15 @@ extension ClipBoardViewController {
     }
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        let contentOffSetY = scrollView.contentOffset.y
-        let contentSizeHeight = scrollView.contentSize.height
-        let frameSizeHeight = scrollView.frame.size.height
         if scrollView == messagesCollectionView && !isPaging {
-            guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String,
-                  let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
-                  let boardId = self.boardId
-            else { return }
-            if (contentOffSetY > (contentSizeHeight-frameSizeHeight)) { // bottom scroll
+            let contentOffSetY = scrollView.contentOffset.y
+            let contentSizeHeight = scrollView.contentSize.height
+            let frameSizeHeight = scrollView.frame.size.height
+            if (contentOffSetY > (contentSizeHeight-frameSizeHeight) && contentOffSetY > 0) { // bottom scroll
+                guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String,
+                      let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
+                      let boardId = self.boardId
+                else { return }
                 isPaging = true
                 isLoading = true
                 messagesCollectionView.reloadSections([messages.count-1])

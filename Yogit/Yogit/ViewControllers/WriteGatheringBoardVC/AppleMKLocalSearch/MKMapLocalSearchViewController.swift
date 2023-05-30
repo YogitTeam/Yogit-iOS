@@ -41,7 +41,7 @@ class MKMapLocalSearchViewController: UIViewController {
     private let searchTimer: Selector = #selector(Search_Tick_TimeConsole) // search 확인 타이머
     
     
-    private let setCountryCode = SessionManager.getSavedCountryCode()
+    private let setCountryCode = LocationManager.shared.getSavedCountryCode()
     
     private lazy var mapView: MKMapView = {
         let view = MKMapView()
@@ -202,7 +202,7 @@ class MKMapLocalSearchViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(20)
         }
         activityIndicator.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(20)
+            make.leading.equalToSuperview().inset(22)
             make.width.height.equalTo(24)
             make.centerY.equalToSuperview()
         }

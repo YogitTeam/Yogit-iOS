@@ -90,80 +90,113 @@ class SettingProfileViewController: UIViewController {
     }
     
     private func deleteAccount() {
-        // keychain 정보 삭제
-        // catch 확인
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let deleteApple = DeleteAppleAccountReq(identityToken: userItem.id_token, refreshToken: userItem.refresh_token, userId: userItem.userId)
         ProgressHUD.show(interaction: false)
-        AlamofireManager.shared.session
-            .request(SessionRouter.deleteApple(parameters: deleteApple))
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<String>.self) { response in
-                switch response.result {
-                case .success:
-                    guard let value = response.value else { return }
-                    if value.httpCode == 200 || value.httpCode == 201 {
-                        do {
-                            try KeychainManager.deleteUserItem(userItem: userItem)
-                            
-                            // 애플 회원탈퇴후 회원가입시 바로 안됨
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-                                moveToLoginVC()
-                                ProgressHUD.dismiss()
-                            }
-                        } catch {
-                            print("KeychainManager.deleteUserItem \(error.localizedDescription)")
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
-                    }
-                case let .failure(error):
-                    print("Delete account decoding error", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+        UserSessionManager.shared.deleteAccount(deleteAccountReq: deleteApple, userItem: userItem) { (response) in
+            switch response {
+            case .success:
+                // 애플 회원탈퇴 후, 애플 계정 ID 사용 중단까지 실제 시간 추가 소요 (2~3초) >> 탈퇴 이후 바로 회원가입시 문제 안생김
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
+                    moveToLoginVC()
+                    ProgressHUD.dismiss()
+                }
+            case .badResponse:
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
+                }
+            case .failureResponse:
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                 }
             }
+        }
+//        AlamofireManager.shared.session
+//            .request(SessionRouter.deleteApple(parameters: deleteApple))
+//            .validate(statusCode: 200..<501)
+//            .responseDecodable(of: APIResponse<String>.self) { response in
+//            switch response.result {
+//            case .success:
+//                guard let value = response.value else { return }
+//                if value.httpCode == 200 || value.httpCode == 201 {
+//                    do {
+//                        try KeychainManager.deleteUserItem(userItem: userItem)
+//
+//                        // 애플 회원탈퇴후 회원가입시 바로 안됨
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
+//                            moveToLoginVC()
+//                            ProgressHUD.dismiss()
+//                        }
+//                    } catch {
+//                        print("KeychainManager.deleteUserItem \(error.localizedDescription)")
+//                    }
+//                } else {
+//                    DispatchQueue.main.async {
+//                        ProgressHUD.dismiss()
+//                    }
+//                }
+//            case let .failure(error):
+//                print("Delete account", error)
+//                DispatchQueue.main.async {
+//                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+//                }
+//            }
+//        }
     }
     
     // userStatus logOut 저장됨
     // userStatus로 화면 이동, 유저 디폴트 현재 servicetype 삭제
     
     private func logOut() {
-        guard let identifier = UserDefaults.standard.object(forKey: SessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         ProgressHUD.show(interaction: false)
         let logOut = LogOutAppleReq(refreshToken: userItem.refresh_token, userId: userItem.userId)
-        AlamofireManager.shared.session
-            .request(SessionRouter.logOut(parameters: logOut))
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<LogOutAppleRes>.self) { response in
-                switch response.result {
-                case .success:
-                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
-                        do {
-                            userItem.userStatus = data.userStatus
-                            try KeychainManager.updateUserItem(userItem: userItem)
-                            DispatchQueue.main.async { [self] in
-                                moveToLoginVC()
-                                ProgressHUD.dismiss()
-                            }
-                        } catch {
-                            print("KeychainManager.deleteUserItem \(error.localizedDescription)")
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
-                    }
-                case let .failure(error):
-                    print("Logout error", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+        UserSessionManager.shared.logOut(logOutReq: logOut, userItem: userItem) { (response) in
+            switch response {
+            case .success:
+                DispatchQueue.main.async {
+                    self.moveToLoginVC()
+                    ProgressHUD.dismiss()
+                }
+            case .badResponse:
+                DispatchQueue.main.async {
+                    ProgressHUD.dismiss()
+                }
+            case .failureResponse:
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                 }
             }
+        }
+//        AlamofireManager.shared.session
+//            .request(SessionRouter.logOut(parameters: logOut))
+//            .validate(statusCode: 200..<501)
+//            .responseDecodable(of: APIResponse<LogOutAppleRes>.self) { response in
+//            switch response.result {
+//            case .success:
+//                if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
+//                    do {
+//                        userItem.userStatus = data.userStatus
+//                        try KeychainManager.updateUserItem(userItem: userItem)
+//                        DispatchQueue.main.async { [self] in
+//                            moveToLoginVC()
+//                            ProgressHUD.dismiss()
+//                        }
+//                    } catch {
+//                        print("KeychainManager.deleteUserItem \(error.localizedDescription)")
+//                    }
+//                } else {
+//                    DispatchQueue.main.async {
+//                        ProgressHUD.dismiss()
+//                    }
+//                }
+//            case let .failure(error):
+//                print("Logout error", error)
+//                DispatchQueue.main.async {
+//                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+//                }
+//            }
+//        }
     }
     
     // MARK: - Table view data source object
