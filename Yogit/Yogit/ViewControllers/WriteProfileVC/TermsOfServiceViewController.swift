@@ -258,50 +258,39 @@ class TermsOfServiceViewController: UIViewController {
         userProfile.refreshToken = userItem.refresh_token
         // 추가 정보 포함된 SearchUserProfile로 요청 때린다.
         // userProfile에  SearchUserProfile 모든 데이터 포함
-        let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
-        if let parameters = urlRequestConvertible.toDictionary {
-            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                for (key, value) in parameters {
-                    if let arrayValue = value as? [Any] {
-                        for arrValue in arrayValue {
-                            multipartFormData.append(Data("\(arrValue)".utf8), withName: key)
+        let router = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
+        
+        AlamofireManager.shared.session.upload(multipartFormData: router.multipartFormData, with: router)
+        .validate(statusCode: 200..<501)
+        .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
+            switch response.result {
+            case .success:
+                do {
+                    guard let value = response.value else { return }
+                    guard let data = value.data else { return }
+                    if value.httpCode == 200 || value.httpCode == 201 {
+                        userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
+                        userItem.userName = data.name // 유저 이름, 상태 저장
+                        try KeychainManager.updateUserItem(userItem: userItem)
+                        DispatchQueue.main.async { [self] in
+                            let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
+                            navigationController?.popToRootViewController(animated: false)
+                            view.window?.rootViewController = rootVC
+                            view.window?.makeKeyAndVisible()
+                            ProgressHUD.dismiss()
                         }
                     } else {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
-                    }
-                }
-            }, with: urlRequestConvertible)
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
-                switch response.result {
-                case .success:
-                    do {
-                        guard let value = response.value else { return }
-                        guard let data = value.data else { return }
-                        if value.httpCode == 200 || value.httpCode == 201 {
-                            userItem.account.hasRequirementInfo = true // 유저 hasRequirementInfo 저장 (필수데이터 정보)
-                            userItem.userName = data.name // 유저 이름, 상태 저장
-                            try KeychainManager.updateUserItem(userItem: userItem)
-                            DispatchQueue.main.async { [self] in
-                                let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
-                                navigationController?.popToRootViewController(animated: false)
-                                view.window?.rootViewController = rootVC
-                                view.window?.makeKeyAndVisible()
-                                ProgressHUD.dismiss()
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                ProgressHUD.dismiss()
-                            }
+                        DispatchQueue.main.async {
+                            ProgressHUD.dismiss()
                         }
-                    } catch {
-                        print("Error - KeychainManager.update \(error.localizedDescription)")
                     }
-                case let .failure(error):
-                    print("TermsOfServiceVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+                } catch {
+                    print("Error - KeychainManager.update \(error.localizedDescription)")
+                }
+            case let .failure(error):
+                print("TermsOfServiceVC - upload response result Not return", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                 }
             }
         }

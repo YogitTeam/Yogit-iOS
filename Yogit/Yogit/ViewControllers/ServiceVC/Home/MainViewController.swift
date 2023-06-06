@@ -196,12 +196,10 @@ class MainViewController: UIViewController {
     }
     
     private func initNavigationBar() {
-        DispatchQueue.main.async { [weak self] in
-            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
-            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
-            self?.tabBarController?.navigationItem.rightBarButtonItems = [self!.searchCityNameButton]
-            self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
-        }
+        tabBarController?.makeNaviTopLabel(title: TabBarKind.home.rawValue.localized())
+        tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
+        tabBarController?.navigationItem.rightBarButtonItems = [searchCityNameButton]
+        searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
     }
 
     

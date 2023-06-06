@@ -88,10 +88,8 @@ class PushNotificationViewController: UIViewController {
     }
     
     private func initNavigationBar() {
-        DispatchQueue.main.async { [weak self] in
-            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue.localized())
-            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
-        }
+        tabBarController?.makeNaviTopLabel(title: TabBarKind.notification.rawValue.localized())
+        tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
     }
     
     private func initGetNotiData() {

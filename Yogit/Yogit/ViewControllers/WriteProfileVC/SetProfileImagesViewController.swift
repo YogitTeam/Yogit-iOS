@@ -153,35 +153,30 @@ class SetProfileImagesViewController: UIViewController {
     private func getUserImages() {
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let getUserImages = GetUserImages(refreshToken: userItem.refresh_token, userId: userItem.userId)
-        let urlRequestConvertible = ProfileRouter.downLoadImages(parameters: getUserImages)
-//        ProgressHUD.show(interaction: false)
         
         let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
 //
         imagesCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         
-        if let parameters = urlRequestConvertible.toDictionary {
-            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                for (key, value) in parameters {
-                    multipartFormData.append(Data("\(value)".utf8), withName: key)
-                }
-            }, with: urlRequestConvertible)
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
-                switch response.result {
-                case .success:
-                    if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
-                        guard let data = value.data else { return }
-                        DispatchQueue.global(qos: .userInitiated).async { [self] in
-                            userImagesData.imageIds = data.userImageIds
-                            userImagesData.downloadImages = data.imageUrls
-                            userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
-                                self?.imagesCollectionView.stopSkeletonAnimation()
-                                self?.imagesCollectionView.hideSkeleton(reloadDataAfter: false)
-                                self?.imagesCollectionView.reloadData()
-                            }
+        let router = ProfileRouter.downLoadImages(parameters: getUserImages)
+        
+        AlamofireManager.shared.session.upload(multipartFormData: router.multipartFormData, with: router)
+        .validate(statusCode: 200..<501)
+        .responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
+            switch response.result {
+            case .success:
+                if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
+                    guard let data = value.data else { return }
+                    DispatchQueue.global(qos: .userInitiated).async { [self] in
+                        userImagesData.imageIds = data.userImageIds
+                        userImagesData.downloadImages = data.imageUrls
+                        userImagesData.downloadProfileImage = data.profileImageUrl
+                        DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
+                            self?.imagesCollectionView.stopSkeletonAnimation()
+                            self?.imagesCollectionView.hideSkeleton(reloadDataAfter: false)
+                            self?.imagesCollectionView.reloadData()
                         }
+                    }
 //                        print(progressTime {
 ////                             0.0019310712814331055 (async let 5개) 0.0017060041427612305 0.0016030073165893555
 ////                             0.0015599727630615234 (withTaskGroup) 0.0017729997634887695 0.0015230178833007812
@@ -225,15 +220,13 @@ class SetProfileImagesViewController: UIViewController {
 //                            }
 //
 //                        })
-                    }
-                case let .failure(error):
-                    print("SetProfileImagesVC - downLoad response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+                }
+            case let .failure(error):
+                print("SetProfileImagesVC - downLoad response result Not return", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                 }
             }
-
         }
     }
     
@@ -261,54 +254,34 @@ class SetProfileImagesViewController: UIViewController {
         
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
         let patchUserImages = PatchUserImages(userId: userItem.userId, refreshToken: userItem.refresh_token, deleteUserImageIds: userImagesData.deleteUserImageIds, uploadImages: userImagesData.uploadImages, uploadProfileImage: profileImage)
-        let urlRequestConvertible = ProfileRouter.uploadImages(parameters: patchUserImages)
         
-        if let parameters = urlRequestConvertible.toDictionary {
-            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                for (key, value) in parameters {
-                    if let arrayValue = value as? [Any]  {
-                        if let images = arrayValue as? [UIImage] {
-                            for image in images {
-                                multipartFormData.append(image.toFile(format: .jpeg(0.7))!, withName: key, fileName: key + ".jpeg", mimeType: key + "/jpeg")
-                            }
-                        } else {
-                            for element in arrayValue {
-                                multipartFormData.append(Data("\(element)".utf8), withName: key)
-                            }
-                        }
-                    } else {
-                        if let image = value as? UIImage {
-                            multipartFormData.append(image.toFile(format: .jpeg(0.7))!, withName: key, fileName: key + ".jpeg", mimeType: key + "/jpeg")
-                        } else {
-                            multipartFormData.append(Data("\(value)".utf8), withName: key)
+        let router = ProfileRouter.uploadImages(parameters: patchUserImages)
+        
+        AlamofireManager.shared.session.upload(multipartFormData: router.multipartFormData, with: router).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
+            switch response.result {
+            case .success:
+                if let value = response.value, value.httpCode == 200 {
+                    guard let data = value.data else { return }
+                    DispatchQueue.global(qos: .userInitiated).async { [self] in
+                        userImagesData.imageIds = data.userImageIds
+                        userImagesData.downloadImages = data.imageUrls
+                        userImagesData.downloadProfileImage = data.profileImageUrl
+                        DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
+                            guard let profileImage = self?.userImagesData.downloadProfileImage else { return }
+                            self?.imagesCollectionView.reloadData()
+                            self?.delegate?.imagesSend(profileImage: profileImage)
+                            self?.navigationController?.popViewController(animated: true)
                         }
                     }
                 }
-            }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<FetchedUserImages>.self) { response in
-                switch response.result {
-                case .success:
-                    if let value = response.value, value.httpCode == 200 {
-                        guard let data = value.data else { return }
-                        DispatchQueue.global(qos: .userInitiated).async { [self] in
-                            userImagesData.imageIds = data.userImageIds
-                            userImagesData.downloadImages = data.imageUrls
-                            userImagesData.downloadProfileImage = data.profileImageUrl
-                            DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
-                                guard let profileImage = self?.userImagesData.downloadProfileImage else { return }
-                                self?.imagesCollectionView.reloadData()
-                                self?.delegate?.imagesSend(profileImage: profileImage)
-                                self?.navigationController?.popViewController(animated: true)
-                            }
-                        }
-                    }
-                case let .failure(error):
-                    print("SetProfileImagesVC - upload response result Not return", error)
-                }
-                DispatchQueue.main.async {
-                    ProgressHUD.dismiss()
-                }
+            case let .failure(error):
+                print("SetProfileImagesVC - upload response result Not return", error)
+            }
+            DispatchQueue.main.async {
+                ProgressHUD.dismiss()
             }
         }
+
     }
     
     /*
@@ -333,11 +306,18 @@ extension SetProfileImagesViewController: SkeletonCollectionViewDelegate {
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
         alert.addAction(cancel)
         if indexPath.row < userImagesData.downloadImages.count + userImagesData.uploadImages.count {
-            let delete = UIAlertAction(title: "DELETE".localized(), style: .destructive) { (action) in self.deleteImage(indexPath.row)}
+            let delete = UIAlertAction(title: "DELETE".localized(), style: .destructive) { [weak self] (action) in
+                self?.deleteImage(indexPath.row)
+                
+            }
             alert.addAction(delete)
         } else {
-            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { (action) in self.openLibrary() }
-            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { (action) in self.openCamera() }
+            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { [weak self] (action) in
+                self?.openLibrary()
+            }
+            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) {  [weak self] (action) in
+                self?.openCamera()
+            }
             alert.addAction(library)
             alert.addAction(camera)
         }
@@ -408,7 +388,6 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
             self?.imageLoadingView.isHidden = false
             self?.activityIndicator.startAnimating()
             UIView.animate(withDuration: 0.5, animations: {
-                // 뷰의 alpha 속성을 1로 설정하여 서서히 나타나도록 함
                 self?.imageLoadingView.alpha = 1.0
             })
         }
@@ -417,7 +396,6 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
     private func dismissImageLoading() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             UIView.animate(withDuration: 0.5, animations: {
-                // 뷰의 alpha 속성을 0으로 설정하여 서서히 사라지도록 함
                 self?.imageLoadingView.alpha = 0.0
             }) { (completed) in
                 self?.imageLoadingView.isHidden = true
@@ -479,7 +457,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
                 }, finish: { (assets) in
                     print("Finished with selections: \(assets)")
                     self?.isDownloading = true
-                    DispatchQueue.global(qos:.userInteractive).async { [weak self] in
+                    DispatchQueue.global(qos:.userInteractive).async {
                         guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: newSize) else { return }
                         DispatchQueue.main.async {
                             self?.userImagesData.uploadImages.append(contentsOf: appendImages)

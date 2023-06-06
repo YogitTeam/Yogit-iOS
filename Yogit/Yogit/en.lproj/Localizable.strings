@@ -282,9 +282,9 @@
 "DELETE_GATHERING_ALERT_MESSAGE" = "Would you want to delete a gathering board?";
 "BOARD_DELETED_ALERT_TITLE" = "Deleted gathering board";
 "BOARD_DELETED_ALERT_MESSAGE" = "The gathering board is deleted";
-"APPLE_MAP" = "애플 지도";
-"GOOGLE_MAP" = "구글 지도";
-"KAKAO_MAP" = "카카오 지도";
+"APPLE_MAP" = "Apple Map";
+"GOOGLE_MAP" = "Goolge Map";
+"KAKAO_MAP" = "Kakao Map";
 "BLOCKED_HOST_ALERT_TITLE" = "Gathering post of blocked host.";
 
 // ClipboardViewController

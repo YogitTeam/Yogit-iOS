@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SkeletonView
 
 class BoardInfoView: UIView {
     let leftImageView: UIImageView = {

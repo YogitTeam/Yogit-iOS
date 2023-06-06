@@ -89,8 +89,8 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     }
     
     func configureDownload(imageString: String, sequence: Int, kind: Kind) {
-        self.imageView.setImage(with: imageString)
-        self.imageSequenceLabel.text = "\(sequence)"
+        imageView.setImage(with: imageString)
+        imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
         case .boardSelectDetail: break
@@ -99,8 +99,8 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     }
     
     func configureUpload(image: UIImage, sequence: Int, kind: Kind) {
-        self.imageView.image = image
-        self.imageSequenceLabel.text = "\(sequence)"
+        imageView.image = image
+        imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
         case .boardSelectDetail: break
@@ -110,8 +110,8 @@ class MyImagesCollectionViewCell: UICollectionViewCell {
     
 
     func configureNull(image: UIImage?, sequence: Int, kind: Kind) { // imageString: String,
-        self.imageView.image = image
-        self.imageSequenceLabel.text = "\(sequence)"
+        imageView.image = image
+        imageSequenceLabel.text = "\(sequence)"
         switch kind {
         case .profile: if sequence == 1 { mainImageLabel.isHidden = false }
         case .boardSelectDetail: break

@@ -15,7 +15,7 @@ enum ProfileRouter: URLRequestConvertible {
     case downLoadImages(parameters: GetUserImages)
 
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "users/")! // 밑에 Auth 수정해야댐
+        return URL(string: API.BASE_URL + "users/")! 
     }
 
     var method: HTTPMethod {
@@ -37,8 +37,8 @@ enum ProfileRouter: URLRequestConvertible {
             return "image/\(parameters.userId)"
         }
     }
-        
-    var toDictionary: [String: Any]? {
+    
+    var body: Parameters {
         switch self {
         case let .uploadEssentialProfile(parameters):
             return mirroringDictionary(parameter: parameters)
@@ -46,15 +46,13 @@ enum ProfileRouter: URLRequestConvertible {
             return mirroringDictionary(parameter: parameters)
         case let .downLoadImages(parameters):
             return mirroringDictionary(parameter: parameters)
-        default: return nil
+        default: fatalError("ProfileRouter Body - Not Suppport Data Type")
         }
     }
     
-//    func asURL() throws -> URL {
-//        let url = baseURL.appendingPathComponent(endPoint)
-//        print("UpdateProfileRouter - asURL() url : \(url)")
-//        return url
-//    }
+    var multipartFormData: MultipartFormData {
+        return multipartAppendParameters(parameters: body)
+    }
     
     func asURLRequest() throws -> URLRequest {
         

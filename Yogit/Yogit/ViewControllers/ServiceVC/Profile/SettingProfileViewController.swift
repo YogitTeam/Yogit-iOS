@@ -20,7 +20,7 @@ class SettingProfileViewController: UIViewController {
     private let settings: [String] = ["LOGOUT_TITLE".localized(), "DELETE_ACCOUNT_TITLE".localized(), "CUSTOMER_SERVICE_CENTER_TITLE".localized()]
     
     private let settingTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
@@ -111,37 +111,6 @@ class SettingProfileViewController: UIViewController {
                 }
             }
         }
-//        AlamofireManager.shared.session
-//            .request(SessionRouter.deleteApple(parameters: deleteApple))
-//            .validate(statusCode: 200..<501)
-//            .responseDecodable(of: APIResponse<String>.self) { response in
-//            switch response.result {
-//            case .success:
-//                guard let value = response.value else { return }
-//                if value.httpCode == 200 || value.httpCode == 201 {
-//                    do {
-//                        try KeychainManager.deleteUserItem(userItem: userItem)
-//
-//                        // 애플 회원탈퇴후 회원가입시 바로 안됨
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-//                            moveToLoginVC()
-//                            ProgressHUD.dismiss()
-//                        }
-//                    } catch {
-//                        print("KeychainManager.deleteUserItem \(error.localizedDescription)")
-//                    }
-//                } else {
-//                    DispatchQueue.main.async {
-//                        ProgressHUD.dismiss()
-//                    }
-//                }
-//            case let .failure(error):
-//                print("Delete account", error)
-//                DispatchQueue.main.async {
-//                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-//                }
-//            }
-//        }
     }
     
     // userStatus logOut 저장됨
@@ -168,35 +137,6 @@ class SettingProfileViewController: UIViewController {
                 }
             }
         }
-//        AlamofireManager.shared.session
-//            .request(SessionRouter.logOut(parameters: logOut))
-//            .validate(statusCode: 200..<501)
-//            .responseDecodable(of: APIResponse<LogOutAppleRes>.self) { response in
-//            switch response.result {
-//            case .success:
-//                if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
-//                    do {
-//                        userItem.userStatus = data.userStatus
-//                        try KeychainManager.updateUserItem(userItem: userItem)
-//                        DispatchQueue.main.async { [self] in
-//                            moveToLoginVC()
-//                            ProgressHUD.dismiss()
-//                        }
-//                    } catch {
-//                        print("KeychainManager.deleteUserItem \(error.localizedDescription)")
-//                    }
-//                } else {
-//                    DispatchQueue.main.async {
-//                        ProgressHUD.dismiss()
-//                    }
-//                }
-//            case let .failure(error):
-//                print("Logout error", error)
-//                DispatchQueue.main.async {
-//                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-//                }
-//            }
-//        }
     }
     
     // MARK: - Table view data source object

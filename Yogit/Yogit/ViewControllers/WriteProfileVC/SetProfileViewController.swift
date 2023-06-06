@@ -327,59 +327,33 @@ class SetProfileViewController: UIViewController {
         userProfile.userId = userItem.userId
         userProfile.refreshToken = userItem.refresh_token
         
-        let urlRequestConvertible = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
-        if let parameters = urlRequestConvertible.toDictionary {
-            print("parameters", parameters)
-            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                for (key, value) in parameters {
-                    if let arrayValue = value as? [Any] {
-                        if arrayValue.isEmpty {
-                            multipartFormData.append(Data("".utf8), withName: key) // 0 byte
-                        } else {
-                            for arrValue in arrayValue {
-                                multipartFormData.append(Data("\(arrValue)".utf8), withName: key)
-                            }
-                        }
-                    } else {
-                        multipartFormData.append(Data("\(value)".utf8), withName: key)
+        let router = ProfileRouter.uploadEssentialProfile(parameters: userProfile)
+        
+        AlamofireManager.shared.session.upload(multipartFormData: router.multipartFormData, with: router)
+        .validate(statusCode: 200..<501)
+        .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
+            switch response.result {
+            case .success:
+                if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
+                    guard let data = value.data else { return }
+                    DispatchQueue.main.async { [weak self] in
+                        self?.delegate?.sendFetchedUserProfile(data: data)
+                        self?.navigationController?.popViewController(animated: true)
+                        ProgressHUD.dismiss()
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
                     }
                 }
-            }, with: urlRequestConvertible)
-            .validate(statusCode: 200..<501)
-            .responseDecodable(of: APIResponse<FetchUserProfile>.self) { response in
-                switch response.result {
-                case .success:
-                    if let value = response.value, (value.httpCode == 200 || value.httpCode == 201) {
-                        guard let data = value.data else { return }
-                        DispatchQueue.main.async { [weak self] in
-                            self?.delegate?.sendFetchedUserProfile(data: data)
-                            self?.navigationController?.popViewController(animated: true)
-                            ProgressHUD.dismiss()
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
-                    }
-                case let .failure(error):
-                    print("SetProfileVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+            case let .failure(error):
+                print("SetProfileVC - upload response result Not return", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                 }
             }
         }
     }
-    
-//    private func checkAllData() {
-//        if mode == .create {
-//            if hasMissingValue == nil {
-//                nextButton.backgroundColor = ServiceColor.primaryColor
-//            } else {
-//                nextButton.backgroundColor = .placeholderText
-//            }
-//        }
-//    }
     
     @objc private func profileImageViewTapped(_ sender: UITapGestureRecognizer) {
         DispatchQueue.main.async {

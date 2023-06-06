@@ -15,7 +15,7 @@ enum SessionRouter: URLRequestConvertible {
     case deleteApple(parameters: DeleteAppleAccountReq)
     
     var baseURL: URL {
-        return URL(string: API.BASE_URL)! // 밑에 Auth 수정해야댐
+        return URL(string: API.BASE_URL)! 
     }
 
     var method: HTTPMethod {

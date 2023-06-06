@@ -14,8 +14,6 @@ import AVFoundation
 final class ImageManager {
     static let shared = ImageManager()
     
-    weak var vc: UIViewController?
-    
     func downloadImage(with urlString: String, completion: @escaping (UIImage?) -> Void) {
         guard let url = URL(string: urlString) else { return completion(nil) }
         let resource = ImageResource(downloadURL: url)

@@ -13,7 +13,7 @@ enum PushNotificationRouter: URLRequestConvertible {
     case sendDeviceToken(parameters: SendDeviceTokenReq)
 
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "users/")! // 밑에 Auth 수정해야댐
+        return URL(string: API.BASE_URL + "users/")! 
     }
 
     var method: HTTPMethod {

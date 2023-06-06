@@ -19,7 +19,7 @@ enum BoardRouter: URLRequestConvertible {
     case readMyBoards(parameters: GetMyClub)
 
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "boards/")! // 밑에 Auth 수정해야댐
+        return URL(string: API.BASE_URL + "boards/")! 
     }
 
     var method: HTTPMethod {
@@ -49,15 +49,19 @@ enum BoardRouter: URLRequestConvertible {
             return "status"
         }
     }
-
-    var toDictionary: [String: Any]? {
+    
+    var body: Parameters {
         switch self {
         case let .createBoard(parameters):
             return mirroringDictionary(parameter: parameters)
         case let .updateBoard(parameters):
             return mirroringDictionary(parameter: parameters)
-        default: return nil
+        default: fatalError("BoardRouter Body - Not Suppport Data Type")
         }
+    }
+    
+    var multipartFormData: MultipartFormData {
+        return multipartAppendParameters(parameters: body)
     }
     
     func asURLRequest() throws -> URLRequest {

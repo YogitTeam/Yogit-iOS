@@ -295,54 +295,32 @@ class GatheringBoardContentViewController: UIViewController {
         
         let updateBoard = UpdateBoard(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardWithMode.boardId, hostId: userItem.userId, title: title, address: address, addressDetail: boardWithMode.addressDetail, longitute: longitute, latitude: latitude, date: date, notice: boardWithMode.notice, cityName: cityName, introduction: introduction, kindOfPerson: kindOfPerson, totalMember: totoalMember, categoryId: categoryId, deleteImageIds: boardWithMode.deleteImageIds, images: boardWithMode.uploadImages)
 
-        let urlRequestConvertible: BoardRouter
+        let router: BoardRouter
         if boardWithMode.mode == .edit {
-            urlRequestConvertible = BoardRouter.updateBoard(parameters: updateBoard)
+            router = BoardRouter.updateBoard(parameters: updateBoard)
         } else {
-            urlRequestConvertible = BoardRouter.createBoard(parameters: updateBoard)
+            router = BoardRouter.createBoard(parameters: updateBoard)
         }
         
-        if let parameters = urlRequestConvertible.toDictionary {
-            AlamofireManager.shared.session.upload(multipartFormData: { multipartFormData in
-                for (key, value) in parameters {
-                    if let arrayValue = value as? [Any]  {
-                        if let images = arrayValue as? [UIImage] {
-                            for image in images {
-                                multipartFormData.append(image.toFile(format: .jpeg(0.7))!, withName: key, fileName: key + ".jpeg", mimeType: key + "/jpeg")
-                            }
-                        } else {
-                            for element in arrayValue {
-                                multipartFormData.append(Data("\(element)".utf8), withName: key)
-                            }
-                        }
-                    } else {
-                        if let image = value as? UIImage {
-                            multipartFormData.append(image.toFile(format: .jpeg(0.7))!, withName: key, fileName: key + ".jpeg", mimeType: key + "/jpeg")
-                        } else {
-                            multipartFormData.append(Data("\(value)".utf8), withName: key)
-                        }
+        AlamofireManager.shared.session.upload(multipartFormData: router.multipartFormData, with: router).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<BoardDetail>.self) { response in
+            switch response.result {
+            case .success:
+                if let value = response.value, value.httpCode == 201 || value.httpCode == 200 {
+                    guard let data = value.data else { return }
+                    DispatchQueue.main.async(qos: .userInteractive) { [self] in
+                        navigationController?.popToRootViewController(animated: true)
+                        NotificationCenter.default.post(name: .baordDetailRefresh, object: data) 
+                        ProgressHUD.dismiss()
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        ProgressHUD.dismiss()
                     }
                 }
-            }, with: urlRequestConvertible).validate(statusCode: 200..<501).responseDecodable(of: APIResponse<BoardDetail>.self) { response in
-                switch response.result {
-                case .success:
-                    if let value = response.value, value.httpCode == 201 || value.httpCode == 200 {
-                        guard let data = value.data else { return }
-                        DispatchQueue.main.async(qos: .userInteractive) { [self] in
-                            navigationController?.popToRootViewController(animated: true)
-                            NotificationCenter.default.post(name: .baordDetailRefresh, object: data) // root가 뭔지 알아야 해당 rootview refresh 가능, 따라서 boardWithMode에 VC 저장
-                            ProgressHUD.dismiss()
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            ProgressHUD.dismiss()
-                        }
-                    }
-                case let .failure(error):
-                    print("SetProfileImagesVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
+            case let .failure(error):
+                print("SetProfileImagesVC - upload response result Not return", error)
+                DispatchQueue.main.async {
+                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
                 }
             }
         }

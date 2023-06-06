@@ -10,10 +10,10 @@ import Alamofire
 
 enum ClipBoardRouter: URLRequestConvertible {
     case createBoard(parameters: CreateClipBoardReq)
-    case readBoard(parameters: GetAllClipBoardsReq) // another
+    case readBoard(parameters: GetAllClipBoardsReq) 
     
     var baseURL: URL {
-        return URL(string: API.BASE_URL + "clipboards/")! // 밑에 Auth 수정해야댐
+        return URL(string: API.BASE_URL + "clipboards/")!
     }
 
     var method: HTTPMethod {

@@ -440,10 +440,8 @@ class GetProfileViewController: UIViewController {
     }
     
     private func initNavigationBar() {
-        DispatchQueue.main.async { [weak self] in
-            self?.tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue.localized())
-            self?.tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
-        }
+        tabBarController?.makeNaviTopLabel(title: TabBarKind.profile.rawValue.localized())
+        tabBarController?.navigationItem.rightBarButtonItems?.removeAll()
         if getUserId == nil { // 상대방 조회 없을때
             let editButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.editButtonTapped(_:)), named: "Edit")
             let settingButton = self.tabBarController?.makeNaviTopButton(self, action: #selector(self.settingButtonTapped(_:)), named: "SETTING")
