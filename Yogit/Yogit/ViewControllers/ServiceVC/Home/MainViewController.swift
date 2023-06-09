@@ -276,13 +276,13 @@ class MainViewController: UIViewController {
         isLoading = false
         let task = Task {
             do {
-                let getData: GetBoardsByCategoryRes
                 
                 if Task.isCancelled {
-                    print("Before api request - Time reduction(api request and response)")
+                    print("Before api request")
                    return
                 }
                 
+                let getData: GetBoardsByCategoryRes
                 if defaulltCityName == cityNameLocalized {
                     getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 } else {
@@ -290,7 +290,7 @@ class MainViewController: UIViewController {
                 }
                 
                 if Task.isCancelled {
-                    print("Before skeletion animation stop - Time reduction(about 0.01s)")
+                    print("Before skeletion animation stop")
                    return
                 }
                 
@@ -313,7 +313,7 @@ class MainViewController: UIViewController {
                 }
                 
                 if Task.isCancelled {
-                    print("Before cell update - Time reduction(Max about 0.25s)")
+                    print("Before cell load")
                    return
                 }
                 
@@ -322,10 +322,10 @@ class MainViewController: UIViewController {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
                     if pageListCnt <= getBoardCnt {
-                        for i in pageListCnt..<getBoardCnt { // 2 < 3
+                        for i in pageListCnt..<getBoardCnt {
                             if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
-                                break
-                            } // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
+                                break  // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
+                            }
                             gatheringBoards.append(getAllBoardResList[i])
                             await MainActor.run {
                                 gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
