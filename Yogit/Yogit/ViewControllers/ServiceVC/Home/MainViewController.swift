@@ -269,26 +269,39 @@ class MainViewController: UIViewController {
     // category 1부터 시작
     private func pagingBoardsByCategory(categoryId: Int, isFirstPage: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        DispatchQueue.main.async {
-            self.guideLabel.text = ""
-        }
+        guideLabel.text = ""
         if isFirstPage {
             gatheringBoardCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
         isLoading = false
-        let startTime = DispatchTime.now().uptimeNanoseconds
         let task = Task {
             do {
                 let getData: GetBoardsByCategoryRes
+                
+                if Task.isCancelled {
+                    print("Before api request - Time reduction(api request and response)")
+                   return
+                }
+                
                 if defaulltCityName == cityNameLocalized {
                     getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 } else {
                     getData = try await fetchGatheringBoardsByCategoryCity(cityName: cityNameEng, category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 }
                 
+                if Task.isCancelled {
+                    print("Before skeletion animation stop - Time reduction(about 0.01s)")
+                   return
+                }
+                
                 if isFirstPage {
                     gatheringBoardCollectionView.stopSkeletonAnimation()
                     gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
+                } else {
+                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                    await MainActor.run {
+                        gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    }
                 }
                 
                 await MainActor.run {
@@ -298,30 +311,9 @@ class MainViewController: UIViewController {
                         guideLabel.text = ""
                     }
                 }
-
-                let endTime = DispatchTime.now().uptimeNanoseconds
-                let elapsedTime = endTime - startTime
                 
                 if Task.isCancelled {
-                   return
-                }
-                
-                if elapsedTime <= 500_000_000 {
-                    do {
-                        try await Task.sleep(nanoseconds: 500_000_000 - elapsedTime)
-                    } catch {
-                        print("sleep nanoseconds error \(error.localizedDescription)")
-                    }
-                }
-                
-                if !isFirstPage {
-                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                    await MainActor.run {
-                        gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
-                    }
-                }
-                
-                if Task.isCancelled {
+                    print("Before cell update - Time reduction(Max about 0.25s)")
                    return
                 }
                 

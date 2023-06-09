@@ -748,9 +748,6 @@ class GetProfileViewController: UIViewController {
                     }
                 case let .failure(error):
                     print("GetProfileVC - upload response result Not return", error)
-                    DispatchQueue.main.async {
-                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-                    }
                 }
             }
     }

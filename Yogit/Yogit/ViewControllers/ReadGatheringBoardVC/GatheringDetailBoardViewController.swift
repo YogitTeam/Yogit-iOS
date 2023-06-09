@@ -705,6 +705,7 @@ class GatheringDetailBoardViewController: UIViewController {
     
     deinit {
         removeNotification()
+        mapView.removeAnnotations(mapView.annotations)
     }
     
     private func setViewWithMode(mode: Mode?) {

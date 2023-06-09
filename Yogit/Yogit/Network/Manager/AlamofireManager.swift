@@ -19,6 +19,6 @@ final class AlamofireManager {
         configuration.timeoutIntervalForRequest = 60
         let interceptors = Interceptor(interceptors: [BaseInterceptor()])
         let monitors = [Logger(), ApiStatusLogger()] as [EventMonitor]
-      return Session(configuration: configuration, interceptor: interceptors, eventMonitors: monitors)
+      return Session(interceptor: interceptors, eventMonitors: monitors)
     }()
 }

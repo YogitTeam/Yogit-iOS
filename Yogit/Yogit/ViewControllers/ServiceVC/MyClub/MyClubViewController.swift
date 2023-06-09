@@ -169,27 +169,30 @@ class MyClubViewController: UIViewController {
         let startTime = DispatchTime.now().uptimeNanoseconds
         let task = Task {
             do {
+                
+                if Task.isCancelled {
+                    print("Before api request - Time reduction(api request and response)")
+                   return
+                }
+                
                 let getData = try await fetchGatheringMyBoards(type: type, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                
+                
+                if Task.isCancelled {
+                    print("Before skeletion animation stop - Time reduction(about 0.01s)")
+                   return
+                }
                 
                 if isFirstPage {
                     myBoardsCollectionView.stopSkeletonAnimation()
                     myBoardsCollectionView.hideSkeleton(reloadDataAfter: false)
-                }
-        
-                let endTime = DispatchTime.now().uptimeNanoseconds
-                let elapsedTime = endTime - startTime
-                
-                if Task.isCancelled {
-                   return
-                }
-                
-                if elapsedTime <= 400_000_000 {
-                    do {
-                        try await Task.sleep(nanoseconds: 400_000_000 - elapsedTime)
-                    } catch {
-                        print("sleep nanoseconds error \(error.localizedDescription)")
+                } else {
+                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
+                    await MainActor.run {
+                        myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
                     }
                 }
+            
                 
                 if !isFirstPage {
                     let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
@@ -199,6 +202,7 @@ class MyClubViewController: UIViewController {
                 }
                 
                 if Task.isCancelled {
+                    print("Before cell update - Time reduction(Max about 0.25s)")
                    return
                 }
                 

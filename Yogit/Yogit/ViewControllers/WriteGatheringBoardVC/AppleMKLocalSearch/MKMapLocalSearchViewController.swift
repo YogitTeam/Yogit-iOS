@@ -175,6 +175,10 @@ class MKMapLocalSearchViewController: UIViewController {
         searhBarNoticeView(noticeView: noticeView)
     }
     
+    deinit {
+        mapView.removeAnnotations(mapView.annotations)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         timerQuit()
     }
