@@ -442,7 +442,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         
         showImageLoading()
         
-        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
+        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
 
         var images = [UIImage?](repeating: nil, count: asstes.count)
         await withTaskGroup(of: Void.self, body: { taskGroup in
@@ -539,7 +539,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         imagePicker.settings.selection.max = 5 - boardWithMode.downloadImages.count - boardWithMode.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
+        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
         ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
             if Auth {
                 self?.presentImagePicker(imagePicker, select: { (asset) in
@@ -598,7 +598,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*1.5, height: self.view.frame.size.width*1.5))
+            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*2, height: self.view.frame.size.width*2))
             boardWithMode.uploadImages.append(resizeImage)
         }
         DispatchQueue.main.async {

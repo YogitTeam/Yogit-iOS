@@ -67,15 +67,6 @@ extension String {
         }.resume()
     }
     
-//    // 클로저 사용
-//    let urlString = "https://example.com/image.jpg"
-//    urlString.loadImage { (image) in
-//        guard let image = image else {
-//            print("Error loading image")
-//            return
-//        }
-//        // Use the image here
-//    }
     
     func loadImageAsync() -> UIImage? {
        guard let url = URL(string: self) else {
@@ -98,56 +89,7 @@ extension String {
        semaphore.wait()
        return image
    }
-// await, async 코드 사용
-//    let urlString = "https://example.com/image.jpg"
-//    if let image = urlString.loadImage() {
-//        // Use the image here
-//    } else {
-//        print("Error loading image")
-//    }
-//
 
-
-
-
-    
-//    func urlToImage() -> UIImage {
-//        var returnImage: UIImage?
-//        DispatchQueue.global().async {
-//            if let url = URL(string: self) {
-//                if let data = try? Data(contentsOf: url) {
-//                    if let image = UIImage(data: data) {
-//                        return Image = image
-//                    }
-//                }
-//            }
-//        }
-//        return image
-//    }
-    
-//    func toImage(completion: @escaping (UIImage) -> Void) {
-////        let image: UIImage?
-//        DispatchQueue.global().async {
-//            if let url = URL(string: self) {
-//                if let data = try? Data(contentsOf: url) {
-//                    if let image = UIImage(data: data) {
-//
-//                    }
-//                }
-//            }
-//        }
-//        
-////        DispatchQueue.global().async {
-////            guard let url = URL(string: self) else { return }
-////            guard let data = try? Data(contentsOf: url) else { return }
-////            guard let image = UIImage(data: data) else { return }
-////        }
-//        guard let url = URL(string: self) else { return nil }
-//        guard let data = try? Data(contentsOf: url) else { return nil }
-//        guard let image = UIImage(data: data) else { return nil }
-//        return image
-//    }
-    
     
     // string을 데이트로는 utc로 저장
     func stringToDate() -> Date? {

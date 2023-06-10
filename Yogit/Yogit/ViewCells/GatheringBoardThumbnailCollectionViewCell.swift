@@ -12,6 +12,21 @@ import CoreLocation
 class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     static let identifier = "GatheringThumbnailCollectionViewCell"
     
+    private var memberImages = [Int: UIImage]() {
+        didSet {
+            if memberImages.count == memberNumber {
+                for i in 0..<memberNumber {
+                    if let imageView = memberImagesStackView.arrangedSubviews[i] as? UIImageView {
+                        imageView.image = memberImages[i]
+                        imageView.layer.borderColor = UIColor.white.cgColor
+                    }
+                }
+            }
+        }
+    }
+    
+    private var memberNumber: Int = 0
+    
     private lazy var backView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -240,6 +255,14 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         backView.backgroundColor = .black.withAlphaComponent(0.1)
         lineView.isHidden = true
         blurView.isHidden = true
+        for i in 0..<6 {
+            if let imageView = memberImagesStackView.arrangedSubviews[i] as? UIImageView {
+                imageView.image = nil
+                imageView.layer.borderColor = UIColor.clear.cgColor
+            }
+        }
+        memberNumber = 0
+        memberImages.removeAll()
     }
     
     func forwardGeocoding(address: String, completion: @escaping (String, String) -> Void) {
@@ -262,22 +285,11 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     func configure(with board: Board) async {
         let memberImageUrls = board.profileImgUrls
         boardImageView.setImage(with: board.imageURL)
-        await withTaskGroup(of: (Void).self) { taskGroup in
-            for i in 0..<6 {
-                taskGroup.addTask {
-                    if let imageView = await self.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
-                        if i >= memberImageUrls.count {
-                            await MainActor.run {
-                                imageView.image = nil
-                                imageView.layer.borderColor = UIColor.clear.cgColor
-                            }
-                        } else {
-                            await imageView.setImage(with: memberImageUrls[i])
-                            await MainActor.run {
-                                imageView.layer.borderColor = UIColor.white.cgColor
-                            }
-                        }
-                    }
+        memberNumber = memberImageUrls.count
+        for i in 0..<memberImageUrls.count {
+            ImageManager.downloadImage(with: memberImageUrls[i]) { [weak self] (image) in
+                if let image = image {
+                    self?.memberImages[i] = image
                 }
             }
         }
@@ -285,10 +297,10 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
         guard let currentDate = Date().dateToStringUTC().stringToDate() else { return }
         let timeInterval = boardDate.timeIntervalSince(currentDate)
         let showToDate = boardDate.dateAndMonthFormatter()
-        if timeInterval < 0 {
-            blurView.isHidden = false
-        }
         await MainActor.run {
+            if timeInterval < 0 {
+                blurView.isHidden = false
+            }
             backView.backgroundColor = .black.withAlphaComponent(0.25)
             lineView.isHidden = false
             titleLabel.text = board.title

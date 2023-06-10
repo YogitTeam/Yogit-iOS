@@ -237,7 +237,7 @@ class SetProfileImagesViewController: UIViewController {
         
         if userImagesData.downloadImages.count != 0 {
             guard let imageString = userImagesData.downloadImages.first else { return }
-            ImageManager.shared.downloadImage(with: imageString) { (image) in
+            ImageManager.downloadImage(with: imageString) { (image) in
                 profileImage = image
             }
         } else if userImagesData.uploadImages.count != 0  {
@@ -414,7 +414,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         
         showImageLoading()
         
-        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
+        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
 
         var images = [UIImage?](repeating: nil, count: asstes.count)
         await withTaskGroup(of: Void.self, body: { taskGroup in
@@ -445,7 +445,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         imagePicker.settings.selection.max = 6 - userImagesData.downloadImages.count - userImagesData.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
+        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
         ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
             if Auth {
                 self?.presentImagePicker(imagePicker, select: { (asset) in
@@ -513,7 +513,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*1.5, height: self.view.frame.size.width*1.5))
+            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*2, height: self.view.frame.size.width*2))
             userImagesData.uploadImages.append(resizeImage)
         }
         DispatchQueue.main.async {

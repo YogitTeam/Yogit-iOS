@@ -15,7 +15,6 @@ import ProgressHUD
 class LoginViewController: UIViewController {
     
     private lazy var signInWithAppleButton: ASAuthorizationAppleIDButton = {
-        //        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: UITraitCollection.current.userInterfaceStyle == .dark ? .white : .black)
         let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .whiteOutline)
         button.addTarget(self, action: #selector(handleAuthorizationAppleIDButtonPress), for: .touchUpInside)
         return button
@@ -175,45 +174,6 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                     }
                 }
             }
-//            AlamofireManager.shared.session
-//                .request(SessionRouter.logInApple(parameters: logInApple))
-//                .validate(statusCode: 200..<501)
-//                .responseDecodable(of: APIResponse<UserItem>.self) { response in
-//                switch response.result {
-//                case .success:
-//                    if let value = response.value, value.httpCode == 200 || value.httpCode == 201, let data = value.data {
-//                        do {
-//                            // userStatus 정보 업데이트 (LOGIN)
-//                            // status만 업데이트
-//                            userItem.userStatus = data.userStatus
-//                            try KeychainManager.updateUserItem(userItem: userItem)
-//
-//                            DispatchQueue.main.async(qos: .userInteractive){ [self] in
-//                                if userItem.account.hasRequirementInfo {
-//                                    let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
-//                                    view.window?.rootViewController = rootVC
-//                                    view.window?.makeKeyAndVisible()
-//                                } else {
-//                                    let SPVC = SetProfileViewController()
-//                                    navigationController?.pushViewController(SPVC, animated: true)
-//                                }
-//                                ProgressHUD.dismiss()
-//                            }
-//                        } catch {
-//                            print("KeychainManager.updateUserItem \(error.localizedDescription)")
-//                        }
-//                    } else {
-//                        DispatchQueue.main.async {
-//                            ProgressHUD.dismiss()
-//                        }
-//                    }
-//                case let .failure(error):
-//                    print("LogInAppleReq", error)
-//                    DispatchQueue.main.async {
-//                        ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-//                    }
-//                }
-//            }
         } else {
             if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
                 let identifier = appleIDCredential.user // apple id
@@ -295,47 +255,3 @@ extension LoginViewController: ASAuthorizationControllerPresentationContextProvi
     }
 }
 
-//extension LoginViewController: SignUp {
-//    func signInWithApple(account: Account) {
-//        AlamofireManager.shared.session
-//            .request(SessionRouter.signUpApple(parameters: account))
-//            .validate(statusCode: 200..<501)
-//            .responseDecodable(of: APIResponse<UserItem>.self) { response in
-//            switch response.result {
-//            case .success:
-//                if let value = response.value, value.httpCode == 200 || value.httpCode == 201 {
-//                    guard let data = value.data else { return }
-//                    do {
-//                        // 신규 가입
-//                        do {
-//                            try KeychainManager.deleteUser(userType: UserSessionManager .Service.UserInit.APPLE)
-//                        } catch {
-//                            print("KeychainManager deleteUser error \(error.localizedDescription)")
-//                        }
-//
-//                        try KeychainManager.saveUserItem(userItem: data)
-//
-//                        DispatchQueue.main.async(qos: .userInteractive) {
-//                            let SPVC = SetProfileViewController()
-//                            self.navigationController?.pushViewController(SPVC, animated: true)
-//                            ProgressHUD.dismiss()
-//                        }
-//
-//                    } catch {
-//                        print("KeychainManager saveUserItem error \(error.localizedDescription)")
-//                    }
-//                } else {
-//                    DispatchQueue.main.async {
-//                        ProgressHUD.dismiss()
-//                    }
-//                }
-//            case let .failure(error):
-//                print("signUpApple", error)
-//                // 응답실패시 다시 요청해도 userItem 반환하게 해야된다.
-//                DispatchQueue.main.async {
-//                    ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-//                }
-//            }
-//        }
-//    }
-//}

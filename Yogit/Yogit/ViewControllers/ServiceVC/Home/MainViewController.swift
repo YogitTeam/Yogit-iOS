@@ -396,7 +396,6 @@ extension MainViewController: SkeletonCollectionViewDelegate {
                 for task in tasks {
                     task.cancel()
                 }
-                isPaging = true
                 DispatchQueue.main.async { [weak self] in
                     if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
                         self?.selectedCell = cell
@@ -404,6 +403,7 @@ extension MainViewController: SkeletonCollectionViewDelegate {
                 }
                 categoryId = indexPath.row + 1
                 resetBoardsData(categoryId: categoryId)
+                isPaging = true
                 pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
             }
         } else {

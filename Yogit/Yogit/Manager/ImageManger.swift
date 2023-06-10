@@ -14,7 +14,7 @@ import AVFoundation
 final class ImageManager {
     static let shared = ImageManager()
     
-    func downloadImage(with urlString: String, completion: @escaping (UIImage?) -> Void) {
+    static func downloadImage(with urlString: String, completion: @escaping (UIImage?) -> Void) {
         guard let url = URL(string: urlString) else { return completion(nil) }
         let resource = ImageResource(downloadURL: url)
         KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
