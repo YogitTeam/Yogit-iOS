@@ -44,9 +44,9 @@ class ServiceTabBarViewController: UITabBarController {
     }
     
     private func configureNotification() {
-//        if UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION) == nil { // 로그아웃, 계정삭제시만 디바이스 토큰 서버로 보냄
-//            registerForPushNotifications()
-//        }
+        if UserDefaults.standard.object(forKey: Preferences.PUSH_NOTIFICATION) == nil { // 로그아웃, 계정삭제시만 디바이스 토큰 서버로 보냄
+            registerForPushNotifications()
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(didBoardDetailNotification(_:)), name: .baordDetailRefresh, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didlMoveToVCNotification(_:)), name: .moveToNotiTabVC, object: nil)
     }
