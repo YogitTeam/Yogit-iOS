@@ -235,6 +235,34 @@ class MainViewController: UIViewController {
         }
     }
     
+    private func gatheringPagesInsertLogic(boards: GetBoardsByCategoryRes) async {
+        let totalPage = boards.totalPage
+        if gatheringPages.cursor < totalPage {
+            let getAllBoardResList = boards.getAllBoardResList
+            let getBoardCnt = getAllBoardResList.count
+            var stIdx = 0
+            if gatheringPages.boardsCnt > 0 {
+                // 동기화 이후 리스트 삭제/추가하면 중복되지 않게 검증 절차
+                // 서버의 마지막 인덱스값부터 -1씩 감소하며 기존 리스트의 마지막 인덱스 값과 일치하는지 검사
+                for idx in stride(from: getBoardCnt-1, through: 0, by: -1) {
+                    if gatheringPages.lastBoardId == getAllBoardResList[idx].boardID {
+                        stIdx = idx + 1 // 일치 한다면 다음 인덱스 부터 시작
+                        break
+                    }
+                }
+            }
+            for i in stIdx..<getBoardCnt {
+                gatheringPages.addBoard(board: getAllBoardResList[i])
+                await MainActor.run {
+                    gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringPages.boardsCnt-1, section: 0)])
+                }
+            }
+            if gatheringPages.boardsCnt%gatheringPages.modular == 0 {
+                gatheringPages.addCursor()
+            }
+        }
+    }
+    
     // cityNameEng가 default면 기존 api, 다르면 다른 api 요청
     private func fetchGatheringBoardsByCategory(category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
         let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
@@ -271,8 +299,6 @@ class MainViewController: UIViewController {
         }
     }
     
-    // category 1부터 시작
-
     private func pagingBoardsByCategory(categoryId: Int, isRefresh: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String,
               let userItem = try? KeychainManager.getUserItem(serviceType: identifier)
@@ -324,32 +350,9 @@ class MainViewController: UIViewController {
                     print("Before page load")
                    return
                 }
+
+                await gatheringPagesInsertLogic(boards: getData)
                 
-                let totalPage = getData.totalPage
-                if gatheringPages.cursor < totalPage {
-                    let getAllBoardResList = getData.getAllBoardResList
-                    let getBoardCnt = getAllBoardResList.count
-                    var stIdx = 0
-                    if gatheringPages.boardsCnt > 0 {
-                        // 동기화 이후 리스트 삭제/추가하면 중복되지 않게 검증 절차
-                        // 서버의 마지막 인덱스값부터 -1씩 감소하며 기존 리스트의 마지막 인덱스 값과 일치하는지 검사
-                        for idx in stride(from: getBoardCnt-1, through: 0, by: -1) {
-                            if gatheringPages.lastBoardId == getAllBoardResList[idx].boardID {
-                                stIdx = idx + 1 // 일치 한다면 다음 인덱스 부터 시작
-                                break
-                            }
-                        }
-                    }
-                    for i in stIdx..<getBoardCnt {
-                        gatheringPages.addBoard(board: getAllBoardResList[i])
-                        await MainActor.run {
-                            gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringPages.boardsCnt-1, section: 0)])
-                        }
-                    }
-                    if gatheringPages.boardsCnt%gatheringPages.modular == 0 {
-                        gatheringPages.addCursor()
-                    }
-                }
                 showGuideLabel(isInit: false)
             } catch {
                 print("fetchGatheringBoardsByCategory error \(error.localizedDescription)")
