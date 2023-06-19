@@ -11,13 +11,8 @@ import CoreLocation
 import SkeletonView
 
 class MainViewController: UIViewController {
-    private var gatheringBoards = [Board]()
-    private var pageCursor = 0
-    private var pageListCnt = 0
-    private var isPaging: Bool = false
-    private var isLoading: Bool = false
-    private let modular = 10
-    private var tasks = [Task<(), Never>]()
+    private var gatheringPages = GatheringPages()
+    
     private var categoryId: Int = 1
     
     private let defaulltCityName = "NATIONWIDE"
@@ -218,16 +213,26 @@ class MainViewController: UIViewController {
     }
     
     private func initAPICall() {
-        isPaging = true
-        pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
+        pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
     }
 
     // 카테고리 눌렀을때만 reloadData
     private func resetBoardsData(categoryId: Int) {
-        gatheringBoards.removeAll() //[categoryId-1].removeAll()
-        pageCursor = 0
-        pageListCnt = 0
+        gatheringPages.resetPage()
         gatheringBoardCollectionView.reloadData()
+    }
+    
+    @MainActor private func bottomLoading() {
+        let at = gatheringPages.boardsCnt == 0 ? 0 : gatheringPages.boardsCnt-1
+        gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+    }
+    
+    @MainActor private func showGuideLabel(isInit: Bool) {
+        if gatheringPages.boardsCnt == 0 && !isInit { // 초기값이 아니고
+            guideLabel.text = "GATHERING_BOARD_NONE_GUIDE_TITLE".localized()
+        } else {
+            guideLabel.text = ""
+        }
     }
     
     // cityNameEng가 default면 기존 api, 다르면 다른 api 요청
@@ -267,82 +272,91 @@ class MainViewController: UIViewController {
     }
     
     // category 1부터 시작
-    private func pagingBoardsByCategory(categoryId: Int, isFirstPage: Bool) {
-        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        guideLabel.text = ""
-        if isFirstPage {
+
+    private func pagingBoardsByCategory(categoryId: Int, isRefresh: Bool) {
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String,
+              let userItem = try? KeychainManager.getUserItem(serviceType: identifier)
+        else { return }
+        showGuideLabel(isInit: true)
+        gatheringPages.isPaging = true
+        gatheringPages.isLoading = false
+        if isRefresh {
             gatheringBoardCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
-        isLoading = false
         let task = Task {
             do {
-                
                 if Task.isCancelled {
                     print("Before api request")
                    return
                 }
                 
+                let startTime = DispatchTime.now().uptimeNanoseconds
+                
                 let getData: GetBoardsByCategoryRes
                 if defaulltCityName == cityNameLocalized {
-                    getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                    getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 } else {
-                    getData = try await fetchGatheringBoardsByCategoryCity(cityName: cityNameEng, category: categoryId, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                    getData = try await fetchGatheringBoardsByCategoryCity(cityName: cityNameEng, category: categoryId, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 }
-                
+        
                 if Task.isCancelled {
                     print("Before skeletion animation stop")
                    return
                 }
                 
-                if isFirstPage {
+                if isRefresh {
                     gatheringBoardCollectionView.stopSkeletonAnimation()
                     gatheringBoardCollectionView.hideSkeleton(reloadDataAfter: false)
                 } else {
-                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                    await MainActor.run {
-                        gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    let endTime = DispatchTime.now().uptimeNanoseconds
+                    let elapsedTime = endTime - startTime
+                    if elapsedTime <= 500_000_000 {
+                        do {
+                            try await Task.sleep(nanoseconds: 500_000_000 - elapsedTime)
+                        } catch {
+                            print("sleep nanoseconds error \(error.localizedDescription)") // Task 취소 되면 에러 발생
+                        }
                     }
-                }
-                
-                await MainActor.run {
-                    if getData.getAllBoardResList.count == 0 && gatheringBoards.count == 0 {
-                        guideLabel.text = "GATHERING_BOARD_NONE_GUIDE_TITLE".localized()
-                    } else {
-                        guideLabel.text = ""
-                    }
+                    bottomLoading()
                 }
                 
                 if Task.isCancelled {
-                    print("Before cell load")
+                    print("Before page load")
                    return
                 }
                 
                 let totalPage = getData.totalPage
-                if pageCursor < totalPage {
+                if gatheringPages.cursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
-                    if pageListCnt <= getBoardCnt {
-                        for i in pageListCnt..<getBoardCnt {
-                            if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
-                                break  // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
-                            }
-                            gatheringBoards.append(getAllBoardResList[i])
-                            await MainActor.run {
-                                gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                    var stIdx = 0
+                    if gatheringPages.boardsCnt > 0 {
+                        // 동기화 이후 리스트 삭제/추가하면 중복되지 않게 검증 절차
+                        // 서버의 마지막 인덱스값부터 -1씩 감소하며 기존 리스트의 마지막 인덱스 값과 일치하는지 검사
+                        for idx in stride(from: getBoardCnt-1, through: 0, by: -1) {
+                            if gatheringPages.lastBoardId == getAllBoardResList[idx].boardID {
+                                stIdx = idx + 1 // 일치 한다면 다음 인덱스 부터 시작
+                                break
                             }
                         }
                     }
-                    pageListCnt = getBoardCnt%modular
-                    if pageListCnt == 0 {
-                        pageCursor += 1
+                    for i in stIdx..<getBoardCnt {
+                        gatheringPages.addBoard(board: getAllBoardResList[i])
+                        await MainActor.run {
+                            gatheringBoardCollectionView.insertItems(at: [IndexPath(item: gatheringPages.boardsCnt-1, section: 0)])
+                        }
+                    }
+                    if gatheringPages.boardsCnt%gatheringPages.modular == 0 {
+                        gatheringPages.addCursor()
                     }
                 }
+                showGuideLabel(isInit: false)
             } catch {
                 print("fetchGatheringBoardsByCategory error \(error.localizedDescription)")
             }
-            isPaging = false
+            gatheringPages.isPaging = false
         }
-        tasks.append(task)
+        gatheringPages.addTask(task: task)
     }
     
     @objc private func searchCityNameButtonTapped(_ sender: UIButton) {
@@ -356,10 +370,9 @@ class MainViewController: UIViewController {
     }
     
     @objc private func refreshGatheringBoards() {
-        if !isPaging {
-            isPaging = true
+        if !gatheringPages.isPaging {
             resetBoardsData(categoryId: categoryId)
-            pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
+            pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
         }
         refreshControl.endRefreshing()
     }
@@ -375,14 +388,12 @@ class MainViewController: UIViewController {
 
 extension  MainViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView == gatheringBoardCollectionView && !isPaging {
+        if scrollView == gatheringBoardCollectionView && !gatheringPages.isPaging {
             if scrollView.contentOffset.y > 86 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
                 .height)) { // -500
-                isPaging = true
-                isLoading = true
-                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                gatheringBoardCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
-                pagingBoardsByCategory(categoryId: categoryId, isFirstPage: false)
+                gatheringPages.isLoading = true
+                bottomLoading()
+                pagingBoardsByCategory(categoryId: categoryId, isRefresh: false)
             }
         }
     }
@@ -393,9 +404,6 @@ extension MainViewController: SkeletonCollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == categoryImageViewCollectionView {
             if categoryId != indexPath.row + 1 {
-                for task in tasks {
-                    task.cancel()
-                }
                 DispatchQueue.main.async { [weak self] in
                     if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
                         self?.selectedCell = cell
@@ -403,12 +411,11 @@ extension MainViewController: SkeletonCollectionViewDelegate {
                 }
                 categoryId = indexPath.row + 1
                 resetBoardsData(categoryId: categoryId)
-                isPaging = true
-                pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
+                pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
             }
         } else {
             DispatchQueue.main.async { [weak self] in
-                let boardId = self?.gatheringBoards[indexPath.row].boardID
+                let boardId = self?.gatheringPages.getBoardId(idx: indexPath.row)
                 let GDBVC = GatheringDetailBoardViewController()
                 GDBVC.boardWithMode.boardId = boardId
                 self?.navigationController?.pushViewController(GDBVC, animated: true)
@@ -439,7 +446,7 @@ extension MainViewController: SkeletonCollectionViewDataSource {
         if collectionView == categoryImageViewCollectionView {
             return CategoryId.allCases.count
         } else {
-            return gatheringBoards.count
+            return gatheringPages.boardsCnt
         }
     }
 
@@ -452,7 +459,7 @@ extension MainViewController: SkeletonCollectionViewDataSource {
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
-            let data = gatheringBoards[indexPath.row]
+            let data = gatheringPages.boards[indexPath.row]
             Task {
                 await cell.configure(with: data)
             }
@@ -472,7 +479,7 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if collectionView == gatheringBoardCollectionView {
-            if isLoading {
+            if gatheringPages.isLoading {
                 return CGSize(width: collectionView.bounds.width, height: 50)
             }
         }
@@ -482,21 +489,19 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
 
 extension MainViewController: SearchCityNameProtocol {
     func cityNameSend(cityNameLocalized: String) {
-        isPaging = true
         self.cityNameLocalized = cityNameLocalized // localized 전 (defaultCityName포함)
         guard let button = searchCityNameButton.customView as? UIButton else { return }
-        DispatchQueue.main.async { [weak self] in
-            button.setTitle(cityNameLocalized.localized(), for: .normal) // localized 되서 보여준다.
-            self?.searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
-        }
+        button.setTitle(cityNameLocalized.localized(), for: .normal) // localized 되서 보여준다.
+        searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
         if defaulltCityName == self.cityNameLocalized {
             resetBoardsData(categoryId: categoryId)
-            pagingBoardsByCategory(categoryId: categoryId, isFirstPage: true)
+            pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
         } else {
             LocationManager.shared.cityNameGeocodingToServer(address: cityNameLocalized) { [weak self] (cityNameEng, countyCode) in
-                self?.cityNameEng = cityNameEng
-                self?.resetBoardsData(categoryId: self!.categoryId)
-                self?.pagingBoardsByCategory(categoryId: self!.categoryId, isFirstPage: true)
+                guard let self = self else { return }
+                self.cityNameEng = cityNameEng
+                self.resetBoardsData(categoryId: self.categoryId)
+                self.pagingBoardsByCategory(categoryId: self.categoryId, isRefresh: true)
             }
         }
     }

@@ -67,6 +67,28 @@ final class ImageManager {
         return image
     }
     
+
+    static func downloadImageWait(with urlString: String) async -> UIImage? {
+        guard let url = URL(string: urlString) else { return nil }
+        
+        let resource = ImageResource(downloadURL: url)
+        var image: UIImage?
+        
+        return await withCheckedContinuation { continuation in
+            KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
+                switch result {
+                case .success(let value):
+                    print("Success - Downloaded Image", value.image)
+                    image = value.image
+                    continuation.resume(returning: image)
+                case .failure(let error):
+                    print("Error - Downloaded Image:", error)
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
+    }
+    
     func requestPHPhotoLibraryAuthorization(completion: @escaping(Bool) -> Void) {
         if #available(iOS 14, *) {
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { authorizationStatus in

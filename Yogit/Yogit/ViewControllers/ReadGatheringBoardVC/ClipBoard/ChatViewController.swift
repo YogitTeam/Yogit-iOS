@@ -198,25 +198,6 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
         for: .highlighted)
     }
     
-    func createClipBoardData(boardData: CreateClipBoardReq) async throws -> GetAllClipBoardsRes {
-        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
-        let response = await dataTask.response
-        switch response.result {
-        case .success:
-            if let value = response.value, (value.httpCode == 200 || value.httpCode == 201), let data = value.data {
-                return data
-            } else {
-                throw CreateError.badResponse
-            }
-        case let .failure(error):
-            print("createClipBoardData error", error)
-            DispatchQueue.main.async {
-                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
-            }
-            throw CreateError.failureResponse
-        }
-    }
-    
     func textCell(for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> UICollectionViewCell? {
       nil
     }
@@ -340,6 +321,25 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
+    func createClipBoardData(boardData: CreateClipBoardReq) async throws -> GetAllClipBoardsRes {
+        let dataTask = AlamofireManager.shared.session.request(ClipBoardRouter.createBoard(parameters: boardData)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetAllClipBoardsRes>.self)
+        let response = await dataTask.response
+        switch response.result {
+        case .success:
+            if let value = response.value, (value.httpCode == 200 || value.httpCode == 201), let data = value.data {
+                return data
+            } else {
+                throw CreateError.badResponse
+            }
+        case let .failure(error):
+            print("createClipBoardData error", error)
+            DispatchQueue.main.async {
+                ProgressHUD.showFailed("NETWORKING_FAIL".localized())
+            }
+            throw CreateError.failureResponse
+        }
+    }
+    
     func fetchClipBoardData(getAllClipBoardsReq: GetAllClipBoardsReq) async throws -> ClipBoardResInfo {
         let dataTask = AlamofireManager.shared.session
             .request(ClipBoardRouter.readBoard(parameters: getAllClipBoardsReq))
@@ -359,19 +359,40 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         }
     }
     
-    func setProfileImage(senderId: String, profileImgURL: String) {
+    func setProfileImage(senderId: String, profileImgURL: String) async {
         if avatarImages[senderId] == nil { // 유저 프로필 이미지 딕션너리로 저장되어 있음
-            if profileImgURL.contains("null") {
+            if !profileImgURL.contains("null") {
+                // 유저 프로필 이미지 캐싱 (동기)
+//                let profileImage = ImageManager.downloadImageWait(with: profileImgURL)
+//                self.avatarImages[senderId] = profileImage
+                let profileImage = await ImageManager.downloadImageWait(with: profileImgURL)
+                avatarImages[senderId] = profileImage
+            } else {
                 // 탈퇴한 유저 이미지
                 self.avatarImages[senderId] = UIImage(named: "PROFILE_IMAGE_NULL")
-            } else {
-                // 유저 프로필 이미지 캐싱 (동기)
-                let profileImage = ImageManager.downloadImageWait(with: profileImgURL)
-                self.avatarImages[senderId] = profileImage
             }
         }
     }
-
+    
+    func setMessage(clipBoard: GetAllClipBoardsRes) async -> Message {
+        let sender = Sender(senderId: "\(clipBoard.userID)", displayName: clipBoard.userName ?? "UNKNOWN".localized())
+        await setProfileImage(senderId: sender.senderId, profileImgURL: clipBoard.profileImgURL)
+        let sendDate = clipBoard.createdAt.stringToDate()
+        let message = Message(sender: sender, messageId: "\(clipBoard.clipBoardID)", sentDate: sendDate, kind: .text(clipBoard.content))
+        return message
+    }
+    
+    func setUpPage(clipBoardListCount: Int) {
+        upPageListCount = clipBoardListCount%modular // 0 1 2
+        if upPageListCount == 0 {
+            upPageCusor += 1
+        }
+    }
+    
+    func setDownPage() {
+        downPageCursor -= 1
+    }
+    
     private func insertMessages(_ data: [Any]) {
         guard let boardId = self.boardId else { return }
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
@@ -390,16 +411,13 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                 if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함
                                     let clipBoardList = getData.getClipBoardResList
                                     var clipBoardListCount = clipBoardList.count
-                                    for i in upPageListCount..<clipBoardListCount { // 9  10
-                                        let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
-                                        setProfileImage(senderId: sender.senderId, profileImgURL: clipBoardList[i].profileImgURL)
-                                        guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
-                                        let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+                                    for i in upPageListCount..<clipBoardListCount {
+                                        let message = await setMessage(clipBoard: clipBoardList[i])
                                         await MainActor.run {
-                                            if i == upPageListCount {
-                                                insertFirst(message)
-                                            } else {
+                                            if i != upPageListCount {
                                                 insertMessage(message)
+                                            } else {
+                                                insertFirst(message)
                                             }
                                         }
                                         if createClipBoardRes.clipBoardID == clipBoardList[i].clipBoardID { // 보낸 메시지와 동일하면
@@ -407,10 +425,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                                             break
                                         }
                                     }
-                                    upPageListCount = clipBoardListCount%modular // 0 1 2
-                                    if upPageListCount == 0 {
-                                        upPageCusor += 1
-                                    }
+                                    setUpPage(clipBoardListCount: clipBoardListCount)
                                     let serviceMessage = Message(sender: service, messageId: "\(serviceMessageId)", sentDate: Date(), kind: .text(serviceNotice))
                                     await MainActor.run {
                                         insertMessage(serviceMessage)

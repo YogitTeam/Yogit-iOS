@@ -64,7 +64,7 @@ class ServiceTabBarViewController: UITabBarController {
         guard let boardDetail = notification.object as? BoardDetail else { return }
         DispatchQueue.main.async(qos: .userInteractive) {
             let GDBVC = GatheringDetailBoardViewController()
-            GDBVC.bindBoardDetail(data: boardDetail)
+            GDBVC.saveBoardDetail(data: boardDetail)
             GDBVC.boardWithMode.mode = .refresh
             self.navigationController?.pushViewController(GDBVC, animated: true)
         }

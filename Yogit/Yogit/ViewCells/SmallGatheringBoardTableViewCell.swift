@@ -459,7 +459,7 @@ class SmallGatheringBoardTableViewCell: UITableViewCell {
             titleLabel.text = board.title + "ㅇㄹㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴ"
             tagsLabel.text = "영어 초보자 환영, 편안한 모임, 영어 초보자 환영, 편안한 모임"
         }
-        dateLabel.text = board.date.stringToDate()?.dateToStringUser()
+        dateLabel.text = board.date.stringToDate().dateToStringUser()
         forwardGeocoding(address: board.cityName) { (locality, countryCodeName) in
             self.localityLabel.text = locality
         }

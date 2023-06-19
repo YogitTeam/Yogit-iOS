@@ -220,7 +220,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
         boardImageView.setImage(with: board.imageURL)
         hostImageView.setImage(with: board.profileImgUrls.first ?? "")
         titleLabel.text = board.title
-        dateLabel.text = board.date.stringToDate()?.dateToStringUser()
+        dateLabel.text = board.date.stringToDate().dateToStringUser()
         localityLabel.text = board.cityName
         memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
     }

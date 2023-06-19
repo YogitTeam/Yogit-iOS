@@ -248,17 +248,14 @@ extension ClipBoardViewController {
             let clipBoardListCount = clipBoardList.count
             var insertMessages: [Message] = []
             for i in 0..<clipBoardListCount { // 8
-                let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
-                setProfileImage(senderId: sender.senderId, profileImgURL: clipBoardList[i].profileImgURL)
-                guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
-                let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+                let message = await setMessage(clipBoard: clipBoardList[i])
                 insertMessages.append(message)
             }
             messages.insert(contentsOf: insertMessages, at: 0)
             await MainActor.run {
                 messagesCollectionView.reloadDataAndKeepOffset()
             }
-            downPageCursor -= 1
+            setDownPage()
         } catch {
             print("fetchClipBoardData error \(error.localizedDescription)")
         }
@@ -283,10 +280,7 @@ extension ClipBoardViewController {
                 let clipBoardList = getData.getClipBoardResList
                 let clipBoardListCount = clipBoardList.count
                 for i in upPageListCount..<clipBoardListCount { // 8
-                    let sender = Sender(senderId: "\(clipBoardList[i].userID)", displayName: clipBoardList[i].userName ?? "UNKNOWN".localized())
-                    setProfileImage(senderId: sender.senderId, profileImgURL: clipBoardList[i].profileImgURL)
-                    guard let sendDate = clipBoardList[i].createdAt.stringToDate() else { return }
-                    let message = Message(sender: sender, messageId: "\(clipBoardList[i].clipBoardID)", sentDate: sendDate, kind: .text(clipBoardList[i].content))
+                    let message = await setMessage(clipBoard: clipBoardList[i])
                     await MainActor.run {
                         if i != upPageListCount {
                             insertMessage(message)
@@ -302,10 +296,7 @@ extension ClipBoardViewController {
                         messagesCollectionView.scrollToLastItem()
                     }
                 }
-                upPageListCount = clipBoardListCount%modular
-                if upPageListCount == 0 {
-                    upPageCusor += 1
-                }
+                setUpPage(clipBoardListCount: clipBoardListCount)
             }
         } catch {
             print("fetchClipBoardData error \(error.localizedDescription)")

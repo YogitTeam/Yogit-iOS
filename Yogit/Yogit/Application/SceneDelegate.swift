@@ -17,6 +17,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
+//        let currentVC = GatheringBoardContentViewController()
+//        let rootVC = UINavigationController(rootViewController: currentVC)
+//        self.window = UIWindow(windowScene: scene)
+//        self.window?.rootViewController = rootVC
+//        self.window?.makeKeyAndVisible()
         
         UserSessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState // 루트뷰 상태
@@ -37,7 +42,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 let rootVC = UINavigationController(rootViewController: currentVC)
                 self.window = UIWindow(windowScene: scene)
                 self.window?.rootViewController = rootVC
-                self.window?.makeKeyAndVisible() 
+                self.window?.makeKeyAndVisible()
             }
         }
     }

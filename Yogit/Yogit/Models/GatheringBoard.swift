@@ -15,6 +15,50 @@ enum Mode {
     case refresh
 }
 
+struct GatheringPages {
+    let modular: Int = 10
+    var cursor: Int = 0
+    var boards: [Board] = []
+    var isPaging: Bool = false
+    var isLoading: Bool = false
+    var pagingTasks: [Task<(), Never>] = []
+    
+    var boardsCnt: Int {
+        return boards.count
+    }
+    
+    var lastBoardId: Int64 {
+        return boards[boardsCnt-1].boardID
+    }
+    
+    func getBoardId(idx: Int) -> Int64 {
+        return boards[idx].boardID
+    }
+    
+    mutating func addBoard(board: Board) {
+        boards.append(board)
+    }
+    
+    mutating func addCursor() {
+        if boardsCnt%modular == 0 {
+            cursor += 1
+        }
+    }
+    
+    mutating func addTask(task: Task<(), Never>) {
+        pagingTasks.append(task)
+    }
+    
+    mutating func resetPage() {
+        for pagingTask in pagingTasks {
+            pagingTask.cancel()
+        }
+        pagingTasks.removeAll()
+        cursor = 0
+        boards.removeAll()
+    }
+}
+
 struct BoardWithMode {
     var mode: Mode?
     var userIds: [Int64]?

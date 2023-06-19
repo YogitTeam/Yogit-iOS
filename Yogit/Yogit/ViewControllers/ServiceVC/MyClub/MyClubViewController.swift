@@ -17,27 +17,11 @@ enum MyClubType: String {
     }
 }
 
-private struct SmallGatheringPage {
-    var cursor: Int
-    var cursorList: Int
-    var boards: [Board]
-    
-    init(cursor: Int = 0, cursorList: Int = 0, boards: [Board] = []) {
-        self.cursor = cursor
-        self.cursorList = cursorList
-        self.boards = boards
-    }
-}
-
 class MyClubViewController: UIViewController {
-    private var tasks = [Task<(), Never>]()
-    private var gatheringBoards = [Board]()
-    private var pageCursor = 0
-    private var pageListCnt = 0
+    private var gatheringPages = GatheringPages()
+
     private var boardType: String = MyClubType.search.toString()
-    private var isPaging: Bool = false
-    private var isLoading: Bool = false
-    private let modular = 10
+
     private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
     
     private(set) lazy var refreshControl: UIRefreshControl = {
@@ -118,15 +102,13 @@ class MyClubViewController: UIViewController {
     }
     
     private func initAPICall() {
-        isPaging = true
-        pagingMyBoards(type: boardType, isFirstPage: true)
+        pagingMyBoards(type: boardType, isRefresh: true)
     }
     
     @objc private func refreshGatheringBoards() {
-        if !isPaging {
-            isPaging = true
+        if !gatheringPages.isPaging {
             resetBoardsData()
-            pagingMyBoards(type: boardType, isFirstPage: true)
+            pagingMyBoards(type: boardType, isRefresh: true)
         }
         refreshControl.endRefreshing()
     }
@@ -140,6 +122,11 @@ class MyClubViewController: UIViewController {
 //        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
 //        spacer.width = 15
 //        self.tabBarController?.navigationItem.rightBarButtonItems = [settingButton!, spacer, editButton!]
+    }
+    
+    @MainActor private func bottomLoading() {
+        let at = gatheringPages.boardsCnt == 0 ? 0 : gatheringPages.boardsCnt-1
+        myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
     }
     
     private func fetchGatheringMyBoards(type: String, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
@@ -159,13 +146,15 @@ class MyClubViewController: UIViewController {
         }
     }
     
-    private func pagingMyBoards(type: String, isFirstPage: Bool) {
-        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String else { return }
-        guard let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        if isFirstPage {
+    private func pagingMyBoards(type: String, isRefresh: Bool) {
+        guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String,
+              let userItem = try? KeychainManager.getUserItem(serviceType: identifier)
+        else { return }
+        gatheringPages.isPaging = true
+        gatheringPages.isLoading = false
+        if isRefresh {
             myBoardsCollectionView.showAnimatedGradientSkeleton(usingGradient: .init(colors: [.systemGray6, .systemGray5]), animation: skeletonAnimation, transition: .none)
         }
-        isLoading = false
         let task = Task {
             do {
                 
@@ -174,95 +163,92 @@ class MyClubViewController: UIViewController {
                    return
                 }
                 
-                let getData = try await fetchGatheringMyBoards(type: type, page: pageCursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                let startTime = DispatchTime.now().uptimeNanoseconds
                 
+                let getData = try await fetchGatheringMyBoards(type: type, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 
                 if Task.isCancelled {
                     print("Before skeletion animation stop")
                    return
                 }
                 
-                if isFirstPage {
+                if isRefresh {
                     myBoardsCollectionView.stopSkeletonAnimation()
                     myBoardsCollectionView.hideSkeleton(reloadDataAfter: false)
                 } else {
-                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                    await MainActor.run {
-                        myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
+                    let endTime = DispatchTime.now().uptimeNanoseconds
+                    let elapsedTime = endTime - startTime
+                    if elapsedTime <= 500_000_000 {
+                        do {
+                            try await Task.sleep(nanoseconds: 500_000_000 - elapsedTime)
+                        } catch {
+                            print("sleep nanoseconds error \(error.localizedDescription)") // Task 취소 되면 에러 발생
+                        }
                     }
-                }
-            
-                
-                if !isFirstPage {
-                    let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                    await MainActor.run {
-                        myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
-                    }
+                    bottomLoading()
                 }
                 
                 if Task.isCancelled {
-                    print("Before cell update")
+                    print("Before page loading")
                    return
                 }
                 
                 let totalPage = getData.totalPage
-                if pageCursor < totalPage {
+                if gatheringPages.cursor < totalPage {
                     let getAllBoardResList = getData.getAllBoardResList
                     let getBoardCnt = getAllBoardResList.count
-                    if pageListCnt <= getBoardCnt {
-                        for i in pageListCnt..<getBoardCnt {
-                            if gatheringBoards.count > 0 && getAllBoardResList[i].boardID == gatheringBoards[gatheringBoards.count-1].boardID {
-                                break // 최신 데이터가 추가되면 데이터가 뒤로 밀려날 경우에, 같은 보드 데이터는 jump
-                            }
-                            gatheringBoards.append(getAllBoardResList[i])
-                            await MainActor.run {
-                                myBoardsCollectionView.insertItems(at: [IndexPath(item: gatheringBoards.count-1, section: 0)])
+                    var stIdx = 0
+                    if gatheringPages.boardsCnt > 0 {
+                        // 동기화 이후 리스트 삭제/추가하면 중복되지 않게 검증 절차
+                        // 서버의 마지막 인덱스값부터 -1씩 감소하며 기존 리스트의 마지막 인덱스 값과 일치하는지 검사
+                        for idx in stride(from: getBoardCnt-1, through: 0, by: -1) {
+                            if gatheringPages.lastBoardId == getAllBoardResList[idx].boardID {
+                                stIdx = idx + 1 // 일치한다면 다음 인덱스 부터 시작
+                                break
                             }
                         }
                     }
-                    pageListCnt = getBoardCnt%modular
-                    if pageListCnt == 0 {
-                        pageCursor += 1
+                    for i in stIdx..<getBoardCnt {
+                        gatheringPages.addBoard(board: getAllBoardResList[i])
+                        await MainActor.run {
+                            myBoardsCollectionView.insertItems(at: [IndexPath(item: gatheringPages.boardsCnt-1, section: 0)])
+                        }
                     }
+                    gatheringPages.addCursor()
                 }
+                
             } catch {
                 print("fetchGatheringMyBoards error \(error.localizedDescription)")
             }
-            isPaging = false
+            gatheringPages.isPaging = false
         }
-        tasks.append(task)
+        gatheringPages.addTask(task: task)
     }
     
     private func resetBoardsData() {
-        gatheringBoards.removeAll() //[categoryId-1].removeAll()
-        pageCursor = 0
-        pageListCnt = 0
+        gatheringPages.resetPage()
         myBoardsCollectionView.reloadData()
     }
     
     @objc private func didChangeValue(_ sender: UISegmentedControl) {
-        for task in tasks {
-            task.cancel()
-        }
-        isPaging = true
         resetBoardsData()
         if sender.selectedSegmentIndex == 0 {
             boardType = MyClubType.search.toString() // 조회 모임
         } else {
             boardType = MyClubType.create.toString() // 생성 모임
         }
-        pagingMyBoards(type: boardType, isFirstPage: true)
+        pagingMyBoards(type: boardType, isRefresh: true)
      }
 }
 
 extension MyClubViewController: SkeletonCollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        let boardId = gatheringBoards[indexPath.row].boardID
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            let boardId = self?.gatheringPages.getBoardId(idx: indexPath.row)
             let GDBVC = GatheringDetailBoardViewController()
             GDBVC.boardWithMode.boardId = boardId
-            self.navigationController?.pushViewController(GDBVC, animated: true)
+            self?.navigationController?.pushViewController(GDBVC, animated: true)
         }
     }
 }
@@ -287,12 +273,12 @@ extension MyClubViewController: SkeletonCollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return gatheringBoards.count
+        return gatheringPages.boardsCnt
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GatheringBoardThumbnailCollectionViewCell.identifier, for: indexPath) as? GatheringBoardThumbnailCollectionViewCell else { return UICollectionViewCell() }
-        let data = gatheringBoards[indexPath.row]
+        let data = gatheringPages.boards[indexPath.row]
         Task {
             await cell.configure(with: data)
         }
@@ -306,7 +292,7 @@ extension MyClubViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        if isLoading {
+        if gatheringPages.isLoading {
             return CGSize(width: collectionView.bounds.width, height: 50)
         }
         return CGSize.zero
@@ -320,14 +306,12 @@ extension  MyClubViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         // scrollView.contentOffset.y > 80 &&
-        if !isPaging {
+        if !gatheringPages.isPaging {
             if scrollView.contentOffset.y > 80 && (scrollView.contentOffset.y > (scrollView.contentSize.height-scrollView.frame.size
                 .height)) { // -500
-                isPaging = true
-                isLoading = true
-                let at = gatheringBoards.count == 0 ? 0 : gatheringBoards.count-1
-                myBoardsCollectionView.reloadItems(at: [IndexPath(item: at, section: 0)])
-                pagingMyBoards(type: boardType, isFirstPage: false)
+                gatheringPages.isLoading = true
+                bottomLoading()
+                pagingMyBoards(type: boardType, isRefresh: false)
             }
         }
     }

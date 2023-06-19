@@ -711,7 +711,7 @@ class GatheringDetailBoardViewController: UIViewController {
     private func setViewWithMode(mode: Mode?) {
         if mode == .refresh {
             DispatchQueue.main.async(qos: .userInteractive, execute: { [self] in
-                viewBinding(data: boardWithMode)
+                updateView(data: boardWithMode)
             })
         } else {
             getBoardDetail(state: .none)
@@ -1096,7 +1096,7 @@ class GatheringDetailBoardViewController: UIViewController {
         }
     }
 
-    func bindBoardDetail(data: BoardDetail) {
+    func saveBoardDetail(data: BoardDetail) {
         // boardDetail로 화면 뿌려줌 & boardWithMode 저장
         boardWithMode.userIds = data.userIds
         boardWithMode.hostId = data.hostId // hostId로 신고 설정
@@ -1123,7 +1123,7 @@ class GatheringDetailBoardViewController: UIViewController {
     }
     
     // textview 업데이트 안됨
-    func viewBinding(data: BoardWithMode) {
+    func updateView(data: BoardWithMode) {
         guard let userIds = data.userIds else { return }
         self.userIds = userIds
         boardImages = data.downloadImages
@@ -1138,17 +1138,18 @@ class GatheringDetailBoardViewController: UIViewController {
             }
         }
 
+        configureSerialCachingImagesScrollView()
+        
 //        Task.detached(priority: .high) { [weak self] in
 //            await self?.configureParallelCachingImageScrollView()
 //        }
-        configureSerialCachingImagesScrollView()
         
         introductionContentTextView.text = data.introduction
         kindOfPersonContentTextView.text = data.kindOfPerson
         
         placeBoardInfoView.infoLabel.text = data.address
         placeBoardInfoView.subInfoLabel.text = data.addressDetail
-        dateBoardInfoView.infoLabel.text = data.date?.stringToDate()?.dateToStringUser() //?.dateToString()
+        dateBoardInfoView.infoLabel.text = data.date?.stringToDate().dateToStringUser() //?.dateToString()
         
         moveLocation(latitudeValue: data.latitude!, longtudeValue: data.longitute!, delta: 0.01)
         setAnnotation(latitudeValue: data.latitude!, longitudeValue: data.longitute!, delta: 0.01, title: "", subtitle: data.address!)
@@ -1177,7 +1178,7 @@ class GatheringDetailBoardViewController: UIViewController {
         clipBoardButton.isHidden = !joinBoardButton.isHidden
         
         guard let boardDate = data.date?.stringToDate() else { return }
-        guard let currentDate = Date().dateToStringUTC().stringToDate() else { return }
+        let currentDate = Date().dateToStringUTC().stringToDate()
         let timeInterval = boardDate.timeIntervalSince(currentDate)
         
         if timeInterval < 0 { // 날짜 지남
@@ -1215,7 +1216,7 @@ class GatheringDetailBoardViewController: UIViewController {
         
         view.layoutIfNeeded()
         view.stopSkeletonAnimation()
-        view.hideSkeleton(reloadDataAfter: true)
+        view.hideSkeleton(reloadDataAfter: false)
         
         rightButton.isHidden = false
         memberLabel.text = "MEMBER".localized() + "(\(data.currentMember ?? 0)/\(data.totalMember ?? 1))"
@@ -1249,11 +1250,12 @@ class GatheringDetailBoardViewController: UIViewController {
                 if value.httpCode == 200 || value.httpCode == 201,
                     let data = value.data, data.status == Status.active.rawValue {
                     DispatchQueue.global().async(qos: .userInitiated) { [weak self] in
-                        self?.bindBoardDetail(data: data)
-                        DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
-                            if state == .join { self?.joinedBulletinManager.showBulletin(above: self!) }
-                            else if state == .withdrawl { self?.withDrawedBulletinManager.showBulletin(above: self!) }
-                            self?.viewBinding(data: self!.boardWithMode)
+                        guard let self = self else { return }
+                        self.saveBoardDetail(data: data)
+                        DispatchQueue.main.async(qos: .userInteractive) { 
+                            if state == .join { self.joinedBulletinManager.showBulletin(above: self) }
+                            else if state == .withdrawl { self.withDrawedBulletinManager.showBulletin(above: self) }
+                            self.updateView(data: self.boardWithMode)
                         }
                     }
                 } else if value.httpCode == 400, let message = value.message, message.contains("보드 인원") { // 멤버수 증가에 따른 에러 처리 (httpCode:400, message: 보드 인원이 다 찼습니다.)
@@ -1265,9 +1267,10 @@ class GatheringDetailBoardViewController: UIViewController {
                     }
                     if let data = value.data {
                         DispatchQueue.global().async(qos: .userInitiated) { [weak self] in
-                            self?.bindBoardDetail(data: data)
-                            DispatchQueue.main.async(qos: .userInteractive) { [weak self] in
-                                self?.viewBinding(data: self!.boardWithMode)
+                            guard let self = self else { return }
+                            self.saveBoardDetail(data: data)
+                            DispatchQueue.main.async(qos: .userInteractive) {
+                                self.updateView(data: self.boardWithMode)
                             }
                         }
                     }

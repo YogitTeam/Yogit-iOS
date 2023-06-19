@@ -431,42 +431,42 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         }
     }
     
-    private func convertAssetsToImagesConcurrency(asstes: [PHAsset]) async -> [UIImage] {
-        
-        let imageManager = PHImageManager.default()
-        let option = PHImageRequestOptions()
-        option.deliveryMode = .highQualityFormat
-        option.resizeMode = .exact
-        option.isSynchronous = true
-        option.isNetworkAccessAllowed = true
-        
-        showImageLoading()
-        
-        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
-
-        var images = [UIImage?](repeating: nil, count: asstes.count)
-        await withTaskGroup(of: Void.self, body: { taskGroup in
-            for i in 0..<asstes.count {
-                taskGroup.addTask { [i] in
-                    imageManager.requestImage(for: asstes[i],
-                                              targetSize: newSize,
-                                              contentMode: .aspectFit,
-                                              options: option) { (result, info) in
-                        if let image = result {
-                            DispatchQueue.main.sync {
-                                images[i] = image
-                            }
-                        }
-                    }
-                }
-            }
-        })
-        let orderedImages = images.compactMap { $0 } // nil을 제거하고 순서를 보장한 배열을 생성
-        
-        dismissImageLoading()
-        
-        return orderedImages
-    }
+//    private func convertAssetsToImagesConcurrency(asstes: [PHAsset]) async -> [UIImage] {
+//
+//        let imageManager = PHImageManager.default()
+//        let option = PHImageRequestOptions()
+//        option.deliveryMode = .highQualityFormat
+//        option.resizeMode = .exact
+//        option.isSynchronous = true
+//        option.isNetworkAccessAllowed = true
+//
+//        showImageLoading()
+//
+//        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
+//
+//        var images = [UIImage?](repeating: nil, count: asstes.count)
+//        await withTaskGroup(of: Void.self, body: { taskGroup in
+//            for i in 0..<asstes.count {
+//                taskGroup.addTask { [i] in
+//                    imageManager.requestImage(for: asstes[i],
+//                                              targetSize: newSize,
+//                                              contentMode: .aspectFit,
+//                                              options: option) { (result, info) in
+//                        if let image = result {
+//                            DispatchQueue.main.sync {
+//                                images[i] = image
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        })
+//        let orderedImages = images.compactMap { $0 } // nil을 제거하고 순서를 보장한 배열을 생성
+//
+//        dismissImageLoading()
+//
+//        return orderedImages
+//    }
     
     private func convertAssetsToImages(asstes: [PHAsset], resize: CGSize) -> [UIImage] {
         var images = [UIImage]()
@@ -539,7 +539,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         imagePicker.settings.selection.max = 5 - boardWithMode.downloadImages.count - boardWithMode.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
+        let targetSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.width*1.5)
         ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
             if Auth {
                 self?.presentImagePicker(imagePicker, select: { (asset) in
@@ -551,7 +551,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                 }, finish: { (assets) in
                     self?.isDownloading = true
                     DispatchQueue.global(qos: .background).async { [weak self] in
-                        guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: newSize) else { return }
+                        guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: targetSize) else { return }
                         DispatchQueue.main.async {
                             self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
                             self?.imagesCollectionView.reloadData()
@@ -598,7 +598,10 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*2, height: self.view.frame.size.width*2))
+            print("이미지 원본", image.toFile(format: .jpeg(1.0)))
+            let targetSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.width*1.5)
+            let resizeImage = image.resize(targetSize: targetSize)
+            print("이미지 원본2", resizeImage.toFile(format:.jpeg(0.7)))
             boardWithMode.uploadImages.append(resizeImage)
         }
         DispatchQueue.main.async {

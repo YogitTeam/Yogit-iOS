@@ -368,7 +368,7 @@ class GatheringBoardOptionViewController: UIViewController, UIScrollViewDelegate
         if mode != .edit { return }
         guard let memberNumber = boardWithMode.totalMember else { return }
         memberTextField.text = String(memberNumber)
-        dateTextField.text = boardWithMode.date?.stringToDate()?.dateToStringUser()
+        dateTextField.text = boardWithMode.date?.stringToDate().dateToStringUser()
         placeTextField.text = boardWithMode.address
         if boardWithMode.address != nil {
             placeDetailTextField.text = boardWithMode.addressDetail

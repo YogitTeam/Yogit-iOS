@@ -137,7 +137,7 @@ class PushNotificationTableViewCell: UITableViewCell {
     }
     
     func configure(data: PushNotification) {
-        guard let date = data.time.stringToDate() else { return }
+        let date = data.time.stringToDate() 
         let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date, to: Date())
         // DateComponentsFormatter를 사용하여 상대적인 시간 표현을 생성
         let formatter = DateComponentsFormatter()

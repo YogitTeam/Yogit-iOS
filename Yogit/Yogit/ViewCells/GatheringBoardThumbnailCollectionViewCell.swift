@@ -293,8 +293,8 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
-        guard let boardDate = board.date.stringToDate() else { return }
-        guard let currentDate = Date().dateToStringUTC().stringToDate() else { return }
+        let boardDate = board.date.stringToDate()
+        let currentDate = Date().dateToStringUTC().stringToDate() 
         let timeInterval = boardDate.timeIntervalSince(currentDate)
         let showToDate = boardDate.dateAndMonthFormatter()
         await MainActor.run {

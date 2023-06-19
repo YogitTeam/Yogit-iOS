@@ -404,48 +404,48 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
         }
     }
     
-    private func convertAssetsToImages(asstes: [PHAsset]) async -> [UIImage] {
-        let imageManager = PHImageManager.default()
-        let option = PHImageRequestOptions()
-        option.deliveryMode = .highQualityFormat
-        option.resizeMode = .exact
-        option.isSynchronous = true
-        option.isNetworkAccessAllowed = true
-        
-        showImageLoading()
-        
-        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
-
-        var images = [UIImage?](repeating: nil, count: asstes.count)
-        await withTaskGroup(of: Void.self, body: { taskGroup in
-            for i in 0..<asstes.count {
-                taskGroup.addTask { [i] in
-                    imageManager.requestImage(for: asstes[i],
-                                              targetSize: newSize,
-                                              contentMode: .aspectFit,
-                                              options: option) { (result, info) in
-                        if let image = result {
-                            DispatchQueue.main.sync {
-                                images[i] = image
-                            }
-                        }
-                    }
-                }
-            }
-        })
-        let orderedImages = images.compactMap { $0 } // nil을 제거하고 순서를 보장한 배열을 생성
-        
-        dismissImageLoading()
-        
-        return orderedImages
-    }
+//    private func convertAssetsToImages(asstes: [PHAsset]) async -> [UIImage] {
+//        let imageManager = PHImageManager.default()
+//        let option = PHImageRequestOptions()
+//        option.deliveryMode = .highQualityFormat
+//        option.resizeMode = .exact
+//        option.isSynchronous = true
+//        option.isNetworkAccessAllowed = true
+//
+//        showImageLoading()
+//
+//        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
+//
+//        var images = [UIImage?](repeating: nil, count: asstes.count)
+//        await withTaskGroup(of: Void.self, body: { taskGroup in
+//            for i in 0..<asstes.count {
+//                taskGroup.addTask { [i] in
+//                    imageManager.requestImage(for: asstes[i],
+//                                              targetSize: newSize,
+//                                              contentMode: .aspectFit,
+//                                              options: option) { (result, info) in
+//                        if let image = result {
+//                            DispatchQueue.main.sync {
+//                                images[i] = image
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        })
+//        let orderedImages = images.compactMap { $0 } // nil을 제거하고 순서를 보장한 배열을 생성
+//
+//        dismissImageLoading()
+//
+//        return orderedImages
+//    }
     
     private func openLibrary() {
         let imagePicker = ImagePickerController()
         imagePicker.settings.selection.max = 6 - userImagesData.downloadImages.count - userImagesData.uploadImages.count
         imagePicker.settings.theme.selectionStyle = .numbered
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
-        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
+        let newSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.height*1.5)
         ImageManager.shared.requestPHPhotoLibraryAuthorization { [weak self] (Auth) in
             if Auth {
                 self?.presentImagePicker(imagePicker, select: { (asset) in
@@ -513,7 +513,7 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*2, height: self.view.frame.size.width*2))
+            let resizeImage = image.resize(targetSize: CGSize(width: self.view.frame.size.width*1.5, height: self.view.frame.size.width*1.5))
             userImagesData.uploadImages.append(resizeImage)
         }
         DispatchQueue.main.async {
