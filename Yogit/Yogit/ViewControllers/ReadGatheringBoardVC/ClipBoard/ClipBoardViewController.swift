@@ -241,7 +241,6 @@ extension ClipBoardViewController: MessagesLayoutDelegate {
 extension ClipBoardViewController {
     
     func loadClipBoardTop(userId: Int64, refreshToken: String, boardId: Int64) async {
-        isPaging = true
         do {
             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: downPageCursor, refreshToken: refreshToken, userId: userId)
             let getData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
@@ -264,24 +263,21 @@ extension ClipBoardViewController {
     }
     
     func loadClipBoardBottom(isInit: Bool,userId: Int64, refreshToken: String, boardId: Int64) async {
-        isPaging = true
         isLoading = false
         let startTime = DispatchTime.now().uptimeNanoseconds
         do {
             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: refreshToken, userId: userId)
             let getData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
-            // 네트워크 속도가 빠른경우에, 로딩화면 렌더링 시간이 거의 없음
-            // 만약 0.5초 이내이면 지연하고 실행해야함
             let endTime = DispatchTime.now().uptimeNanoseconds
             let elapsedTime = endTime - startTime
             if elapsedTime <= 500_000_000 && !isInit {
                 try await Task.sleep(nanoseconds: 500_000_000 - elapsedTime)
             }
             let totalPage = getData.totalPage
-            if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함
+            if upPageCusor < totalPage {
                 let clipBoardList = getData.getClipBoardResList
                 let clipBoardListCount = clipBoardList.count
-                for i in upPageListCount..<clipBoardListCount { // 8
+                for i in upPageListCount..<clipBoardListCount {
                     let message = await setMessage(clipBoard: clipBoardList[i])
                     await MainActor.run {
                         if i != upPageListCount {
@@ -349,6 +345,7 @@ extension ClipBoardViewController {
                       let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
                       let boardId = self.boardId
                 else { return }
+                isPaging = true
                 Task(priority: .low) {
                     await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
                 }
@@ -366,6 +363,7 @@ extension ClipBoardViewController {
                       let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
                       let boardId = self.boardId
                 else { return }
+                isPaging = true
                 isLoading = true
                 messagesCollectionView.reloadSections([messages.count-1])
                 Task(priority: .medium) {

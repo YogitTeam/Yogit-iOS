@@ -302,6 +302,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                     self.present(alert, animated: false, completion: nil)
                 }
             } else {
+                isPaging = true
                 let attributedText = inputBar.inputTextView.attributedText!
                 let range = NSRange(location: 0, length: attributedText.length)
                 attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
@@ -395,7 +396,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     private func insertMessages(_ data: [Any]) {
         guard let boardId = self.boardId else { return }
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
-        isPaging = true
         for component in data {
             Task(priority: .high) {
                 if let str = component as? String {
@@ -404,8 +404,8 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                         let createClipBoardRes = try await createClipBoardData(boardData: createClipBoardReq) // 등록
                         var totalPage = 0
                         repeat {
-                            let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
                             do {
+                                let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: upPageCusor, refreshToken: userItem.refresh_token, userId: userItem.userId)
                                 let getData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
                                 totalPage = getData.totalPage
                                 if upPageCusor < totalPage { // 현재페이지 토탈페이지-1 이고 개수 10보다 작으면 막아야함

@@ -20,13 +20,13 @@ class MainViewController: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 oldValue?.imageView.tintColor = .label
                 oldValue?.titleLabel.textColor = .label
-                oldValue?.backView.backgroundColor = .systemGray6 //.systemBackground
+                oldValue?.backView.backgroundColor = .systemGray6
                 oldValue?.backView.layer.borderWidth = 1
                 oldValue?.backView.layer.borderColor = UIColor.systemGray6.cgColor
                 
-                self?.selectedCell?.imageView.tintColor = ServiceColor.primaryColor//.label//UIColor(rgb: 0x3232FF, alpha: 1.0) //.white // .white
-                self?.selectedCell?.titleLabel.textColor = ServiceColor.primaryColor //.label//UIColor(rgb: 0x3232FF, alpha: 1.0)
-                self?.selectedCell?.backView.backgroundColor = .systemGray6//UIColor(rgb: 0xEFEFEF, alpha: 1.0) // .withAlphaComponent(0.8)
+                self?.selectedCell?.imageView.tintColor = ServiceColor.primaryColor
+                self?.selectedCell?.titleLabel.textColor = ServiceColor.primaryColor
+                self?.selectedCell?.backView.backgroundColor = .systemGray6
                 self?.selectedCell?.backView.layer.borderWidth = 1
                 self?.selectedCell?.backView.layer.borderColor = ServiceColor.primaryColor.cgColor
             }
@@ -401,7 +401,7 @@ extension MainViewController: SkeletonCollectionViewDelegate {
                     }
                 }
                 gatheringPages.categoryId = indexPath.row + 1
-                resetBoardsData()
+                resetBoardsData() // page reset logic
                 pagingBoardsByCategory(categoryId: gatheringPages.categoryId, cityName: gatheringPages.cityNameToServer, isRefresh: true)
             }
         } else {

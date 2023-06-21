@@ -313,7 +313,6 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
     }
     
     private func renderingProfileImages() {
-        let startTime = DispatchTime.now().uptimeNanoseconds
         Task {
             await withTaskGroup(of: (Void).self) { taskGroup in
                 for i in 0..<memberNumber {
@@ -327,9 +326,6 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
                         }
                     }
                 }
-                let endTime = DispatchTime.now().uptimeNanoseconds
-                let elapsedTime = endTime - startTime
-                print("렌더링 시간", elapsedTime)
             }
         }
     }
