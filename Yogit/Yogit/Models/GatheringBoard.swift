@@ -17,11 +17,17 @@ enum Mode {
 
 struct GatheringPages {
     let modular: Int = 10
+    var cityNameLocalized: String = ServiceCountry.defaulltCityName
+    var cityNameToServer: String? = nil
     var cursor: Int = 0
+    var categoryId: Int = 1
     var boards: [Board] = []
     var isPaging: Bool = false
     var isLoading: Bool = false
     var pagingTasks: [Task<(), Never>] = []
+    var isDefaultCity: Bool {
+        return cityNameLocalized == ServiceCountry.defaulltCityName
+    }
     
     var boardsCnt: Int {
         return boards.count
@@ -33,6 +39,10 @@ struct GatheringPages {
     
     func getBoardId(idx: Int) -> Int64 {
         return boards[idx].boardID
+    }
+    
+    mutating func changeCategoryId(id: Int) {
+        categoryId = id
     }
     
     mutating func addBoard(board: Board) {

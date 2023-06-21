@@ -311,5 +311,27 @@ class GatheringBoardThumbnailCollectionViewCell: UICollectionViewCell {
             memberNumberLabel.text = "\(board.currentMember)/\(board.totalMember)"
         }
     }
+    
+    private func renderingProfileImages() {
+        let startTime = DispatchTime.now().uptimeNanoseconds
+        Task {
+            await withTaskGroup(of: (Void).self) { taskGroup in
+                for i in 0..<memberNumber {
+                    taskGroup.addTask { [weak self] in
+                        if let imageView = await self?.memberImagesStackView.arrangedSubviews[i] as? UIImageView {
+                            let image = await self?.memberImages[i]
+                            await MainActor.run {
+                                imageView.image = image
+                                imageView.layer.borderColor = UIColor.white.cgColor
+                            }
+                        }
+                    }
+                }
+                let endTime = DispatchTime.now().uptimeNanoseconds
+                let elapsedTime = endTime - startTime
+                print("렌더링 시간", elapsedTime)
+            }
+        }
+    }
 }
               

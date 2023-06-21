@@ -302,7 +302,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                     self.present(alert, animated: false, completion: nil)
                 }
             } else {
-                isPaging = true
                 let attributedText = inputBar.inputTextView.attributedText!
                 let range = NSRange(location: 0, length: attributedText.length)
                 attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
@@ -396,6 +395,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     private func insertMessages(_ data: [Any]) {
         guard let boardId = self.boardId else { return }
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String, let userItem = try? KeychainManager.getUserItem(serviceType: identifier) else { return }
+        isPaging = true
         for component in data {
             Task(priority: .high) {
                 if let str = component as? String {

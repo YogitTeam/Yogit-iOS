@@ -25,7 +25,7 @@ class SearchCityNameViewController: UIViewController {
     weak var delegate: SearchCityNameProtocol?
     
     private let setCountryCode = LocationManager.shared.getSavedCountryCode()
-    private let defaultCityName = "NATIONWIDE"
+    private let defaultCityName = ServiceCountry.defaulltCityName
     private lazy var cities: [String] = [defaultCityName]
     private var searchRunTimeInterval: TimeInterval? // 마지막 작업을 설정할 시간
     private let searchTimer: Selector = #selector(Search_Tick_TimeConsole) // search 확인 타이머

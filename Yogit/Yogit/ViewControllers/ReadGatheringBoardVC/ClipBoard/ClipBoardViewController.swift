@@ -241,6 +241,7 @@ extension ClipBoardViewController: MessagesLayoutDelegate {
 extension ClipBoardViewController {
     
     func loadClipBoardTop(userId: Int64, refreshToken: String, boardId: Int64) async {
+        isPaging = true
         do {
             let getAllClipBoardsReq = GetAllClipBoardsReq(boardId: boardId, cursor: downPageCursor, refreshToken: refreshToken, userId: userId)
             let getData = try await fetchClipBoardData(getAllClipBoardsReq: getAllClipBoardsReq)
@@ -263,6 +264,7 @@ extension ClipBoardViewController {
     }
     
     func loadClipBoardBottom(isInit: Bool,userId: Int64, refreshToken: String, boardId: Int64) async {
+        isPaging = true
         isLoading = false
         let startTime = DispatchTime.now().uptimeNanoseconds
         do {
@@ -347,7 +349,6 @@ extension ClipBoardViewController {
                       let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
                       let boardId = self.boardId
                 else { return }
-                isPaging = true
                 Task(priority: .low) {
                     await loadClipBoardTop(userId: userItem.userId, refreshToken: userItem.refresh_token, boardId: boardId)
                 }
@@ -365,7 +366,6 @@ extension ClipBoardViewController {
                       let userItem = try? KeychainManager.getUserItem(serviceType: identifier),
                       let boardId = self.boardId
                 else { return }
-                isPaging = true
                 isLoading = true
                 messagesCollectionView.reloadSections([messages.count-1])
                 Task(priority: .medium) {

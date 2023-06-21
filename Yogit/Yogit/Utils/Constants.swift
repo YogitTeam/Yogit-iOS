@@ -52,6 +52,7 @@ enum UserAuthorizationLocation {
 
 enum ServiceCountry: String {
     static let identifier = "SetCountryIdentifier"
+    static let defaulltCityName: String = "NATIONWIDE"
     
     case kr = "KR"
 }

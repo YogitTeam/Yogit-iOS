@@ -13,17 +13,6 @@ import SkeletonView
 class MainViewController: UIViewController {
     private var gatheringPages = GatheringPages()
     
-    private var categoryId: Int = 1
-    
-    private let defaulltCityName = "NATIONWIDE"
-    
-    // to user
-    private lazy var cityNameLocalized: String = defaulltCityName
-    
-    // to server
-    private var cityNameEng: String = ""
-    
-    
     private let skeletonAnimation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topBottom)
     
     private var selectedCell: CategoryImageViewCollectionViewCell? {
@@ -103,7 +92,7 @@ class MainViewController: UIViewController {
     }()
     
     private lazy var searchCityNameButton: UIBarButtonItem = {
-        let buttonTitle = cityNameLocalized.localized()
+        let buttonTitle = ServiceCountry.defaulltCityName.localized()
         let buttonImage = UIImage(systemName: "chevron.down")?.withTintColor(.label, renderingMode: .alwaysOriginal)
         let button = UIButton(type: .custom)
 //        button.semanticContentAttribute = .forceRightToLeft
@@ -143,7 +132,7 @@ class MainViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: categoryId-1, section: 0)) as? CategoryImageViewCollectionViewCell {
+        if let cell = categoryImageViewCollectionView.cellForItem(at: IndexPath(item: gatheringPages.categoryId-1, section: 0)) as? CategoryImageViewCollectionViewCell {
             selectedCell = cell
         }
     }
@@ -213,11 +202,10 @@ class MainViewController: UIViewController {
     }
     
     private func initAPICall() {
-        pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
+        pagingBoardsByCategory(categoryId: gatheringPages.categoryId, cityName: gatheringPages.cityNameToServer, isRefresh: true)
     }
 
-    // 카테고리 눌렀을때만 reloadData
-    private func resetBoardsData(categoryId: Int) {
+    private func resetBoardsData() {
         gatheringPages.resetPage()
         gatheringBoardCollectionView.reloadData()
     }
@@ -264,7 +252,7 @@ class MainViewController: UIViewController {
     }
     
     // cityNameEng가 default면 기존 api, 다르면 다른 api 요청
-    private func fetchGatheringBoardsByCategory(category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
+    private func fetchGatheringBoardsByCategory(categoryId: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
         let getBoardsByCategoryReq = GetBoardsByCategoryReq(categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
         let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoards(parameters: getBoardsByCategoryReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
         let response = await dataTask.response
@@ -282,7 +270,7 @@ class MainViewController: UIViewController {
     }
     
     // cityNameEng가 default면 기존 api, 다르면 다른 api 요청
-    private func fetchGatheringBoardsByCategoryCity(cityName: String, category: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
+    private func fetchGatheringBoardsByCategoryCity(cityName: String, categoryId: Int, page: Int, userId: Int64, refreshToken: String) async throws -> GetBoardsByCategoryRes {
         let getBoardsByCategoryCityReq = GetBoardsByCategoryCityReq(cityName: cityName, categoryId: categoryId, cursor: page, refreshToken: refreshToken, userId: userId)
         let dataTask = AlamofireManager.shared.session.request(BoardRouter.readCategoryBoardsByCity(parameters: getBoardsByCategoryCityReq)).validate(statusCode: 200..<501).serializingDecodable(APIResponse<GetBoardsByCategoryRes>.self)
         let response = await dataTask.response
@@ -299,10 +287,11 @@ class MainViewController: UIViewController {
         }
     }
     
-    private func pagingBoardsByCategory(categoryId: Int, isRefresh: Bool) {
+    private func pagingBoardsByCategory(categoryId: Int, cityName: String?, isRefresh: Bool) {
         guard let identifier = UserDefaults.standard.object(forKey: UserSessionManager.currentServiceTypeIdentifier) as? String,
               let userItem = try? KeychainManager.getUserItem(serviceType: identifier)
         else { return }
+        let startTime = DispatchTime.now().uptimeNanoseconds
         showGuideLabel(isInit: true)
         gatheringPages.isPaging = true
         gatheringPages.isLoading = false
@@ -316,13 +305,12 @@ class MainViewController: UIViewController {
                    return
                 }
                 
-                let startTime = DispatchTime.now().uptimeNanoseconds
-                
                 let getData: GetBoardsByCategoryRes
-                if defaulltCityName == cityNameLocalized {
-                    getData = try await fetchGatheringBoardsByCategory(category: categoryId, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                if gatheringPages.isDefaultCity {
+                    getData = try await fetchGatheringBoardsByCategory(categoryId: categoryId, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 } else {
-                    getData = try await fetchGatheringBoardsByCategoryCity(cityName: cityNameEng, category: categoryId, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
+                    guard let cityName = cityName else { return }
+                    getData = try await fetchGatheringBoardsByCategoryCity(cityName: cityName, categoryId: categoryId, page: gatheringPages.cursor, userId: userItem .userId, refreshToken: userItem.refresh_token)
                 }
         
                 if Task.isCancelled {
@@ -374,8 +362,8 @@ class MainViewController: UIViewController {
     
     @objc private func refreshGatheringBoards() {
         if !gatheringPages.isPaging {
-            resetBoardsData(categoryId: categoryId)
-            pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
+            resetBoardsData()
+            pagingBoardsByCategory(categoryId: gatheringPages.categoryId, cityName: gatheringPages.cityNameToServer, isRefresh: true)
         }
         refreshControl.endRefreshing()
     }
@@ -396,7 +384,7 @@ extension  MainViewController: UIScrollViewDelegate {
                 .height)) { // -500
                 gatheringPages.isLoading = true
                 bottomLoading()
-                pagingBoardsByCategory(categoryId: categoryId, isRefresh: false)
+                pagingBoardsByCategory(categoryId: gatheringPages.categoryId, cityName: gatheringPages.cityNameToServer, isRefresh: false)
             }
         }
     }
@@ -406,15 +394,15 @@ extension MainViewController: SkeletonCollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == categoryImageViewCollectionView {
-            if categoryId != indexPath.row + 1 {
+            if gatheringPages.categoryId != indexPath.row + 1 {
                 DispatchQueue.main.async { [weak self] in
                     if let cell = collectionView.cellForItem(at: indexPath) as? CategoryImageViewCollectionViewCell {
                         self?.selectedCell = cell
                     }
                 }
-                categoryId = indexPath.row + 1
-                resetBoardsData(categoryId: categoryId)
-                pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
+                gatheringPages.categoryId = indexPath.row + 1
+                resetBoardsData()
+                pagingBoardsByCategory(categoryId: gatheringPages.categoryId, cityName: gatheringPages.cityNameToServer, isRefresh: true)
             }
         } else {
             DispatchQueue.main.async { [weak self] in
@@ -492,19 +480,19 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
 
 extension MainViewController: SearchCityNameProtocol {
     func cityNameSend(cityNameLocalized: String) {
-        self.cityNameLocalized = cityNameLocalized // localized 전 (defaultCityName포함)
+        gatheringPages.cityNameLocalized = cityNameLocalized // localized 전 (defaultCityName포함)
         guard let button = searchCityNameButton.customView as? UIButton else { return }
         button.setTitle(cityNameLocalized.localized(), for: .normal) // localized 되서 보여준다.
         searchCityNameButton.customView?.semanticContentAttribute = .forceRightToLeft
-        if defaulltCityName == self.cityNameLocalized {
-            resetBoardsData(categoryId: categoryId)
-            pagingBoardsByCategory(categoryId: categoryId, isRefresh: true)
+        if gatheringPages.isDefaultCity {
+            resetBoardsData()
+            pagingBoardsByCategory(categoryId: gatheringPages.categoryId, cityName: gatheringPages.cityNameToServer, isRefresh: true)
         } else {
             LocationManager.shared.cityNameGeocodingToServer(address: cityNameLocalized) { [weak self] (cityNameEng, countyCode) in
                 guard let self = self else { return }
-                self.cityNameEng = cityNameEng
-                self.resetBoardsData(categoryId: self.categoryId)
-                self.pagingBoardsByCategory(categoryId: self.categoryId, isRefresh: true)
+                self.gatheringPages.cityNameToServer = cityNameEng
+                self.resetBoardsData()
+                self.pagingBoardsByCategory(categoryId: self.gatheringPages.categoryId, cityName: self.gatheringPages.cityNameToServer, isRefresh: true)
             }
         }
     }
