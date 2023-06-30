@@ -20,6 +20,9 @@
 	* Caching | Kingfisher
 	* Network (REST API) | Alamofire, URLSession
 	* Login API | Sign in with Apple
+	* Localize
+         - All languages | Address, Region, Date&Time, Nationality selection, Language selection
+         - Korean, English | APN, Service phrase, User permission phrase
 
 <br/>
 
