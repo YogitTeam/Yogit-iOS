@@ -338,8 +338,12 @@ extension GatheringBoardContentViewController: UICollectionViewDelegate {
             alert.addAction(delete)
             alert.addAction(cancel)
         } else {
-            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { (action) in self.openLibrary() }
-            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { (action) in self.openCamera() }
+            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { [weak self] (action) in
+                self?.openLibrary()
+            }
+            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { [weak self] (action) in
+                self?.openCamera()
+            }
             alert.addAction(library)
             alert.addAction(camera)
             alert.addAction(cancel)
@@ -476,7 +480,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         option.resizeMode = .exact
         option.isSynchronous = true
         option.isNetworkAccessAllowed = true
-        
+
         showImageLoading()
         
         for i in 0..<asstes.count {
@@ -552,8 +556,8 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                     self?.isDownloading = true
                     DispatchQueue.global(qos: .background).async { [weak self] in
                         guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: targetSize) else { return }
+                        self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
                         DispatchQueue.main.async {
-                            self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
                             self?.imagesCollectionView.reloadData()
                             self?.isDownloading = false
                         }
@@ -598,10 +602,8 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            print("이미지 원본", image.toFile(format: .jpeg(1.0)))
             let targetSize = CGSize(width: view.frame.size.width*1.5, height: view.frame.size.width*1.5)
             let resizeImage = image.resize(targetSize: targetSize)
-            print("이미지 원본2", resizeImage.toFile(format:.jpeg(0.7)))
             boardWithMode.uploadImages.append(resizeImage)
         }
         DispatchQueue.main.async {
@@ -681,4 +683,5 @@ extension GatheringBoardContentViewController {
         view.endEditing(true)
     }
 }
+
 

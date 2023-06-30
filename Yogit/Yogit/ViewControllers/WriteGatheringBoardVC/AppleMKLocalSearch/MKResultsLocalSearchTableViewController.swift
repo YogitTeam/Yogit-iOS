@@ -7,7 +7,6 @@
 
 // google map version
 import UIKit
-import CoreLocation
 import MapKit
 import SnapKit
 

@@ -96,3 +96,4 @@ struct FetchUserProfile: Decodable {
         self.isBlockingUser = isBlockingUser
     }
 }
+

@@ -1,84 +1,29 @@
 # Yogit-iOS
 ## 📱 Global Gathering by Locally Based Interest
-#### App store <https://apps.apple.com/app/yogit-%EC%9A%94%EA%B9%83/id6447361140>
+#### App store (iPhone) <https://apps.apple.com/app/yogit-%EC%9A%94%EA%B9%83/id6447361140>
+<img width="1406" alt="Portfolio_Demo" src="https://github.com/devjohnpark/DataStructure/assets/109328441/fcbfbe6d-dc6c-40e5-9292-534a28647347">
+
+* Subject | Global gathering app by local based interests
+* Subtitle | O2O gathering with locals & foreigners
+* Target (developed in consideration of global service launch)
+	* People from various countries nearby and people who want various activities and experiences
+	*  Who wants to actually improve their foreign language skills
+* Support | iOS 16.0 V ~
+* Dark mode | Support
+* Tech
+	* Language | Swift
+	* Framework | UIKit, Mapkit, Core Location
+	* DataBase | Keychain, Realm, UserDefaults
+	* Autolayout | Snapkit, CodeBasedUI
+	* Architecture | MVC
+	* Asynchronous | GCD, Async await
+	* Caching | Kingfisher
+	* Network (REST API) | Alamofire, URLSession
+	* Login API | Sign in with Apple
 
 <br/>
 
-### iOS development key achievement
----
-#### Session Management
-    User State Processing
-    Keychain
-    Automatic Login
-    Sign With Apple
-    
-<br/>
-
-#### Network Management
-    Alamofire
-    Logger
-    Interceptor
-    Router
-    Network state handling
-    Rest API communication
-    
-<br/>
-    
-#### Parallel, asynchronous code scheduling
-`Async await` `GCD` `Semaphore`
-
-    Concurrency control, race condition problem solving
-    Created just before the current task is created, after canceling the previous tasks
-    → UI update reduced by about 0.25 to 0.75 seconds
-    Asynchronous image list caching
-    → 1800% ~ 4500% increase in download speed (Serial)
-    → 750% ~ 1900% increase in download speed (Parallel)
-    The image list being downloaded from iCloud is asynchronously processed and loaded in a background thread.
-    → Immediately enable next UI interaction
-  
-<br/>
-
-#### Implement UI/UX similar to chatting with REST API communication
-	→ Fast MVP Development
-
-<br/>
-
-#### Image Resize & JPEG Compression
-	→ 85% reduction in capacity compared to the original
-     
-<br/>
-    
-#### Post CRUD (Rest API server communication)
-
-<br/>
-    
-#### Realm CRUD (Local DB)
-
-<br/>
-
-#### Push notification
-
-<br/>
-
-#### Address and location search, localization, and map related features
-    Mapkit
-    CoreLocation
-    GooglePlace API
-    
-<br/>
-
-#### Localizing
-    Select address, region, date, nationality, language - All languages
-    Push notification, user permission statement, service statement - Korean, English
-    
-<br/>
-
-#### ETC
-   
-<br/>
-<br/>
-
-### App key feature (1.3.1 Version)
+### App key feature (1.5.7 Version)
 ---
 #### Member management
 
@@ -88,91 +33,86 @@
 	Delete account
 	Customer service center
 
-
-|<img src="https://user-images.githubusercontent.com/109328441/235420878-23cdf78c-f2f3-4b5f-851a-58978484b268.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235583452-c677588c-487a-4709-9649-7371ca8a9b66.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235591103-7041b427-c9ad-411d-84e4-2abf677f316a.gif" width="200" height="430"/>|
+|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/debd7cae-d052-42fa-837a-ccd89c76a240" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/7660b9af-36f0-43ec-a9e3-55dea49a95a1" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/144f9edf-8e9b-4825-974e-0cd7fd23edc0" width="200" height="430"/>|
 |:---:|:---:|:---:|
-|Sign Up|Log In/out|Delete account|
+|Sign Up & Create Profile|Log In/Out|Delete Account|
 
 
 <br/>
 
-#### Home screen
+#### Read gathering list
 
-	Read gathering posts by (category, city name)
+	Read gathering list by (category, city name)
 	Refresh gathering boards 
-	Infinte scroll (pagenation)
+	Infinte scroll (paging)
 
 |<img src="https://user-images.githubusercontent.com/109328441/235421445-dca4e839-1643-425f-9f88-30d97816661b.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235421686-a30d810a-83db-4ed4-a2e2-e3382cfff1b2.gif" width="200" height="430"/>|
 |:---:|:---:|
-|Read posts|Infinte scroll|
+|Read gathering list|Infinte Scroll|
 
 <br/>
 
 #### Gathering post
 
-	CRUD
+	Gathering post CRUD
 	Copy gathering address
 	Open gathering location with apple/google/kakao app or web map
-	Join gathering board
+	Join the gathering 
 	Cancel joined gathering 
 	Report post
+	Get user's profile
 
-|<img src="https://user-images.githubusercontent.com/109328441/235426398-3f5c0696-986e-44fe-a30f-d0ee400ad76c.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235578566-11341d46-ea80-4491-ada8-c29ce31344e2.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235424164-828ddba2-3e2f-49b9-a5cb-fcf5cdb93935.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235594306-a6dd6622-af9d-4692-8a6b-58d78880521d.gif" width="200" height="430"/>|
+|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/e5044572-2b2a-4729-a271-a9a3b2cb7f53" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/d1559831-3a4b-45e4-bb26-2703c8bc9e21" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235424164-828ddba2-3e2f-49b9-a5cb-fcf5cdb93935.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235594306-a6dd6622-af9d-4692-8a6b-58d78880521d.gif" width="200" height="430"/>|
 |:---:|:---:|:---:|:---:|
-|Create post|Read post|Update post|Delete post|
-
-
-|<img src="https://user-images.githubusercontent.com/109328441/235579977-4d7d0d7f-8755-43c7-a8be-307c156936cf.gif" width="200" height="430"/>|
-|:---:|
-|Read joined/opend post|
+|Create post|Read post(join/cancel)|Update post|Delete post|
 
 <br/>
 
-#### Clipboard
+#### Clipboard (Implementation of gathering chat room with HTTP communication)
 
 	Create clipboard
 	Read clipboard
-	Paging (scroll up down)
+	Paging (infinte scroll up down)
 	Report clipboard
 
-|<img src="https://user-images.githubusercontent.com/109328441/235424668-d92693ea-ae89-402d-8574-fc69eb4b0cb6.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235425245-009fb02a-04ff-4951-8050-7bd8c0537844.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235425554-f8f01e45-c1da-4cfc-8c1c-04966fc41742.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235577132-49916ae0-b5e4-431c-b32c-b4e17c101089.gif" width="200" height="430"/>|
+|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/27a2a4fb-6b47-41cb-ba27-d76499dadab9" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/f73d3a12-fb51-4f9e-8fbf-809a219f8d05" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/71b493ba-42fc-4a72-8afa-2d56f3a97b56" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235577132-49916ae0-b5e4-431c-b32c-b4e17c101089.gif" width="200" height="430"/>|
 |:---:|:---:|:---:|:---:|
-|Create Clipboard|Read Clipboard|Clipboard Paging|Report Clipboard|
+|Clipboard|Clipboard up paging|Clipboard down paging|Report Clipboard|
 
 <br/>
 
-#### Report/Block user
+#### Block/Report user
 
+	Block user
 	Report user
-	Block iser
-
-|<img src="https://user-images.githubusercontent.com/109328441/235582657-9e4659de-aea5-4e71-8027-c7ccfaaa51b6.gif" width="200" height="430"/>|
-|:---:|
-|Read joined/opend post|
+	
+|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/015459c6-0107-4fc8-8862-fb266972b4ad" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/cff4789c-7223-4f53-a53b-95500b48e922" width="200" height="430"/>|
+|:---:|:---:|
+|Block user|Report user|
 
 <br/>
 
 #### User's gathering post
 
-	Joned gathering
-	Opend gathering
+	Joined gathering
+	Opened gathering
 
 |<img src="https://user-images.githubusercontent.com/109328441/235426762-28112f8f-c239-4302-b1a1-1086a5b110fa.gif" width="200" height="430"/>|
 |:---:|
-|Read joined/opend post|
+|Read joined/Opend post|
 
 <br/>
 
 #### Profile
 
-	Create
-	Read
+	Create (with sign up)
+	Read 
 	Update
-	Delete
+	Delete (with delete account)
 
-|<img src="https://user-images.githubusercontent.com/109328441/235420878-23cdf78c-f2f3-4b5f-851a-58978484b268.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235581396-4664e859-9941-4837-abfe-4fd9586f6b25.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235427593-833e9874-f0ee-4ee8-bc3b-efd5cac33cb9.gif" width="200" height="430"/>|<img src="https://user-images.githubusercontent.com/109328441/235591103-7041b427-c9ad-411d-84e4-2abf677f316a.gif" width="200" height="430"/>|
-|:---:|:---:|:---:|:---:|
-|Create|Read|Update|Delete|
+|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/f82aa02b-e76e-4fb4-9bf0-6121e89fba23" width="200" height="430"/>|<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/0f1d29b0-355a-413b-a87e-95140b9c6921" width="200" height="430"/>|
+|:---:|:---:|
+|Read Profile|Update Profile|
 
 <br/>
 
@@ -180,23 +120,11 @@
 
 	Clipboard notifications
 	Activity notifications
-   	 * Joined member notification
-   	 * Canceled member notification
 
 |<img src="https://user-images.githubusercontent.com/109328441/235421939-942585f4-fda7-4efe-a2a9-65986dff9814.gif" width="200" height="430"/>|
 |:---:|
-|Clipboard/Activity|
+|Clipboard/Activity notifications|
 
-
-<br/>
-
-#### Support dark mode
-
-|<img src="https://user-images.githubusercontent.com/109328441/235582066-6a077e55-e3eb-4331-ae4d-10b685b52ce2.gif" width="200" height="430"/>|
-|:---:|
-|Dark mode|
-
-<br/>
 
 
 

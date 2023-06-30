@@ -262,6 +262,7 @@ extension ClipBoardViewController {
         isPaging = false
     }
     
+    
     func loadClipBoardBottom(isInit: Bool,userId: Int64, refreshToken: String, boardId: Int64) async {
         isLoading = false
         let startTime = DispatchTime.now().uptimeNanoseconds
@@ -336,6 +337,7 @@ extension ClipBoardViewController {
             }
         }
     }
+    
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == messagesCollectionView && !isPaging {
