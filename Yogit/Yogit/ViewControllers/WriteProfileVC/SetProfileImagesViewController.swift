@@ -306,17 +306,17 @@ extension SetProfileImagesViewController: SkeletonCollectionViewDelegate {
         let cancel = UIAlertAction(title: "CANCEL".localized(), style: .cancel, handler: nil)
         alert.addAction(cancel)
         if indexPath.row < userImagesData.downloadImages.count + userImagesData.uploadImages.count {
-            let delete = UIAlertAction(title: "DELETE".localized(), style: .destructive) { [weak self] (action) in
-                self?.deleteImage(indexPath.row)
+            let delete = UIAlertAction(title: "DELETE".localized(), style: .destructive) {  (action) in
+                self.deleteImage(indexPath.row)
                 
             }
             alert.addAction(delete)
         } else {
-            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { [weak self] (action) in
-                self?.openLibrary()
+            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { (action) in
+                self.openLibrary()
             }
-            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) {  [weak self] (action) in
-                self?.openCamera()
+            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { (action) in
+                self.openCamera()
             }
             alert.addAction(library)
             alert.addAction(camera)
@@ -465,14 +465,6 @@ extension SetProfileImagesViewController: UIImagePickerControllerDelegate, UINav
                             self?.isDownloading = false
                         }
                     }
-//                    Task.detached(priority: .high) { [weak self] in
-//                        guard let appendImages = await self?.convertAssetsToImages(asstes: assets) else { return }
-//                        await MainActor.run { [weak self] in
-//                            self?.userImagesData.uploadImages.append(contentsOf: appendImages)
-//                            self?.imagesCollectionView.reloadData()
-//                            self?.isDownloading = false
-//                        }
-//                    }
                 }, completion: {
                     
                 })

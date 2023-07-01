@@ -22,7 +22,7 @@
 	* Login API | Sign in with Apple
     * APN
 	* Localize
-         - All languages | Address, Region, Date&Time, Nationality selection, Language selection
+         - All languages | Address, Region, Date&Time, Nationality list selection, Language list selection
          - Korean, English | APN, Service phrase, User permission phrase
 
 <br/>

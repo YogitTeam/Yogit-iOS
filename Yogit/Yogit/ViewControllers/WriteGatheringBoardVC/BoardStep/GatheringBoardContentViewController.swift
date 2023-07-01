@@ -338,11 +338,11 @@ extension GatheringBoardContentViewController: UICollectionViewDelegate {
             alert.addAction(delete)
             alert.addAction(cancel)
         } else {
-            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { [weak self] (action) in
-                self?.openLibrary()
+            let library = UIAlertAction(title: "UPLOAD_PHOTO".localized(), style: .default) { (action) in
+                self.openLibrary()
             }
-            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { [weak self] (action) in
-                self?.openCamera()
+            let camera = UIAlertAction(title: "TAKE_PHOTO".localized(), style: .default) { (action) in
+                self.openCamera()
             }
             alert.addAction(library)
             alert.addAction(camera)
@@ -381,36 +381,6 @@ extension GatheringBoardContentViewController: UICollectionViewDelegateFlowLayou
 }
 
 extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-//    private func convertAssetsToImages(asstes: [PHAsset]) -> [UIImage] {
-//        var images = [UIImage]()
-//        let imageManager = PHImageManager.default()
-//        let option = PHImageRequestOptions()
-////        option.deliveryMode = .fastFormat//.highQualityFormat
-////        option.resizeMode = .exact
-//        option.isSynchronous = true
-//        option.isNetworkAccessAllowed = true
-//
-//        // CGSize(width: view.frame.size.width, height: view.frame.size.height)
-//        let newSize = CGSize(width: view.frame.size.width*2, height: view.frame.size.height*2)
-//        for i in 0..<asstes.count {
-//
-//            imageManager.requestImage(for: asstes[i],
-//                                      targetSize: newSize,
-//                                      contentMode: .aspectFit,
-//                                      options: option) { (result, info) in
-//                if let image = result {
-//                    images.append(image)
-//                    print("image and image size", image, image.size)
-////                    print("이미지 크기", image.toFile(format: .jpeg(1.0))!)
-////                    let resized = image.resize(targetSize: CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height))
-////                    print("resized and resized size", resized, resized.size)
-////                    print("이미지 크기", resized.toFile(format: .jpeg(1.0))!)
-//                }
-//            }
-//        }
-//        return images
-//    }
     
     private func showImageLoading() {
         DispatchQueue.main.async { [weak self] in
@@ -499,7 +469,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
         return images
     }
     
-    private func convertAssetsToImagesGCD(asstes: [PHAsset], newSize: CGSize) -> [UIImage] {
+    private func convertAssetsToImagesGCD(asstes: [PHAsset], resize: CGSize) -> [UIImage] {
         
         let imageManager = PHImageManager.default()
         let option = PHImageRequestOptions()
@@ -518,7 +488,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
             dispatchGroup.enter()
             dispatchQueue.async { [i] in
                 imageManager.requestImage(for: asstes[i],
-                                          targetSize: newSize,
+                                          targetSize: resize,
                                           contentMode: .aspectFit,
                                           options: option) { (result, info) in
                     if let image = result {

@@ -18,6 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         //        guard let _ = (scene as? UIWindowScene) else { return }
         guard let scene = (scene as? UIWindowScene) else { return }
         
+        
         UserSessionManager.checkUserAuth { (AuthState) in
             var rootViewState: RootViewState // 루트뷰 상태
             switch AuthState {
