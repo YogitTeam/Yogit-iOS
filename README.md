@@ -8,7 +8,7 @@
 * Target (developed in consideration of global service launch)
 	* People from various countries nearby and people who want various activities and experiences
 	*  Who wants to actually improve their foreign language skills
-* Support | iOS 16.0 V ~
+* Support | iOS 16.0 V ~ / DarkMode
 * Dark mode | Support
 * Tech
 	* Language | Swift
@@ -20,6 +20,7 @@
 	* Caching | Kingfisher
 	* Network (REST API) | Alamofire, URLSession
 	* Login API | Sign in with Apple
+    * APN
 	* Localize
          - All languages | Address, Region, Date&Time, Nationality selection, Language selection
          - Korean, English | APN, Service phrase, User permission phrase
