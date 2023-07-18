@@ -30,7 +30,7 @@ iOS 앱 클라이언트 부분은 혼자 개발하다보니, 커밋을 기능 �
 
 #### Architecture
 
-<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/7ea1c64e-06f9-491f-8ae5-2b20296cf2d8" width="700" height="770"/>
+<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/fa501d8a-cfb1-45b3-8c9c-5614bbb1acad" width="800" height="800"/>
 
 <br/>
 
