@@ -1,6 +1,6 @@
 # Yogit-iOS
 ## 📱 Global Gathering by Locally Based Interest
-iOS 앱 클라이언트 부분은 혼자 개발하다보니, Commit을 기능 단위로 하는 것을 간과하고 덩어리 단위로 하였습니다...
+iOS 앱 클라이언트 부분은 혼자 개발하다보니, 커밋을 기능 단위로 하는 것을 간과하고 덩어리 단위로 하여 커밋 수가 적습니다...
 #### App store (iPhone) <https://apps.apple.com/app/yogit-%EC%9A%94%EA%B9%83/id6447361140>
 <img width="1406" alt="Portfolio_Demo" src="https://github.com/devjohnpark/DataStructure/assets/109328441/fcbfbe6d-dc6c-40e5-9292-534a28647347">
 
@@ -30,7 +30,7 @@ iOS 앱 클라이언트 부분은 혼자 개발하다보니, Commit을 기능 �
 
 #### Architecture
 
-<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/7ea1c64e-06f9-491f-8ae5-2b20296cf2d8" width="500" height="550"/>
+<img src="https://github.com/devjohnpark/DataStructure/assets/109328441/7ea1c64e-06f9-491f-8ae5-2b20296cf2d8" width="700" height="770"/>
 
 <br/>
 
