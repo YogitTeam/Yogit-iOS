@@ -97,8 +97,8 @@ class SettingProfileViewController: UIViewController {
             switch response {
             case .success:
                 // 애플 회원탈퇴 후, 애플 계정 ID 사용 중단까지 실제 시간 추가 소요 (2~3초) >> 탈퇴 이후 바로 회원가입시 문제 안생김
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-                    moveToLoginVC()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                    self?.moveToLoginVC()
                     ProgressHUD.dismiss()
                 }
             case .badResponse:
@@ -123,8 +123,8 @@ class SettingProfileViewController: UIViewController {
         UserSessionManager.shared.logOut(logOutReq: logOut, userItem: userItem) { (response) in
             switch response {
             case .success:
-                DispatchQueue.main.async {
-                    self.moveToLoginVC()
+                DispatchQueue.main.async { [weak self] in
+                    self?.moveToLoginVC()
                     ProgressHUD.dismiss()
                 }
             case .badResponse:

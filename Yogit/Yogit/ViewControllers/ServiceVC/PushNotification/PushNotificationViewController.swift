@@ -84,6 +84,7 @@ class PushNotificationViewController: UIViewController {
     }
     
     deinit {
+        print("해제")
         removeNotification()
     }
     

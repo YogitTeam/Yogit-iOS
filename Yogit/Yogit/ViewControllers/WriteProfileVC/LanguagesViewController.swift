@@ -24,7 +24,6 @@ protocol LanguageProtocol: AnyObject {
 class LanguagesViewController: UIViewController {
     
     // MARK: - Data
-
     private var sections = [SectionLanguage]()
     
     private let levelOptions: [Int] = [0, 1, 2, 3, 4]

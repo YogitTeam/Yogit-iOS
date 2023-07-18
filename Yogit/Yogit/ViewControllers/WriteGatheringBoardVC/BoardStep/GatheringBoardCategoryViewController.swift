@@ -23,14 +23,15 @@ class GatheringBoardCategoryViewController: UIViewController {
     
     var categoryId: Int? {
         didSet {
-            DispatchQueue.main.async { [self] in
-                categoryTableView.reloadData()
-                if categoryId != nil {
-                    nextButton.isEnabled = true
-                    nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else  { return }
+                self.categoryTableView.reloadData()
+                if self.categoryId != nil {
+                    self.nextButton.isEnabled = true
+                    self.nextButton.backgroundColor = UIColor(rgb: 0x3232FF, alpha: 1.0)
                 } else {
-                    nextButton.isEnabled = false
-                    nextButton.backgroundColor = .placeholderText
+                    self.nextButton.isEnabled = false
+                    self.nextButton.backgroundColor = .placeholderText
                 }
             }
         }

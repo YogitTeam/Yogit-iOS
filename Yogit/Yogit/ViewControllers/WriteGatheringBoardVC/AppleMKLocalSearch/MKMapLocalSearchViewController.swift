@@ -30,7 +30,7 @@ class MKMapLocalSearchViewController: UIViewController {
     
     private var searchRegion: MKCoordinateRegion = MKCoordinateRegion(MKMapRect.world)
 
-    weak var timer: Timer?
+    var timer: Timer?
 
     private let searchVC = UISearchController(searchResultsController: MKResultsLocalSearchTableViewController())
 
@@ -256,7 +256,7 @@ class MKMapLocalSearchViewController: UIViewController {
         if let timer = timer {
             if(timer.isValid){
                 timer.invalidate()
-                self.timer = nil
+//                self.timer = nil
             }
         }
     }
@@ -408,7 +408,7 @@ extension MKMapLocalSearchViewController: CLLocationManagerDelegate, MKMapViewDe
 
     @objc func Search_Tick_TimeConsole() {
 //        searchVC.searchBar.tag = 0
-        
+        print("타이머")
         guard let timeInterval = searchRunTimeInterval else { return }
 
         let interval = Date().timeIntervalSinceReferenceDate - timeInterval

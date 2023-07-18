@@ -464,6 +464,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
             }
         }
         
+        
         dismissImageLoading()
         
         return images
@@ -523,7 +524,6 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                 }, cancel: { (assets) in
                     print("Canceled with selections: \(assets)")
                 }, finish: { (assets) in
-                    self?.isDownloading = true
                     DispatchQueue.global(qos: .background).async { [weak self] in
                         guard let appendImages = self?.convertAssetsToImages(asstes: assets, resize: targetSize) else { return }
                         self?.boardWithMode.uploadImages.append(contentsOf: appendImages)
@@ -533,7 +533,7 @@ extension GatheringBoardContentViewController: UIImagePickerControllerDelegate, 
                         }
                     }
                 }, completion: {
-                    
+    
                 })
             } else {
                 self?.setAuthAlertAction("PHOTO".localized())

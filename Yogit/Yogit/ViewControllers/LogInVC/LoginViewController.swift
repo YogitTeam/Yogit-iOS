@@ -153,14 +153,14 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
             UserSessionManager .shared.logIn(logInReq: logInApple, userItem: userItem) { (response) in
                 switch response {
                 case .success:
-                    DispatchQueue.main.async(qos: .userInteractive){ [self] in
+                    DispatchQueue.main.async(qos: .userInteractive){ [weak self] in
                         if userItem.account.hasRequirementInfo {
                             let rootVC = UINavigationController(rootViewController: ServiceTabBarViewController())
-                            view.window?.rootViewController = rootVC
-                            view.window?.makeKeyAndVisible()
+                            self?.view.window?.rootViewController = rootVC
+                            self?.view.window?.makeKeyAndVisible()
                         } else {
                             let SPVC = SetProfileViewController()
-                            navigationController?.pushViewController(SPVC, animated: true)
+                            self?.navigationController?.pushViewController(SPVC, animated: true)
                         }
                         ProgressHUD.dismiss()
                     }
@@ -223,9 +223,9 @@ extension LoginViewController: ASAuthorizationControllerDelegate {
                         } catch {
                             print("KeychainManager deleteUser error \(error.localizedDescription)")
                         }
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.async { [weak self] in
                             let SPVC = SetProfileViewController()
-                            self.navigationController?.pushViewController(SPVC, animated: true)
+                            self?.navigationController?.pushViewController(SPVC, animated: true)
                             ProgressHUD.dismiss()
                         }
                     case .badResponse:
