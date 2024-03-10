@@ -16,7 +16,7 @@ final class ImageManager {
     
     static func downloadImage(with urlString: String, completion: @escaping (UIImage?) -> Void) {
         guard let url = URL(string: urlString) else { return completion(nil) }
-        let resource = ImageResource(downloadURL: url)
+        let resource = Kingfisher.ImageResource(downloadURL: url)
         KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
             switch result {
             case .success(let value):
@@ -50,7 +50,7 @@ final class ImageManager {
     static func downloadImageWait(with urlString: String) -> UIImage? {
         guard let url = URL(string: urlString) else { return nil }
         let semaphore = DispatchSemaphore(value: 0)
-        let resource = ImageResource(downloadURL: url)
+        let resource = Kingfisher.ImageResource(downloadURL: url)
         var image: UIImage?
         KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
             switch result {
@@ -71,7 +71,7 @@ final class ImageManager {
     static func downloadImageWait(with urlString: String) async -> UIImage? {
         guard let url = URL(string: urlString) else { return nil }
         
-        let resource = ImageResource(downloadURL: url)
+        let resource = Kingfisher.ImageResource(downloadURL: url)
         var image: UIImage?
         
         return await withCheckedContinuation { continuation in
